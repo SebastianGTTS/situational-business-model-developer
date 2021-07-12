@@ -1,0 +1,40 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{feature.name}}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="closeModal.emit()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <ul class="list-group inner" style="margin:5px;">
+    <li class="list-group-item justify-content-between align-items-center"><i class="fas fa-plus-square"></i>
+      Add existing business model decisions:
+      <ul class="list-group inner" style="margin:5px;">
+        <li class="list-group-item justify-content-between align-items-center" *ngFor=" let f of unselectedFeatures">
+            <span>
+              {{f.name}}
+              <small class="text-muted" *ngIf="f.description">{{ f.description }}</small>
+            </span>
+          <button (click)="addBusinessModelDecision.emit(f.id)" type="button"
+                  class="btn btn-warning btn-xs bottom-right">
+            Add
+          </button>
+        </li>
+        <li class="list-group-item justify-content-between align-items-center" *ngIf="unselectedFeatures.length == 0">
+          There are no existing business model decisions left to add.
+        </li>
+      </ul>
+    </li>
+    <li class="list-group-item justify-content-between align-items-center"><i class="fas fa-plus-square"></i>
+      Add new business model decision:
+      <ul class="list-group inner" style="margin:5px;">
+        <li class="list-group-item justify-content-between align-items-center">
+          <form [formGroup]="addFeatureForm" (ngSubmit)="submitAddFeatureForm()" class="form-inline">
+            <label class="sr-only" for="name">Decision Name</label>
+            <input type="text" formControlName="name" class="form-control mb-2 mr-sm-2" id="name">
+            <button type="submit" class="btn btn-warning btn-xs bottom-right">Add</button>
+          </form>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

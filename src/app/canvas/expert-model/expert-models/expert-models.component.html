@@ -1,0 +1,19 @@
+<main role="main" class="container">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Expert Models</h6>
+    <p class="mt-1">Expert knowledge models are used to represent the knowledge of experts about a certain
+      domain.</p>
+    <app-model-list
+      class="expert-model-list"
+      modelListTitle="List of Expert Business Knowledge Models"
+      modelFormTitle="Add Expert Business Knowledge Model"
+      [modelList]="expertModelList"
+      (viewModel)="viewExpertModel($event)"
+      (editModel)="editExpertModel($event)"
+      (deleteModel)="deleteExpertModel($event)"
+      (addModel)="addExpertModel($event.definition, $event.name, $event.description)"></app-model-list>
+
+    <app-model-import-view formTitle="Import Expert Model" [importExpertModel]="true"
+                           (imported)="loadExpertModelList()"></app-model-import-view>
+  </div>
+</main>

@@ -1,0 +1,20 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <ul formArrayName="steps" class="list-group">
+    <li *ngFor="let step of steps; let index = index" class="list-group-item">
+      <app-method-info-step
+        [formGroupName]="index.toString()"
+        [bmProcess]="bmProcess"
+        [contextDomains]="contextDomains"
+        [step]="step"
+        [stepDecision]="stepDecisions[index]"
+        (forceUpdate)="forceUpdate.emit({step: index, stepDecision: $event})"></app-method-info-step>
+    </li>
+  </ul>
+  <div *ngIf="steps.length > 0" class="form-group row mt-3">
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!form.valid">
+        <ng-container>Update</ng-container>
+      </button>
+    </div>
+  </div>
+</form>

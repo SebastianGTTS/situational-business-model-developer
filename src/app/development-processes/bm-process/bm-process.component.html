@@ -1,0 +1,48 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="bmProcess">
+    <a class="nav-link active" [routerLink]="[]">{{bmProcess.name}}</a>
+  </nav>
+</div>
+
+<main *ngIf="bmProcess" role="main">
+  <div class="alert alert-info container mt-3" role="alert">
+    <p>On this page it is possible to create a Business Model Development Method. You can start by defining the
+      development context on the bottom of the screen that will later be used to check situational factors
+      or just start with the definition of the Method by clicking on the start event and then, on the add button to
+      select a Method Pattern as a starting point.</p>
+
+    <p>After that, you can append more patterns when selecting the added Method Pattern or insert
+      Method Patterns into activities by selecting the activity and then selecting the insert icon.
+      This is only possible if the corresponding activity has a plus symbol and is thus a call activity. Otherwise
+      it is only possible to insert Method Building Blocks into the activity by selecting the database icon when
+      an activity is selected.</p>
+
+    <p class="mb-0">Additionally, it is possible to get an overview of an inserted Method Building Block by selecting
+      the corresponding activity and selecting the info icon. There it is also possible to select which groups of
+      artifacts and stakeholders to use and which concrete Method Elements to use.</p>
+  </div>
+
+  <app-bm-process-diagram [bmProcess]="bmProcess" (saveBmProcess)="save($event)"></app-bm-process-diagram>
+
+  <div class="container">
+    <div class="mb-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom border-gray pb-2 mb-0">Context</h6>
+      <div class="my-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Domain</h6>
+        <div class="text-muted pt-3">
+          <app-domains-selection-form
+            [domains]="bmProcess.domains"
+            (submitDomainsForm)="updateBmProcessValue({domains: $event.value})"></app-domains-selection-form>
+        </div>
+      </div>
+      <div class="mt-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2 mb-0">Situational Factors</h6>
+        <div class="text-muted pt-3">
+          <app-situational-factors-selection-form
+            [situationalFactors]="bmProcess.situationalFactors"
+            (submitSituationalFactorsForm)="updateBmProcessValue({situationalFactors: $event.value})"></app-situational-factors-selection-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

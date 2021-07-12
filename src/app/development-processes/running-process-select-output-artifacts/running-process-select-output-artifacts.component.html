@@ -1,0 +1,55 @@
+<ng-container *ngIf="outputArtifacts.length === 0">
+  <div class="alert alert-info">
+    This building block has no output artifacts.
+  </div>
+  <div class="d-flex">
+    <button type="button" class="btn btn-primary btn-block" (click)="nextStep()">Finish execution</button>
+  </div>
+</ng-container>
+<form [formGroup]="form" *ngIf="outputArtifacts.length > 0" (ngSubmit)="submitForm()">
+  <table class="table" formArrayName="outputArtifacts">
+    <thead>
+    <tr>
+      <th scope="col">Artifact Type</th>
+      <th scope="col">Select Artifact</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let artifact of outputArtifacts; let index = index" formGroupName="{{index}}">
+      <td>{{artifact.name}} (<<{{artifact.list}}>>)</td>
+      <td>
+        <div class="form-group">
+          <div class="btn-group btn-group-toggle" ngbRadioGroup name="selectIsDefinition"
+               formControlName="isDefinition">
+            <label ngbButtonLabel class="btn-primary">
+              <input ngbButton type="radio" [value]="false"> Merge
+            </label>
+            <label ngbButtonLabel class="btn-primary">
+              <input ngbButton type="radio" [value]="true"> New Artifact
+            </label>
+          </div>
+        </div>
+        <div *ngIf="!formArray.at(index).get('isDefinition').value" class="form-group">
+          <label for="artifact">Artifact</label>
+          <select class="form-control" id="artifact" formControlName="artifact">
+            <ng-container *ngFor="let a of runningProcess.artifacts; let index = index">
+              <option *ngIf="a.artifact._id === artifact._id" [ngValue]="index">{{a.identifier}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="formArray.at(index).get('isDefinition').value">
+          <label for="name">Name</label>
+          <input class="form-control" id="name" formControlName="artifactName">
+        </div>
+        <div class="form-group" *ngIf="!artifact.internalArtifact">
+          <label for="externalOutputArtifactData">Note</label>
+          <textarea class="form-control" id="externalOutputArtifactData" rows="3" formControlName="data"></textarea>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="d-flex">
+    <button type="submit" class="btn btn-primary btn-block" [disabled]="!form.valid">Finish execution</button>
+  </div>
+</form>

@@ -1,0 +1,25 @@
+<div *ngIf="featureModel">
+  <table *ngIf="featureModel" class="table table-bordered canvas-table">
+    <tbody>
+    <tr *ngFor="let row of featureModel.definition.rows">
+      <ng-container *ngFor="let cell of row">
+        <td class="canvas-table-cell" *ngIf="!cell.isSpacer" [colSpan]="cell.colspan" [rowSpan]="cell.rowspan">
+          <div class="canvas-table-block">
+            <app-feature-building-block
+              [buildingBlockName]="cell.name"
+              [features]="asList(featureModel.features[cell.id].subfeatures)"></app-feature-building-block>
+          </div>
+        </td>
+        <td *ngIf="cell.isSpacer" [colSpan]="cell.colspan" [rowSpan]="cell.rowspan"></td>
+      </ng-container>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-4"><strong>Legend:</strong></div>
+    <div class="col-4"><i class="fa fa-circle"></i> Mandatory Feature</div>
+    <div class="col-4"><i class="fa fa-circle-o"></i> Optional Feature</div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="artifact">
+    <a class="nav-link active" [routerLink]="[]">{{artifact.name}}</a>
+  </nav>
+</div>
+
+<main class="container" *ngIf="artifact">
+
+  <div class="alert alert-info mt-3" role="alert">
+    Update an Artifact and define its values.
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Artifact</h6>
+    <div class="text-muted">
+      <app-method-element-form [methodElement]="artifact" [listNames]="listNames"
+                               (submitMethodElementForm)="updateValue($event.value)"></app-method-element-form>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Definition</h6>
+    <div class="text-muted">
+      <form [formGroup]="definitionForm" (ngSubmit)="updateValue(definitionForm.value)">
+        <div class="form-group">
+          <div class="btn-group btn-group-toggle" ngbRadioGroup name="internalArtifact"
+               formControlName="internalArtifact">
+            <label ngbButtonLabel class="btn-primary">
+              <input ngbButton type="radio" [value]="true"> Internal Artifact
+            </label>
+            <label ngbButtonLabel class="btn-primary">
+              <input ngbButton type="radio" [value]="false"> External Artifact
+            </label>
+          </div>
+        </div>
+        <div *ngIf="definitionForm.get('internalArtifact').value" class="form-group row">
+          <label for="metaModel" class="col-sm-4 col-form-label">Meta Model</label>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              formControlName="metaModel"
+              class="form-control"
+              [class.is-invalid]="metaModelControl.invalid"
+              id="metaModel"
+              [ngbTypeahead]="searchMetaModel"
+              [editable]="false"
+              [resultFormatter]="formatter"
+              [inputFormatter]="formatter"
+              (click)="openMetaModelInput.next($any($event.target).value)"
+              (focus)="openMetaModelInput.next($any($event.target).value)">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!definitionForm.valid">
+              <ng-container>Update</ng-container>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</main>

@@ -1,0 +1,22 @@
+<table class="table mb-0">
+  <tbody>
+  <tr>
+    <th scope="col">List</th>
+    <th scope="col">Situational Factor</th>
+    <th scope="col">Needed Context</th>
+    <th scope="col">Provided by Element</th>
+    <th scope="col" class="text-center">Fulfilled</th>
+  </tr>
+  <tr *ngFor="let factor of factors">
+    <td>{{factor.list}}</td>
+    <td>{{factor.name}}</td>
+    <td>{{factor.needed}}</td>
+    <td>{{factor.provided}}</td>
+    <td class="text-center">
+      <i *ngIf="factor.fulfills === undefined" class="fas fa-question text-muted"></i>
+      <i *ngIf="factor.fulfills === false" class="fas fa-times text-danger"></i>
+      <i *ngIf="factor.fulfills === true" class="fas fa-check text-success"></i>
+    </td>
+  </tr>
+  </tbody>
+</table>

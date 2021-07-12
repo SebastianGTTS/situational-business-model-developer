@@ -1,0 +1,1483 @@
+[
+  {
+    "type": "ProcessPattern",
+    "name": "Business Model Initialization Pattern",
+    "description": "This pattern allows the creation of a fixed process to create and validate a business model for a mobile application. Therefore, the process is particularly suitable for developers who have little experience with the creation of business models.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1038tb5</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_1038tb5\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_1fdjmm5\" /><bpmn:callActivity id=\"Activity_1v3a0dr\" name=\"&#60;&#60;discovery&#62;&#62;\"><bpmn:incoming>Flow_0gd19zx</bpmn:incoming><bpmn:outgoing>Flow_0y72bxm</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_1qs3oc9\" name=\"&#60;&#60;analysis&#62;&#62;\"><bpmn:incoming>Flow_01m9y59</bpmn:incoming><bpmn:outgoing>Flow_1sab3si</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:exclusiveGateway id=\"Gateway_1sn658h\"><bpmn:incoming>Flow_0y72bxm</bpmn:incoming><bpmn:incoming>Flow_0x50kxa</bpmn:incoming><bpmn:outgoing>Flow_01m9y59</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0y72bxm\" sourceRef=\"Activity_1v3a0dr\" targetRef=\"Gateway_1sn658h\" /><bpmn:sequenceFlow id=\"Flow_01m9y59\" sourceRef=\"Gateway_1sn658h\" targetRef=\"Activity_1qs3oc9\" /><bpmn:exclusiveGateway id=\"Gateway_1xo4mt4\"><bpmn:incoming>Flow_1sab3si</bpmn:incoming><bpmn:incoming>Flow_1gkr7d2</bpmn:incoming><bpmn:outgoing>Flow_1wsv2e8</bpmn:outgoing><bpmn:outgoing>Flow_1935tcl</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_1sab3si\" sourceRef=\"Activity_1qs3oc9\" targetRef=\"Gateway_1xo4mt4\" /><bpmn:sequenceFlow id=\"Flow_1wsv2e8\" sourceRef=\"Gateway_1xo4mt4\" targetRef=\"Activity_0fldsb1\" /><bpmn:callActivity id=\"Activity_0fldsb1\" name=\"&#60;&#60;design&#62;&#62;\"><bpmn:incoming>Flow_1wsv2e8</bpmn:incoming><bpmn:outgoing>Flow_0oci9mm</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:exclusiveGateway id=\"Gateway_1oaecke\"><bpmn:incoming>Flow_0oci9mm</bpmn:incoming><bpmn:incoming>Flow_0delj8n</bpmn:incoming><bpmn:outgoing>Flow_08oz6nc</bpmn:outgoing><bpmn:outgoing>Flow_0x50kxa</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0oci9mm\" sourceRef=\"Activity_0fldsb1\" targetRef=\"Gateway_1oaecke\" /><bpmn:sequenceFlow id=\"Flow_08oz6nc\" sourceRef=\"Gateway_1oaecke\" targetRef=\"Activity_0xntgt9\" /><bpmn:callActivity id=\"Activity_0xntgt9\" name=\"&#60;&#60;develop&#62;&#62;\"><bpmn:incoming>Flow_08oz6nc</bpmn:incoming><bpmn:outgoing>Flow_01x9eus</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:exclusiveGateway id=\"Gateway_168ska7\"><bpmn:incoming>Flow_01x9eus</bpmn:incoming><bpmn:outgoing>Flow_172n46f</bpmn:outgoing><bpmn:outgoing>Flow_1gkr7d2</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_01x9eus\" sourceRef=\"Activity_0xntgt9\" targetRef=\"Gateway_168ska7\" /><bpmn:sequenceFlow id=\"Flow_172n46f\" sourceRef=\"Gateway_168ska7\" targetRef=\"Activity_0rwv72u\" /><bpmn:callActivity id=\"Activity_0rwv72u\" name=\"&#60;&#60;validate&#62;&#62;\"><bpmn:incoming>Flow_172n46f</bpmn:incoming><bpmn:outgoing>Flow_10xurca</bpmn:outgoing><bmdl:neededType><bmdl:list>validate</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:exclusiveGateway id=\"Gateway_01iu1l9\"><bpmn:incoming>Flow_10xurca</bpmn:incoming><bpmn:outgoing>Flow_07db5lv</bpmn:outgoing><bpmn:outgoing>Flow_0delj8n</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_10xurca\" sourceRef=\"Activity_0rwv72u\" targetRef=\"Gateway_01iu1l9\" /><bpmn:endEvent id=\"Event_02xe3v6\"><bpmn:incoming>Flow_07db5lv</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_07db5lv\" sourceRef=\"Gateway_01iu1l9\" targetRef=\"Event_02xe3v6\" /><bpmn:exclusiveGateway id=\"Gateway_1fdjmm5\"><bpmn:incoming>Flow_1038tb5</bpmn:incoming><bpmn:incoming>Flow_1935tcl</bpmn:incoming><bpmn:outgoing>Flow_0gd19zx</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0gd19zx\" sourceRef=\"Gateway_1fdjmm5\" targetRef=\"Activity_1v3a0dr\" /><bpmn:sequenceFlow id=\"Flow_1935tcl\" sourceRef=\"Gateway_1xo4mt4\" targetRef=\"Gateway_1fdjmm5\" /><bpmn:sequenceFlow id=\"Flow_0x50kxa\" sourceRef=\"Gateway_1oaecke\" targetRef=\"Gateway_1sn658h\" /><bpmn:sequenceFlow id=\"Flow_0delj8n\" sourceRef=\"Gateway_01iu1l9\" targetRef=\"Gateway_1oaecke\" /><bpmn:sequenceFlow id=\"Flow_1gkr7d2\" sourceRef=\"Gateway_168ska7\" targetRef=\"Gateway_1xo4mt4\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1gkr7d2_di\" bpmnElement=\"Flow_1gkr7d2\"><di:waypoint x=\"1220\" y=\"145\" /><di:waypoint x=\"1220\" y=\"300\" /><di:waypoint x=\"700\" y=\"300\" /><di:waypoint x=\"700\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0delj8n_di\" bpmnElement=\"Flow_0delj8n\"><di:waypoint x=\"1480\" y=\"95\" /><di:waypoint x=\"1480\" y=\"10\" /><di:waypoint x=\"960\" y=\"10\" /><di:waypoint x=\"960\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0x50kxa_di\" bpmnElement=\"Flow_0x50kxa\"><di:waypoint x=\"960\" y=\"145\" /><di:waypoint x=\"960\" y=\"240\" /><di:waypoint x=\"440\" y=\"240\" /><di:waypoint x=\"440\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1935tcl_di\" bpmnElement=\"Flow_1935tcl\"><di:waypoint x=\"700\" y=\"95\" /><di:waypoint x=\"700\" y=\"10\" /><di:waypoint x=\"180\" y=\"10\" /><di:waypoint x=\"180\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0gd19zx_di\" bpmnElement=\"Flow_0gd19zx\"><di:waypoint x=\"205\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_07db5lv_di\" bpmnElement=\"Flow_07db5lv\"><di:waypoint x=\"1505\" y=\"120\" /><di:waypoint x=\"1562\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_10xurca_di\" bpmnElement=\"Flow_10xurca\"><di:waypoint x=\"1400\" y=\"120\" /><di:waypoint x=\"1455\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_172n46f_di\" bpmnElement=\"Flow_172n46f\"><di:waypoint x=\"1245\" y=\"120\" /><di:waypoint x=\"1300\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_01x9eus_di\" bpmnElement=\"Flow_01x9eus\"><di:waypoint x=\"1140\" y=\"120\" /><di:waypoint x=\"1195\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_08oz6nc_di\" bpmnElement=\"Flow_08oz6nc\"><di:waypoint x=\"985\" y=\"120\" /><di:waypoint x=\"1040\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0oci9mm_di\" bpmnElement=\"Flow_0oci9mm\"><di:waypoint x=\"880\" y=\"120\" /><di:waypoint x=\"935\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1wsv2e8_di\" bpmnElement=\"Flow_1wsv2e8\"><di:waypoint x=\"725\" y=\"120\" /><di:waypoint x=\"780\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1sab3si_di\" bpmnElement=\"Flow_1sab3si\"><di:waypoint x=\"620\" y=\"120\" /><di:waypoint x=\"675\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_01m9y59_di\" bpmnElement=\"Flow_01m9y59\"><di:waypoint x=\"465\" y=\"120\" /><di:waypoint x=\"520\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0y72bxm_di\" bpmnElement=\"Flow_0y72bxm\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"415\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1038tb5_di\" bpmnElement=\"Flow_1038tb5\"><di:waypoint x=\"98\" y=\"120\" /><di:waypoint x=\"155\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"62\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1m0op33_di\" bpmnElement=\"Activity_1v3a0dr\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_10hykv2_di\" bpmnElement=\"Activity_1qs3oc9\"><dc:Bounds x=\"520\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1sn658h_di\" bpmnElement=\"Gateway_1sn658h\" isMarkerVisible=\"true\"><dc:Bounds x=\"415\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1xo4mt4_di\" bpmnElement=\"Gateway_1xo4mt4\" isMarkerVisible=\"true\"><dc:Bounds x=\"675\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1r2wh7o_di\" bpmnElement=\"Activity_0fldsb1\"><dc:Bounds x=\"780\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1oaecke_di\" bpmnElement=\"Gateway_1oaecke\" isMarkerVisible=\"true\"><dc:Bounds x=\"935\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1my8pdy_di\" bpmnElement=\"Activity_0xntgt9\"><dc:Bounds x=\"1040\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_168ska7_di\" bpmnElement=\"Gateway_168ska7\" isMarkerVisible=\"true\"><dc:Bounds x=\"1195\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1f26yxt_di\" bpmnElement=\"Activity_0rwv72u\"><dc:Bounds x=\"1300\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_01iu1l9_di\" bpmnElement=\"Gateway_01iu1l9\" isMarkerVisible=\"true\"><dc:Bounds x=\"1455\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_02xe3v6_di\" bpmnElement=\"Event_02xe3v6\"><dc:Bounds x=\"1562\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1fdjmm5_di\" bpmnElement=\"Gateway_1fdjmm5\" isMarkerVisible=\"true\"><dc:Bounds x=\"155\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "initialisation",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      }
+    ],
+    "_id": "1615659481079"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Business Model Discovery Initialization Pattern",
+    "description": "This pattern allows the flexible creation of a process for business model development starting at the discovery phase. Due to this flexibility, it should be used only by experts in business model development.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0zj52gk</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0zj52gk\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0pv0v3k\" /><bpmn:callActivity id=\"Activity_0pv0v3k\" name=\"&#60;&#60;discovery&#62;&#62;\"><bpmn:incoming>Flow_0zj52gk</bpmn:incoming><bpmn:outgoing>Flow_155sdko</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:endEvent id=\"Event_1fwptii\"><bpmn:incoming>Flow_155sdko</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_155sdko\" sourceRef=\"Activity_0pv0v3k\" targetRef=\"Event_1fwptii\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_155sdko_di\" bpmnElement=\"Flow_155sdko\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0zj52gk_di\" bpmnElement=\"Flow_0zj52gk\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1hen4ps_di\" bpmnElement=\"Activity_0pv0v3k\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1fwptii_di\" bpmnElement=\"Event_1fwptii\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "initialisation",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      }
+    ],
+    "_id": "1615659902483"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Business Model Analysis Initialization Pattern",
+    "description": "This pattern allows the flexible creation of a process for business model development starting at the analysis phase. Due to this flexibility, it should be used only by experts in business model development.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1u195xu</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_1u195xu\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_06bxtpx\" /><bpmn:endEvent id=\"Event_0b7xcbb\"><bpmn:incoming>Flow_1y56myt</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1y56myt\" sourceRef=\"Activity_06bxtpx\" targetRef=\"Event_0b7xcbb\" /><bpmn:callActivity id=\"Activity_06bxtpx\" name=\"&#60;&#60;analysis&#62;&#62;\"><bpmn:incoming>Flow_1u195xu</bpmn:incoming><bpmn:outgoing>Flow_1y56myt</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1y56myt_di\" bpmnElement=\"Flow_1y56myt\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1u195xu_di\" bpmnElement=\"Flow_1u195xu\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0b7xcbb_di\" bpmnElement=\"Event_0b7xcbb\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1qay21l_di\" bpmnElement=\"Activity_06bxtpx\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "initialisation",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      }
+    ],
+    "_id": "1615660181792"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Business Model Design Initialization Pattern",
+    "description": "This pattern allows the flexible creation of a process for business model development starting at the design phase. Due to this flexibility, it should be used only by experts in business model development.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0z9dbjz</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0z9dbjz\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1slso2n\" /><bpmn:endEvent id=\"Event_1vlx2hy\"><bpmn:incoming>Flow_0ycii6r</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0ycii6r\" sourceRef=\"Activity_1slso2n\" targetRef=\"Event_1vlx2hy\" /><bpmn:callActivity id=\"Activity_1slso2n\" name=\"&#60;&#60;design&#62;&#62;\"><bpmn:incoming>Flow_0z9dbjz</bpmn:incoming><bpmn:outgoing>Flow_0ycii6r</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0ycii6r_di\" bpmnElement=\"Flow_0ycii6r\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0z9dbjz_di\" bpmnElement=\"Flow_0z9dbjz\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1vlx2hy_di\" bpmnElement=\"Event_1vlx2hy\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_10wsmrk_di\" bpmnElement=\"Activity_1slso2n\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "initialisation",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      }
+    ],
+    "_id": "1615660240828"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Business Model Development Initialization Pattern",
+    "description": "This pattern allows the flexible creation of a process for business model development starting at the development phase. Due to this flexibility, it should be used only by experts in business model development.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1sfp24i</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_1sfp24i\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1jftb7t\" /><bpmn:endEvent id=\"Event_0ds9128\"><bpmn:incoming>Flow_0gf0nq0</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0gf0nq0\" sourceRef=\"Activity_1jftb7t\" targetRef=\"Event_0ds9128\" /><bpmn:callActivity id=\"Activity_1jftb7t\" name=\"&#60;&#60;develop&#62;&#62;\"><bpmn:incoming>Flow_1sfp24i</bpmn:incoming><bpmn:outgoing>Flow_0gf0nq0</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0gf0nq0_di\" bpmnElement=\"Flow_0gf0nq0\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1sfp24i_di\" bpmnElement=\"Flow_1sfp24i\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0ds9128_di\" bpmnElement=\"Event_0ds9128\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0i0c45y_di\" bpmnElement=\"Activity_1jftb7t\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "initialisation",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      }
+    ],
+    "_id": "1615660304623"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Business Model Validation Initialization Pattern",
+    "description": "This pattern allows the flexible creation of a process for business model development starting at the validation phase. Due to this flexibility, it should be used only by experts in business model development.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_02showv</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_02showv\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_18uo8tv\" /><bpmn:callActivity id=\"Activity_18uo8tv\" name=\"&#60;&#60;validate&#62;&#62;\"><bpmn:incoming>Flow_02showv</bpmn:incoming><bpmn:outgoing>Flow_1mcnlyo</bpmn:outgoing><bmdl:neededType><bmdl:list>validate</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:endEvent id=\"Event_0fpts04\"><bpmn:incoming>Flow_1mcnlyo</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1mcnlyo\" sourceRef=\"Activity_18uo8tv\" targetRef=\"Event_0fpts04\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1mcnlyo_di\" bpmnElement=\"Flow_1mcnlyo\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_02showv_di\" bpmnElement=\"Flow_02showv\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_06d1wvr_di\" bpmnElement=\"Activity_18uo8tv\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0fpts04_di\" bpmnElement=\"Event_0fpts04\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "initialisation",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      }
+    ],
+    "_id": "1615660367007"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Customer First Discovery Pattern",
+    "description": "The pattern allows identifying the customers before targeting the problem.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:bmdl=\"http://localhost/schema/bmdl\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_10yn572</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_10yn572\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1e1br2u\" /><bpmn:exclusiveGateway id=\"Gateway_1a1s22u\"><bpmn:incoming>Flow_1n5mg7b</bpmn:incoming><bpmn:incoming>Flow_0n2o9ve</bpmn:incoming><bpmn:outgoing>Flow_1pqo0s7</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_1n5mg7b\" sourceRef=\"Activity_1e1br2u\" targetRef=\"Gateway_1a1s22u\" /><bpmn:sequenceFlow id=\"Flow_1pqo0s7\" sourceRef=\"Gateway_1a1s22u\" targetRef=\"Activity_05y4fdq\" /><bpmn:exclusiveGateway id=\"Gateway_0lohovi\"><bpmn:incoming>Flow_096nwy8</bpmn:incoming><bpmn:outgoing>Flow_1h1q2gc</bpmn:outgoing><bpmn:outgoing>Flow_0n2o9ve</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_096nwy8\" sourceRef=\"Activity_05y4fdq\" targetRef=\"Gateway_0lohovi\" /><bpmn:endEvent id=\"Event_0q9g0ys\"><bpmn:incoming>Flow_1h1q2gc</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1h1q2gc\" sourceRef=\"Gateway_0lohovi\" targetRef=\"Event_0q9g0ys\" /><bpmn:callActivity id=\"Activity_1e1br2u\" name=\"&#60;&#60;customer Discovery&#62;&#62;\"><bpmn:incoming>Flow_10yn572</bpmn:incoming><bpmn:outgoing>Flow_1n5mg7b</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646706099</bmdl:_id><bmdl:name>customerDiscovery</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_05y4fdq\" name=\"&#60;&#60;problem Discovery&#62;&#62;\"><bpmn:incoming>Flow_1pqo0s7</bpmn:incoming><bpmn:outgoing>Flow_096nwy8</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646721496</bmdl:_id><bmdl:name>problemDiscovery</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:sequenceFlow id=\"Flow_0n2o9ve\" sourceRef=\"Gateway_0lohovi\" targetRef=\"Gateway_1a1s22u\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0n2o9ve_di\" bpmnElement=\"Flow_0n2o9ve\"><di:waypoint x=\"700\" y=\"95\" /><di:waypoint x=\"700\" y=\"40\" /><di:waypoint x=\"440\" y=\"40\" /><di:waypoint x=\"440\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1h1q2gc_di\" bpmnElement=\"Flow_1h1q2gc\"><di:waypoint x=\"725\" y=\"120\" /><di:waypoint x=\"782\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_096nwy8_di\" bpmnElement=\"Flow_096nwy8\"><di:waypoint x=\"620\" y=\"120\" /><di:waypoint x=\"675\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1pqo0s7_di\" bpmnElement=\"Flow_1pqo0s7\"><di:waypoint x=\"465\" y=\"120\" /><di:waypoint x=\"520\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1n5mg7b_di\" bpmnElement=\"Flow_1n5mg7b\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"415\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_10yn572_di\" bpmnElement=\"Flow_10yn572\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1a1s22u_di\" bpmnElement=\"Gateway_1a1s22u\" isMarkerVisible=\"true\"><dc:Bounds x=\"415\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0lohovi_di\" bpmnElement=\"Gateway_0lohovi\" isMarkerVisible=\"true\"><dc:Bounds x=\"675\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0q9g0ys_di\" bpmnElement=\"Event_0q9g0ys\"><dc:Bounds x=\"782\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_18oe1m5_di\" bpmnElement=\"Activity_1e1br2u\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1ymc09u_di\" bpmnElement=\"Activity_05y4fdq\"><dc:Bounds x=\"520\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "discovery",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647588013",
+            "_rev": "1-e71109eb7939c04f5782f80896d3f3a2",
+            "list": "Phase",
+            "name": "problemValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615660450456"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Problem First Discovery Pattern",
+    "description": "The pattern allows identifying the problem before targeting the customer.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0twjksb</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0twjksb\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0lec3q1\" /><bpmn:exclusiveGateway id=\"Gateway_07jvh00\"><bpmn:incoming>Flow_0jsois1</bpmn:incoming><bpmn:incoming>Flow_1lonipl</bpmn:incoming><bpmn:outgoing>Flow_1rfklty</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0jsois1\" sourceRef=\"Activity_0lec3q1\" targetRef=\"Gateway_07jvh00\" /><bpmn:sequenceFlow id=\"Flow_1rfklty\" sourceRef=\"Gateway_07jvh00\" targetRef=\"Activity_1glb6s4\" /><bpmn:exclusiveGateway id=\"Gateway_09clfye\"><bpmn:incoming>Flow_04mhucw</bpmn:incoming><bpmn:outgoing>Flow_1n5125o</bpmn:outgoing><bpmn:outgoing>Flow_1lonipl</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_04mhucw\" sourceRef=\"Activity_1glb6s4\" targetRef=\"Gateway_09clfye\" /><bpmn:endEvent id=\"Event_17frfgx\"><bpmn:incoming>Flow_1n5125o</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1n5125o\" sourceRef=\"Gateway_09clfye\" targetRef=\"Event_17frfgx\" /><bpmn:sequenceFlow id=\"Flow_1lonipl\" sourceRef=\"Gateway_09clfye\" targetRef=\"Gateway_07jvh00\" /><bpmn:callActivity id=\"Activity_0lec3q1\" name=\"&#60;&#60;problem Discovery&#62;&#62;\"><bpmn:incoming>Flow_0twjksb</bpmn:incoming><bpmn:outgoing>Flow_0jsois1</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646721496</bmdl:_id><bmdl:name>problemDiscovery</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_1glb6s4\" name=\"&#60;&#60;customer Discovery&#62;&#62;\"><bpmn:incoming>Flow_1rfklty</bpmn:incoming><bpmn:outgoing>Flow_04mhucw</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646706099</bmdl:_id><bmdl:name>customerDiscovery</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1lonipl_di\" bpmnElement=\"Flow_1lonipl\"><di:waypoint x=\"700\" y=\"95\" /><di:waypoint x=\"700\" y=\"30\" /><di:waypoint x=\"440\" y=\"30\" /><di:waypoint x=\"440\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1n5125o_di\" bpmnElement=\"Flow_1n5125o\"><di:waypoint x=\"725\" y=\"120\" /><di:waypoint x=\"782\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_04mhucw_di\" bpmnElement=\"Flow_04mhucw\"><di:waypoint x=\"620\" y=\"120\" /><di:waypoint x=\"675\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1rfklty_di\" bpmnElement=\"Flow_1rfklty\"><di:waypoint x=\"465\" y=\"120\" /><di:waypoint x=\"520\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0jsois1_di\" bpmnElement=\"Flow_0jsois1\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"415\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0twjksb_di\" bpmnElement=\"Flow_0twjksb\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_07jvh00_di\" bpmnElement=\"Gateway_07jvh00\" isMarkerVisible=\"true\"><dc:Bounds x=\"415\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_09clfye_di\" bpmnElement=\"Gateway_09clfye\" isMarkerVisible=\"true\"><dc:Bounds x=\"675\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_17frfgx_di\" bpmnElement=\"Event_17frfgx\"><dc:Bounds x=\"782\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_14qil8m_di\" bpmnElement=\"Activity_0lec3q1\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1xv7254_di\" bpmnElement=\"Activity_1glb6s4\"><dc:Bounds x=\"520\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "discovery",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647593804",
+            "_rev": "1-7136b18eb09b47a26901e585ce04d126",
+            "list": "Phase",
+            "name": "customerValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615894075899"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Customer Light Discovery Pattern",
+    "description": "The pattern allows the light discovery of the customers if the segment is already quite clear.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0mno57r</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0mno57r\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_08x5kem\" /><bpmn:endEvent id=\"Event_1dwc5cr\"><bpmn:incoming>Flow_03zya08</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_03zya08\" sourceRef=\"Activity_08x5kem\" targetRef=\"Event_1dwc5cr\" /><bpmn:callActivity id=\"Activity_08x5kem\" name=\"&#60;&#60;customer Identification&#62;&#62;\"><bpmn:incoming>Flow_0mno57r</bpmn:incoming><bpmn:outgoing>Flow_03zya08</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646712401</bmdl:_id><bmdl:name>customerIdentification</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_03zya08_di\" bpmnElement=\"Flow_03zya08\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0mno57r_di\" bpmnElement=\"Flow_0mno57r\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1dwc5cr_di\" bpmnElement=\"Event_1dwc5cr\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0opijtv_di\" bpmnElement=\"Activity_08x5kem\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "discovery",
+        "element": {
+          "type": "Type",
+          "_id": "1615646706099",
+          "_rev": "1-aab69dea7376030a1badb0c7161a1653",
+          "list": "discovery",
+          "name": "customerDiscovery",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647593804",
+            "_rev": "1-7136b18eb09b47a26901e585ce04d126",
+            "list": "Phase",
+            "name": "customerValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647502890",
+            "_rev": "1-10491c34180121e22533defe57226ecc",
+            "list": "Company",
+            "name": "timeResources",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Customer",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647539973",
+            "_rev": "1-5462faf90915eceaf5d00090298f70c8",
+            "list": "Customer",
+            "name": "customerSegment",
+            "description": null,
+            "values": [
+              "uniform",
+              "divers"
+            ],
+            "ordered": false
+          },
+          "value": "uniform"
+        }
+      }
+    ],
+    "_id": "1615894206746"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Customer Deep Discovery Pattern",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_10tcvzd</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_10tcvzd\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1micivi\" /><bpmn:endEvent id=\"Event_048ouxd\"><bpmn:incoming>Flow_0le225j</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0le225j\" sourceRef=\"Activity_1micivi\" targetRef=\"Event_048ouxd\" /><bpmn:callActivity id=\"Activity_1micivi\" name=\"&#60;&#60;customer Identification&#62;&#62;\"><bpmn:incoming>Flow_10tcvzd</bpmn:incoming><bpmn:outgoing>Flow_0le225j</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646712401</bmdl:_id><bmdl:name>customerIdentification</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0le225j_di\" bpmnElement=\"Flow_0le225j\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_10tcvzd_di\" bpmnElement=\"Flow_10tcvzd\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_048ouxd_di\" bpmnElement=\"Event_048ouxd\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1erkkod_di\" bpmnElement=\"Activity_1micivi\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "discovery",
+        "element": {
+          "type": "Type",
+          "_id": "1615646706099",
+          "_rev": "1-aab69dea7376030a1badb0c7161a1653",
+          "list": "discovery",
+          "name": "customerDiscovery",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647593804",
+            "_rev": "1-7136b18eb09b47a26901e585ce04d126",
+            "list": "Phase",
+            "name": "customerValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647502890",
+            "_rev": "1-10491c34180121e22533defe57226ecc",
+            "list": "Company",
+            "name": "timeResources",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Customer",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647539973",
+            "_rev": "1-5462faf90915eceaf5d00090298f70c8",
+            "list": "Customer",
+            "name": "customerSegment",
+            "description": null,
+            "values": [
+              "uniform",
+              "divers"
+            ],
+            "ordered": false
+          },
+          "value": "divers"
+        }
+      }
+    ],
+    "_id": "1615894388956"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Problem Light Discovery Pattern",
+    "description": "The pattern allows the light discovery of the problem based on existing resources.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_06xfn93</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_06xfn93\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_002jdat\" /><bpmn:endEvent id=\"Event_00lzf0i\"><bpmn:incoming>Flow_1a5mnkb</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1a5mnkb\" sourceRef=\"Activity_002jdat\" targetRef=\"Event_00lzf0i\" /><bpmn:callActivity id=\"Activity_002jdat\" name=\"&#60;&#60;problem Identification&#62;&#62;\"><bpmn:incoming>Flow_06xfn93</bpmn:incoming><bpmn:outgoing>Flow_1a5mnkb</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646726406</bmdl:_id><bmdl:name>problemIdentification</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1a5mnkb_di\" bpmnElement=\"Flow_1a5mnkb\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_06xfn93_di\" bpmnElement=\"Flow_06xfn93\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_00lzf0i_di\" bpmnElement=\"Event_00lzf0i\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1whctzh_di\" bpmnElement=\"Activity_002jdat\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "discovery",
+        "element": {
+          "type": "Type",
+          "_id": "1615646721496",
+          "_rev": "1-2c07d9dd6dc3ca8f1d04c3631bfc55ec",
+          "list": "discovery",
+          "name": "problemDiscovery",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647588013",
+            "_rev": "1-e71109eb7939c04f5782f80896d3f3a2",
+            "list": "Phase",
+            "name": "problemValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647502890",
+            "_rev": "1-10491c34180121e22533defe57226ecc",
+            "list": "Company",
+            "name": "timeResources",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Problem",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647533588",
+            "_rev": "1-d257b29f774e69a2d60a5245af2b7400",
+            "list": "Problem",
+            "name": "problemComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      }
+    ],
+    "_id": "1615894494106"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Problem Deep Discovery Pattern",
+    "description": "The pattern allows a deep discovery of the problem by generating new insights from the customer.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0uioi1l</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0uioi1l\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1eur6ox\" /><bpmn:sequenceFlow id=\"Flow_11k9xb2\" sourceRef=\"Activity_1eur6ox\" targetRef=\"Activity_1r51kvr\" /><bpmn:endEvent id=\"Event_0aebfpi\"><bpmn:incoming>Flow_0wb9u6c</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0wb9u6c\" sourceRef=\"Activity_1r51kvr\" targetRef=\"Event_0aebfpi\" /><bpmn:callActivity id=\"Activity_1r51kvr\" name=\"&#60;&#60;problem Analysis&#62;&#62;\"><bpmn:incoming>Flow_11k9xb2</bpmn:incoming><bpmn:outgoing>Flow_0wb9u6c</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646731492</bmdl:_id><bmdl:name>problemAnalysis</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_1eur6ox\" name=\"&#60;&#60;problem Identification&#62;&#62;\"><bpmn:incoming>Flow_0uioi1l</bpmn:incoming><bpmn:outgoing>Flow_11k9xb2</bpmn:outgoing><bmdl:neededType><bmdl:list>discovery</bmdl:list><bmdl:methodElement><bmdl:_id>1615646726406</bmdl:_id><bmdl:name>problemIdentification</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0wb9u6c_di\" bpmnElement=\"Flow_0wb9u6c\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"582\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_11k9xb2_di\" bpmnElement=\"Flow_11k9xb2\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0uioi1l_di\" bpmnElement=\"Flow_0uioi1l\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0aebfpi_di\" bpmnElement=\"Event_0aebfpi\"><dc:Bounds x=\"582\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1pgamr3_di\" bpmnElement=\"Activity_1r51kvr\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1c8g2p4_di\" bpmnElement=\"Activity_1eur6ox\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "discovery",
+        "element": {
+          "type": "Type",
+          "_id": "1615646721496",
+          "_rev": "1-2c07d9dd6dc3ca8f1d04c3631bfc55ec",
+          "list": "discovery",
+          "name": "problemDiscovery",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647588013",
+            "_rev": "1-e71109eb7939c04f5782f80896d3f3a2",
+            "list": "Phase",
+            "name": "problemValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647502890",
+            "_rev": "1-10491c34180121e22533defe57226ecc",
+            "list": "Company",
+            "name": "timeResources",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Problem",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647533588",
+            "_rev": "1-d257b29f774e69a2d60a5245af2b7400",
+            "list": "Problem",
+            "name": "problemComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615894574811"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Analysis Pattern",
+    "description": "The pattern allows the structuring of the analysis phase in the steps of the market analysis and the competitor analysis.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1oevy09</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_1oevy09\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0h8izyq\" /><bpmn:sequenceFlow id=\"Flow_1s6glx7\" sourceRef=\"Activity_0h8izyq\" targetRef=\"Activity_19wu1q3\" /><bpmn:endEvent id=\"Event_0iv60p2\"><bpmn:incoming>Flow_182sgp0</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_182sgp0\" sourceRef=\"Activity_19wu1q3\" targetRef=\"Event_0iv60p2\" /><bpmn:callActivity id=\"Activity_0h8izyq\" name=\"&#60;&#60;market Analysis&#62;&#62;\"><bpmn:incoming>Flow_1oevy09</bpmn:incoming><bpmn:outgoing>Flow_1s6glx7</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list><bmdl:methodElement><bmdl:_id>1615646742307</bmdl:_id><bmdl:name>marketAnalysis</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_19wu1q3\" name=\"&#60;&#60;competitor Analysis&#62;&#62;\"><bpmn:incoming>Flow_1s6glx7</bpmn:incoming><bpmn:outgoing>Flow_182sgp0</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list><bmdl:methodElement><bmdl:_id>1615646746173</bmdl:_id><bmdl:name>competitorAnalysis</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_182sgp0_di\" bpmnElement=\"Flow_182sgp0\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"582\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1s6glx7_di\" bpmnElement=\"Flow_1s6glx7\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1oevy09_di\" bpmnElement=\"Flow_1oevy09\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0iv60p2_di\" bpmnElement=\"Event_0iv60p2\"><dc:Bounds x=\"582\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_19324kb_di\" bpmnElement=\"Activity_0h8izyq\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1x1lqpt_di\" bpmnElement=\"Activity_19wu1q3\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "analysis",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Market",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647551257",
+            "_rev": "1-3fb372bfb43b8f26146b559edc3fce78",
+            "list": "Market",
+            "name": "marketSize",
+            "description": null,
+            "values": [
+              "niche",
+              "mass"
+            ],
+            "ordered": false
+          },
+          "value": "niche"
+        }
+      }
+    ],
+    "_id": "1615894670769"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Analysis Sharping Pattern",
+    "description": "The pattern allows the structuring of the analysis phase in the steps of the market analysis and the competitor analysis. Moreover, it allows a sharping of the problem and the target group after both analyses.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0fh5mkb</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id=\"Gateway_1qyrmon\"><bpmn:incoming>Flow_0fh5mkb</bpmn:incoming><bpmn:incoming>Flow_0yl33xn</bpmn:incoming><bpmn:outgoing>Flow_1ork9ro</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0fh5mkb\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_1qyrmon\" /><bpmn:sequenceFlow id=\"Flow_1ork9ro\" sourceRef=\"Gateway_1qyrmon\" targetRef=\"Activity_1lo6dig\" /><bpmn:exclusiveGateway id=\"Gateway_00w1sae\"><bpmn:incoming>Flow_0z5482m</bpmn:incoming><bpmn:incoming>Flow_1dhigwq</bpmn:incoming><bpmn:outgoing>Flow_13fcdnn</bpmn:outgoing><bpmn:outgoing>Flow_0yl33xn</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0z5482m\" sourceRef=\"Activity_1lo6dig\" targetRef=\"Gateway_00w1sae\" /><bpmn:sequenceFlow id=\"Flow_13fcdnn\" sourceRef=\"Gateway_00w1sae\" targetRef=\"Activity_0zcaqx9\" /><bpmn:exclusiveGateway id=\"Gateway_17pamuo\"><bpmn:incoming>Flow_1wpv93m</bpmn:incoming><bpmn:incoming>Flow_0j30a94</bpmn:incoming><bpmn:outgoing>Flow_1ljxg2p</bpmn:outgoing><bpmn:outgoing>Flow_1dhigwq</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_1wpv93m\" sourceRef=\"Activity_0zcaqx9\" targetRef=\"Gateway_17pamuo\" /><bpmn:sequenceFlow id=\"Flow_1ljxg2p\" sourceRef=\"Gateway_17pamuo\" targetRef=\"Activity_07y26sn\" /><bpmn:exclusiveGateway id=\"Gateway_0jowr4k\"><bpmn:incoming>Flow_1hieu28</bpmn:incoming><bpmn:outgoing>Flow_01xs3rg</bpmn:outgoing><bpmn:outgoing>Flow_0j30a94</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_1hieu28\" sourceRef=\"Activity_07y26sn\" targetRef=\"Gateway_0jowr4k\" /><bpmn:endEvent id=\"Event_13lnj3n\"><bpmn:incoming>Flow_01xs3rg</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_01xs3rg\" sourceRef=\"Gateway_0jowr4k\" targetRef=\"Event_13lnj3n\" /><bpmn:sequenceFlow id=\"Flow_0yl33xn\" sourceRef=\"Gateway_00w1sae\" targetRef=\"Gateway_1qyrmon\" /><bpmn:sequenceFlow id=\"Flow_1dhigwq\" sourceRef=\"Gateway_17pamuo\" targetRef=\"Gateway_00w1sae\" /><bpmn:sequenceFlow id=\"Flow_0j30a94\" sourceRef=\"Gateway_0jowr4k\" targetRef=\"Gateway_17pamuo\" /><bpmn:callActivity id=\"Activity_1lo6dig\" name=\"&#60;&#60;market Analysis&#62;&#62;\"><bpmn:incoming>Flow_1ork9ro</bpmn:incoming><bpmn:outgoing>Flow_0z5482m</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list><bmdl:methodElement><bmdl:_id>1615646742307</bmdl:_id><bmdl:name>marketAnalysis</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_0zcaqx9\" name=\"&#60;&#60;competitor Analysis&#62;&#62;\"><bpmn:incoming>Flow_13fcdnn</bpmn:incoming><bpmn:outgoing>Flow_1wpv93m</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list><bmdl:methodElement><bmdl:_id>1615646746173</bmdl:_id><bmdl:name>competitorAnalysis</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_07y26sn\" name=\"&#60;&#60;niche Analysis&#62;&#62;\"><bpmn:incoming>Flow_1ljxg2p</bpmn:incoming><bpmn:outgoing>Flow_1hieu28</bpmn:outgoing><bmdl:neededType><bmdl:list>analysis</bmdl:list><bmdl:methodElement><bmdl:_id>1615646750064</bmdl:_id><bmdl:name>nicheAnalysis</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0j30a94_di\" bpmnElement=\"Flow_0j30a94\"><di:waypoint x=\"1130\" y=\"95\" /><di:waypoint x=\"1130\" y=\"40\" /><di:waypoint x=\"850\" y=\"40\" /><di:waypoint x=\"850\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1dhigwq_di\" bpmnElement=\"Flow_1dhigwq\"><di:waypoint x=\"850\" y=\"145\" /><di:waypoint x=\"850\" y=\"210\" /><di:waypoint x=\"570\" y=\"210\" /><di:waypoint x=\"570\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0yl33xn_di\" bpmnElement=\"Flow_0yl33xn\"><di:waypoint x=\"570\" y=\"95\" /><di:waypoint x=\"570\" y=\"40\" /><di:waypoint x=\"290\" y=\"40\" /><di:waypoint x=\"290\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_01xs3rg_di\" bpmnElement=\"Flow_01xs3rg\"><di:waypoint x=\"1155\" y=\"120\" /><di:waypoint x=\"1222\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1hieu28_di\" bpmnElement=\"Flow_1hieu28\"><di:waypoint x=\"1040\" y=\"120\" /><di:waypoint x=\"1105\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1ljxg2p_di\" bpmnElement=\"Flow_1ljxg2p\"><di:waypoint x=\"875\" y=\"120\" /><di:waypoint x=\"940\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1wpv93m_di\" bpmnElement=\"Flow_1wpv93m\"><di:waypoint x=\"760\" y=\"120\" /><di:waypoint x=\"825\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_13fcdnn_di\" bpmnElement=\"Flow_13fcdnn\"><di:waypoint x=\"595\" y=\"120\" /><di:waypoint x=\"660\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0z5482m_di\" bpmnElement=\"Flow_0z5482m\"><di:waypoint x=\"480\" y=\"120\" /><di:waypoint x=\"545\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1ork9ro_di\" bpmnElement=\"Flow_1ork9ro\"><di:waypoint x=\"315\" y=\"120\" /><di:waypoint x=\"380\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0fh5mkb_di\" bpmnElement=\"Flow_0fh5mkb\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"265\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1qyrmon_di\" bpmnElement=\"Gateway_1qyrmon\" isMarkerVisible=\"true\"><dc:Bounds x=\"265\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_00w1sae_di\" bpmnElement=\"Gateway_00w1sae\" isMarkerVisible=\"true\"><dc:Bounds x=\"545\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_17pamuo_di\" bpmnElement=\"Gateway_17pamuo\" isMarkerVisible=\"true\"><dc:Bounds x=\"825\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0jowr4k_di\" bpmnElement=\"Gateway_0jowr4k\" isMarkerVisible=\"true\"><dc:Bounds x=\"1105\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_13lnj3n_di\" bpmnElement=\"Event_13lnj3n\"><dc:Bounds x=\"1222\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_15wrily_di\" bpmnElement=\"Activity_1lo6dig\"><dc:Bounds x=\"380\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0io3yax_di\" bpmnElement=\"Activity_0zcaqx9\"><dc:Bounds x=\"660\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0yawnx0_di\" bpmnElement=\"Activity_07y26sn\"><dc:Bounds x=\"940\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "analysis",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Market",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647551257",
+            "_rev": "1-3fb372bfb43b8f26146b559edc3fce78",
+            "list": "Market",
+            "name": "marketSize",
+            "description": null,
+            "values": [
+              "niche",
+              "mass"
+            ],
+            "ordered": false
+          },
+          "value": "mass"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647588013",
+            "_rev": "1-e71109eb7939c04f5782f80896d3f3a2",
+            "list": "Phase",
+            "name": "problemValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      }
+    ],
+    "_id": "1615900986023"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Design Pattern",
+    "description": "The pattern allows the simple design of a feature set and a corresponding business model for a mobile application. It should be used for the development of business models for simple apps with fewer uncertainties in the problem and the target group.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1jxinid</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_1jxinid\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_1sltsmq\" /><bpmn:parallelGateway id=\"Gateway_1sltsmq\"><bpmn:incoming>Flow_1jxinid</bpmn:incoming><bpmn:outgoing>Flow_1bdeuty</bpmn:outgoing><bpmn:outgoing>Flow_14l5o3z</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_1bdeuty\" sourceRef=\"Gateway_1sltsmq\" targetRef=\"Activity_05kgeud\" /><bpmn:sequenceFlow id=\"Flow_14l5o3z\" sourceRef=\"Gateway_1sltsmq\" targetRef=\"Activity_0mavzzb\" /><bpmn:sequenceFlow id=\"Flow_1h223gp\" sourceRef=\"Activity_05kgeud\" targetRef=\"Gateway_16hxjyy\" /><bpmn:parallelGateway id=\"Gateway_16hxjyy\"><bpmn:incoming>Flow_1h223gp</bpmn:incoming><bpmn:incoming>Flow_01g80vy</bpmn:incoming><bpmn:outgoing>Flow_0rwn9f2</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_01g80vy\" sourceRef=\"Activity_0mavzzb\" targetRef=\"Gateway_16hxjyy\" /><bpmn:endEvent id=\"Event_03x79d0\"><bpmn:incoming>Flow_0rwn9f2</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0rwn9f2\" sourceRef=\"Gateway_16hxjyy\" targetRef=\"Event_03x79d0\" /><bpmn:callActivity id=\"Activity_05kgeud\" name=\"&#60;&#60;feature Design&#62;&#62;\"><bpmn:incoming>Flow_1bdeuty</bpmn:incoming><bpmn:outgoing>Flow_1h223gp</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646771090</bmdl:_id><bmdl:name>featureDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_0mavzzb\" name=\"&#60;&#60;business Design&#62;&#62;\"><bpmn:incoming>Flow_14l5o3z</bpmn:incoming><bpmn:outgoing>Flow_01g80vy</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646777512</bmdl:_id><bmdl:name>businessDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0rwn9f2_di\" bpmnElement=\"Flow_0rwn9f2\"><di:waypoint x=\"595\" y=\"120\" /><di:waypoint x=\"662\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_01g80vy_di\" bpmnElement=\"Flow_01g80vy\"><di:waypoint x=\"480\" y=\"230\" /><di:waypoint x=\"570\" y=\"230\" /><di:waypoint x=\"570\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1h223gp_di\" bpmnElement=\"Flow_1h223gp\"><di:waypoint x=\"480\" y=\"120\" /><di:waypoint x=\"545\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_14l5o3z_di\" bpmnElement=\"Flow_14l5o3z\"><di:waypoint x=\"290\" y=\"145\" /><di:waypoint x=\"290\" y=\"230\" /><di:waypoint x=\"380\" y=\"230\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1bdeuty_di\" bpmnElement=\"Flow_1bdeuty\"><di:waypoint x=\"315\" y=\"120\" /><di:waypoint x=\"380\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1jxinid_di\" bpmnElement=\"Flow_1jxinid\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"265\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1rm6pfp_di\" bpmnElement=\"Gateway_1sltsmq\"><dc:Bounds x=\"265\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0qv9e2n_di\" bpmnElement=\"Gateway_16hxjyy\"><dc:Bounds x=\"545\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_03x79d0_di\" bpmnElement=\"Event_03x79d0\"><dc:Bounds x=\"662\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0w7657c_di\" bpmnElement=\"Activity_05kgeud\"><dc:Bounds x=\"380\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1eakmhg_di\" bpmnElement=\"Activity_0mavzzb\"><dc:Bounds x=\"380\" y=\"190\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "design",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Problem",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647533588",
+            "_rev": "1-d257b29f774e69a2d60a5245af2b7400",
+            "list": "Problem",
+            "name": "problemComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Product",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647572602",
+            "_rev": "1-083f1708d7d904416ffbc120807e6845",
+            "list": "Product",
+            "name": "productComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615901159055"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Design Enhancement Pattern",
+    "description": "The pattern allows the design of a feature set and a corresponding business model for a mobile application. It should be used for complex apps with uncertainties in the target group.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_00xbqbc</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_00xbqbc\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_0xj6bmj\" /><bpmn:parallelGateway id=\"Gateway_0xj6bmj\"><bpmn:incoming>Flow_00xbqbc</bpmn:incoming><bpmn:outgoing>Flow_11ze7hb</bpmn:outgoing><bpmn:outgoing>Flow_0p2h057</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_11ze7hb\" sourceRef=\"Gateway_0xj6bmj\" targetRef=\"Activity_1rbjk2h\" /><bpmn:sequenceFlow id=\"Flow_0yhdvbc\" sourceRef=\"Activity_1rbjk2h\" targetRef=\"Gateway_17u81e7\" /><bpmn:parallelGateway id=\"Gateway_17u81e7\"><bpmn:incoming>Flow_0yhdvbc</bpmn:incoming><bpmn:incoming>Flow_0mx4i1w</bpmn:incoming><bpmn:outgoing>Flow_1xfoshz</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_0p2h057\" sourceRef=\"Gateway_0xj6bmj\" targetRef=\"Activity_1qe9qmj\" /><bpmn:sequenceFlow id=\"Flow_0mx4i1w\" sourceRef=\"Activity_1qe9qmj\" targetRef=\"Gateway_17u81e7\" /><bpmn:sequenceFlow id=\"Flow_1xfoshz\" sourceRef=\"Gateway_17u81e7\" targetRef=\"Activity_0tlzxc3\" /><bpmn:endEvent id=\"Event_13tjz72\"><bpmn:incoming>Flow_00rzgi8</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_00rzgi8\" sourceRef=\"Activity_0tlzxc3\" targetRef=\"Event_13tjz72\" /><bpmn:callActivity id=\"Activity_1rbjk2h\" name=\"&#60;&#60;feature Design&#62;&#62;\"><bpmn:incoming>Flow_11ze7hb</bpmn:incoming><bpmn:outgoing>Flow_0yhdvbc</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646771090</bmdl:_id><bmdl:name>featureDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_1qe9qmj\" name=\"&#60;&#60;business Design&#62;&#62;\"><bpmn:incoming>Flow_0p2h057</bpmn:incoming><bpmn:outgoing>Flow_0mx4i1w</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646777512</bmdl:_id><bmdl:name>businessDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_0tlzxc3\" name=\"&#60;&#60;enhancement Design&#62;&#62;\"><bpmn:incoming>Flow_1xfoshz</bpmn:incoming><bpmn:outgoing>Flow_00rzgi8</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646810172</bmdl:_id><bmdl:name>enhancementDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_00rzgi8_di\" bpmnElement=\"Flow_00rzgi8\"><di:waypoint x=\"760\" y=\"120\" /><di:waypoint x=\"832\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1xfoshz_di\" bpmnElement=\"Flow_1xfoshz\"><di:waypoint x=\"595\" y=\"120\" /><di:waypoint x=\"660\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0mx4i1w_di\" bpmnElement=\"Flow_0mx4i1w\"><di:waypoint x=\"480\" y=\"230\" /><di:waypoint x=\"570\" y=\"230\" /><di:waypoint x=\"570\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0p2h057_di\" bpmnElement=\"Flow_0p2h057\"><di:waypoint x=\"290\" y=\"145\" /><di:waypoint x=\"290\" y=\"230\" /><di:waypoint x=\"380\" y=\"230\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0yhdvbc_di\" bpmnElement=\"Flow_0yhdvbc\"><di:waypoint x=\"480\" y=\"120\" /><di:waypoint x=\"545\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_11ze7hb_di\" bpmnElement=\"Flow_11ze7hb\"><di:waypoint x=\"315\" y=\"120\" /><di:waypoint x=\"380\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_00xbqbc_di\" bpmnElement=\"Flow_00xbqbc\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"265\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_1du7de4_di\" bpmnElement=\"Gateway_0xj6bmj\"><dc:Bounds x=\"265\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_03yioyo_di\" bpmnElement=\"Gateway_17u81e7\"><dc:Bounds x=\"545\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_13tjz72_di\" bpmnElement=\"Event_13tjz72\"><dc:Bounds x=\"832\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_10yhspt_di\" bpmnElement=\"Activity_1rbjk2h\"><dc:Bounds x=\"380\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1dyvct3_di\" bpmnElement=\"Activity_1qe9qmj\"><dc:Bounds x=\"380\" y=\"190\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0szlb27_di\" bpmnElement=\"Activity_0tlzxc3\"><dc:Bounds x=\"660\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "design",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Problem",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647533588",
+            "_rev": "1-d257b29f774e69a2d60a5245af2b7400",
+            "list": "Problem",
+            "name": "problemComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      },
+      {
+        "list": "Product",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647572602",
+            "_rev": "1-083f1708d7d904416ffbc120807e6845",
+            "list": "Product",
+            "name": "productComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "high"
+        }
+      }
+    ],
+    "_id": "1615901323027"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Canvas Development Pattern",
+    "description": "The pattern allows the creation of a business model and a value proposition. It should be used by business developers who are familiar with canvas models.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_06yh3b6</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0cgh3cv\" name=\"&#60;&#60;vpDesign&#62;&#62;\"><bpmn:incoming>Flow_06yh3b6</bpmn:incoming><bpmn:outgoing>Flow_1fajuas</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646781917</bmdl:_id><bmdl:name>vpDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_06yh3b6\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0cgh3cv\" /><bpmn:task id=\"Activity_1te8amf\" name=\"&#60;&#60;bmDesign&#62;&#62;\"><bpmn:incoming>Flow_1fajuas</bpmn:incoming><bpmn:outgoing>Flow_0v5l1ph</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646785987</bmdl:_id><bmdl:name>bmDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_1fajuas\" sourceRef=\"Activity_0cgh3cv\" targetRef=\"Activity_1te8amf\" /><bpmn:endEvent id=\"Event_1xfgbpe\"><bpmn:incoming>Flow_0v5l1ph</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0v5l1ph\" sourceRef=\"Activity_1te8amf\" targetRef=\"Event_1xfgbpe\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0v5l1ph_di\" bpmnElement=\"Flow_0v5l1ph\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"582\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1fajuas_di\" bpmnElement=\"Flow_1fajuas\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_06yh3b6_di\" bpmnElement=\"Flow_06yh3b6\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0cgh3cv_di\" bpmnElement=\"Activity_0cgh3cv\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1te8amf_di\" bpmnElement=\"Activity_1te8amf\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1xfgbpe_di\" bpmnElement=\"Event_1xfgbpe\"><dc:Bounds x=\"582\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "design",
+        "element": {
+          "type": "Type",
+          "_id": "1615646777512",
+          "_rev": "1-046d702c0f482c1fb2f42877ab3841a2",
+          "list": "design",
+          "name": "businessDesign",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615901486472"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Strategy Identification Pattern",
+    "description": "The pattern allows the creation of a business model and a value proposition. It should be used by business developers who are not familiar with canvas models.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1sub7fv</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_1k8vk98\" name=\"&#60;&#60;usp Design&#62;&#62;\"><bpmn:incoming>Flow_1sub7fv</bpmn:incoming><bpmn:outgoing>Flow_12kvv4s</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646805954</bmdl:_id><bmdl:name>uspDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_1sub7fv\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1k8vk98\" /><bpmn:task id=\"Activity_1bjdcvd\" name=\"&#60;&#60;monetization Design&#62;&#62;\"><bpmn:incoming>Flow_12kvv4s</bpmn:incoming><bpmn:outgoing>Flow_09pq54h</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646791921</bmdl:_id><bmdl:name>monetizationDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_12kvv4s\" sourceRef=\"Activity_1k8vk98\" targetRef=\"Activity_1bjdcvd\" /><bpmn:task id=\"Activity_1nwr50m\" name=\"&#60;&#60;marketing Design&#62;&#62;\"><bpmn:incoming>Flow_09pq54h</bpmn:incoming><bpmn:outgoing>Flow_0uvm3js</bpmn:outgoing><bmdl:neededType><bmdl:list>design</bmdl:list><bmdl:methodElement><bmdl:_id>1615646798975</bmdl:_id><bmdl:name>marketingDesign</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_09pq54h\" sourceRef=\"Activity_1bjdcvd\" targetRef=\"Activity_1nwr50m\" /><bpmn:endEvent id=\"Event_0vne6at\"><bpmn:incoming>Flow_0uvm3js</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0uvm3js\" sourceRef=\"Activity_1nwr50m\" targetRef=\"Event_0vne6at\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0uvm3js_di\" bpmnElement=\"Flow_0uvm3js\"><di:waypoint x=\"680\" y=\"120\" /><di:waypoint x=\"742\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_09pq54h_di\" bpmnElement=\"Flow_09pq54h\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"580\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_12kvv4s_di\" bpmnElement=\"Flow_12kvv4s\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1sub7fv_di\" bpmnElement=\"Flow_1sub7fv\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1k8vk98_di\" bpmnElement=\"Activity_1k8vk98\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1bjdcvd_di\" bpmnElement=\"Activity_1bjdcvd\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1nwr50m_di\" bpmnElement=\"Activity_1nwr50m\"><dc:Bounds x=\"580\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0vne6at_di\" bpmnElement=\"Event_0vne6at\"><dc:Bounds x=\"742\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "design",
+        "element": {
+          "type": "Type",
+          "_id": "1615646777512",
+          "_rev": "1-046d702c0f482c1fb2f42877ab3841a2",
+          "list": "design",
+          "name": "businessDesign",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615901579648"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Full Development Pattern",
+    "description": "The pattern allows the structured development of an app that covers all important aspects.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:bmdl=\"http://localhost/schema/bmdl\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1p87shh</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_1p87shh\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_06er2w4\" /><bpmn:sequenceFlow id=\"Flow_1u1o312\" sourceRef=\"Activity_06er2w4\" targetRef=\"Activity_1hfh26o\" /><bpmn:task id=\"Activity_04qsmvu\" name=\"&#60;&#60;product Development&#62;&#62;\"><bpmn:incoming>Flow_16u33xd</bpmn:incoming><bpmn:outgoing>Flow_0tyy3zq</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646852543</bmdl:_id><bmdl:name>productDevelopment</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_16u33xd\" sourceRef=\"Activity_1hfh26o\" targetRef=\"Activity_04qsmvu\" /><bpmn:endEvent id=\"Event_0xf1uc8\"><bpmn:incoming>Flow_0tyy3zq</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0tyy3zq\" sourceRef=\"Activity_04qsmvu\" targetRef=\"Event_0xf1uc8\" /><bpmn:callActivity id=\"Activity_06er2w4\" name=\"&#60;&#60;content Development&#62;&#62;\"><bpmn:incoming>Flow_1p87shh</bpmn:incoming><bpmn:outgoing>Flow_1u1o312</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646827229</bmdl:_id><bmdl:name>contentDevelopment</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_1hfh26o\" name=\"&#60;&#60;prototype Development&#62;&#62;\"><bpmn:incoming>Flow_1u1o312</bpmn:incoming><bpmn:outgoing>Flow_16u33xd</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646840146</bmdl:_id><bmdl:name>prototypDevelopment</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0tyy3zq_di\" bpmnElement=\"Flow_0tyy3zq\"><di:waypoint x=\"680\" y=\"120\" /><di:waypoint x=\"742\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_16u33xd_di\" bpmnElement=\"Flow_16u33xd\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"580\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1u1o312_di\" bpmnElement=\"Flow_1u1o312\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1p87shh_di\" bpmnElement=\"Flow_1p87shh\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_04qsmvu_di\" bpmnElement=\"Activity_04qsmvu\"><dc:Bounds x=\"580\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0xf1uc8_di\" bpmnElement=\"Event_0xf1uc8\"><dc:Bounds x=\"742\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1tk41uj_di\" bpmnElement=\"Activity_06er2w4\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0w37w2x_di\" bpmnElement=\"Activity_1hfh26o\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "develop",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647510041",
+            "_rev": "1-097bee8ee4ae9e1deb319efec682a1f9",
+            "list": "Company",
+            "name": "businessModelingSkills",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Product",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647572602",
+            "_rev": "1-083f1708d7d904416ffbc120807e6845",
+            "list": "Product",
+            "name": "productComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647582996",
+            "_rev": "1-cd417e0527c92e037c1995fab2a54da0",
+            "list": "Phase",
+            "name": "processSpeed",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647612778",
+            "_rev": "1-2250158af594bc2904e863e6e47b1526",
+            "list": "Phase",
+            "name": "productFeatureValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      }
+    ],
+    "_id": "1615901672962"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Content Development Pattern",
+    "description": "The pattern allows the development and spread of content to test the potential acceptance in the market.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0k82zwt</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0k82zwt\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_18rzqrf\" /><bpmn:sequenceFlow id=\"Flow_1gelb5p\" sourceRef=\"Activity_18rzqrf\" targetRef=\"Activity_1ufnqet\" /><bpmn:endEvent id=\"Event_17hrb8g\"><bpmn:incoming>Flow_0p4t5gw</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_0p4t5gw\" sourceRef=\"Activity_1ufnqet\" targetRef=\"Event_17hrb8g\" /><bpmn:callActivity id=\"Activity_18rzqrf\" name=\"&#60;&#60;create Content&#62;&#62;\"><bpmn:incoming>Flow_0k82zwt</bpmn:incoming><bpmn:outgoing>Flow_1gelb5p</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646831373</bmdl:_id><bmdl:name>createContent</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_1ufnqet\" name=\"&#60;&#60;spread Content&#62;&#62;\"><bpmn:incoming>Flow_1gelb5p</bpmn:incoming><bpmn:outgoing>Flow_0p4t5gw</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646835744</bmdl:_id><bmdl:name>spreadContent</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0p4t5gw_di\" bpmnElement=\"Flow_0p4t5gw\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"582\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1gelb5p_di\" bpmnElement=\"Flow_1gelb5p\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0k82zwt_di\" bpmnElement=\"Flow_0k82zwt\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_17hrb8g_di\" bpmnElement=\"Event_17hrb8g\"><dc:Bounds x=\"582\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1nlbvry_di\" bpmnElement=\"Activity_18rzqrf\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_163bv1b_di\" bpmnElement=\"Activity_1ufnqet\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "develop",
+        "element": {
+          "type": "Type",
+          "_id": "1615646827229",
+          "_rev": "1-90e415ec9c311bca8d5d462d5d934feb",
+          "list": "develop",
+          "name": "contentDevelopment",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Product",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647572602",
+            "_rev": "1-083f1708d7d904416ffbc120807e6845",
+            "list": "Product",
+            "name": "productComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647582996",
+            "_rev": "1-cd417e0527c92e037c1995fab2a54da0",
+            "list": "Phase",
+            "name": "processSpeed",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647612778",
+            "_rev": "1-2250158af594bc2904e863e6e47b1526",
+            "list": "Phase",
+            "name": "productFeatureValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      }
+    ],
+    "_id": "1615901960846"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Marketing Development Pattern",
+    "description": "The pattern allows the parallel marketing of the app during the development phase. This ensures an existing brand in the market after the app has been developed.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0z98w3v</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0z98w3v\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_1e12g7q\" /><bpmn:sequenceFlow id=\"Flow_1ugmk1o\" sourceRef=\"Gateway_1e12g7q\" targetRef=\"Activity_13r6wta\" /><bpmn:sequenceFlow id=\"Flow_00orxaj\" sourceRef=\"Gateway_1e12g7q\" targetRef=\"Activity_0r16vnq\" /><bpmn:callActivity id=\"Activity_13r6wta\" name=\"&#60;&#60;marketing Development&#62;&#62;\"><bpmn:incoming>Flow_1ugmk1o</bpmn:incoming><bpmn:outgoing>Flow_061hkot</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646821909</bmdl:_id><bmdl:name>marketingDevelopment</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:callActivity id=\"Activity_0r16vnq\" name=\"&#60;&#60;development&#62;&#62;\"><bpmn:incoming>Flow_00orxaj</bpmn:incoming><bpmn:outgoing>Flow_0f8rqa6</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list></bmdl:neededType></bpmn:callActivity><bpmn:parallelGateway id=\"Gateway_1e12g7q\"><bpmn:incoming>Flow_0z98w3v</bpmn:incoming><bpmn:outgoing>Flow_1ugmk1o</bpmn:outgoing><bpmn:outgoing>Flow_00orxaj</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_061hkot\" sourceRef=\"Activity_13r6wta\" targetRef=\"Gateway_0x4dvfp\" /><bpmn:parallelGateway id=\"Gateway_0x4dvfp\"><bpmn:incoming>Flow_061hkot</bpmn:incoming><bpmn:incoming>Flow_0f8rqa6</bpmn:incoming><bpmn:outgoing>Flow_14ekf9r</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_0f8rqa6\" sourceRef=\"Activity_0r16vnq\" targetRef=\"Gateway_0x4dvfp\" /><bpmn:endEvent id=\"Event_0hg6lmp\"><bpmn:incoming>Flow_14ekf9r</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_14ekf9r\" sourceRef=\"Gateway_0x4dvfp\" targetRef=\"Event_0hg6lmp\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_14ekf9r_di\" bpmnElement=\"Flow_14ekf9r\"><di:waypoint x=\"595\" y=\"120\" /><di:waypoint x=\"662\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0f8rqa6_di\" bpmnElement=\"Flow_0f8rqa6\"><di:waypoint x=\"480\" y=\"230\" /><di:waypoint x=\"570\" y=\"230\" /><di:waypoint x=\"570\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_061hkot_di\" bpmnElement=\"Flow_061hkot\"><di:waypoint x=\"480\" y=\"120\" /><di:waypoint x=\"545\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_00orxaj_di\" bpmnElement=\"Flow_00orxaj\"><di:waypoint x=\"290\" y=\"145\" /><di:waypoint x=\"290\" y=\"230\" /><di:waypoint x=\"380\" y=\"230\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1ugmk1o_di\" bpmnElement=\"Flow_1ugmk1o\"><di:waypoint x=\"315\" y=\"120\" /><di:waypoint x=\"380\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0z98w3v_di\" bpmnElement=\"Flow_0z98w3v\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"265\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1lg98hu_di\" bpmnElement=\"Activity_13r6wta\"><dc:Bounds x=\"380\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1mfpg03_di\" bpmnElement=\"Activity_0r16vnq\"><dc:Bounds x=\"380\" y=\"190\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0tlcyuq_di\" bpmnElement=\"Gateway_1e12g7q\"><dc:Bounds x=\"265\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_17uernz_di\" bpmnElement=\"Gateway_0x4dvfp\"><dc:Bounds x=\"545\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0hg6lmp_di\" bpmnElement=\"Event_0hg6lmp\"><dc:Bounds x=\"662\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "develop",
+        "element": {
+          "type": "Type",
+          "_id": "1615646821909",
+          "_rev": "1-eb970209aa0991b60fe99e57a64454f6",
+          "list": "develop",
+          "name": "marketingDevelopment",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Product",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647572602",
+            "_rev": "1-083f1708d7d904416ffbc120807e6845",
+            "list": "Product",
+            "name": "productComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647582996",
+            "_rev": "1-cd417e0527c92e037c1995fab2a54da0",
+            "list": "Phase",
+            "name": "processSpeed",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647612778",
+            "_rev": "1-2250158af594bc2904e863e6e47b1526",
+            "list": "Phase",
+            "name": "productFeatureValidity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615902056644"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Product Development Pattern",
+    "description": "The pattern allows the development of the final product for the store. It ensures the platform’s selection, financing, development, and publishing in the store.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0q8iplk</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_1edrijb\" name=\"&#60;&#60;platform Selection&#62;&#62;\"><bpmn:incoming>Flow_0q8iplk</bpmn:incoming><bpmn:outgoing>Flow_1io5uoi</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646844016</bmdl:_id><bmdl:name>platformSelection</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_0q8iplk\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1edrijb\" /><bpmn:task id=\"Activity_1g0pfta\" name=\"&#60;&#60;financial Check&#62;&#62;\"><bpmn:incoming>Flow_1io5uoi</bpmn:incoming><bpmn:outgoing>Flow_115rmuc</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646848359</bmdl:_id><bmdl:name>financialCheck</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_1io5uoi\" sourceRef=\"Activity_1edrijb\" targetRef=\"Activity_1g0pfta\" /><bpmn:task id=\"Activity_0wvgpad\" name=\"&#60;&#60;platform Development&#62;&#62;\"><bpmn:incoming>Flow_115rmuc</bpmn:incoming><bpmn:outgoing>Flow_0wi5ycw</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_115rmuc\" sourceRef=\"Activity_1g0pfta\" targetRef=\"Activity_0wvgpad\" /><bpmn:task id=\"Activity_0kcusnn\" name=\"&#60;&#60;platform Publishing&#62;&#62;\"><bpmn:incoming>Flow_0wi5ycw</bpmn:incoming><bpmn:outgoing>Flow_1sp95ey</bpmn:outgoing><bmdl:neededType><bmdl:list>develop</bmdl:list><bmdl:methodElement><bmdl:_id>1615646856351</bmdl:_id><bmdl:name>platformPublishing</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_0wi5ycw\" sourceRef=\"Activity_0wvgpad\" targetRef=\"Activity_0kcusnn\" /><bpmn:endEvent id=\"Event_12kt6j2\"><bpmn:incoming>Flow_1sp95ey</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1sp95ey\" sourceRef=\"Activity_0kcusnn\" targetRef=\"Event_12kt6j2\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1sp95ey_di\" bpmnElement=\"Flow_1sp95ey\"><di:waypoint x=\"840\" y=\"120\" /><di:waypoint x=\"902\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0wi5ycw_di\" bpmnElement=\"Flow_0wi5ycw\"><di:waypoint x=\"680\" y=\"120\" /><di:waypoint x=\"740\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_115rmuc_di\" bpmnElement=\"Flow_115rmuc\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"580\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1io5uoi_di\" bpmnElement=\"Flow_1io5uoi\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0q8iplk_di\" bpmnElement=\"Flow_0q8iplk\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1edrijb_di\" bpmnElement=\"Activity_1edrijb\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1g0pfta_di\" bpmnElement=\"Activity_1g0pfta\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0wvgpad_di\" bpmnElement=\"Activity_0wvgpad\"><dc:Bounds x=\"580\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0kcusnn_di\" bpmnElement=\"Activity_0kcusnn\"><dc:Bounds x=\"740\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_12kt6j2_di\" bpmnElement=\"Event_12kt6j2\"><dc:Bounds x=\"902\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "develop",
+        "element": {
+          "type": "Type",
+          "_id": "1615646852543",
+          "_rev": "1-95ce34c6609cc59fb750fe18b5766b88",
+          "list": "develop",
+          "name": "productDevelopment",
+          "description": null
+        }
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Product",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647572602",
+            "_rev": "1-083f1708d7d904416ffbc120807e6845",
+            "list": "Product",
+            "name": "productComplexity",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      },
+      {
+        "list": "Phase",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647582996",
+            "_rev": "1-cd417e0527c92e037c1995fab2a54da0",
+            "list": "Phase",
+            "name": "processSpeed",
+            "description": null,
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "ordered": false
+          },
+          "value": "low"
+        }
+      }
+    ],
+    "_id": "1615902160702"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Generic Parallelism Pattern",
+    "description": "The pattern allows the generic parallel creation of method building blocks.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_02lt5jx</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_02lt5jx\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_1elyntr\" /><bpmn:parallelGateway id=\"Gateway_1elyntr\"><bpmn:incoming>Flow_02lt5jx</bpmn:incoming><bpmn:outgoing>Flow_1ga9lx3</bpmn:outgoing><bpmn:outgoing>Flow_0vucjs2</bpmn:outgoing></bpmn:parallelGateway><bpmn:sequenceFlow id=\"Flow_1ga9lx3\" sourceRef=\"Gateway_1elyntr\" targetRef=\"Activity_0r6nbda\" /><bpmn:sequenceFlow id=\"Flow_0vucjs2\" sourceRef=\"Gateway_1elyntr\" targetRef=\"Activity_1dah4ly\" /><bpmn:sequenceFlow id=\"Flow_05fk023\" sourceRef=\"Activity_0r6nbda\" targetRef=\"Gateway_0kvyq9x\" /><bpmn:parallelGateway id=\"Gateway_0kvyq9x\"><bpmn:incoming>Flow_05fk023</bpmn:incoming><bpmn:incoming>Flow_155pkgy</bpmn:incoming><bpmn:outgoing>Flow_13gx7u5</bpmn:outgoing></bpmn:parallelGateway><bpmn:endEvent id=\"Event_1i06277\"><bpmn:incoming>Flow_13gx7u5</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_13gx7u5\" sourceRef=\"Gateway_0kvyq9x\" targetRef=\"Event_1i06277\" /><bpmn:sequenceFlow id=\"Flow_155pkgy\" sourceRef=\"Activity_1dah4ly\" targetRef=\"Gateway_0kvyq9x\" /><bpmn:callActivity id=\"Activity_0r6nbda\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_1ga9lx3</bpmn:incoming><bpmn:outgoing>Flow_05fk023</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity><bpmn:callActivity id=\"Activity_1dah4ly\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_0vucjs2</bpmn:incoming><bpmn:outgoing>Flow_155pkgy</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_155pkgy_di\" bpmnElement=\"Flow_155pkgy\"><di:waypoint x=\"480\" y=\"230\" /><di:waypoint x=\"570\" y=\"230\" /><di:waypoint x=\"570\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_13gx7u5_di\" bpmnElement=\"Flow_13gx7u5\"><di:waypoint x=\"595\" y=\"120\" /><di:waypoint x=\"662\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_05fk023_di\" bpmnElement=\"Flow_05fk023\"><di:waypoint x=\"480\" y=\"120\" /><di:waypoint x=\"545\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0vucjs2_di\" bpmnElement=\"Flow_0vucjs2\"><di:waypoint x=\"290\" y=\"145\" /><di:waypoint x=\"290\" y=\"230\" /><di:waypoint x=\"380\" y=\"230\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1ga9lx3_di\" bpmnElement=\"Flow_1ga9lx3\"><di:waypoint x=\"315\" y=\"120\" /><di:waypoint x=\"380\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_02lt5jx_di\" bpmnElement=\"Flow_02lt5jx\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"265\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0l05w69_di\" bpmnElement=\"Gateway_1elyntr\"><dc:Bounds x=\"265\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_05cum6n_di\" bpmnElement=\"Gateway_0kvyq9x\"><dc:Bounds x=\"545\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1i06277_di\" bpmnElement=\"Event_1i06277\"><dc:Bounds x=\"662\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1gwlwrs_di\" bpmnElement=\"Activity_0r6nbda\"><dc:Bounds x=\"380\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_13zz5na_di\" bpmnElement=\"Activity_1dah4ly\"><dc:Bounds x=\"380\" y=\"190\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "generic",
+        "element": null
+      }
+    ],
+    "situationalFactors": [],
+    "_id": "1615989084072"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Generic Alternative Pattern",
+    "description": "The pattern allows the generic alternative creation of method building blocks.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0bu4q7q</bpmn:outgoing></bpmn:startEvent><bpmn:exclusiveGateway id=\"Gateway_0tofwh7\"><bpmn:incoming>Flow_0bu4q7q</bpmn:incoming><bpmn:outgoing>Flow_0jmnlks</bpmn:outgoing><bpmn:outgoing>Flow_15uj2jp</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_0bu4q7q\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_0tofwh7\" /><bpmn:sequenceFlow id=\"Flow_0jmnlks\" sourceRef=\"Gateway_0tofwh7\" targetRef=\"Activity_1hlohps\" /><bpmn:sequenceFlow id=\"Flow_15uj2jp\" sourceRef=\"Gateway_0tofwh7\" targetRef=\"Activity_12ame5n\" /><bpmn:exclusiveGateway id=\"Gateway_0puuads\"><bpmn:incoming>Flow_12caq0x</bpmn:incoming><bpmn:incoming>Flow_194pu0a</bpmn:incoming><bpmn:outgoing>Flow_1kor88a</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_12caq0x\" sourceRef=\"Activity_1hlohps\" targetRef=\"Gateway_0puuads\" /><bpmn:endEvent id=\"Event_0i7j8x0\"><bpmn:incoming>Flow_1kor88a</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1kor88a\" sourceRef=\"Gateway_0puuads\" targetRef=\"Event_0i7j8x0\" /><bpmn:sequenceFlow id=\"Flow_194pu0a\" sourceRef=\"Activity_12ame5n\" targetRef=\"Gateway_0puuads\" /><bpmn:callActivity id=\"Activity_1hlohps\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_0jmnlks</bpmn:incoming><bpmn:outgoing>Flow_12caq0x</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity><bpmn:callActivity id=\"Activity_12ame5n\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_15uj2jp</bpmn:incoming><bpmn:outgoing>Flow_194pu0a</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_194pu0a_di\" bpmnElement=\"Flow_194pu0a\"><di:waypoint x=\"480\" y=\"230\" /><di:waypoint x=\"570\" y=\"230\" /><di:waypoint x=\"570\" y=\"145\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1kor88a_di\" bpmnElement=\"Flow_1kor88a\"><di:waypoint x=\"595\" y=\"120\" /><di:waypoint x=\"662\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_12caq0x_di\" bpmnElement=\"Flow_12caq0x\"><di:waypoint x=\"480\" y=\"120\" /><di:waypoint x=\"545\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_15uj2jp_di\" bpmnElement=\"Flow_15uj2jp\"><di:waypoint x=\"290\" y=\"145\" /><di:waypoint x=\"290\" y=\"230\" /><di:waypoint x=\"380\" y=\"230\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0jmnlks_di\" bpmnElement=\"Flow_0jmnlks\"><di:waypoint x=\"315\" y=\"120\" /><di:waypoint x=\"380\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0bu4q7q_di\" bpmnElement=\"Flow_0bu4q7q\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"265\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0tofwh7_di\" bpmnElement=\"Gateway_0tofwh7\" isMarkerVisible=\"true\"><dc:Bounds x=\"265\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0puuads_di\" bpmnElement=\"Gateway_0puuads\" isMarkerVisible=\"true\"><dc:Bounds x=\"545\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0i7j8x0_di\" bpmnElement=\"Event_0i7j8x0\"><dc:Bounds x=\"662\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_084g6in_di\" bpmnElement=\"Activity_1hlohps\"><dc:Bounds x=\"380\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_19hv1s5_di\" bpmnElement=\"Activity_12ame5n\"><dc:Bounds x=\"380\" y=\"190\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "generic",
+        "element": null
+      }
+    ],
+    "situationalFactors": [],
+    "_id": "1615989154590"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Generic Consecutive Pattern",
+    "description": "The pattern allows the consecutive creation of two method building blocks.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0hjagem</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0hjagem\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0aodffo\" /><bpmn:sequenceFlow id=\"Flow_01dalb8\" sourceRef=\"Activity_0aodffo\" targetRef=\"Activity_1kb8lpz\" /><bpmn:endEvent id=\"Event_1u3pk81\"><bpmn:incoming>Flow_03ur53t</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_03ur53t\" sourceRef=\"Activity_1kb8lpz\" targetRef=\"Event_1u3pk81\" /><bpmn:callActivity id=\"Activity_0aodffo\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_0hjagem</bpmn:incoming><bpmn:outgoing>Flow_01dalb8</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity><bpmn:callActivity id=\"Activity_1kb8lpz\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_01dalb8</bpmn:incoming><bpmn:outgoing>Flow_03ur53t</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_03ur53t_di\" bpmnElement=\"Flow_03ur53t\"><di:waypoint x=\"520\" y=\"120\" /><di:waypoint x=\"582\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_01dalb8_di\" bpmnElement=\"Flow_01dalb8\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"420\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0hjagem_di\" bpmnElement=\"Flow_0hjagem\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1u3pk81_di\" bpmnElement=\"Event_1u3pk81\"><dc:Bounds x=\"582\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0rtbgx6_di\" bpmnElement=\"Activity_0aodffo\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_091lbir_di\" bpmnElement=\"Activity_1kb8lpz\"><dc:Bounds x=\"420\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "generic",
+        "element": null
+      }
+    ],
+    "situationalFactors": [],
+    "_id": "1615989368999"
+  },
+  {
+    "type": "ProcessPattern",
+    "name": "Intermediate Validation Pattern",
+    "description": "The pattern allows the intermediate validation of results during the discovery, design or validation stage.",
+    "author": {
+      "name": "Sebastian Gottschalk",
+      "company": "Paderborn University",
+      "email": "xxxx@xxxx.xx",
+      "website": "upb.de"
+    },
+    "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0t6s5cn</bpmn:outgoing></bpmn:startEvent><bpmn:sequenceFlow id=\"Flow_0t6s5cn\" sourceRef=\"StartEvent_1\" targetRef=\"Gateway_0r4mam0\" /><bpmn:sequenceFlow id=\"Flow_076g5xw\" sourceRef=\"Activity_1opzvbb\" targetRef=\"Activity_0ucs0lq\" /><bpmn:endEvent id=\"Event_0lao3g4\"><bpmn:incoming>Flow_04r8abs</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_005j0x0\" sourceRef=\"Activity_0ucs0lq\" targetRef=\"Gateway_0s4mvzo\" /><bpmn:callActivity id=\"Activity_1opzvbb\" name=\"&#60;&#60;generic&#62;&#62;\"><bpmn:incoming>Flow_1er15gw</bpmn:incoming><bpmn:outgoing>Flow_076g5xw</bpmn:outgoing><bmdl:inherit>true</bmdl:inherit></bpmn:callActivity><bpmn:callActivity id=\"Activity_0ucs0lq\" name=\"&#60;&#60;validate Intermediate&#62;&#62;\"><bpmn:incoming>Flow_076g5xw</bpmn:incoming><bpmn:outgoing>Flow_005j0x0</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>validate</bmdl:list><bmdl:methodElement><bmdl:_id>1615646873313</bmdl:_id><bmdl:name>intermediateValidation</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:callActivity><bpmn:exclusiveGateway id=\"Gateway_0s4mvzo\"><bpmn:incoming>Flow_005j0x0</bpmn:incoming><bpmn:outgoing>Flow_04r8abs</bpmn:outgoing><bpmn:outgoing>Flow_0d23ngn</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_04r8abs\" sourceRef=\"Gateway_0s4mvzo\" targetRef=\"Event_0lao3g4\" /><bpmn:exclusiveGateway id=\"Gateway_0r4mam0\"><bpmn:incoming>Flow_0t6s5cn</bpmn:incoming><bpmn:incoming>Flow_0d23ngn</bpmn:incoming><bpmn:outgoing>Flow_1er15gw</bpmn:outgoing></bpmn:exclusiveGateway><bpmn:sequenceFlow id=\"Flow_1er15gw\" sourceRef=\"Gateway_0r4mam0\" targetRef=\"Activity_1opzvbb\" /><bpmn:sequenceFlow id=\"Flow_0d23ngn\" sourceRef=\"Gateway_0s4mvzo\" targetRef=\"Gateway_0r4mam0\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0d23ngn_di\" bpmnElement=\"Flow_0d23ngn\"><di:waypoint x=\"650\" y=\"95\" /><di:waypoint x=\"650\" y=\"30\" /><di:waypoint x=\"270\" y=\"30\" /><di:waypoint x=\"270\" y=\"95\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1er15gw_di\" bpmnElement=\"Flow_1er15gw\"><di:waypoint x=\"295\" y=\"120\" /><di:waypoint x=\"330\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_04r8abs_di\" bpmnElement=\"Flow_04r8abs\"><di:waypoint x=\"675\" y=\"120\" /><di:waypoint x=\"722\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_005j0x0_di\" bpmnElement=\"Flow_005j0x0\"><di:waypoint x=\"580\" y=\"120\" /><di:waypoint x=\"625\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_076g5xw_di\" bpmnElement=\"Flow_076g5xw\"><di:waypoint x=\"430\" y=\"120\" /><di:waypoint x=\"480\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_0t6s5cn_di\" bpmnElement=\"Flow_0t6s5cn\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"245\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_0lao3g4_di\" bpmnElement=\"Event_0lao3g4\"><dc:Bounds x=\"722\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0tcuzhb_di\" bpmnElement=\"Activity_1opzvbb\"><dc:Bounds x=\"330\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1mtuwfq_di\" bpmnElement=\"Activity_0ucs0lq\"><dc:Bounds x=\"480\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0s4mvzo_di\" bpmnElement=\"Gateway_0s4mvzo\" isMarkerVisible=\"true\"><dc:Bounds x=\"625\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Gateway_0r4mam0_di\" bpmnElement=\"Gateway_0r4mam0\" isMarkerVisible=\"true\"><dc:Bounds x=\"245\" y=\"95\" width=\"50\" height=\"50\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+    "types": [
+      {
+        "list": "generic",
+        "element": null
+      }
+    ],
+    "situationalFactors": [
+      {
+        "list": "Company",
+        "element": {
+          "factor": {
+            "type": "SituationalFactorDefinition",
+            "_id": "1615647502890",
+            "_rev": "1-10491c34180121e22533defe57226ecc",
+            "list": "Company",
+            "name": "timeResources",
+            "description": null,
+            "values": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "ordered": true
+          },
+          "value": "medium"
+        }
+      }
+    ],
+    "_id": "1615989451280"
+  }
+]

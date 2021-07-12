@@ -1,0 +1,49 @@
+<div [formGroup]="formGroup" class="form-row">
+  <div class="form-group col">
+    <label for="listInput">List</label>
+    <div class="input-group">
+      <input
+        type="text"
+        formControlName="list"
+        class="form-control"
+        [class.is-invalid]="listControl.invalid"
+        id="listInput"
+        aria-describedby="listInputFeedback"
+        [ngbTypeahead]="searchLists"
+        (click)="openListInput.next($any($event.target).value)"
+        (focus)="openListInput.next($any($event.target).value)">
+      <div class="input-group-append btn-group btn-group-toggle" *ngIf="multipleAllowed">
+        <label class="btn-outline-secondary" ngbButtonLabel>
+          <input type="checkbox" formControlName="multiple" ngbButton> Multiple
+        </label>
+      </div>
+    </div>
+    <div id="listInputFeedback" class="invalid-feedback">
+      <span *ngIf="listControl.hasError('required')">This field is required.</span>
+    </div>
+  </div>
+  <div class="form-group col">
+    <label for="elementInput">{{methodElementName}}</label>
+    <div class="input-group">
+      <input
+        type="text"
+        formControlName="element"
+        class="form-control"
+        id="elementInput"
+        [ngbTypeahead]="searchElements"
+        [editable]="false"
+        [resultFormatter]="formatter"
+        [inputFormatter]="formatter"
+        (click)="openElementInput.next($any($event.target).value)"
+        (focus)="openElementInput.next($any($event.target).value)">
+      <div class="input-group-append btn-group btn-group-toggle" *ngIf="multipleAllowed">
+        <label class="btn-outline-secondary" ngbButtonLabel>
+          <input type="checkbox" formControlName="multipleElements" ngbButton> Multiple
+        </label>
+      </div>
+      <div class="input-group-append">
+        <button (click)="remove.emit()" class="btn btn-secondary align-self-baseline" type="button">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>

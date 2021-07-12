@@ -1,0 +1,13 @@
+<app-kanban-board
+  [todo]="todo"
+  [doing]="doing"
+  [done]="done"
+  (addTodo)="addTodo.emit($event)"
+  (removeTodo)="removeTodo.emit($event)"
+  (viewNode)="viewNode.emit($event)"
+  (showNodeInfo)="_showNodeInfo($event)"
+  (showExecutionInfo)="_showExecutionInfo($event)"
+  (startNodeExecution)="startNodeExecution.emit($event)"
+  (startExecution)="startExecution.emit($event)"
+  (viewExecution)="viewExecution.emit($event)"
+  (viewComments)="viewComments.emit($event)"></app-kanban-board>

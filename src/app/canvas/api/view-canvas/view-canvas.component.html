@@ -1,0 +1,34 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="processApiService.runningProcess">
+    <a class="nav-link"
+       [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id]">
+      {{processApiService.runningProcess.process.name}} &ndash; {{processApiService.runningProcess.name}}
+    </a>
+    <a
+      *ngIf="processApiService.runningMethod != null"
+      class="nav-link"
+      [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id, 'method', processApiService.runningMethod.executionId]">
+      {{processApiService.runningMethod.methodName}}
+    </a>
+    <a
+      class="nav-link active"
+      [routerLink]="[]"
+      [queryParams]="processApiService.queryParams">
+      View Canvas
+    </a>
+  </nav>
+</div>
+
+<main *ngIf="instance" role="main" class="container">
+  <app-instance
+    [featureModel]="companyModel"
+    [instance]="instance"
+    [adaptable]="false"
+    [editable]="false"
+    [updatable]="false"></app-instance>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="processApiService.stepInfo.step != null">
+    <h6 class="border-bottom border-gray pb-2">Finish viewing</h6>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">Finish viewing</button>
+  </div>
+</main>

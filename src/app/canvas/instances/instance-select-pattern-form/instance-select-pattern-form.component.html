@@ -1,0 +1,34 @@
+<form [formGroup]="selectPatternForm" (ngSubmit)="submit()">
+  <div class="form-group form-row">
+    <label for="featureModel" class="col-sm-4 col-form-label">Patterns of</label>
+    <div class="col-sm-8">
+      <select id="featureModel" formControlName="featureModel" class="form-control">
+        <option *ngFor="let expertModel of expertModels" [ngValue]="expertModel._id">
+          {{expertModel.name}}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <label for="instance" class="col-sm-4 col-form-label">Pattern</label>
+    <div class="col-sm-8">
+      <select id="instance" formControlName="instance" class="form-control">
+        <option *ngFor="let instance of expertModel ? expertModel.getPatterns() : []" [ngValue]="instance.id">
+          {{ instance.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <div class="col-sm-12">
+      <button *ngIf="!showsPattern" type="submit" class="btn btn-sm btn-dark btn-block"
+              [disabled]="!selectPatternForm.valid">
+        Show
+      </button>
+      <button *ngIf="showsPattern" type="button" class="btn btn-sm btn-dark btn-block"
+              (click)="clearPattern.emit()">
+        Clear
+      </button>
+    </div>
+  </div>
+</form>

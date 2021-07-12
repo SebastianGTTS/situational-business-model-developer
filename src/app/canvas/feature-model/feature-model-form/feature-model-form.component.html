@@ -1,0 +1,33 @@
+<form [formGroup]="featureModelForm" (ngSubmit)="submitForm()">
+  <div class="form-group row">
+    <label for="name" class="col-sm-4 col-form-label">Model Name</label>
+    <div class="col-sm-8">
+      <input type="text" formControlName="name" class="form-control" id="name">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="description" class="col-sm-4 col-form-label">Model Description</label>
+    <div class="col-sm-8">
+      <input type="text" formControlName="description" class="form-control" id="description">
+    </div>
+  </div>
+  <div class="form-group row" *ngIf="featureModel.hasOwnProperty('version')">
+    <label for="version" class="col-sm-4 col-form-label">Version</label>
+    <div class="col-sm-8">
+      <input type="text" formControlName="version" class="form-control" id="version">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="copyright" class="col-sm-4 col-form-label">Copyright</label>
+    <div class="col-sm-8">
+      <input type="text" formControlName="copyright" class="form-control" id="copyright">
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!featureModelForm.valid">
+        Update Feature Model
+      </button>
+    </div>
+  </div>
+</form>

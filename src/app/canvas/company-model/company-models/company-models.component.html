@@ -1,0 +1,14 @@
+<main role="main" class="container">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Company Models</h6>
+    <p class="mt-1">Company Models are used to represent merged expert models.</p>
+    <app-model-list
+      modelListTitle="List of Company Business Knowledge Models"
+      modelFormTitle="Add Company Business Knowledge Model"
+      [modelList]="companyModelList"
+      (viewModel)="viewCompanyModel($event)"
+      (editModel)="editCompanyModel($event)"
+      (deleteModel)="deleteCompanyModel($event)"
+      (addModel)="addCompanyModel($event.definition, $event.name, $event.description)"></app-model-list>
+  </div>
+</main>

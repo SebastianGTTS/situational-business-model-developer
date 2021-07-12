@@ -1,0 +1,14 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a *ngIf="expertModel" class="nav-link"
+       [routerLink]="['/expertModels', expertModel._id]">{{expertModel.name}}</a>
+    <a *ngIf="expertModel" class="nav-link active"
+       [routerLink]="['/expertModels', expertModel._id, 'patterns', pattern.id]">{{pattern.name}}</a>
+  </nav>
+</div>
+
+<main *ngIf="expertModel" role="main" class="container">
+
+  <app-instance [featureModel]="expertModel" [instance]="pattern" (updateFeatureModel)="updateExpertModel()"
+                (createAdaptation)="createAdaptation()"></app-instance>
+</main>

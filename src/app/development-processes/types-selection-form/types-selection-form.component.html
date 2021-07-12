@@ -1,0 +1,16 @@
+<form [formGroup]="typesForm" (ngSubmit)="submitForm()">
+  <app-method-elements-selection-form
+    class="form-group"
+    formArrayName="types"
+    [createFormGroupFactory]="createFormGroupFactory"
+    [listNames]="listNames"
+    [methodElements]="methodElements"
+    methodElementName="Type"></app-method-elements-selection-form>
+  <div class="form-group row">
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!typesForm.valid">
+        <ng-container>Update</ng-container>
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,97 @@
+<ng-template #defaultCell let-list="list">
+  <ul>
+    <li *ngFor="let element of asGroupSummary(list).elements">
+      <ng-container *ngIf="element.multiple">
+        [<<{{element.list}}>>]
+        <ul>
+          <li *ngFor="let concreteElement of element.elements">{{concreteElement.name}}</li>
+        </ul>
+      </ng-container>
+      <ng-container *ngIf="!element.multiple">
+        <ng-container *ngIf="element.elements.length === 1">
+          <ng-container *ngIf="element.multipleElements">
+            [{{element.elements[0].name}}] (<<{{element.elements[0].list}}>>)
+          </ng-container>
+          <ng-container *ngIf="!element.multipleElements">
+            {{element.elements[0].name}} (<<{{element.elements[0].list}}>>)
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="element.elements.length === 0">
+          (<<{{element.list}}>>)
+        </ng-container>
+      </ng-container>
+    </li>
+  </ul>
+</ng-template>
+
+<ng-template #inputArtifactsCell>
+  <ul>
+    <li *ngFor="let element of inputArtifacts; let index = index">
+      {{element.identifier}} &ndash; {{element.artifact.name}} &ndash; Version #{{element.versionInfo.number + 1}}
+      &ndash; {{element.versionInfo.time | date:'short'}}
+      <ul *ngIf="element.data && (element.data.type === 1 || element.data.type === 2)">
+        <li *ngIf="element.data.type === 1">{{element.data.data}}</li>
+        <li *ngIf="element.data.type === 2">
+          {{metaModelDefinitions[index].name}}
+          <button
+            class="btn btn-xs btn-secondary"
+            (click)="_viewArtifactReference(index, element.data.data)">
+            View
+          </button>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</ng-template>
+
+<table class="table mb-0">
+  <tbody>
+  <tr>
+    <th scope="row">Building Block Name</th>
+    <td>{{decision.method.name}}</td>
+  </tr>
+  <tr>
+    <th scope="row">Building Block Description</th>
+    <td class="show-new-lines">{{decision.method.description}}</td>
+  </tr>
+  <tr *ngIf="decision.method.examples.length > 0">
+    <th scope="row">Examples</th>
+    <td class="show-new-lines">
+      <ul class="list-group">
+        <li *ngFor="let example of decision.method.examples" class="list-group-item">
+          {{example}}
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Input Artifacts</th>
+    <td>
+      <ng-container *ngIf="!inputArtifacts">
+        <ng-container *ngTemplateOutlet="defaultCell; context: {list: this.summary.inputArtifacts}"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="inputArtifacts">
+        <ng-container *ngTemplateOutlet="inputArtifactsCell"></ng-container>
+      </ng-container>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Output Artifacts</th>
+    <td>
+      <ng-container *ngTemplateOutlet="defaultCell; context: {list: this.summary.outputArtifacts}"></ng-container>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Involved Stakeholders</th>
+    <td>
+      <ng-container *ngTemplateOutlet="defaultCell; context: {list: this.summary.stakeholders}"></ng-container>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Tools</th>
+    <td>
+      <ng-container *ngTemplateOutlet="defaultCell; context: {list: this.summary.tools}"></ng-container>
+    </td>
+  </tr>
+  </tbody>
+</table>

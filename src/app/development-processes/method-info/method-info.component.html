@@ -1,0 +1,66 @@
+<table class="table mb-0">
+  <tbody>
+  <tr>
+    <th scope="row">Building Block Name</th>
+    <td>{{developmentMethod.name}}</td>
+  </tr>
+  <tr>
+    <th scope="row">Building Block Description</th>
+    <td class="show-new-lines">{{developmentMethod.description}}</td>
+  </tr>
+  <tr>
+    <th scope="row">Examples</th>
+    <td class="show-new-lines">
+      <ul class="list-group">
+        <li *ngFor="let example of developmentMethod.examples" class="list-group-item">
+          {{example}}
+        </li>
+      </ul>
+    </td>
+  </tr>
+  <tr *ngIf="contextSituationalFactors && contextSituationalFactors.length > 0">
+    <th scope="row">Situational Factors</th>
+    <td class="show-new-lines">
+      <app-situational-factors-overview [needed]="needed" [provided]="provided"></app-situational-factors-overview>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Input Artifacts</th>
+    <td>
+      <app-artifacts-group-info [selection]="decision.inputArtifacts" [groups]="developmentMethod.inputArtifacts"
+                                (submitGroupsForm)="updateDecisions.emit({inputArtifacts: $event.value})"></app-artifacts-group-info>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Output Artifacts</th>
+    <td>
+      <app-artifacts-group-info [selection]="decision.outputArtifacts" [groups]="developmentMethod.outputArtifacts"
+                                (submitGroupsForm)="updateDecisions.emit({outputArtifacts: $event.value})"></app-artifacts-group-info>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Involved Stakeholders</th>
+    <td>
+      <app-stakeholders-group-info [selection]="decision.stakeholders" [groups]="developmentMethod.stakeholders"
+                                   (submitGroupsForm)="updateDecisions.emit({stakeholders: $event.value})"></app-stakeholders-group-info>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Tools</th>
+    <td>
+      <app-tools-group-info [selection]="decision.tools" [groups]="developmentMethod.tools"
+                            (submitGroupsForm)="updateDecisions.emit({tools: $event.value})"></app-tools-group-info>
+    </td>
+  </tr>
+  <tr>
+    <th scope="row">Steps</th>
+    <td>
+      <app-method-info-steps [bmProcess]="bmProcess" [contextDomains]="contextDomains"
+                             [steps]="decision.method.executionSteps"
+                             [stepDecisions]="decision.stepDecisions"
+                             (submitStepsForm)="updateDecisions.emit({stepDecisions: $event})"
+                             (forceUpdate)="forceUpdate($event)"></app-method-info-steps>
+    </td>
+  </tr>
+  </tbody>
+</table>

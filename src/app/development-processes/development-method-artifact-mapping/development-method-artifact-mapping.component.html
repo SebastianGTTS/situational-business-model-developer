@@ -1,0 +1,42 @@
+<div [formGroup]="formGroup" class="form-row">
+  <div class="form-group col-md">
+    <label for="selectOutput">To other step or output</label>
+    <select id="selectOutput" class="form-control" formControlName="output">
+      <option [ngValue]="false">Step</option>
+      <option [ngValue]="true">Output</option>
+    </select>
+  </div>
+  <ng-container *ngIf="!outputControl.value">
+    <div class="form-group col-md">
+      <label for="inputStep">Step</label>
+      <select id="inputStep" class="form-control" formControlName="step">
+        <option *ngFor="let step of developmentMethod.executionSteps; let index = index" [ngValue]="index">
+          #{{index + 1}}</option>
+      </select>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="outputControl.value">
+    <div class="form-group col-md">
+      <label for="inputGroup">Group</label>
+      <select id="inputGroup" class="form-control" formControlName="group">
+        <option *ngFor="let group of developmentMethod.outputArtifacts; let index = index" [ngValue]="index">
+          #{{index + 1}}</option>
+      </select>
+    </div>
+  </ng-container>
+  <div class="form-group col">
+    <label for="inputArtifact">Artifact</label>
+    <div class="input-group">
+      <select id="inputArtifact" class="form-control" formControlName="artifact">
+        <ng-container *ngFor="let artifact of artifacts; let index = index">
+          <option *ngIf="artifactConformsToMetaModel(artifact)" [ngValue]="index">
+            #{{index + 1}} {{artifact.name}}
+          </option>
+        </ng-container>
+      </select>
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" (click)="remove.emit()">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>

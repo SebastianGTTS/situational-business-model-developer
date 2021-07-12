@@ -1,0 +1,198 @@
+[
+  {
+    "type": "Type",
+    "list": "discovery",
+    "name": "customerDiscovery",
+    "description": null,
+    "_id": "1615646706099"
+  },
+  {
+    "type": "Type",
+    "list": "discovery",
+    "name": "customerIdentification",
+    "description": null,
+    "_id": "1615646712401"
+  },
+  {
+    "type": "Type",
+    "list": "discovery",
+    "name": "customerAnalysis",
+    "description": null,
+    "_id": "1615646717278"
+  },
+  {
+    "type": "Type",
+    "list": "discovery",
+    "name": "problemDiscovery",
+    "description": null,
+    "_id": "1615646721496"
+  },
+  {
+    "type": "Type",
+    "list": "discovery",
+    "name": "problemIdentification",
+    "description": null,
+    "_id": "1615646726406"
+  },
+  {
+    "type": "Type",
+    "list": "discovery",
+    "name": "problemAnalysis",
+    "description": null,
+    "_id": "1615646731492"
+  },
+  {
+    "type": "Type",
+    "list": "analysis",
+    "name": "marketAnalysis",
+    "description": null,
+    "_id": "1615646742307"
+  },
+  {
+    "type": "Type",
+    "list": "analysis",
+    "name": "competitorAnalysis",
+    "description": null,
+    "_id": "1615646746173"
+  },
+  {
+    "type": "Type",
+    "list": "analysis",
+    "name": "nicheAnalysis",
+    "description": null,
+    "_id": "1615646750064"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "ideaIdentification",
+    "description": null,
+    "_id": "1615646756371"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "featureDesign",
+    "description": null,
+    "_id": "1615646771090"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "businessDesign",
+    "description": null,
+    "_id": "1615646777512"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "vpDesign",
+    "description": null,
+    "_id": "1615646781917"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "bmDesign",
+    "description": null,
+    "_id": "1615646785987"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "monetizationDesign",
+    "description": null,
+    "_id": "1615646791921"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "marketingDesign",
+    "description": null,
+    "_id": "1615646798975"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "uspDesign",
+    "description": null,
+    "_id": "1615646805954"
+  },
+  {
+    "type": "Type",
+    "list": "design",
+    "name": "enhancementDesign",
+    "description": null,
+    "_id": "1615646810172"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "marketingDevelopment",
+    "description": null,
+    "_id": "1615646821909"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "contentDevelopment",
+    "description": null,
+    "_id": "1615646827229"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "createContent",
+    "description": null,
+    "_id": "1615646831373"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "spreadContent",
+    "description": null,
+    "_id": "1615646835744"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "prototypDevelopment",
+    "description": null,
+    "_id": "1615646840146"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "platformSelection",
+    "description": null,
+    "_id": "1615646844016"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "financialCheck",
+    "description": null,
+    "_id": "1615646848359"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "productDevelopment",
+    "description": null,
+    "_id": "1615646852543"
+  },
+  {
+    "type": "Type",
+    "list": "develop",
+    "name": "platformPublishing",
+    "description": null,
+    "_id": "1615646856351"
+  },
+  {
+    "type": "Type",
+    "list": "validate",
+    "name": "intermediateValidation",
+    "description": null,
+    "_id": "1615646873313"
+  }
+]

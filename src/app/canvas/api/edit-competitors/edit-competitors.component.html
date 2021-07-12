@@ -1,0 +1,43 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="processApiService.runningProcess">
+    <a class="nav-link"
+       [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id]">
+      {{processApiService.runningProcess.process.name}} &ndash; {{processApiService.runningProcess.name}}
+    </a>
+    <a
+      class="nav-link"
+      [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id, 'method', processApiService.runningMethod.executionId]">
+      {{processApiService.runningMethod.methodName}}
+    </a>
+    <a
+      class="nav-link active"
+      [routerLink]="[]"
+      [queryParams]="processApiService.queryParams">
+      Edit Competitors
+    </a>
+  </nav>
+</div>
+
+<main *ngIf="companyModel" role="main" class="container">
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Competitors</h6>
+    <ul class="list-group">
+      <li *ngFor="let competitor of competitors"
+          class="d-flex list-group-item justify-content-between align-items-center">
+      <span>{{ competitor.name }} <small class="text-muted"
+                                         *ngIf="competitor.description">{{ competitor.description }}</small></span>
+        <div>
+          <button (click)="editCompetitor(competitor.id)" type="button" class="btn btn-dark btn-xs">Edit</button>&nbsp;
+          <button (click)="removeCompetitor(competitor.id)" type="button" class="btn btn-danger btn-xs">Remove</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Finish editing competitors</h6>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">Finish editing competitors</button>
+  </div>
+
+</main>

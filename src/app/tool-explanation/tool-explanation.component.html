@@ -1,0 +1,50 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Tool Explanation</a>
+  </nav>
+</div>
+
+<main role="main" class="container">
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Explanations</h6>
+    <ul ngbNav #nav="ngbNav" class="nav-pills nav-justified">
+      <li ngbNavItem>
+        <a ngbNavLink>Enaction</a>
+        <ng-template ngbNavContent>
+          <app-enaction-explanation></app-enaction-explanation>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Method Modeler</a>
+        <ng-template ngbNavContent>
+          <app-method-modeler-explanation></app-method-modeler-explanation>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Feature Modeler</a>
+        <ng-template ngbNavContent>
+          <app-feature-modeler-explanation></app-feature-modeler-explanation>
+        </ng-template>
+      </li>
+    </ul>
+  </div>
+
+  <div class="mt-1" [ngbNavOutlet]="nav"></div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Further Information</h6>
+    <p class="mt-2">
+      Further information can be accessed in two ways:
+    </p>
+    <ul class="mb-0">
+      <li><strong>Download Source Code:</strong>
+        <a href="https://github.com/SebastianGTTS/situational-business-model-developer">
+          https://github.com/SebastianGTTS/situational-business-model-developer
+        </a>
+      </li>
+      <li><strong>Read Research Paper:</strong> Currently under review</li>
+    </ul>
+  </div>
+
+</main>

@@ -1,0 +1,77 @@
+<div class="form-row">
+  <div class="form-group col">
+    <label for="listInput">List</label>
+    <input
+      readonly
+      type="text"
+      [value]="listValue"
+      class="form-control-plaintext"
+      id="listInput">
+  </div>
+  <div class="form-group col" *ngIf="!methodElement">
+    <label for="elementInput">{{methodElementName}}</label>
+    <div class="input-group" *ngIf="formArray && formArray.length > 0">
+      <input *ngIf="formArray.length > 0"
+             #input
+             type="text"
+             [formControl]="$any(formArray.controls[0])"
+             class="form-control"
+             id="elementInput"
+             [ngbTypeahead]="searchElements(input)"
+             [editable]="false"
+             [resultFormatter]="formatter"
+             [inputFormatter]="formatter"
+             (click)="openElementInput.next([input, $any($event.target).value])"
+             (focus)="openElementInput.next([input, $any($event.target).value])">
+      <div class="input-group-append" *ngIf="multiple">
+        <button (click)="add(1)" class="btn btn-outline-secondary align-self-baseline" type="button">+</button>
+        <button *ngIf="formArray.length > 0" (click)="remove(0)" class="btn btn-outline-secondary align-self-baseline"
+                type="button">
+          -
+        </button>
+      </div>
+    </div>
+    <div *ngIf="formArray && formArray.length === 0">
+      <button (click)="add()" class="btn btn-outline-secondary align-self-baseline" type="button">+</button>
+    </div>
+  </div>
+  <div class="form-group col" *ngIf="methodElement">
+    <label for="elementInputStatic">{{methodElementName}}</label>
+    <input
+      readonly
+      type="text"
+      [value]="elementValue"
+      class="form-control-plaintext"
+      id="elementInputStatic">
+  </div>
+</div>
+<ng-container *ngIf="formArray && multiple">
+  <div *ngFor="let control of formArray.controls.slice(1); let index = index" class="form-row">
+    <div class="form-group col"></div>
+    <div class="form-group col">
+      <label for="elementMultipleInput" class="sr-only">{{methodElementName}}</label>
+      <div class="input-group">
+        <input
+          #input
+          type="text"
+          [formControl]="$any(control)"
+          class="form-control"
+          id="elementMultipleInput"
+          [ngbTypeahead]="searchElements(input)"
+          [editable]="false"
+          [resultFormatter]="formatter"
+          [inputFormatter]="formatter"
+          (click)="openElementInput.next([input, $any($event.target).value])"
+          (focus)="openElementInput.next([input, $any($event.target).value])">
+        <div class="input-group-append" *ngIf="multiple">
+          <button (click)="add(index + 2)" class="btn btn-outline-secondary align-self-baseline" type="button">
+            +
+          </button>
+          <button (click)="remove(index + 1)" class="btn btn-outline-secondary align-self-baseline" type="button">
+            -
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

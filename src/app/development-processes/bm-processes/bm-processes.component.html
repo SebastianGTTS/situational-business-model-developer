@@ -1,0 +1,57 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Business Model Development Methods</a>
+    <a *ngFor="let bmProcess of bmProcessesList" class="nav-link"
+       [routerLink]="['bmprocessview', bmProcess._id]">{{bmProcess.name}}</a>
+  </nav>
+</div>
+
+<main role="main" class="container">
+
+  <div class="my-3 alert alert-info" role="alert">
+    Create Business Model Development Methods from Method Patterns and Method Building Blocks.
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Business Model Development Methods</h6>
+    <div *ngIf="!bmProcessesList">Loading...</div>
+    <div *ngIf="bmProcessesList && bmProcessesList.length === 0">No Business Model Development Methods defined.</div>
+    <ul class="list-group" *ngIf="bmProcessesList && bmProcessesList.length > 0">
+      <li class="d-flex list-group-item justify-content-between align-items-baseline"
+          *ngFor="let bmProcess of bmProcessesList">
+        <div>
+          <span>{{bmProcess.name}}</span>
+        </div>
+        <div>
+          <a [routerLink]="['bmprocessview', bmProcess._id]" type="button"
+             class="btn btn-dark btn-xs mr-1">View</a>
+          <button (click)="deleteBmProcess(bmProcess._id)" type="button" class="btn btn-danger btn-xs">
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Add Business Model Development Method</h6>
+    <div class="text-muted pt-3">
+      <form [formGroup]="bmProcessForm" (ngSubmit)="addBmProcess(bmProcessForm)">
+        <div class="form-group row">
+          <label for="name" class="col-sm-4 col-form-label">Business Model Development Method Name</label>
+          <div class="col-sm-8">
+            <input type="text" formControlName="name" class="form-control" id="name">
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!bmProcessForm.valid">
+              Add Business Model Development Method
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</main>

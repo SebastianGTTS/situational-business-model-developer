@@ -1,0 +1,61 @@
+<div class="row min-height-200-px">
+  <div class="col border-right">
+    <div class="d-flex justify-content-center">
+      <div class="flex-1"></div>
+      <h6 class="text-center ml-auto mr-auto">TODO</h6>
+      <div class="d-flex flex-1">
+        <button class="btn btn-xs btn-primary ml-auto" (click)="addTodo.emit()">Add</button>
+      </div>
+    </div>
+    <div class="d-flex flex-column align-items-center">
+      <div *ngFor="let info of todo" class="card text-center w-75 my-2">
+        <div class="card-body">
+          <div class="card-title font-weight-bold">{{info.methodName}}</div>
+          <button *ngIf="info.nodeId" class="btn btn-xs btn-dark mr-1 mb-1" (click)="viewNode.emit(info.nodeId)">
+            View
+          </button>
+          <button class="btn btn-xs btn-info mr-1 mb-1" (click)="_showInfo(info)">Info</button>
+          <button class="btn btn-xs btn-warning mr-1 mb-1" (click)="_startExecution(info)">Start</button>
+          <button
+            *ngIf="info.nodeId == null" class="btn btn-xs btn-secondary mb-1"
+            (click)="removeTodo.emit(info.executionId)">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col border-right">
+    <h6 class="text-center">Doing</h6>
+    <div class="d-flex flex-column align-items-center">
+      <div *ngFor="let info of doing" class="card text-center w-75 my-2">
+        <div class="card-body">
+          <div class="card-title font-weight-bold">{{info.methodName}}</div>
+          <button *ngIf="info.nodeId" class="btn btn-xs btn-dark mr-1 mb-1" (click)="viewNode.emit(info.nodeId)">
+            View
+          </button>
+          <button class="btn btn-xs btn-info mr-1 mb-1" (click)="_showInfo(info)">Info</button>
+          <button class="btn btn-xs btn-warning mb-1" (click)="viewExecution.emit(info.executionId)">
+            View Execution
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <h6 class="text-center">Done</h6>
+    <div class="d-flex flex-column align-items-center">
+      <div *ngFor="let info of done" class="card text-center w-75 my-2">
+        <div class="card-body">
+          <div class="card-title font-weight-bold">{{info.methodName}}</div>
+          <button *ngIf="info.nodeId" class="btn btn-xs btn-dark mr-1 mb-1" (click)="viewNode.emit(info.nodeId)">
+            View
+          </button>
+          <button class="btn btn-xs btn-dark mr-1 mb-1" (click)="viewComments.emit(info.executionId)">
+            View Comments
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

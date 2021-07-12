@@ -1,0 +1,13 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a *ngIf="expertModel" class="nav-link"
+       [routerLink]="['/expertModels', expertModel._id]">View {{expertModel.name}}</a>
+    <a *ngIf="expertModel" class="nav-link active"
+       [routerLink]="['/expertModels', expertModel._id, 'edit']">Edit {{expertModel.name}}</a>
+  </nav>
+</div>
+
+<main *ngIf="expertModel" role="main" class="container">
+  <app-feature-model-edit [featureModel]="expertModel"
+                          (updateFeatureModel)="updateExpertModel()"></app-feature-model-edit>
+</main>

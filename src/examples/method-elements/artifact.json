@@ -1,0 +1,224 @@
+[
+  {
+    "type": "Artifact",
+    "_id": "1615648456976",
+    "list": "Structured Information",
+    "name": "User Persona Map",
+    "description": "",
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648460846",
+    "list": "Structured Information",
+    "name": "Customer Journey Map",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648465839",
+    "list": "Structured Information",
+    "name": "SWOT Map",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648470122",
+    "list": "Structured Information",
+    "name": "Business Model Canvas",
+    "description": null,
+    "internalArtifact": true,
+    "metaModel": {
+      "name": "Canvas",
+      "type": "CompanyModel"
+    }
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648473666",
+    "list": "Structured Information",
+    "name": "Value Proposition Canvas",
+    "description": null,
+    "internalArtifact": true,
+    "metaModel": {
+      "name": "Canvas",
+      "type": "CompanyModel"
+    }
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648477829",
+    "list": "Structured Information",
+    "name": "Feature Set",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648484285",
+    "list": "Information",
+    "name": "Customer Information",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648488922",
+    "list": "Information",
+    "name": "Problem Information",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648493552",
+    "list": "Information",
+    "name": "Market Information",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648497837",
+    "list": "Information",
+    "name": "Competitor Information",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648503459",
+    "list": "Information",
+    "name": "App Information",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648509560",
+    "list": "Medium",
+    "name": "Website",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648513576",
+    "list": "Medium",
+    "name": "Landing Page",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648517309",
+    "list": "Medium",
+    "name": "Blog",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648521807",
+    "list": "Medium",
+    "name": "Social Media Profile",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648535262",
+    "list": "Prototype",
+    "name": "Proof-of-Concept",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648539192",
+    "list": "Prototype",
+    "name": "Sketch",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648543172",
+    "list": "Prototype",
+    "name": "Mockup",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648546517",
+    "list": "Prototype",
+    "name": "Wireframe",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648550737",
+    "list": "Prototype",
+    "name": "Minimum Viable Product",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648557299",
+    "list": "Product",
+    "name": "iOS App",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648562990",
+    "list": "Product",
+    "name": "Android App",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615648569558",
+    "list": "Product",
+    "name": "Web App",
+    "description": null,
+    "internalArtifact": false,
+    "metaModel": null
+  },
+  {
+    "type": "Artifact",
+    "_id": "1615889474456",
+    "list": "Information",
+    "name": "Marketing Information",
+    "description": "",
+    "internalArtifact": false,
+    "metaModel": null
+  }
+]

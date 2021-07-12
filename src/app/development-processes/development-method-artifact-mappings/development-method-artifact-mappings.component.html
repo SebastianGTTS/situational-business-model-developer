@@ -1,0 +1,8 @@
+<div *ngFor="let control of formArray.controls; let index = index" [formGroup]="$any(control)">
+  <app-development-method-artifact-mapping
+    [developmentMethod]="developmentMethod" (remove)="removeMapping(index)"
+    [metaModel]="metaModel"></app-development-method-artifact-mapping>
+</div>
+<div class="d-flex">
+  <button type="button" class="ml-auto btn btn-primary" (click)="addMapping()">Add Mapping</button>
+</div>

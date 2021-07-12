@@ -1,0 +1,27 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Artifacts</a>
+  </nav>
+</div>
+
+<main role="main" class="container">
+
+  <div class="my-3 alert alert-info" role="alert">
+    Create Artifacts to use them for the definition of Method Fragments
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Artifacts</h6>
+    <app-method-element-list [elementLists]="elementLists"
+                             (deleteElement)="delete($event._id)"></app-method-element-list>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Add Artifact</h6>
+    <div class="text-muted pt-3">
+      <app-method-element-form [listNames]="listNames"
+                               (submitMethodElementForm)="add($event)"></app-method-element-form>
+    </div>
+  </div>
+
+</main>

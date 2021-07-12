@@ -1,0 +1,48 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <ul class="form-group list-group" ngbRadioGroup formControlName="selectedGroup">
+    <li *ngFor="let group of groups; let index = index" class="list-group-item">
+      <ul class="list-group shadow-sm">
+        <li [class.list-group-item-secondary]="selectedGroup !== index"
+            [class.list-group-item-primary]="selectedGroup === index"
+            class="list-group-item d-flex align-items-baseline">
+          <h5 class="mb-0" *ngIf="group.length > 0">Group</h5>
+          <h5 class="mb-0" *ngIf="group.length === 0">None</h5>
+          <div class="ml-auto btn-group btn-group-toggle">
+            <label ngbButtonLabel class="btn-primary">
+              <input ngbButton type="radio" [value]="index"> Select
+            </label>
+          </div>
+        </li>
+        <ng-container *ngIf="selectedGroup !== index">
+          <li *ngFor="let element of group" class="list-group-item">
+            <app-method-element-info
+              [multiple]="element.multiple"
+              [multipleElements]="element.multipleElements"
+              [listName]="element.list"
+              [methodElement]="element.element"
+              [methodElementName]="methodElementName"></app-method-element-info>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="selectedGroup === index">
+          <li *ngFor="let element of group; let elementIndex = index" class="list-group-item" formArrayName="elements">
+            <app-method-element-info
+              [formArrayName]="elementIndex.toString()"
+              [multiple]="element.multiple"
+              [multipleElements]="element.multipleElements"
+              [listName]="element.list"
+              [methodElement]="element.element"
+              [methodElements]="methodElements"
+              [methodElementName]="methodElementName"></app-method-element-info>
+          </li>
+        </ng-container>
+      </ul>
+    </li>
+  </ul>
+  <div *ngIf="groups.length > 0" class="form-group row mt-3">
+    <div class="col-sm-12">
+      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!form.valid">
+        <ng-container>Update</ng-container>
+      </button>
+    </div>
+  </div>
+</form>

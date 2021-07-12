@@ -1,0 +1,67 @@
+<ul *ngIf="features" class="list-group inner" style="margin:5px;">
+
+  <li *ngFor="let f of getFeatures()"
+      class="d-flex flex-wrap list-group-item justify-content-between align-items-center">
+
+    <div class="d-flex">
+      <div class="mr-1">
+        <ng-container *ngIf="f.type === 'mandatory'">
+          <i class="fa fa-circle" aria-hidden="true" title="mandatory"></i>
+          <span class="sr-only">mandatory</span>
+        </ng-container>
+        <ng-container *ngIf="f.type === 'optional'">
+          <i class="fa fa-circle-o" aria-hidden="true" title="optional"></i>
+          <span class="sr-only">optional</span>
+        </ng-container>
+      </div>
+
+      <div class="mr-1">
+        <span
+          [class.text-danger]="problemFeatureIds && problemFeatureIds.includes(f.id)"
+          [class.text-warning]="supportsHurtsProblemFeatureIds && supportsHurtsProblemFeatureIds.includes(f.id)"
+        >{{ f.name }}<span
+          *ngIf="problemFeatureIds && problemFeatureIds.includes(f.id)"
+          class="sr-only"> (instantiation error)</span><span
+          *ngIf="supportsHurtsProblemFeatureIds && supportsHurtsProblemFeatureIds.includes(f.id)"
+          class="sr-only"> (supports/hurts error)</span></span>
+        <small class="text-muted" *ngIf="f.description"> {{ f.description }}</small>
+      </div>
+
+      <div *ngIf="f.subfeatureConnections !== null" class="mr-1">
+        <ng-container *ngIf="f.subfeatureConnections === 'or'">
+          <i class="fa fa-caret-up" aria-hidden="true" title="or subfeatures"></i>
+          <span class="sr-only">or subfeatures</span>
+        </ng-container>
+        <ng-container *ngIf="f.subfeatureConnections === 'xor'">
+          <i class="fa fa-angle-up" aria-hidden="true" title="xor subfeatures"></i>
+          <span class="sr-only">xor subfeatures</span>
+        </ng-container>
+      </div>
+
+      <div *ngIf="f.parent !== null && hasExpertTraces(f)">
+        <span class="badge badge-dark">from expert model</span>
+      </div>
+    </div>
+
+    <div>
+      <button type="button" *ngIf="!f.relationships.hasNoRelationships()" class="btn btn-dark btn-xs mr-1"
+              (click)="openDependencies(f.id)">Show Dependencies
+      </button>
+      <button (click)="updateFeature(f.id)" type="button" class="btn btn-warning btn-xs mr-1">Update</button>
+      <button [class.invisible]="f.parent === null" (click)="deleteFeature(f.id)" type="button"
+              class="btn btn-danger btn-xs">
+        Delete
+      </button>
+    </div>
+
+    <app-feature-tree
+      class="w-100"
+      [features]="f.subfeatures"
+      [problemFeatureIds]="problemFeatureIds"
+      [supportsHurtsProblemFeatureIds]="supportsHurtsProblemFeatureIds"
+      (openDependenciesEmitter)="openDependenciesForwardEmitter($event)"
+      (updateFeatureEmitter)="updateFeatureForwardEmitter($event)"
+      (deleteFeatureEmitter)="deleteFeatureForwardEmitter($event)"></app-feature-tree>
+  </li>
+
+</ul>

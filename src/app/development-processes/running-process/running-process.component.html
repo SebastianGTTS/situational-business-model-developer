@@ -1,0 +1,164 @@
+<ng-template #infoModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Building Block Info</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-development-method-summary [decision]="modalDecision"></app-development-method-summary>
+  </div>
+</ng-template>
+
+<ng-template #multipleOptionsInfoModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Execution Error</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    You need to select one of the outgoing flows of the exclusive gateway to specify which path should be taken for the
+    execution.
+  </div>
+</ng-template>
+
+<ng-template #showArtifactVersionModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Version
+      #{{modalArtifact.versions.indexOf(modalArtifactVersion) + 1}} of {{modalArtifact.identifier}}
+      &ndash; {{modalArtifact.artifact.name}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ng-container *ngIf="getArtifactDataTypeString() === modalArtifactVersion.data.type">
+      <h5>Note</h5>
+      {{modalArtifactVersion.data.data}}
+    </ng-container>
+    <ng-container *ngIf="getArtifactDataTypeReference() === modalArtifactVersion.data.type">
+      <h5>Reference</h5>
+      This version points on another object in the database.
+      <button class="btn btn-xs btn-primary" (click)="viewArtifactReference(modalArtifactVersion.data.data)">
+        View
+      </button>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #selectMethodModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Select Method Building Block to add to TODO</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-development-methods-selection-form
+      [contextSituationalFactors]="runningProcess.process.situationalFactors"
+      [developmentMethods]="modalDevelopmentMethods"
+      (selectDevelopmentMethod)="configureMethod($event)"></app-development-methods-selection-form>
+  </div>
+</ng-template>
+
+<ng-template #methodConfigurationModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Configure Building Block {{modalDevelopmentMethod.name}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-method-info [contextSituationalFactors]="runningProcess.process.situationalFactors"
+                     [developmentMethod]="modalDevelopmentMethod" [decision]="modalDecision"
+                     (updateDecisions)="updateDecision($event)"></app-method-info>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="addMethod()">Add method</button>
+  </div>
+</ng-template>
+
+<ng-template #commentsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Comments of {{modalRunningMethodInfo.methodName}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-method-comments
+      [comments]="modalRunningMethodInfo.comments"
+      [editable]="false"></app-running-process-method-comments>
+  </div>
+</ng-template>
+
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="runningProcess">
+    <a class="nav-link active" [routerLink]="[]">{{runningProcess.process.name}} &ndash; {{runningProcess.name}}</a>
+  </nav>
+</div>
+
+<main *ngIf="runningProcess" role="main">
+  <app-running-process-viewer [runningProcess]="runningProcess"></app-running-process-viewer>
+
+  <div class="container">
+    <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="decisions.length > 0">
+      <h6 class="border-bottom border-gray pb-2">Decision</h6>
+      <ul class="list-group">
+        <li *ngFor="let decision of decisions" class="list-group-item">
+          <div class="d-flex justify-content-between align-items-baseline">
+            <h5>Node {{decision.type}}</h5>
+            <div class="d-flex align-items-baseline">
+              <button (click)="focus(decision.id)" type="button" class="btn btn-dark btn-xs mr-1">
+                View
+              </button>
+              <button (click)="executeStep(decision.id)" type="button" class="btn btn-primary btn-xs">
+                Next Step
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom border-gray pb-2">Kanban Board</h6>
+      <app-running-process-kanban-board
+        [runningProcess]="runningProcess"
+        (addTodo)="openSelectMethodModal()"
+        (removeTodo)="removeMethod($event)"
+        (viewNode)="focus($event)"
+        (showInfo)="openInfoModal($event)"
+        (startNodeExecution)="startNodeExecution($event)"
+        (startExecution)="startExecution($event)"
+        (viewExecution)="viewExecution($event)"
+        (viewComments)="openCommentsModal($event)"></app-running-process-kanban-board>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom border-gray pb-2">Artifacts</h6>
+      <div *ngIf="runningProcess.artifacts.length === 0" class="alert alert-info mb-0">
+        There are no artifacts
+      </div>
+      <ul *ngIf="runningProcess.artifacts.length > 0" class="list-group">
+        <li *ngFor="let artifact of runningProcess.artifacts" class="list-group-item">
+          {{artifact.identifier}} &ndash; {{artifact.artifact.name}}
+          <ul *ngIf="artifact.versions.length > 0">
+            <li *ngFor="let version of artifact.versions; let index = index">
+              <a [routerLink]="[]" (click)="openShowArtifactVersionModal(artifact, version)">Version #{{index + 1}}</a>
+              &ndash;
+              <a *ngIf="version.createdBy !== 'manual'" [routerLink]="[]" (click)="focus(version.createdBy)">
+                {{runningProcess.process.decisions[version.createdBy].method.name}}
+              </a>
+              <span *ngIf="version.createdBy === 'manual'">
+                {{runningProcess.getExecutedMethod(version.executedBy).methodName}}
+              </span>
+              &ndash; {{version.time | date:'short'}}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>

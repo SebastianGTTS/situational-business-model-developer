@@ -1,0 +1,44 @@
+<ng-template #editCommentModal let-d="dismiss" let-c="close">
+  <div class="modal-header">
+    <h4 class="modal-title">Edit comment {{modalComment.title}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-method-comment-form
+      [comment]="modalComment"
+      (submitCommentForm)="_updateComment($event)"></app-running-process-method-comment-form>
+  </div>
+</ng-template>
+
+<div class="my-3 p-3 bg-white rounded shadow-sm">
+  <h6 class="border-bottom border-gray pb-2">Comments</h6>
+  <div *ngIf="comments.length === 0">No comments</div>
+  <ul class="list-group" *ngIf="comments.length > 0">
+    <li *ngFor="let comment of comments" class="list-group-item">
+      <div class="d-flex w-100 justify-content-between">
+        <small>Created by {{comment.userName}}</small>
+        <div *ngIf="editable">
+          <button (click)="_editComment(comment)" type="button" class="btn btn-warning btn-xs mr-1">
+            Edit
+          </button>
+          <button (click)="removeComment.emit(comment.id)" type="button" class="btn btn-danger btn-xs">
+            Delete
+          </button>
+        </div>
+      </div>
+      <h5 class="border-bottom pb-2">{{comment.title}}</h5>
+      <p class="show-new-lines mb-1">{{comment.comment}}</p>
+      <small>{{comment.time | date:'short'}}</small>
+    </li>
+  </ul>
+</div>
+
+<div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="editable">
+  <h6 class="border-bottom border-gray pb-2">Add comment</h6>
+  <div class="text-muted pt-3">
+    <app-running-process-method-comment-form
+      (submitCommentForm)="_addComment($event)"></app-running-process-method-comment-form>
+  </div>
+</div>

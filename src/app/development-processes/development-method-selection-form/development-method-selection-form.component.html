@@ -1,0 +1,10 @@
+<div class="d-flex align-items-baseline">
+  <h5>{{developmentMethod.name}}</h5>
+  <button (click)="selectDevelopmentMethod.emit(developmentMethod)" type="button"
+          class="btn btn-primary ml-auto btn-xs">
+    Select
+  </button>
+</div>
+<p>{{developmentMethod.description}}</p>
+<app-situational-factors-overview *ngIf="needed && needed.length > 0" [provided]="provided"
+                                  [needed]="needed"></app-situational-factors-overview>
