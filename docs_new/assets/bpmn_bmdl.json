@@ -1,0 +1,106 @@
+{
+  "name": "Business Model Development",
+  "uri": "http://localhost/schema/bmdl",
+  "prefix": "bmdl",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "ActivityWithType",
+      "extends": ["bpmn:Activity"],
+      "properties": [
+        {
+          "name": "inherit",
+          "type": "Boolean"
+        },
+        {
+          "name": "neededType",
+          "isMany": true,
+          "type": "Type",
+          "xml": {
+            "serialize": "property"
+          }
+        },
+        {
+          "name": "forbiddenType",
+          "isMany": true,
+          "type": "Type",
+          "xml": {
+            "serialize": "property"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ProcessPattern",
+      "extends": ["bpmn:SubProcess"],
+      "properties": [
+        {
+          "name": "processPatternId",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "InnerSubProcess",
+      "extends": ["bpmn:SubProcess"],
+      "properties": [
+        {
+          "name": "taskName",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Type",
+      "properties": [
+        {
+          "name": "list",
+          "type": "String"
+        },
+        {
+          "name": "element",
+          "type": "MethodElement"
+        }
+      ]
+    },
+    {
+      "name": "MethodElement",
+      "properties": [
+        {
+          "name": "_id",
+          "type": "String"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "MethodActivity",
+      "extends": ["bpmn:Activity"],
+      "properties": [
+        {
+          "name": "method",
+          "type": "Method"
+        }
+      ]
+    },
+    {
+      "name": "Method",
+      "properties": [
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "id",
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "enumerations": []
+}
