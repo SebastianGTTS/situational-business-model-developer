@@ -19,13 +19,13 @@ and [bpmn-js](https://bpmn.io/toolkit/bpmn-js/) to run directly in the webbrowse
 
 ## Screenshots
 
-| Create Running Method | Kanban board to enact method |
-| ------ | ------ |
-| [![Create Running Method](images/create_running_method.png "Create Running Method")](images/create_running_method.png) | [![Kanban board to enact method](images/kanban_board.png "Kanban board to enact method")](images/kanban_board.png) |
+| Create Running Method                                                                                                  | Kanban board to enact method                                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [![Create Running Method](images/create_running_method.png 'Create Running Method')](images/create_running_method.png) | [![Kanban board to enact method](images/kanban_board.png 'Kanban board to enact method')](images/kanban_board.png) |
 
-| Execute Building Block |
-| ------ |
-| [![Execute Building Block](images/execute_method.png "Execute Building Block")](images/execute_method.png) |
+| Execute Building Block                                                                                     |
+| ---------------------------------------------------------------------------------------------------------- |
+| [![Execute Building Block](images/execute_method.png 'Execute Building Block')](images/execute_method.png) |
 
 ## Installation
 

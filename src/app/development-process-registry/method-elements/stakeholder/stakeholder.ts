@@ -1,7 +1,8 @@
-import { MethodElement } from '../method-element';
+import { MethodElement, MethodElementEntry } from '../method-element';
+
+export interface StakeholderEntry extends MethodElementEntry {}
 
 export class Stakeholder extends MethodElement {
-
   static readonly typeName = 'Stakeholder';
 
   constructor(stakeholder: Partial<Stakeholder>) {
@@ -14,14 +15,13 @@ export class Stakeholder extends MethodElement {
    *
    * @param stakeholder the new values of this stakeholder (values will be copied to the current object)
    */
-  update(stakeholder: Partial<Stakeholder>) {
+  update(stakeholder: Partial<Stakeholder>): void {
     Object.assign(this, stakeholder);
   }
 
-  toPouchDb(): any {
+  toDb(): StakeholderEntry {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
     };
   }
-
 }

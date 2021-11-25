@@ -6,19 +6,18 @@ import { FeatureModel } from '../../../canvas-meta-model/feature-model';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.css']
+  styleUrls: ['./canvas.component.css'],
 })
 export class CanvasComponent {
-
   @Input() featureModel: FeatureModel;
   @Input() instance: Instance;
 
   @Input() conformance: ConformanceReport = new ConformanceReport();
   @Input() conformanceOptions: {
-    showWarnings: boolean,
-    showStrengths: boolean,
-    showHints: boolean,
-    showPatternHints: boolean,
+    showWarnings: boolean;
+    showStrengths: boolean;
+    showHints: boolean;
+    showPatternHints: boolean;
   } = {
     showHints: false,
     showPatternHints: false,
@@ -33,13 +32,17 @@ export class CanvasComponent {
 
   @Input() editable = true;
 
-
   @Output() addFeatureModal = new EventEmitter<string>();
   @Output() deleteFeatureModal = new EventEmitter<string>();
 
-
   getHeatmapStyle(featureId: string) {
-    return this.percentages ? {'background-color': 'hsla(' + (this.percentages[featureId] / 100) * 120 + ', 100%, 66%, 0.3)'} : {};
+    return this.percentages
+      ? {
+          'background-color':
+            'hsla(' +
+            (this.percentages[featureId] / 100) * 120 +
+            ', 100%, 66%, 0.3)',
+        }
+      : {};
   }
-
 }

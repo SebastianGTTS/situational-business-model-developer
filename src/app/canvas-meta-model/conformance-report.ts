@@ -1,5 +1,12 @@
-export class ConformanceReport {
+import { Instance } from './instance';
+import { Feature } from './feature';
 
+export interface PatternHint {
+  pattern: Instance;
+  missingFeatures: Feature[];
+}
+
+export class ConformanceReport {
   errorFeatureIds: string[] = [];
   errors: string[] = [];
   warningFeatureIds: string[] = [];
@@ -9,11 +16,10 @@ export class ConformanceReport {
   hintFeatureIds: string[] = [];
   hints: string[] = [];
   patternHintFeatureIds: string[] = [];
-  patternHints: string[] = [];
-  usedPatterns: string[] = [];
+  patternHints: PatternHint[] = [];
+  usedPatterns: Instance[] = [];
 
   constructor(conformanceReport: Partial<ConformanceReport> = {}) {
     Object.assign(this, conformanceReport);
   }
-
 }

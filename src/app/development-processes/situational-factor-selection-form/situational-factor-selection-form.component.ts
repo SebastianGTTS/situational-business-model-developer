@@ -1,19 +1,25 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { FormBuilder, FormControl, FormGroupDirective } from '@angular/forms';
 import { filter, map, tap } from 'rxjs/operators';
-import {
-  SituationalFactorDefinition
-} from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
 import { getTypeaheadInputPipe } from '../../shared/utils';
 
 @Component({
   selector: 'app-situational-factor-selection-form',
   templateUrl: './situational-factor-selection-form.component.html',
-  styleUrls: ['./situational-factor-selection-form.component.css']
+  styleUrls: ['./situational-factor-selection-form.component.css'],
 })
-export class SituationalFactorSelectionFormComponent implements OnInit, OnDestroy {
-
+export class SituationalFactorSelectionFormComponent
+  implements OnInit, OnDestroy
+{
   @Input() methodElements: SituationalFactorDefinition[];
   @Input() listNames: string[];
 
@@ -27,23 +33,31 @@ export class SituationalFactorSelectionFormComponent implements OnInit, OnDestro
 
   constructor(
     private fb: FormBuilder,
-    private formGroupDirective: FormGroupDirective,
-  ) {
-  }
+    private formGroupDirective: FormGroupDirective
+  ) {}
 
   ngOnInit() {
-    this.listChangeSubscription = this.listControl.valueChanges.pipe(
-      filter((value) => this.factorControl.value && this.factorControl.value.list !== value),
-      tap(() => this.elementControl.setValue({
-        factor: null,
-        value: null,
-      })),
-    ).subscribe();
-    this.factorChangeSubscription = this.factorControl.valueChanges.pipe(
-      tap(() => this.valueControl.setValue(null)),
-      filter((value) => value && this.listControl.value !== value.list),
-      tap((value) => this.listControl.setValue(value.list)),
-    ).subscribe();
+    this.listChangeSubscription = this.listControl.valueChanges
+      .pipe(
+        filter(
+          (value) =>
+            this.factorControl.value && this.factorControl.value.list !== value
+        ),
+        tap(() =>
+          this.elementControl.setValue({
+            factor: null,
+            value: null,
+          })
+        )
+      )
+      .subscribe();
+    this.factorChangeSubscription = this.factorControl.valueChanges
+      .pipe(
+        tap(() => this.valueControl.setValue(null)),
+        filter((value) => value && this.listControl.value !== value.list),
+        tap((value) => this.listControl.setValue(value.list))
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -59,20 +73,31 @@ export class SituationalFactorSelectionFormComponent implements OnInit, OnDestro
 
   searchLists = (input: Observable<string>) => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
-      map((term) => this.listNames.filter((listItem) => listItem.toLowerCase().includes(term.toLowerCase())).slice(0, 7)),
+      map((term) =>
+        this.listNames
+          .filter((listItem) =>
+            listItem.toLowerCase().includes(term.toLowerCase())
+          )
+          .slice(0, 7)
+      )
     );
-  }
+  };
 
   searchElements = (input: Observable<string>) => {
     return merge(getTypeaheadInputPipe(input), this.openElementInput).pipe(
-      map(
-        (term) => this.methodElements.filter((methodElement) =>
-          (!this.listControl.value || methodElement.list.toLowerCase() === this.listControl.value.toLowerCase()) &&
-          methodElement.name.toLowerCase().includes(term.toLowerCase())
-        ).slice(0, 7)
-      ),
+      map((term) =>
+        this.methodElements
+          .filter(
+            (methodElement) =>
+              (!this.listControl.value ||
+                methodElement.list.toLowerCase() ===
+                  this.listControl.value.toLowerCase()) &&
+              methodElement.name.toLowerCase().includes(term.toLowerCase())
+          )
+          .slice(0, 7)
+      )
     );
-  }
+  };
 
   get values() {
     if (!this.factorControl.value) {
@@ -104,5 +129,4 @@ export class SituationalFactorSelectionFormComponent implements OnInit, OnDestro
   get formGroup() {
     return this.formGroupDirective.control;
   }
-
 }

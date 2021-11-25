@@ -1,44 +1,24 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { Domain } from '../../development-process-registry/knowledge/domain';
+import { Component } from '@angular/core';
 import { DomainService } from '../../development-process-registry/knowledge/domain.service';
+import { DomainLoaderService } from '../shared/domain-loader.service';
 
 @Component({
   selector: 'app-domain',
   templateUrl: './domain.component.html',
-  styleUrls: ['./domain.component.css']
+  styleUrls: ['./domain.component.css'],
+  providers: [DomainLoaderService],
 })
-export class DomainComponent implements OnInit, OnDestroy {
-
-  domain: Domain;
-
-  private routeSubscription: Subscription;
-
+export class DomainComponent {
   constructor(
-    private domainService: DomainService,
-    private route: ActivatedRoute,
-  ) {
+    private domainLoaderService: DomainLoaderService,
+    private domainService: DomainService
+  ) {}
+
+  async updateDescription(description: any) {
+    await this.domainService.update(this.domain._id, description);
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe(map => this.load(map.get('id')));
+  get domain() {
+    return this.domainLoaderService.domain;
   }
-
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-  }
-
-  async updateDescription(description: string) {
-    this.domain.description = description;
-    await this.domainService.save(this.domain);
-    await this.load(this.domain._id);
-  }
-
-  async load(id: string) {
-    this.domain = await this.domainService.get(id);
-  }
-
 }

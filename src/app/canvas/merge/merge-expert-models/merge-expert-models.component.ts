@@ -9,14 +9,15 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-merge-expert-models',
   templateUrl: './merge-expert-models.component.html',
-  styleUrls: ['./merge-expert-models.component.css']
+  styleUrls: ['./merge-expert-models.component.css'],
 })
 export class MergeExpertModelsComponent implements OnInit, OnDestroy {
-
   companyModelId: string;
 
   selectedExpertModelList: FeatureModel[];
-  selectedExpertModelForm = this.fb.group({expertModelId: [null, Validators.required]});
+  selectedExpertModelForm = this.fb.group({
+    expertModelId: [null, Validators.required],
+  });
   unselectedExpertModelList: FeatureModel[];
 
   private routeSubscription: Subscription;
@@ -26,14 +27,13 @@ export class MergeExpertModelsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private mergeService: MergeService,
     private router: Router,
-    private route: ActivatedRoute,
-  ) {
-  }
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
       this.companyModelId = paramMap.get('companyModelId');
-      this.loadExpertModels(this.companyModelId);
+      void this.loadExpertModels(this.companyModelId);
     });
   }
 
@@ -44,37 +44,46 @@ export class MergeExpertModelsComponent implements OnInit, OnDestroy {
   }
 
   async selectExpertModel() {
-    await this.mergeService.selectExpertModel(this.companyModelId, this.selectedExpertModelForm.value.expertModelId);
+    await this.mergeService.selectExpertModel(
+      this.companyModelId,
+      this.selectedExpertModelForm.value.expertModelId
+    );
     this.selectedExpertModelForm.reset();
-    this.loadExpertModels(this.companyModelId);
+    await this.loadExpertModels(this.companyModelId);
   }
 
   async unselectExpertModel(expertModelId: string) {
-    await this.mergeService.unselectExpertModel(this.companyModelId, expertModelId);
-    this.loadExpertModels(this.companyModelId);
+    await this.mergeService.unselectExpertModel(
+      this.companyModelId,
+      expertModelId
+    );
+    await this.loadExpertModels(this.companyModelId);
   }
 
-  viewExpertModel(expertModelId: string): void {
-    this.router.navigate(['/expertModels', expertModelId]);
+  async viewExpertModel(expertModelId: string): Promise<void> {
+    await this.router.navigate(['/expertModels', expertModelId]);
   }
 
-  mergeExpertModel(expertModelId: string): void {
-    this.router.navigate(['/merge', this.companyModelId, expertModelId]);
+  async mergeExpertModel(expertModelId: string): Promise<void> {
+    void this.router.navigate(['/merge', this.companyModelId, expertModelId]);
   }
 
-  private loadExpertModels(companyModelId: string) {
-    this.loadSelectedExpertModels(companyModelId);
-    this.loadUnselectedExpertModels(companyModelId);
+  private async loadExpertModels(companyModelId: string): Promise<void> {
+    await this.loadSelectedExpertModels(companyModelId);
+    await this.loadUnselectedExpertModels(companyModelId);
   }
 
-  private async loadSelectedExpertModels(companyModelId: string) {
-    const result = await this.mergeService.getSelectedExpertModels(companyModelId);
-    this.selectedExpertModelList = result.docs;
+  private async loadSelectedExpertModels(
+    companyModelId: string
+  ): Promise<void> {
+    this.selectedExpertModelList =
+      await this.mergeService.getSelectedExpertModels(companyModelId);
   }
 
-  private async loadUnselectedExpertModels(companyModelId: string) {
-    const result = await this.mergeService.getUnselectedExpertModels(companyModelId);
-    this.unselectedExpertModelList = result.docs;
+  private async loadUnselectedExpertModels(
+    companyModelId: string
+  ): Promise<void> {
+    this.unselectedExpertModelList =
+      await this.mergeService.getUnselectedExpertModels(companyModelId);
   }
-
 }

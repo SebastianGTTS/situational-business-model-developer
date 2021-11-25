@@ -3,10 +3,9 @@ import { DevelopmentProcessRegistryModule } from './development-process-registry
 import { MetaModelApi, MetaModelDefinition } from './meta-model-definition';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
 export class MetaModelService {
-
   metaModels: MetaModelDefinition[] = [];
 
   registerMetaModel(definition: MetaModelDefinition) {
@@ -18,7 +17,8 @@ export class MetaModelService {
   }
 
   getMetaModelDefinition(metaModelType: any): MetaModelDefinition {
-    return this.metaModels.find((metaModelDefinition) => metaModelDefinition.type === metaModelType);
+    return this.metaModels.find(
+      (metaModelDefinition) => metaModelDefinition.type === metaModelType
+    );
   }
-
 }

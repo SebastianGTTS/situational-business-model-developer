@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { RunningProcess } from './running-process';
 import { StepArtifact } from './step-artifact';
-import { ArtifactData, ArtifactDataReference, ArtifactDataType } from './artifact-data';
+import { ArtifactDataType } from './artifact-data';
 import { ModuleService } from '../module-api/module.service';
-import { MetaModelService } from '../meta-model.service';
 import { Router } from '@angular/router';
 import { RunningMethod } from './running-method';
 import { Artifact } from '../method-elements/artifact/artifact';
@@ -13,6 +12,8 @@ import { Step } from './step';
 import { MethodExecutionOutput } from '../module-api/method-execution-output';
 import { MethodExecutionInput } from '../module-api/method-execution-input';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
+import { ArtifactDataService } from './artifact-data.service';
+import { OutputArtifactMapping } from './output-artifact-mapping';
 
 export enum MethodExecutionErrors {
   NO_METHOD = 'The node has no method defined',
@@ -24,20 +25,18 @@ export enum MethodExecutionErrors {
   ALREADY_PREPARED = 'The execution of this step is already prepared',
   STEPS_LEFT = 'There are steps left in this method',
   WRONG_STEP = 'Trying to finish the wrong step',
-  WRONG_ARTIFACT_TYPE = 'You can only delete reference artifacts',
+  MISSING_OUTPUT = 'The output artifacts are not correctly mapped',
 }
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
 export class MethodExecutionService {
-
   constructor(
-    private metaModelService: MetaModelService,
+    private artifactDataService: ArtifactDataService,
     private moduleService: ModuleService,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
   /**
    * Add a method to a running process that is executed out of the defined process
@@ -46,10 +45,12 @@ export class MethodExecutionService {
    * @param decision the method decisions
    */
   addMethod(runningProcess: RunningProcess, decision: Decision): void {
-    runningProcess.addTodoMethod(new RunningMethod({
-      decision,
-      steps: decision.method.executionSteps.map(() => new Step({})),
-    }));
+    runningProcess.addTodoMethod(
+      new RunningMethod({
+        decision,
+        steps: decision.method.executionSteps.map(() => new Step({})),
+      })
+    );
   }
 
   /**
@@ -70,7 +71,10 @@ export class MethodExecutionService {
    * @param nodeId the node id of the task which includes the method
    * @return the added running method
    */
-  startMethodExecution(runningProcess: RunningProcess, nodeId: string): RunningMethod {
+  startMethodExecution(
+    runningProcess: RunningProcess,
+    nodeId: string
+  ): RunningMethod {
     if (runningProcess.getRunningMethodByNode(nodeId) != null) {
       throw new Error(MethodExecutionErrors.ALREADY_EXECUTING);
     }
@@ -86,7 +90,10 @@ export class MethodExecutionService {
    * @param runningProcess the running process
    * @param executionId the execution id of the todomethod
    */
-  startTodoMethodExecution(runningProcess: RunningProcess, executionId: string) {
+  startTodoMethodExecution(
+    runningProcess: RunningProcess,
+    executionId: string
+  ) {
     const method = runningProcess.getTodoMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_DEFINED);
@@ -105,7 +112,7 @@ export class MethodExecutionService {
   selectInputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    inputArtifactMapping: { artifact: number, version: number }[]
+    inputArtifactMapping: { artifact: number; version: number }[]
   ): void {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
@@ -134,7 +141,10 @@ export class MethodExecutionService {
    * @param executionId the id of the executed method
    * @return true if the execution step is already prepared
    */
-  isExecutionStepPrepared(runningProcess: RunningProcess, executionId: string): boolean {
+  isExecutionStepPrepared(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): boolean {
     const method = runningProcess.getRunningMethod(executionId);
     return this._isExecutionStepPrepared(method);
   }
@@ -161,7 +171,10 @@ export class MethodExecutionService {
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async prepareExecuteStep(runningProcess: RunningProcess, executionId: string): Promise<void> {
+  async prepareExecuteStep(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
@@ -175,8 +188,13 @@ export class MethodExecutionService {
     if (method.isPrepared()) {
       throw new Error(MethodExecutionErrors.ALREADY_PREPARED);
     }
-    const stepInput = method.getStepArtifacts(method.currentStepNumber, moduleMethod.input.length);
-    const stepArtifacts: StepArtifact[] = await this.copyStepArtifacts(stepInput);
+    const stepInput = method.getStepArtifacts(
+      method.currentStepNumber,
+      moduleMethod.input.length
+    );
+    const stepArtifacts: StepArtifact[] = await this.copyStepArtifacts(
+      stepInput
+    );
     method.setInternalStepArtifacts(stepArtifacts);
   }
 
@@ -186,7 +204,10 @@ export class MethodExecutionService {
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async executeStep(runningProcess: RunningProcess, executionId: string): Promise<void> {
+  async executeStep(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
     if (!this._isExecutionStepPrepared(method)) {
       throw new Error(MethodExecutionErrors.NOT_PREPARED);
@@ -214,7 +235,12 @@ export class MethodExecutionService {
    * @param step the step in the method
    * @param output the output of the method of the module
    */
-  finishExecuteStep(runningProcess: RunningProcess, executionId: string, step: number, output: MethodExecutionOutput): void {
+  finishExecuteStep(
+    runningProcess: RunningProcess,
+    executionId: string,
+    step: number,
+    output: MethodExecutionOutput
+  ): void {
     const method = runningProcess.getRunningMethod(executionId);
     if (!this._isExecutionStepPrepared(method)) {
       throw new Error(MethodExecutionErrors.NOT_PREPARED);
@@ -226,16 +252,49 @@ export class MethodExecutionService {
     const module = this.moduleService.getModule(currentStep.module);
     const moduleMethodDefinition = module.methods[currentStep.method];
     const artifacts = output.outputArtifactData;
-    method.finishStepExecution(artifacts.map((artifactData, index) => new StepArtifact({
-      artifact: new Artifact({
-        metaModel: {
-          name: undefined,
-          type: moduleMethodDefinition.output[index].metaModelType,
-        },
-      }),
-      data: artifactData,
-    })));
-    this.router.navigate(['runningprocess', 'runningprocessview', runningProcess._id, 'method', executionId]).then();
+    method.finishStepExecution(
+      artifacts.map(
+        (artifactData, index) =>
+          new StepArtifact({
+            artifact: new Artifact({
+              metaModel: {
+                name: undefined,
+                type: moduleMethodDefinition.output[index].metaModelType,
+              },
+            }),
+            data: artifactData,
+          })
+      )
+    );
+    void this.router.navigate([
+      'runningprocess',
+      'runningprocessview',
+      runningProcess._id,
+      'method',
+      executionId,
+    ]);
+  }
+
+  /**
+   * Update the output artifact mapping of a method.
+   *
+   * @param runningProcess the running Process
+   * @param executionId the id of the executed method
+   * @param outputArtifacts the mapping of the artifacts
+   */
+  updateOutputArtifacts(
+    runningProcess: RunningProcess,
+    executionId: string,
+    outputArtifacts: OutputArtifactMapping[]
+  ): void {
+    const method = runningProcess.getRunningMethod(executionId);
+    if (method == null) {
+      throw new Error(MethodExecutionErrors.NOT_EXECUTING);
+    }
+    if (method.hasStepsLeft()) {
+      throw new Error(MethodExecutionErrors.STEPS_LEFT);
+    }
+    method.updateOutputArtifacts(outputArtifacts);
   }
 
   /**
@@ -245,10 +304,10 @@ export class MethodExecutionService {
    * @param executionId the id of the executed method
    * @param outputArtifactsMapping the mapping of the artifacts
    */
-  async addOutputArtifacts(
+  private async addOutputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    outputArtifactsMapping: { isDefinition: boolean, artifact: number, artifactName: string, data: ArtifactData }[]
+    outputArtifactsMapping: OutputArtifactMapping[]
   ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
@@ -258,13 +317,19 @@ export class MethodExecutionService {
       throw new Error(MethodExecutionErrors.STEPS_LEFT);
     }
     const artifacts = method.getProcessOutputArtifacts();
-    const methodOutputArtifacts = await this.copyStepArtifacts(method.getOutputArtifacts());
+    const methodOutputArtifacts = await this.copyStepArtifacts(
+      method.getOutputArtifacts()
+    );
     for (let i = 0; i < methodOutputArtifacts.length; i++) {
       if (methodOutputArtifacts[i] != null) {
         outputArtifactsMapping[i].data = methodOutputArtifacts[i].data;
       }
     }
-    runningProcess.addOutputArtifacts(executionId, artifacts, outputArtifactsMapping);
+    runningProcess.addOutputArtifacts(
+      executionId,
+      artifacts,
+      outputArtifactsMapping
+    );
   }
 
   /**
@@ -273,7 +338,10 @@ export class MethodExecutionService {
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async stopMethodExecution(runningProcess: RunningProcess, executionId: string): Promise<void> {
+  async stopMethodExecution(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
@@ -281,6 +349,14 @@ export class MethodExecutionService {
     if (method.hasStepsLeft()) {
       throw new Error(MethodExecutionErrors.STEPS_LEFT);
     }
+    if (!method.hasOutputArtifactsCorrectlyDefined()) {
+      throw new Error(MethodExecutionErrors.MISSING_OUTPUT);
+    }
+    await this.addOutputArtifacts(
+      runningProcess,
+      executionId,
+      method.outputArtifacts
+    );
     await this.removeUnusedArtifacts(method);
     runningProcess.addExecutedMethod({
       nodeId: method.nodeId,
@@ -297,7 +373,10 @@ export class MethodExecutionService {
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async abortMethodExecution(runningProcess: RunningProcess, executionId: string): Promise<void> {
+  async abortMethodExecution(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
@@ -307,48 +386,25 @@ export class MethodExecutionService {
   }
 
   /**
-   * Removes an artifact reference
-   *
-   * @param artifact the artifact to remove
-   */
-  async removeArtifact(artifact: ArtifactData): Promise<void> {
-    if (artifact.type !== ArtifactDataType.REFERENCE) {
-      throw new Error(MethodExecutionErrors.WRONG_ARTIFACT_TYPE);
-    }
-    const reference: ArtifactDataReference = artifact.data;
-    const api = this.metaModelService.getMetaModelApi(reference.type);
-    try {
-      await api.remove(reference);
-    } catch (error) {
-      if (error.status === 404 && error.name === 'not_found' && error.reason === 'deleted') {
-        console.log(reference.id + ' (' + reference.type + ') already deleted');
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  /**
    * Copy the step artifacts
    *
    * @param stepArtifacts the step artifacts
    * @return the copied step artifacts
    */
-  private async copyStepArtifacts(stepArtifacts: StepArtifact[]): Promise<StepArtifact[]> {
-    return Promise.all(stepArtifacts.map(async (artifact) => {
-      if (artifact.data.type === ArtifactDataType.REFERENCE) {
-        const reference: ArtifactDataReference = artifact.data.data;
-        const api = this.metaModelService.getMetaModelApi(reference.type);
-        return new StepArtifact({
-          ...artifact,
-          data: new ArtifactData({
-            ...artifact.data,
-            data: await api.copy(reference),
-          }),
-        });
-      }
-      return new StepArtifact(artifact);
-    }));
+  private async copyStepArtifacts(
+    stepArtifacts: StepArtifact[]
+  ): Promise<StepArtifact[]> {
+    return Promise.all(
+      stepArtifacts.map(async (artifact) => {
+        if (artifact.data.type === ArtifactDataType.REFERENCE) {
+          return new StepArtifact({
+            ...artifact,
+            data: await this.artifactDataService.copy(artifact.data),
+          });
+        }
+        return new StepArtifact(artifact);
+      })
+    );
   }
 
   /**
@@ -358,9 +414,11 @@ export class MethodExecutionService {
    */
   private async removeUnusedArtifacts(method: RunningMethod): Promise<void> {
     const artifacts = method.getAllStepArtifacts();
-    const toRemove = artifacts.filter((artifact) => artifact.data.type === ArtifactDataType.REFERENCE);
+    const toRemove = artifacts.filter(
+      (artifact) => artifact.data.type === ArtifactDataType.REFERENCE
+    );
     for (const artifact of toRemove) {
-      await this.removeArtifact(artifact.data);
+      await this.artifactDataService.remove(artifact.data);
     }
   }
 }

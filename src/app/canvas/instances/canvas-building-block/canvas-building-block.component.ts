@@ -6,7 +6,7 @@ import { ConformanceReport } from '../../../canvas-meta-model/conformance-report
 @Component({
   selector: 'app-canvas-building-block',
   templateUrl: './canvas-building-block.component.html',
-  styleUrls: ['./canvas-building-block.component.css']
+  styleUrls: ['./canvas-building-block.component.css'],
 })
 /**
  * Internal class to display single business model decisions of the business model canvas.
@@ -14,7 +14,6 @@ import { ConformanceReport } from '../../../canvas-meta-model/conformance-report
  * @author Sebastian Gottschalk
  */
 export class CanvasBuildingBlockComponent {
-
   @Input() feature: Feature;
   @Input() levelDepth = 1;
   @Input() instance: Instance;
@@ -34,8 +33,7 @@ export class CanvasBuildingBlockComponent {
   /**
    * Create a new instance of the CanvasBuildingBlockComponent.
    */
-  constructor() {
-  }
+  constructor() {}
 
   /**
    * Emit Event to add feature.
@@ -72,5 +70,4 @@ export class CanvasBuildingBlockComponent {
   asList(map: { [id: string]: Feature }): Feature[] {
     return Object.values(map);
   }
-
 }

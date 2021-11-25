@@ -1,7 +1,6 @@
 import ReplaceMenuProvider from 'bpmn-js/lib/features/popup-menu/ReplaceMenuProvider';
 
 export default class BmProcessPatternsReplaceMenuProvider extends ReplaceMenuProvider {
-
   _createEntries(element, replaceOptions) {
     const allowedTargetTypes = new Set<string>([
       'bpmn:StartEvent',
@@ -27,5 +26,4 @@ export default class BmProcessPatternsReplaceMenuProvider extends ReplaceMenuPro
   _getLoopEntries() {
     return [];
   }
-
 }

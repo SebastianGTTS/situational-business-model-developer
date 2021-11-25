@@ -1,7 +1,19 @@
-import { SituationalFactorDefinition } from './situational-factor-definition';
+import {
+  SituationalFactorDefinition,
+  SituationalFactorDefinitionEntry,
+} from './situational-factor-definition';
+import { Equality } from '../../../shared/equality';
+import { DatabaseModelPart } from '../../../database/database-model-part';
+import { DatabaseEntry } from '../../../database/database-entry';
 
-export class SituationalFactor {
+export interface SituationalFactorEntry extends DatabaseEntry {
+  factor: SituationalFactorDefinitionEntry;
+  value: string;
+}
 
+export class SituationalFactor
+  implements Equality<SituationalFactor>, DatabaseModelPart
+{
   factor: SituationalFactorDefinition;
   value: string;
 
@@ -11,7 +23,9 @@ export class SituationalFactor {
    * @param situationalFactors the situational factors
    * @returns the situational factors map factor list to name to factor value
    */
-  static createMap(situationalFactors: SituationalFactor[]): { [listName: string]: { [factorName: string]: string } } {
+  static createMap(situationalFactors: SituationalFactor[]): {
+    [listName: string]: { [factorName: string]: string };
+  } {
     const map = {};
     situationalFactors.forEach((factor) => {
       if (!(factor.factor.list in map)) {
@@ -27,11 +41,17 @@ export class SituationalFactor {
     this.factor = new SituationalFactorDefinition(this.factor);
   }
 
-  toPouchDb(): any {
+  toDb(): SituationalFactorEntry {
     return {
-      factor: this.factor.toPouchDb(),
+      factor: this.factor.toDb(),
       value: this.value,
     };
   }
 
+  equals(other: SituationalFactor): boolean {
+    if (other == null) {
+      return false;
+    }
+    return other.value === this.value && this.factor.equals(other.factor);
+  }
 }

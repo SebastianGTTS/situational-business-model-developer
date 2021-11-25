@@ -7,8 +7,10 @@
   </div>
   <div class="modal-body">
     <div class="text-muted pt-3">
-      <app-process-pattern-types-form [types]="modalTask"
-                                      (submitTypesForm)="updateTypes($event)"></app-process-pattern-types-form>
+      <app-process-pattern-types-form
+        [types]="modalTask"
+        (submitTypesForm)="updateTypes($event)"
+      ></app-process-pattern-types-form>
     </div>
   </div>
 </ng-template>
@@ -17,6 +19,8 @@
 <div class="container">
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Controls</h6>
-    <button class="btn btn-primary" (click)="saveDiagram()">Save Diagram</button>
+    <button class="btn btn-primary" (click)="saveDiagram()">
+      Save Diagram
+    </button>
   </div>
 </div>

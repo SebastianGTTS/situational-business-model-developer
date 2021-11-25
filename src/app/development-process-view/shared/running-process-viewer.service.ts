@@ -6,20 +6,16 @@ import rbmp from '../../../assets/bpmn_running_process.json';
 import { BpmnViewerService } from './bpmn-viewer.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RunningProcessViewerService extends BpmnViewerService {
-
   getBpmnViewer(): BpmnViewer {
     return new BpmnViewer({
-      additionalModules: [
-        runningProcessView,
-      ],
+      additionalModules: [runningProcessView],
       moddleExtensions: {
         bmdl,
         rbmp,
-      }
+      },
     });
   }
-
 }

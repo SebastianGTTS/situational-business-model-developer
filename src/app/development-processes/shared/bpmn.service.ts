@@ -16,10 +16,9 @@ import { Decision } from '../../development-process-registry/bm-process/decision
 import { BpmnViewerService } from '../../development-process-view/shared/bpmn-viewer.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BpmnService extends BpmnViewerService {
-
   /**
    * Get a BpmnModeler with customizations to support the creation of process patterns
    *
@@ -27,12 +26,10 @@ export class BpmnService extends BpmnViewerService {
    */
   getBpmnProcessPatternModeler(): BpmnModeler {
     return new BpmnModeler({
-      additionalModules: [
-        bmProcessPatterns,
-      ],
+      additionalModules: [bmProcessPatterns],
       moddleExtensions: {
         bmdl,
-      }
+      },
     });
   }
 
@@ -43,22 +40,31 @@ export class BpmnService extends BpmnViewerService {
    */
   getBmProcessModeler(): BpmnModeler {
     return new BpmnModeler({
-      additionalModules: [
-        bmProcess,
-      ],
+      additionalModules: [bmProcess],
       moddleExtensions: {
         bmdl,
       },
     });
   }
 
-  appendBpmn(modeler: BpmnModeler, processPattern: ProcessPattern, lastElement): Promise<void> {
+  appendBpmn(
+    modeler: BpmnModeler,
+    processPattern: ProcessPattern,
+    lastElement
+  ): Promise<void> {
     const processPatternModeler = this.getBmProcessModeler();
-    return processPatternModeler.importXML(processPattern.pattern).then(() => {
-      const operation = new BpmnAttachOperation(modeler, processPatternModeler, lastElement);
-      operation.init();
-      operation.attach(processPattern.name, processPattern._id);
-    }).finally(() => processPatternModeler.destroy());
+    return processPatternModeler
+      .importXML(processPattern.pattern)
+      .then(() => {
+        const operation = new BpmnAttachOperation(
+          modeler,
+          processPatternModeler,
+          lastElement
+        );
+        operation.init();
+        operation.attach(processPattern.name, processPattern._id);
+      })
+      .finally(() => processPatternModeler.destroy());
   }
 
   /**
@@ -88,8 +94,11 @@ export class BpmnService extends BpmnViewerService {
    * @param forbiddenTypes the forbidden types of the method
    */
   setTypesOfActivity(
-    modeler: BpmnModeler, activityId: string, inherit: boolean,
-    neededTypes: { list: string, element: Type }[], forbiddenTypes: { list: string, element: Type }[],
+    modeler: BpmnModeler,
+    activityId: string,
+    inherit: boolean,
+    neededTypes: { list: string; element: Type }[],
+    forbiddenTypes: { list: string; element: Type }[]
   ) {
     const moddle = modeler.get('moddle');
     const modeling = modeler.get('modeling');
@@ -107,14 +116,20 @@ export class BpmnService extends BpmnViewerService {
    * @param modeler the modeler
    * @param activityId the id of the activity
    */
-  getTypesOfActivity(modeler: BpmnModeler, activityId: string): {
-    neededType: { list: string, element: { _id: string, name: string } }[],
-    forbiddenType: { list: string, element: { _id: string, name: string } }[],
+  getTypesOfActivity(
+    modeler: BpmnModeler,
+    activityId: string
+  ): {
+    neededType: { list: string; element: { _id: string; name: string } }[];
+    forbiddenType: { list: string; element: { _id: string; name: string } }[];
   } {
     const elementRegistry = modeler.get('elementRegistry');
     const activity = elementRegistry.get(activityId);
     let businessObject = activity.businessObject;
-    while (businessObject && (businessObject.inherit || !businessObject.neededType)) {
+    while (
+      businessObject &&
+      (businessObject.inherit || !businessObject.neededType)
+    ) {
       businessObject = businessObject.$parent;
     }
     return {
@@ -130,14 +145,18 @@ export class BpmnService extends BpmnViewerService {
    * @param taskElement the task element
    * @param developmentMethod the development method
    */
-  selectDevelopmentMethodForProcessTask(modeler: BpmnModeler, taskElement, developmentMethod: DevelopmentMethod) {
+  selectDevelopmentMethodForProcessTask(
+    modeler: BpmnModeler,
+    taskElement,
+    developmentMethod: DevelopmentMethod
+  ) {
     const moddle = modeler.get('moddle');
     const modeling = modeler.get('modeling');
     modeling.updateProperties(taskElement, {
       method: moddle.create('bmdl:Method', {
         name: developmentMethod.name,
         id: developmentMethod._id,
-      })
+      }),
     });
   }
 
@@ -149,16 +168,27 @@ export class BpmnService extends BpmnViewerService {
    */
   removeDevelopmentMethodFromProcessTask(modeler: BpmnModeler, taskElement) {
     const modeling = modeler.get('modeling');
-    modeling.updateProperties(taskElement, {method: null});
+    modeling.updateProperties(taskElement, { method: null });
   }
 
-  insertProcessPatternIntoCallActivity(modeler: BpmnModeler, callActivityElement, processPattern: ProcessPattern) {
+  insertProcessPatternIntoCallActivity(
+    modeler: BpmnModeler,
+    callActivityElement,
+    processPattern: ProcessPattern
+  ) {
     const processPatternModeler = this.getBmProcessModeler();
-    return processPatternModeler.importXML(processPattern.pattern).then(() => {
-      const operation = new BpmnInsertOperation(modeler, processPatternModeler, callActivityElement);
-      operation.init();
-      operation.insert(processPattern.name, processPattern._id);
-    }).finally(() => processPatternModeler.destroy());
+    return processPatternModeler
+      .importXML(processPattern.pattern)
+      .then(() => {
+        const operation = new BpmnInsertOperation(
+          modeler,
+          processPatternModeler,
+          callActivityElement
+        );
+        operation.init();
+        operation.insert(processPattern.name, processPattern._id);
+      })
+      .finally(() => processPatternModeler.destroy());
   }
 
   /**
@@ -168,7 +198,8 @@ export class BpmnService extends BpmnViewerService {
    * @returns elements that have a method defined
    */
   getActivitiesWithMethod(modeler: BpmnModeler): any[] {
-    return modeler.get('elementRegistry')
+    return modeler
+      .get('elementRegistry')
       .filter((element) => element.businessObject.get('method'));
   }
 
@@ -179,8 +210,9 @@ export class BpmnService extends BpmnViewerService {
    * @returns used method ids
    */
   getUsedMethodIds(modeler: BpmnModeler): string[] {
-    return this.getActivitiesWithMethod(modeler)
-      .map((element) => element.businessObject.get('method').get('id'));
+    return this.getActivitiesWithMethod(modeler).map((element) =>
+      element.businessObject.get('method').get('id')
+    );
   }
 
   /**
@@ -190,7 +222,8 @@ export class BpmnService extends BpmnViewerService {
    * @returns elements that are used as a pattern
    */
   getPatterns(modeler: BpmnModeler) {
-    return modeler.get('elementRegistry')
+    return modeler
+      .get('elementRegistry')
       .filter((element) => element.businessObject.get('processPatternId'));
   }
 
@@ -201,8 +234,9 @@ export class BpmnService extends BpmnViewerService {
    * @returns used method ids
    */
   getUsedPatternIds(modeler: BpmnModeler): string[] {
-    return this.getPatterns(modeler)
-      .map((element) => element.businessObject.get('processPatternId'));
+    return this.getPatterns(modeler).map((element) =>
+      element.businessObject.get('processPatternId')
+    );
   }
 
   /**
@@ -211,15 +245,16 @@ export class BpmnService extends BpmnViewerService {
    * @param modeler the modeler of the current model
    * @param decisions the decisions of the bm process
    */
-  checkArtifacts(modeler: BpmnModeler, decisions: { [elementId: string]: Decision }): { [elementId: string]: Artifact[] } {
+  checkArtifacts(
+    modeler: BpmnModeler,
+    decisions: { [elementId: string]: Decision }
+  ): { [elementId: string]: Artifact[] } {
     const operation = new BpmnCheckArtifacts(modeler, decisions);
     return operation.checkArtifacts();
   }
-
 }
 
 class BpmnOperation {
-
   readonly currentElementRegistry;
   readonly currentElementFactory;
   readonly currentBpmnFactory;
@@ -234,8 +269,7 @@ class BpmnOperation {
     this.currentModeling = current.get('modeling');
   }
 
-  init() {
-  }
+  init() {}
 
   /**
    * Reconnect an already existing connection
@@ -245,9 +279,12 @@ class BpmnOperation {
    * @param oldConnection the old connection
    */
   reconnect(source, target, oldConnection) {
-    const flowBusinessObject = this.currentBpmnFactory.create(oldConnection.businessObject.$type, {
-      name: oldConnection.businessObject.name,
-    });
+    const flowBusinessObject = this.currentBpmnFactory.create(
+      oldConnection.businessObject.$type,
+      {
+        name: oldConnection.businessObject.name,
+      }
+    );
     let waypoints: any[] = oldConnection.waypoints.slice();
     if (oldConnection.source !== source) {
       // Find index of last point that is in the new source
@@ -261,7 +298,10 @@ class BpmnOperation {
       if (index !== null) {
         waypoints = waypoints.slice(index);
       } else if (waypoints.length > 0) {
-        waypoints.unshift({x: source.x + source.width / 2, y: source.y + source.height / 2});
+        waypoints.unshift({
+          x: source.x + source.width / 2,
+          y: source.y + source.height / 2,
+        });
       }
     }
     if (oldConnection.target !== target) {
@@ -276,7 +316,10 @@ class BpmnOperation {
       if (index !== null) {
         waypoints = waypoints.slice(0, index + 1);
       } else if (waypoints.length > 0) {
-        waypoints.push({x: target.x + source.width / 2, y: target.y + target.height / 2});
+        waypoints.push({
+          x: target.x + source.width / 2,
+          y: target.y + target.height / 2,
+        });
       }
     }
     const flowElement = this.currentElementFactory.createConnection({
@@ -284,14 +327,23 @@ class BpmnOperation {
       businessObject: flowBusinessObject,
       waypoints: waypoints.length > 1 ? waypoints : undefined,
     });
-    this.currentModeling.createConnection(source, target, flowElement, oldConnection.parent);
+    this.currentModeling.createConnection(
+      source,
+      target,
+      flowElement,
+      oldConnection.parent
+    );
     if (flowElement.label) {
-      this.currentModeling.updateLabel(flowElement, oldConnection.businessObject.name, {
-        x: oldConnection.label.x,
-        y: oldConnection.label.y,
-        height: oldConnection.label.height,
-        width: oldConnection.label.width,
-      });
+      this.currentModeling.updateLabel(
+        flowElement,
+        oldConnection.businessObject.name,
+        {
+          x: oldConnection.label.x,
+          y: oldConnection.label.y,
+          height: oldConnection.label.height,
+          width: oldConnection.label.width,
+        }
+      );
     }
   }
 
@@ -304,22 +356,24 @@ class BpmnOperation {
   copyBpmnData(oldElement, newElement) {
     this.currentModeling.updateProperties(newElement, {
       inherit: oldElement.businessObject.get('inherit'),
-      neededType: oldElement.businessObject.get('neededType').map((element) => mapTypes(this.currentModdle, element)),
-      forbiddenType: oldElement.businessObject.get('forbiddenType').map((element) => mapTypes(this.currentModdle, element)),
+      neededType: oldElement.businessObject
+        .get('neededType')
+        .map((element) => mapTypes(this.currentModdle, element)),
+      forbiddenType: oldElement.businessObject
+        .get('forbiddenType')
+        .map((element) => mapTypes(this.currentModdle, element)),
     });
   }
-
 }
 
 class BpmnAppendOperation extends BpmnOperation {
-
   readonly appendElementRegistry;
 
   readonly suffix = '_' + String(Date.now());
 
-  oldBoundaries: { x: number, y: number, width: number, height: number } = null;
-  processPoint: { x: number, y: number } = null;
-  processSize: { width: number, height: number };
+  oldBoundaries: { x: number; y: number; width: number; height: number } = null;
+  processPoint: { x: number; y: number } = null;
+  processSize: { width: number; height: number };
 
   constructor(current: BpmnModeler, append: BpmnModeler) {
     super(current);
@@ -333,7 +387,11 @@ class BpmnAppendOperation extends BpmnOperation {
   }
 
   private calculateOldBoundaries() {
-    const bbox = getBBox(this.appendElementRegistry.filter((element) => !is(element, 'bpmn:Process')));
+    const bbox = getBBox(
+      this.appendElementRegistry.filter(
+        (element) => !is(element, 'bpmn:Process')
+      )
+    );
     this.oldBoundaries = {
       x: bbox.x,
       y: bbox.y,
@@ -355,8 +413,11 @@ class BpmnAppendOperation extends BpmnOperation {
    * @param point the point
    * @returns the translated point
    */
-  translatePoint(point: { x: number, y: number }): { x: number, y: number } {
-    return {x: point.x - this.oldBoundaries.x + this.processPoint.x + 20, y: point.y - this.oldBoundaries.y + this.processPoint.y + 30};
+  translatePoint(point: { x: number; y: number }): { x: number; y: number } {
+    return {
+      x: point.x - this.oldBoundaries.x + this.processPoint.x + 20,
+      y: point.y - this.oldBoundaries.y + this.processPoint.y + 30,
+    };
   }
 
   /**
@@ -368,9 +429,19 @@ class BpmnAppendOperation extends BpmnOperation {
    * @returns the created subprocess
    */
   createSubProcess(name: string, processPatternId: string, parent): any {
-    const bmBusinessObject = this.currentBpmnFactory.create('bpmn:SubProcess', {name});
-    const bmElement = this.currentElementFactory.createShape({type: 'bpmn:SubProcess', isExpanded: true, businessObject: bmBusinessObject});
-    const subprocess = this.currentModeling.createShape(bmElement, {...this.processPoint, ...this.processSize}, parent);
+    const bmBusinessObject = this.currentBpmnFactory.create('bpmn:SubProcess', {
+      name,
+    });
+    const bmElement = this.currentElementFactory.createShape({
+      type: 'bpmn:SubProcess',
+      isExpanded: true,
+      businessObject: bmBusinessObject,
+    });
+    const subprocess = this.currentModeling.createShape(
+      bmElement,
+      { ...this.processPoint, ...this.processSize },
+      parent
+    );
     this.currentModeling.updateProperties(subprocess, {
       processPatternId,
     });
@@ -383,32 +454,47 @@ class BpmnAppendOperation extends BpmnOperation {
    * @param subProcess the subprocess
    */
   appendNodes(subProcess) {
-    this.appendElementRegistry.filter(
-      (element) => (
-        is(element, 'bpmn:FlowNode') || is(element, 'bpmn:TextAnnotation')
-      ) && is(element, element.type)
-    ).forEach((element) => {
-      const bmBusinessObject = this.currentBpmnFactory.create(element.businessObject.$type, {
-        ...element.businessObject,
-        id: element.businessObject.id + this.suffix,
-        attachedToRef: element.businessObject.attachedToRef
-          ? this.currentElementRegistry.get(element.businessObject.attachedToRef.id + this.suffix)
-          : undefined,
-      });
-      const bmElement = this.currentElementFactory.createShape({type: element.type, businessObject: bmBusinessObject});
-      this.currentModeling.createShape(bmElement, {
-        ...this.translatePoint(element),
-        height: element.height,
-        width: element.width,
-      }, subProcess);
-      if (bmElement.label) {
-        this.currentModeling.updateLabel(bmElement, bmBusinessObject.name, {
-          ...this.translatePoint(element.label),
-          height: element.label.height,
-          width: element.label.width,
+    this.appendElementRegistry
+      .filter(
+        (element) =>
+          (is(element, 'bpmn:FlowNode') ||
+            is(element, 'bpmn:TextAnnotation')) &&
+          is(element, element.type)
+      )
+      .forEach((element) => {
+        const bmBusinessObject = this.currentBpmnFactory.create(
+          element.businessObject.$type,
+          {
+            ...element.businessObject,
+            id: element.businessObject.id + this.suffix,
+            attachedToRef: element.businessObject.attachedToRef
+              ? this.currentElementRegistry.get(
+                  element.businessObject.attachedToRef.id + this.suffix
+                )
+              : undefined,
+          }
+        );
+        const bmElement = this.currentElementFactory.createShape({
+          type: element.type,
+          businessObject: bmBusinessObject,
         });
-      }
-    });
+        this.currentModeling.createShape(
+          bmElement,
+          {
+            ...this.translatePoint(element),
+            height: element.height,
+            width: element.width,
+          },
+          subProcess
+        );
+        if (bmElement.label) {
+          this.currentModeling.updateLabel(bmElement, bmBusinessObject.name, {
+            ...this.translatePoint(element.label),
+            height: element.label.height,
+            width: element.label.width,
+          });
+        }
+      });
   }
 
   /**
@@ -417,33 +503,54 @@ class BpmnAppendOperation extends BpmnOperation {
    * @param subProcess the subprocess in which the connections should be created
    */
   connectNodes(subProcess) {
-    this.appendElementRegistry.filter(
-      (element) => (is(element, 'bpmn:SequenceFlow') || is(element, 'bpmn:Association')) && is(element, element.type)
-    ).forEach((element) => {
-      const connection = element.businessObject;
-      const source = this.currentElementRegistry.get(connection.sourceRef.id + this.suffix);
-      const target = this.currentElementRegistry.get(connection.targetRef.id + this.suffix);
-      const waypoints = element.waypoints.map((waypoint) => this.translatePoint(waypoint));
-      const flowBusinessObject = this.currentBpmnFactory.create(connection.$type, {
-        id: connection.id + this.suffix,
-        name: connection.name,
-      });
-      const flowElement = this.currentElementFactory.createConnection({type: element.type, businessObject: flowBusinessObject, waypoints});
-      this.currentModeling.createConnection(source, target, flowElement, subProcess);
-      if (flowElement.label) {
-        this.currentModeling.updateLabel(flowElement, connection.name, {
-          ...this.translatePoint(element.label),
-          height: element.label.height,
-          width: element.label.width,
+    this.appendElementRegistry
+      .filter(
+        (element) =>
+          (is(element, 'bpmn:SequenceFlow') ||
+            is(element, 'bpmn:Association')) &&
+          is(element, element.type)
+      )
+      .forEach((element) => {
+        const connection = element.businessObject;
+        const source = this.currentElementRegistry.get(
+          connection.sourceRef.id + this.suffix
+        );
+        const target = this.currentElementRegistry.get(
+          connection.targetRef.id + this.suffix
+        );
+        const waypoints = element.waypoints.map((waypoint) =>
+          this.translatePoint(waypoint)
+        );
+        const flowBusinessObject = this.currentBpmnFactory.create(
+          connection.$type,
+          {
+            id: connection.id + this.suffix,
+            name: connection.name,
+          }
+        );
+        const flowElement = this.currentElementFactory.createConnection({
+          type: element.type,
+          businessObject: flowBusinessObject,
+          waypoints,
         });
-      }
-    });
+        this.currentModeling.createConnection(
+          source,
+          target,
+          flowElement,
+          subProcess
+        );
+        if (flowElement.label) {
+          this.currentModeling.updateLabel(flowElement, connection.name, {
+            ...this.translatePoint(element.label),
+            height: element.label.height,
+            width: element.label.width,
+          });
+        }
+      });
   }
-
 }
 
 class BpmnInsertOperation extends BpmnAppendOperation {
-
   private readonly insertElement;
 
   constructor(current: BpmnModeler, append: BpmnModeler, insertElement) {
@@ -472,10 +579,22 @@ class BpmnInsertOperation extends BpmnAppendOperation {
 
   private insertSubProcess(processName: string, processPatternId: string) {
     this.createSpace();
-    const subprocess = this.createSubProcess(processName, processPatternId, this.insertElement.parent);
-    this.insertElement.incoming.forEach((flow) => this.reconnect(flow.source, subprocess, flow));
-    this.insertElement.outgoing.forEach((flow) => this.reconnect(subprocess, flow.target, flow));
-    this.currentModeling.removeElements([...this.insertElement.incoming, ...this.insertElement.outgoing, this.insertElement]);
+    const subprocess = this.createSubProcess(
+      processName,
+      processPatternId,
+      this.insertElement.parent
+    );
+    this.insertElement.incoming.forEach((flow) =>
+      this.reconnect(flow.source, subprocess, flow)
+    );
+    this.insertElement.outgoing.forEach((flow) =>
+      this.reconnect(subprocess, flow.target, flow)
+    );
+    this.currentModeling.removeElements([
+      ...this.insertElement.incoming,
+      ...this.insertElement.outgoing,
+      this.insertElement,
+    ]);
     return subprocess;
   }
 
@@ -494,8 +613,12 @@ class BpmnInsertOperation extends BpmnAppendOperation {
       y: (this.processSize.height - this.insertElement.height) / 2,
     };
     const innerSubProcesses = this.getParents();
-    const leftRightCheck = this.checkLeftSpace(innerSubProcesses) || this.checkRightSpace(innerSubProcesses);
-    const topBottomCheck = this.checkTopSpace(innerSubProcesses) || this.checkBottomSpace(innerSubProcesses);
+    const leftRightCheck =
+      this.checkLeftSpace(innerSubProcesses) ||
+      this.checkRightSpace(innerSubProcesses);
+    const topBottomCheck =
+      this.checkTopSpace(innerSubProcesses) ||
+      this.checkBottomSpace(innerSubProcesses);
     const completeSpaceCheck = this.checkCompleteSpace(innerSubProcesses);
     if (leftRightCheck || (completeSpaceCheck && !topBottomCheck)) {
       this.createLeftSpace(innerSubProcesses, delta.x);
@@ -508,64 +631,72 @@ class BpmnInsertOperation extends BpmnAppendOperation {
   }
 
   private checkLeftSpace(innerSubProcesses) {
-    const condition = (element) => (
+    const condition = (element) =>
       element.x + element.width < this.processPoint.x ||
       element.x > this.insertElement.x ||
       element.y + element.height < this.insertElement.y ||
-      element.y > this.insertElement.y + this.insertElement.height
+      element.y > this.insertElement.y + this.insertElement.height;
+    return (
+      this.checkSpace(condition, innerSubProcesses) ||
+      this.insertElement.parent.x > this.processPoint.x
     );
-    return this.checkSpace(condition, innerSubProcesses) || this.insertElement.parent.x > this.processPoint.x;
   }
 
   private checkRightSpace(innerSubProcesses) {
-    const condition = (element) => (
-      element.x + element.width < this.insertElement.x + this.insertElement.width ||
+    const condition = (element) =>
+      element.x + element.width <
+        this.insertElement.x + this.insertElement.width ||
       element.x > this.processPoint.x + this.processSize.width ||
       element.y + element.height < this.insertElement.y ||
-      element.y > this.insertElement.y + this.insertElement.height
-    );
-    return this.checkSpace(condition, innerSubProcesses) || (
-      this.insertElement.parent.x + this.insertElement.parent.width < this.processPoint.x + this.processSize.width
+      element.y > this.insertElement.y + this.insertElement.height;
+    return (
+      this.checkSpace(condition, innerSubProcesses) ||
+      this.insertElement.parent.x + this.insertElement.parent.width <
+        this.processPoint.x + this.processSize.width
     );
   }
 
   private checkTopSpace(innerSubProcesses) {
-    const condition = (element) => (
+    const condition = (element) =>
       element.x + element.width < this.insertElement.x ||
       element.x > this.insertElement.x + this.insertElement.width ||
       element.y + element.height < this.processPoint.y ||
-      element.y > this.insertElement.y
+      element.y > this.insertElement.y;
+    return (
+      this.checkSpace(condition, innerSubProcesses) ||
+      this.insertElement.parent.y > this.processPoint.y
     );
-    return this.checkSpace(condition, innerSubProcesses) || this.insertElement.parent.y > this.processPoint.y;
   }
 
   private checkBottomSpace(innerSubProcesses) {
-    const condition = (element) => (
+    const condition = (element) =>
       element.x + element.width < this.insertElement.x ||
       element.x > this.insertElement.x + this.insertElement.width ||
-      element.y + element.height < this.insertElement.y + this.insertElement.height ||
-      element.y > this.processPoint.y + this.processSize.height
-    );
-    return this.checkSpace(condition, innerSubProcesses) || (
-      this.insertElement.parent.y + this.insertElement.parent.height < this.processPoint.y + this.processSize.height
+      element.y + element.height <
+        this.insertElement.y + this.insertElement.height ||
+      element.y > this.processPoint.y + this.processSize.height;
+    return (
+      this.checkSpace(condition, innerSubProcesses) ||
+      this.insertElement.parent.y + this.insertElement.parent.height <
+        this.processPoint.y + this.processSize.height
     );
   }
 
   private checkCompleteSpace(innerSubProcesses) {
-    const condition = (element) => (
+    const condition = (element) =>
       element.x + element.width < this.processPoint.x ||
       element.x > this.processPoint.x + this.processSize.width ||
       element.y + element.height < this.processPoint.y ||
-      element.y > this.processPoint.y + this.processSize.height
-    );
+      element.y > this.processPoint.y + this.processSize.height;
     return this.checkSpace(condition, innerSubProcesses);
   }
 
   private checkSpace(condition: (element) => boolean, innerSubProcesses) {
-    const elements = this.currentElementRegistry.filter((element) =>
-      element.id !== this.insertElement.id &&
-      !is(element, 'bpmn:Process') &&
-      !innerSubProcesses.includes(element)
+    const elements = this.currentElementRegistry.filter(
+      (element) =>
+        element.id !== this.insertElement.id &&
+        !is(element, 'bpmn:Process') &&
+        !innerSubProcesses.includes(element)
     );
     const waypointsToLines = (waypoints) => {
       const lines = [];
@@ -579,17 +710,25 @@ class BpmnInsertOperation extends BpmnAppendOperation {
       }
       return lines;
     };
-    return elements.some((element) => !element.waypoints && !condition(element)) ||
-      elements.some((element) =>
-        element.waypoints &&
-        element.source !== this.insertElement &&
-        element.target !== this.insertElement &&
-        waypointsToLines(element.waypoints).some((line) => !condition(line))
-      );
+    return (
+      elements.some((element) => !element.waypoints && !condition(element)) ||
+      elements.some(
+        (element) =>
+          element.waypoints &&
+          element.source !== this.insertElement &&
+          element.target !== this.insertElement &&
+          waypointsToLines(element.waypoints).some((line) => !condition(line))
+      )
+    );
   }
 
   private createLeftSpace(innerSubProcesses, xDelta: number) {
-    this.createSpaceDirection(innerSubProcesses, this.insertElement.x, 'e', xDelta);
+    this.createSpaceDirection(
+      innerSubProcesses,
+      this.insertElement.x,
+      'e',
+      xDelta
+    );
     this.processPoint = {
       x: this.processPoint.x + xDelta,
       y: this.processPoint.y,
@@ -597,11 +736,21 @@ class BpmnInsertOperation extends BpmnAppendOperation {
   }
 
   private createRightSpace(innerSubProcesses, xDelta: number) {
-    this.createSpaceDirection(innerSubProcesses, this.insertElement.x + this.insertElement.width, 'e', xDelta);
+    this.createSpaceDirection(
+      innerSubProcesses,
+      this.insertElement.x + this.insertElement.width,
+      'e',
+      xDelta
+    );
   }
 
   private createTopSpace(innerSubProcesses, yDelta: number) {
-    this.createSpaceDirection(innerSubProcesses, this.insertElement.y, 's', yDelta);
+    this.createSpaceDirection(
+      innerSubProcesses,
+      this.insertElement.y,
+      's',
+      yDelta
+    );
     this.processPoint = {
       x: this.processPoint.x,
       y: this.processPoint.y + yDelta,
@@ -609,37 +758,51 @@ class BpmnInsertOperation extends BpmnAppendOperation {
   }
 
   private createBottomSpace(innerSubProcesses, yDelta: number) {
-    this.createSpaceDirection(innerSubProcesses, this.insertElement.y + this.insertElement.height, 's', yDelta);
+    this.createSpaceDirection(
+      innerSubProcesses,
+      this.insertElement.y + this.insertElement.height,
+      's',
+      yDelta
+    );
   }
 
-  private createSpaceDirection(innerSubProcesses, from: number, direction: 'e' | 's', delta: number) {
-    const elements = this.currentElementRegistry.filter((element) =>
-      (direction === 'e' ? element.x : element.y) >= from &&
-      (innerSubProcesses.includes(element.parent) || is(element.parent, 'bpmn:Process')) &&
-      !innerSubProcesses.includes(element)
+  private createSpaceDirection(
+    innerSubProcesses,
+    from: number,
+    direction: 'e' | 's',
+    delta: number
+  ) {
+    const elements = this.currentElementRegistry.filter(
+      (element) =>
+        (direction === 'e' ? element.x : element.y) >= from &&
+        (innerSubProcesses.includes(element.parent) ||
+          is(element.parent, 'bpmn:Process')) &&
+        !innerSubProcesses.includes(element)
     );
     const toMove = selfAndChildren(elements, true, -1);
     this.currentModeling.createSpace(
       toMove,
       innerSubProcesses,
-      {x: direction === 'e' ? delta : 0, y: direction === 's' ? delta : 0},
+      { x: direction === 'e' ? delta : 0, y: direction === 's' ? delta : 0 },
       direction,
-      from,
+      from
     );
   }
 
   private getParents(): any[] {
     const parents = [];
-    for (let parent = this.insertElement.parent; !is(parent, 'bpmn:Process'); parent = parent.parent) {
+    for (
+      let parent = this.insertElement.parent;
+      !is(parent, 'bpmn:Process');
+      parent = parent.parent
+    ) {
       parents.push(parent);
     }
     return parents;
   }
-
 }
 
 class BpmnRemoveOperation extends BpmnOperation {
-
   private readonly subprocess;
 
   constructor(current: BpmnModeler, subprocess) {
@@ -654,16 +817,30 @@ class BpmnRemoveOperation extends BpmnOperation {
   }
 
   private createActivity() {
-    const bmBusinessObject = this.currentBpmnFactory.create('bpmn:CallActivity', {name: this.subprocess.businessObject.get('taskName')});
-    const bmElement = this.currentElementFactory.createShape({type: 'bpmn:CallActivity', businessObject: bmBusinessObject});
-    const activity = this.currentModeling.createShape(bmElement, center(this.subprocess), this.subprocess.parent);
+    const bmBusinessObject = this.currentBpmnFactory.create(
+      'bpmn:CallActivity',
+      { name: this.subprocess.businessObject.get('taskName') }
+    );
+    const bmElement = this.currentElementFactory.createShape({
+      type: 'bpmn:CallActivity',
+      businessObject: bmBusinessObject,
+    });
+    const activity = this.currentModeling.createShape(
+      bmElement,
+      center(this.subprocess),
+      this.subprocess.parent
+    );
     this.copyBpmnData(this.subprocess, activity);
     return activity;
   }
 
   private reconnectActivity(activity) {
-    this.subprocess.incoming.forEach((flow) => this.reconnect(flow.source, activity, flow));
-    this.subprocess.outgoing.forEach((flow) => this.reconnect(activity, flow.target, flow));
+    this.subprocess.incoming.forEach((flow) =>
+      this.reconnect(flow.source, activity, flow)
+    );
+    this.subprocess.outgoing.forEach((flow) =>
+      this.reconnect(activity, flow.target, flow)
+    );
   }
 
   private removeSubprocess() {
@@ -673,11 +850,9 @@ class BpmnRemoveOperation extends BpmnOperation {
       this.subprocess,
     ]);
   }
-
 }
 
 class BpmnAttachOperation extends BpmnAppendOperation {
-
   private readonly attachmentElement;
 
   constructor(current: BpmnModeler, append: BpmnModeler, attachmentElement) {
@@ -694,7 +869,7 @@ class BpmnAttachOperation extends BpmnAppendOperation {
     const point = center(this.attachmentElement);
     this.processPoint = {
       x: this.attachmentElement.x + this.attachmentElement.width + 50,
-      y: point.y - (this.processSize.height / 2),
+      y: point.y - this.processSize.height / 2,
     };
   }
 
@@ -705,15 +880,22 @@ class BpmnAttachOperation extends BpmnAppendOperation {
   }
 
   private appendSubProcess(processName: string, processPatternId: string) {
-    const subprocess = this.createSubProcess(processName, processPatternId, this.attachmentElement.parent);
-    this.currentModeling.createConnection(this.attachmentElement, subprocess, {type: 'bpmn:SequenceFlow'}, this.attachmentElement.parent);
+    const subprocess = this.createSubProcess(
+      processName,
+      processPatternId,
+      this.attachmentElement.parent
+    );
+    this.currentModeling.createConnection(
+      this.attachmentElement,
+      subprocess,
+      { type: 'bpmn:SequenceFlow' },
+      this.attachmentElement.parent
+    );
     return subprocess;
   }
-
 }
 
 class BpmnCheckArtifacts {
-
   private readonly elementRegistry;
   private readonly decisions: { [elementId: string]: Decision };
 
@@ -721,14 +903,20 @@ class BpmnCheckArtifacts {
   private artifacts: { [elementId: string]: Artifact[] } = {};
   private currentNodes = [];
 
-  constructor(modeler: BpmnModeler, decisions: { [elementId: string]: Decision }) {
+  constructor(
+    modeler: BpmnModeler,
+    decisions: { [elementId: string]: Decision }
+  ) {
     this.elementRegistry = modeler.get('elementRegistry');
     this.decisions = decisions;
   }
 
   checkArtifacts(): { [elementId: string]: Artifact[] | null } {
     const missingMap = {};
-    const startingElement = this.elementRegistry.find((element) => is(element, 'bpmn:StartEvent') && is(element.parent, 'bpmn:Process'));
+    const startingElement = this.elementRegistry.find(
+      (element) =>
+        is(element, 'bpmn:StartEvent') && is(element.parent, 'bpmn:Process')
+    );
     this.currentNodes.push(startingElement);
     while (this.currentNodes.length > 0) {
       const currentNode = this.currentNodes[0];
@@ -745,20 +933,30 @@ class BpmnCheckArtifacts {
         incomingArtifacts = this.getIncomingArtifacts(currentNode);
       }
       this.visitedNodes.add(currentNode);
-      const incomingArtifactIds = incomingArtifacts.map((artifact) => artifact._id);
+      const incomingArtifactIds = incomingArtifacts.map(
+        (artifact) => artifact._id
+      );
       const neededArtifacts = this.getNeededArtifacts(currentNode);
-      const missing = neededArtifacts.filter((artifact) => !incomingArtifactIds.includes(artifact._id));
+      const missing = neededArtifacts.filter(
+        (artifact) => !incomingArtifactIds.includes(artifact._id)
+      );
       if (missing.length > 0 || currentNode.id in missingMap) {
         missingMap[currentNode.id] = missing;
       }
-      const previousArtifactIds = currentNode.id in this.artifacts ? this.artifacts[currentNode.id].map((artifact) => artifact._id) : null;
+      const previousArtifactIds =
+        currentNode.id in this.artifacts
+          ? this.artifacts[currentNode.id].map((artifact) => artifact._id)
+          : null;
       this.artifacts[currentNode.id] = [
         ...incomingArtifacts,
         ...this.getCreatedArtifacts(currentNode),
       ];
-      const currentArtifactIds = this.artifacts[currentNode.id].map((artifact) => artifact._id);
+      const currentArtifactIds = this.artifacts[currentNode.id].map(
+        (artifact) => artifact._id
+      );
       if (previousArtifactIds) {
-        const unchanged = currentArtifactIds.every((id) => previousArtifactIds.includes(id)) &&
+        const unchanged =
+          currentArtifactIds.every((id) => previousArtifactIds.includes(id)) &&
           previousArtifactIds.every((id) => currentArtifactIds.includes(id));
         if (unchanged) {
           continue;
@@ -766,9 +964,15 @@ class BpmnCheckArtifacts {
       }
       this.currentNodes.push(...this.getTargets(currentNode));
     }
-    this.elementRegistry.getAll()
-      .filter((element) => is(element, 'bpmn:FlowNode') && !this.visitedNodes.has(element) && !is(element, 'bpmn:SubProcess'))
-      .forEach((element) => missingMap[element.id] = null);
+    this.elementRegistry
+      .getAll()
+      .filter(
+        (element) =>
+          is(element, 'bpmn:FlowNode') &&
+          !this.visitedNodes.has(element) &&
+          !is(element, 'bpmn:SubProcess')
+      )
+      .forEach((element) => (missingMap[element.id] = null));
     return missingMap;
   }
 
@@ -784,8 +988,13 @@ class BpmnCheckArtifacts {
     if (element.id in this.decisions) {
       const artifacts: Artifact[] = [];
       const decision = this.decisions[element.id];
-      const decisionArtifacts = input ? decision.inputArtifacts : decision.outputArtifacts;
-      if (decisionArtifacts.selectedGroup === null || decisionArtifacts.selectedGroup === undefined) {
+      const decisionArtifacts = input
+        ? decision.inputArtifacts
+        : decision.outputArtifacts;
+      if (
+        decisionArtifacts.selectedGroup === null ||
+        decisionArtifacts.selectedGroup === undefined
+      ) {
         return [];
       }
       const method = decision.method;
@@ -820,11 +1029,20 @@ class BpmnCheckArtifacts {
     if (sources.length === 0) {
       return [];
     }
-    sources.filter((source) => source.id in this.artifacts).forEach((source) => artifacts.push(this.getArtifacts(source)));
-    const others: string[][] = artifacts.map((group) => group.map((artifact) => artifact._id));
+    sources
+      .filter((source) => source.id in this.artifacts)
+      .forEach((source) => artifacts.push(this.getArtifacts(source)));
+    const others: string[][] = artifacts.map((group) =>
+      group.map((artifact) => artifact._id)
+    );
     others.slice(0, 1);
     let resultingArtifacts: Artifact[] = artifacts[0];
-    others.forEach((group) => resultingArtifacts = resultingArtifacts.filter((artifact) => group.includes(artifact._id)));
+    others.forEach(
+      (group) =>
+        (resultingArtifacts = resultingArtifacts.filter((artifact) =>
+          group.includes(artifact._id)
+        ))
+    );
     return resultingArtifacts;
   }
 
@@ -854,13 +1072,15 @@ class BpmnCheckArtifacts {
         return [];
       }
     }
-    return incomingFlows.map((flow) => flow.source).map((source) => {
-      if (is(source, 'bpmn:SubProcess')) {
-        return source.children.find((e) => is(e, 'bpmn:EndEvent'));
-      } else {
-        return source;
-      }
-    });
+    return incomingFlows
+      .map((flow) => flow.source)
+      .map((source) => {
+        if (is(source, 'bpmn:SubProcess')) {
+          return source.children.find((e) => is(e, 'bpmn:EndEvent'));
+        } else {
+          return source;
+        }
+      });
   }
 
   getTargets(element): any[] {
@@ -875,25 +1095,26 @@ class BpmnCheckArtifacts {
         return [];
       }
     }
-    return outgoingFlows.map((flow) => flow.target).map((target) => {
-      if (is(target, 'bpmn:SubProcess')) {
-        return target.children.find((e) => is(e, 'bpmn:StartEvent'));
-      } else {
-        return target;
-      }
-    });
+    return outgoingFlows
+      .map((flow) => flow.target)
+      .map((target) => {
+        if (is(target, 'bpmn:SubProcess')) {
+          return target.children.find((e) => is(e, 'bpmn:StartEvent'));
+        } else {
+          return target;
+        }
+      });
   }
-
 }
 
-function mapTypes(moddle, element: { list: string, element: Type }) {
+function mapTypes(moddle, element: { list: string; element: Type }) {
   return moddle.create('bmdl:Type', {
     list: element.list,
     element: element.element
       ? moddle.create('bmdl:MethodElement', {
-        _id: element.element._id,
-        name: element.element.name,
-      })
+          _id: element.element._id,
+          name: element.element.name,
+        })
       : null,
   });
 }

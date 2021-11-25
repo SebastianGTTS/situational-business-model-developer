@@ -1,3 +1,17 @@
+<ng-template #deleteSituationalFactorModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    (dismiss)="d()"
+    (delete)="deleteSituationalFactor(modalSituationalFactor._id); c()"
+  >
+    <div modalTitle>
+      Delete Situational Factor {{ modalSituationalFactor.name }}
+    </div>
+    You are deleting the situational factor {{ modalSituationalFactor.name }}.
+    This can not be undone. This action will not delete the situational factor
+    from method building blocks that are using it.
+  </app-delete-modal>
+</ng-template>
+
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
     <a class="nav-link active" [routerLink]="[]">Situational Factors</a>
@@ -5,23 +19,24 @@
 </div>
 
 <main role="main" class="container">
-
   <div class="my-3 alert alert-info" role="alert">
-    Create situational Factors to use them for the definition of the context and in Method Building Blocks
+    Create situational Factors to use them for the definition of the context and
+    in Method Building Blocks
   </div>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2">Situational Factors</h6>
-    <app-method-element-list [elementLists]="elementLists"
-                             (deleteElement)="deleteSituationalFactor($event._id)"></app-method-element-list>
-  </div>
+  <app-method-element-list
+    listTitle="Situational Factors"
+    [elementLists]="elementLists"
+    (deleteElement)="openDeleteSituationalFactorModal($event)"
+  ></app-method-element-list>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Add Situational Factor</h6>
     <div class="text-muted pt-3">
-      <app-method-element-form [listNames]="listNames"
-                               (submitMethodElementForm)="addSituationalFactor($event)"></app-method-element-form>
+      <app-method-element-form
+        [listNames]="listNames"
+        (submitMethodElementForm)="addSituationalFactor($event)"
+      ></app-method-element-form>
     </div>
   </div>
-
 </main>

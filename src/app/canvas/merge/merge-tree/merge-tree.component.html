@@ -1,7 +1,8 @@
-<ul *ngIf="features" class="list-group inner" style="margin:5px;">
-
-  <li *ngFor="let f of asList(features)" class="list-group-item justify-content-between align-items-center">
-
+<ul *ngIf="features" class="list-group inner" style="margin: 5px">
+  <li
+    *ngFor="let f of asList(features)"
+    class="list-group-item justify-content-between align-items-center"
+  >
     <div class="d-flex justify-content-between align-items-center">
       <div class="d-flex">
         <div class="mr-1">
@@ -17,39 +18,78 @@
 
         <div class="mr-1">
           {{ f.name }}
-          <small class="text-muted" *ngIf="f.description">{{ f.description }}</small>
+          <small class="text-muted" *ngIf="f.description">{{
+            f.description
+          }}</small>
         </div>
 
         <div>
           <ng-container *ngIf="f.subfeatureConnections === 'or'">
-            <i class="fa fa-caret-up" aria-hidden="true" title="or subfeatures"></i>
+            <i
+              class="fa fa-caret-up"
+              aria-hidden="true"
+              title="or subfeatures"
+            ></i>
             <span class="sr-only">or subfeatures</span>
           </ng-container>
           <ng-container *ngIf="f.subfeatureConnections === 'xor'">
-            <i class="fa fa-angle-up" aria-hidden="true" title="xor subfeatures"></i>
+            <i
+              class="fa fa-angle-up"
+              aria-hidden="true"
+              title="xor subfeatures"
+            ></i>
             <span class="sr-only">xor subfeatures</span>
           </ng-container>
         </div>
       </div>
 
       <div>
-        <button type="button" *ngIf="!f.relationships.hasNoRelationships()"
-                class="btn btn-dark btn-xs mr-1" (click)="openDependencies.emit(f.id)">Show Dependencies
+        <button
+          type="button"
+          *ngIf="!f.relationships.hasNoRelationships()"
+          class="btn btn-dark btn-xs mr-1"
+          (click)="openDependencies.emit(f.id)"
+        >
+          Show Dependencies
         </button>
-        <button type="button" class="btn btn-warning btn-xs mr-1"
-                *ngIf="!trace.expertFeatureIdMap[f.id] && f.parent && trace.expertFeatureIdMap[f.parent.id]"
-                (click)="addTrace.emit(f.id)">Add
+        <button
+          type="button"
+          class="btn btn-warning btn-xs mr-1"
+          *ngIf="
+            !trace.expertFeatureIdMap[f.id] &&
+            f.parent &&
+            trace.expertFeatureIdMap[f.parent.id]
+          "
+          (click)="addTrace.emit(f.id)"
+        >
+          Add
         </button>
-        <button type="button" class="btn btn-warning btn-xs mr-1"
-                *ngIf="!trace.expertFeatureIdMap[f.id] && f.parent && trace.expertFeatureIdMap[f.parent.id]"
-                (click)="selectFeature.emit(f.id)">Select
+        <button
+          type="button"
+          class="btn btn-warning btn-xs mr-1"
+          *ngIf="
+            !trace.expertFeatureIdMap[f.id] &&
+            f.parent &&
+            trace.expertFeatureIdMap[f.parent.id]
+          "
+          (click)="selectFeature.emit(f.id)"
+        >
+          Select
         </button>
-        <button type="button" class="btn btn-warning btn-xs mr-1" *ngIf="trace.expertFeatureIdMap[f.id]"
-                (click)="addAll.emit(f.id)">
+        <button
+          type="button"
+          class="btn btn-warning btn-xs mr-1"
+          *ngIf="trace.expertFeatureIdMap[f.id]"
+          (click)="addAll.emit(f.id)"
+        >
           Add all
         </button>
-        <button type="button" class="btn btn-primary btn-xs mr-1" *ngIf="trace.expertFeatureIdMap[f.id]"
-                (click)="openTrace.emit(f.id)">
+        <button
+          type="button"
+          class="btn btn-primary btn-xs mr-1"
+          *ngIf="trace.expertFeatureIdMap[f.id]"
+          (click)="openTrace.emit(f.id)"
+        >
           Show Trace
         </button>
         <ng-container *ngIf="trace.expertFeatureIdMap[f.id]">
@@ -57,17 +97,24 @@
           <span class="sr-only">(Merged)</span>
         </ng-container>
         <ng-container *ngIf="!trace.expertFeatureIdMap[f.id]">
-          <i class="fa fa-exclamation-triangle" aria-hidden="true" title="Unmerged"></i>
+          <i
+            class="fa fa-exclamation-triangle"
+            aria-hidden="true"
+            title="Unmerged"
+          ></i>
           <span class="sr-only">(Unmerged)</span>
         </ng-container>
       </div>
     </div>
 
-    <app-merge-tree [features]="f.subfeatures" [trace]="trace"
-                    (openDependencies)="openDependencies.emit($event)"
-                    (addTrace)="addTrace.emit($event)" (selectFeature)="selectFeature.emit($event)"
-                    (addAll)="addAll.emit($event)"
-                    (openTrace)="openTrace.emit($event)"></app-merge-tree>
+    <app-merge-tree
+      [features]="f.subfeatures"
+      [trace]="trace"
+      (openDependencies)="openDependencies.emit($event)"
+      (addTrace)="addTrace.emit($event)"
+      (selectFeature)="selectFeature.emit($event)"
+      (addAll)="addAll.emit($event)"
+      (openTrace)="openTrace.emit($event)"
+    ></app-merge-tree>
   </li>
-
 </ul>

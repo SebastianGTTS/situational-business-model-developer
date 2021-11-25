@@ -1,0 +1,82 @@
+{
+  "docs": [
+    {
+      "type": "CanvasDefinition",
+      "_id": "1625144329606",
+      "name": "Business Model Canvas",
+      "rows": [
+        [
+          {
+            "isSpacer": false,
+            "name": "Key Partners",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "key-partners"
+          },
+          {
+            "isSpacer": false,
+            "name": "Key Activities",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "key-activities"
+          },
+          {
+            "isSpacer": false,
+            "name": "Value Propositions",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "value-propositions"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Relationships",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "customer-relationships"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Segments",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "customer-segments"
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "name": "Key Resources",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "key-resources"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Channels",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "channels"
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "name": "Cost Structure",
+            "rowspan": 1,
+            "colspan": 5,
+            "id": "cost-structure"
+          },
+          {
+            "isSpacer": false,
+            "name": "Revenue Streams",
+            "rowspan": 1,
+            "colspan": 5,
+            "id": "revenue-streams"
+          }
+        ]
+      ],
+      "relationshipTypes": ["requires", "excludes", "supports", "hurts"]
+    }
+  ],
+  "identifier": "SBMD-v1"
+}

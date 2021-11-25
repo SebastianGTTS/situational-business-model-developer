@@ -6,10 +6,9 @@ import { Feature } from '../../../canvas-meta-model/feature';
 @Component({
   selector: 'app-add-decision-modal',
   templateUrl: './add-decision-modal.component.html',
-  styleUrls: ['./add-decision-modal.component.css']
+  styleUrls: ['./add-decision-modal.component.css'],
 })
 export class AddDecisionModalComponent {
-
   @Input() instance: Instance;
   @Input() feature: Feature;
 
@@ -17,12 +16,9 @@ export class AddDecisionModalComponent {
   @Output() addBusinessModelDecision = new EventEmitter<string>();
   @Output() addFeature = new EventEmitter<Partial<Feature>>();
 
-  addFeatureForm = this.fb.group({name: ['', Validators.required]});
+  addFeatureForm = this.fb.group({ name: ['', Validators.required] });
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   submitAddFeatureForm() {
     this.addFeature.emit(this.addFeatureForm.value);
@@ -30,7 +26,8 @@ export class AddDecisionModalComponent {
   }
 
   get unselectedFeatures(): Feature[] {
-    return Object.values(this.feature.subfeatures).filter((feature) => !this.instance.usedFeatures.includes(feature.id));
+    return Object.values(this.feature.subfeatures).filter(
+      (feature) => !this.instance.usedFeatures.includes(feature.id)
+    );
   }
-
 }

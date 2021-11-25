@@ -8,10 +8,9 @@ import { MultipleSelection } from '../../development-process-registry/developmen
 @Component({
   selector: 'app-stakeholders-group-info',
   templateUrl: './stakeholders-group-info.component.html',
-  styleUrls: ['./stakeholders-group-info.component.css']
+  styleUrls: ['./stakeholders-group-info.component.css'],
 })
 export class StakeholdersGroupInfoComponent implements OnInit {
-
   @Input() groups: MultipleSelection<Stakeholder>[][];
   @Input() selection: GroupSelection<Stakeholder>;
 
@@ -19,17 +18,13 @@ export class StakeholdersGroupInfoComponent implements OnInit {
 
   methodElements: Stakeholder[] = [];
 
-  constructor(
-    private stakeholderService: StakeholderService,
-  ) {
-  }
+  constructor(private stakeholderService: StakeholderService) {}
 
   ngOnInit() {
-    this.loadMethodElements();
+    void this.loadMethodElements();
   }
 
-  private loadMethodElements() {
-    this.stakeholderService.getAll().then((stakeholders) => this.methodElements = stakeholders.docs);
+  private async loadMethodElements(): Promise<void> {
+    this.methodElements = await this.stakeholderService.getList();
   }
-
 }

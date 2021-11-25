@@ -1,52 +1,51 @@
-import { Component, OnInit } from '@angular/core';
-import { MethodElement } from '../../development-process-registry/method-elements/method-element';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Type } from '../../development-process-registry/method-elements/type/type';
 
 @Component({
   selector: 'app-types',
   templateUrl: './types.component.html',
-  styleUrls: ['./types.component.css']
+  styleUrls: ['./types.component.css'],
 })
 export class TypesComponent implements OnInit {
-
-  elementLists: { listName: string, elements: MethodElement[] }[] = null;
+  elementLists: { listName: string; elements: Type[] }[] = null;
   listNames: string[] = [];
 
+  modalType: Type;
+  private modalReference: NgbModalRef;
+
+  @ViewChild('deleteTypeModal', { static: true }) deleteTypeModal: any;
+
   constructor(
-    private typeService: TypeService,
-  ) {
-  }
+    private modalService: NgbModal,
+    private typeService: TypeService
+  ) {}
 
   ngOnInit() {
-    this.load();
+    void this.load();
   }
 
-  private load() {
-    this.typeService.getLists().then(
-      lists => {
-        this.elementLists = lists;
-        this.listNames = this.elementLists.map((list) => list.listName);
-      },
-    ).catch(
-      error => console.log('Load: ' + error)
-    );
+  private async load(): Promise<void> {
+    this.elementLists = await this.typeService.getLists();
+    this.listNames = this.elementLists.map((list) => list.listName);
   }
 
-  delete(id: string) {
-    this.typeService.delete(id).then(
-      () => this.load()
-    ).catch(
-      error => console.log('Delete: ' + error)
-    );
+  openDeleteTypeModal(type: Type) {
+    this.modalType = type;
+    this.modalReference = this.modalService.open(this.deleteTypeModal, {
+      size: 'lg',
+    });
   }
 
-  add(form: FormGroup) {
-    this.typeService.add(form.value).then(
-      () => this.load()
-    ).catch(
-      error => console.log('Add: ' + error)
-    );
+  async delete(id: string): Promise<void> {
+    await this.typeService.delete(id);
+    await this.load();
   }
 
+  async add(form: FormGroup): Promise<void> {
+    await this.typeService.add(form.value);
+    await this.load();
+  }
 }

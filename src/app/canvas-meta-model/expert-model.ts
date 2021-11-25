@@ -3,7 +3,6 @@ import { Instance, InstanceType } from './instance';
 import { Domain } from '../development-process-registry/knowledge/domain';
 
 export class ExpertModel extends FeatureModel {
-
   static readonly typeName = 'ExpertModel';
 
   domains: Domain[];
@@ -31,17 +30,21 @@ export class ExpertModel extends FeatureModel {
   }
 
   getExamples(): Instance[] {
-    return this.instances.filter((instance) => instance.type === InstanceType.EXAMPLE);
+    return this.instances.filter(
+      (instance) => instance.type === InstanceType.EXAMPLE
+    );
   }
 
   getPatterns(): Instance[] {
-    return this.instances.filter((instance) => instance.type === InstanceType.PATTERN);
+    return this.instances.filter(
+      (instance) => instance.type === InstanceType.PATTERN
+    );
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
-      ...super.toPouchDb(),
-      domains: this.domains.map((domain) => domain.toPouchDb()),
+      ...super.toDb(),
+      domains: this.domains.map((domain) => domain.toDb()),
       version: this.version,
     };
   }
@@ -52,5 +55,4 @@ export class ExpertModel extends FeatureModel {
       version: this.version,
     };
   }
-
 }

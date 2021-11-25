@@ -9,7 +9,11 @@ import { DevelopmentProcessViewModule } from '../development-process-view/develo
 import { FormArrayListComponent } from './form-array-list/form-array-list.component';
 import { DomainSelectionFormComponent } from './domain-selection-form/domain-selection-form.component';
 import { DomainsSelectionFormComponent } from './domains-selection-form/domains-selection-form.component';
-
+import { DeleteModalComponent } from './delete-modal/delete-modal.component';
+import { SearchComponent } from './search/search.component';
+import { ListWrapperComponent } from './list-wrapper/list-wrapper.component';
+import { ResultsListItemComponent } from './results-list-item/results-list-item.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -19,12 +23,17 @@ import { DomainsSelectionFormComponent } from './domains-selection-form/domains-
     FormArrayListComponent,
     DomainSelectionFormComponent,
     DomainsSelectionFormComponent,
+    DeleteModalComponent,
+    SearchComponent,
+    ListWrapperComponent,
+    ResultsListItemComponent,
   ],
   imports: [
     CommonModule,
     DevelopmentProcessViewModule,
     NgbModule,
     ReactiveFormsModule,
+    RouterModule,
   ],
   exports: [
     CommonModule,
@@ -33,11 +42,14 @@ import { DomainsSelectionFormComponent } from './domains-selection-form/domains-
 
     AuthorFormComponent,
     AuthorInfoComponent,
+    DeleteModalComponent,
     DescriptionFormComponent,
     DevelopmentProcessViewModule,
     FormArrayListComponent,
     DomainsSelectionFormComponent,
+    SearchComponent,
+    ListWrapperComponent,
+    ResultsListItemComponent,
   ],
 })
-export class SharedModule {
-}
+export class SharedModule {}

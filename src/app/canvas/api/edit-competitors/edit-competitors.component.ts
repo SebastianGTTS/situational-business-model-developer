@@ -1,73 +1,115 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProcessApiService } from '../process-api.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CompanyModel } from '../../../canvas-meta-model/company-model';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { Instance } from '../../../canvas-meta-model/instance';
 import { CanvasResolveService } from '../../canvas-resolve.service';
+import { InstanceLoaderService } from '../instance-loader.service';
+import { CompanyModel } from '../../../canvas-meta-model/company-model';
+import { RunningProcess } from '../../../development-process-registry/running-process/running-process';
+import { RunningMethod } from '../../../development-process-registry/running-process/running-method';
+import { Comment } from '../../../development-process-registry/running-process/comment';
+import { RunningProcessService } from '../../../development-process-registry/running-process/running-process.service';
 
 @Component({
   selector: 'app-edit-competitors',
   templateUrl: './edit-competitors.component.html',
-  styleUrls: ['./edit-competitors.component.css']
+  styleUrls: ['./edit-competitors.component.css'],
+  providers: [InstanceLoaderService, ProcessApiService],
 })
-export class EditCompetitorsComponent implements OnInit, OnDestroy {
-
-  companyModel: CompanyModel;
-  instanceId: number;
+export class EditCompetitorsComponent implements OnInit {
   competitors: Instance[];
-
-  private routeSubscription: Subscription;
 
   constructor(
     private canvasResolveService: CanvasResolveService,
     private companyModelService: CompanyModelService,
-    public processApiService: ProcessApiService,
-    private route: ActivatedRoute,
+    private instanceLoaderService: InstanceLoaderService,
+    private processApiService: ProcessApiService,
     private router: Router,
-  ) {
-  }
+    private runningProcessService: RunningProcessService
+  ) {}
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
-      this.instanceId = +paramMap.get('instanceId');
-      this.loadCompanyModel(paramMap.get('companyModelId')).then();
+  ngOnInit(): void {
+    this.instanceLoaderService.loaded.subscribe(() => {
+      this.competitors = this.companyModel.instances.filter(
+        (instance) => instance.id !== this.instanceId
+      );
     });
-    this.processApiService.init(this.route);
   }
 
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-    this.processApiService.destroy();
+  async editCompetitor(id: number): Promise<void> {
+    await this.router.navigate(
+      [
+        'canvas',
+        this.companyModel._id,
+        'instance',
+        this.instanceId,
+        'competitors',
+        id,
+        'edit',
+      ],
+      { queryParams: this.processApiService.queryParams }
+    );
   }
 
-  editCompetitor(id: number) {
-    this.router.navigate(
-      ['canvas', this.companyModel._id, 'instance', this.instanceId, 'competitors', id, 'edit'],
-      {queryParams: this.processApiService.queryParams},
-    ).then();
-  }
-
-  async removeCompetitor(id: number) {
+  async removeCompetitor(id: number): Promise<void> {
     this.companyModel.removeInstance(id);
     await this.updateCompanyModel();
   }
 
-  finish() {
-    this.canvasResolveService.resolveEditCanvas(this.processApiService.stepInfo, this.companyModel._id, this.instanceId);
+  async addComment(comment: Comment): Promise<void> {
+    await this.runningProcessService.addComment(
+      this.runningProcess._id,
+      this.runningMethod.executionId,
+      comment
+    );
   }
 
-  private async loadCompanyModel(companyModelId: string) {
-    this.companyModel = await this.companyModelService.get(companyModelId);
-    this.competitors = this.companyModel.instances.filter((instance) => instance.id !== this.instanceId);
+  async updateComment(comment: Comment): Promise<void> {
+    await this.runningProcessService.updateComment(
+      this.runningProcess._id,
+      this.runningMethod.executionId,
+      comment
+    );
   }
 
-  private async updateCompanyModel() {
+  async removeComment(commentId: string): Promise<void> {
+    await this.runningProcessService.removeComment(
+      this.runningProcess._id,
+      this.runningMethod.executionId,
+      commentId
+    );
+  }
+
+  finish(): void {
+    this.canvasResolveService.resolveEditCanvas(
+      this.processApiService.stepInfo,
+      this.companyModel._id,
+      this.instanceId
+    );
+  }
+
+  private async updateCompanyModel(): Promise<void> {
     await this.companyModelService.save(this.companyModel);
-    await this.loadCompanyModel(this.companyModel._id);
   }
 
+  get companyModel(): CompanyModel {
+    return this.instanceLoaderService.companyModel;
+  }
+
+  get instanceId(): number {
+    return this.instanceLoaderService.instance.id;
+  }
+
+  private get runningProcess(): RunningProcess {
+    return this.processApiService.runningProcess;
+  }
+
+  get runningMethod(): RunningMethod {
+    return this.processApiService.runningMethod;
+  }
+
+  isCorrectStep(): boolean {
+    return this.processApiService.isCorrectStep();
+  }
 }

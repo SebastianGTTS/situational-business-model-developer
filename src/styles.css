@@ -3,14 +3,14 @@ body {
   overflow-x: hidden; /* Prevent scroll on narrow devices */
 }
 
-body {
-  padding-top: 56px;
+#wrapper {
+  padding-top: 3.5rem;
 }
 
 /*
-  Initial style by Bootstrap Offcanvas: https://getbootstrap.com/docs/4.3/examples/offcanvas/ 
+  Initial style by Bootstrap Offcanvas: https://getbootstrap.com/docs/4.3/examples/offcanvas/
 */
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
   .offcanvas-collapse {
     position: fixed;
     top: 56px; /* Height of navbar */
@@ -22,10 +22,12 @@ body {
     overflow-y: auto;
     visibility: hidden;
     background-color: #343a40;
-    transition: visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
-    transition: transform .3s ease-in-out, visibility .3s ease-in-out;
-    transition: transform .3s ease-in-out, visibility .3s ease-in-out, -webkit-transform .3s ease-in-out;
+    transition: visibility 0.3s ease-in-out, -webkit-transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out,
+      -webkit-transform 0.3s ease-in-out;
   }
+
   .offcanvas-collapse.open {
     visibility: visible;
     -webkit-transform: translateX(-100%);
@@ -48,16 +50,16 @@ body {
   padding-bottom: 1rem;
   margin-top: -1px;
   overflow-x: auto;
-  color: rgba(255, 255, 255, .75);
+  color: rgba(255, 255, 255, 0.75);
   text-align: center;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
 }
 
 .nav-underline .nav-link {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
-  font-size: .875rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-size: 0.875rem;
   color: #6c757d;
 }
 
@@ -70,19 +72,32 @@ body {
   color: #343a40;
 }
 
-.text-white-50 { color: rgba(255, 255, 255, .5); }
+.text-white-50 {
+  color: rgba(255, 255, 255, 0.5);
+}
 
-.bg-purple { background-color: #6f42c1; }
+.bg-purple {
+  background-color: #6f42c1;
+}
 
-.lh-100 { line-height: 1; }
-.lh-125 { line-height: 1.25; }
-.lh-150 { line-height: 1.5; }
+.lh-100 {
+  line-height: 1;
+}
+
+.lh-125 {
+  line-height: 1.25;
+}
+
+.lh-150 {
+  line-height: 1.5;
+}
 
 /* Manage Lists */
 .bottom-right {
   position: absolute;
   right: 8px;
 }
+
 .bottom-right-two {
   position: absolute;
   right: 68px;
@@ -94,10 +109,10 @@ body {
 }
 
 .btn-xs {
-  padding  : .25rem .4rem;
-  font-size  : .875rem;
-  line-height  : 1;
-  border-radius : .2rem;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1;
+  border-radius: 0.2rem;
 }
 
 /* Manage Canvas */
@@ -139,12 +154,13 @@ body {
   padding: 0;
   vertical-align: top;
 }
+
 .two-col-special li:before {
   content: '+';
   padding: 5px;
-  margin-right: 5px; 
+  margin-right: 5px;
   color: orange;
-  background-color: white; 
+  background-color: white;
   display: inline-block;
 }
 
@@ -174,21 +190,27 @@ body {
 }
 
 .min-height-200-px {
-  min-height: 200px !important
+  min-height: 200px !important;
 }
 
 .flex-1 {
-  flex: 1
+  flex: 1;
 }
 
 .canvas-table {
   table-layout: fixed;
 }
 
-.canvas-table, td.canvas-table-cell {
+.canvas-table,
+td.canvas-table-cell {
   border: 3px #343a40 solid;
 }
 
 .canvas-table-block {
   min-height: 200px;
+}
+
+/* Fix https://github.com/KillerCodeMonkey/ngx-quill/issues/352 */
+.ql-container {
+  height: auto;
 }

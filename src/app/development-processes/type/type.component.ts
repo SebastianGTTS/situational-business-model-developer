@@ -1,54 +1,33 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { Component } from '@angular/core';
 import { Type } from '../../development-process-registry/method-elements/type/type';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
+import { MethodElementLoaderService } from '../shared/method-element-loader.service';
+import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
 
 @Component({
   selector: 'app-type',
   templateUrl: './type.component.html',
-  styleUrls: ['./type.component.css']
+  styleUrls: ['./type.component.css'],
+  providers: [
+    MethodElementLoaderService,
+    { provide: MethodElementService, useExisting: TypeService },
+  ],
 })
-export class TypeComponent implements OnInit, OnDestroy {
-
-  type: Type;
-  listNames: string[] = [];
-
-  private routeSubscription: Subscription;
-
+export class TypeComponent {
   constructor(
-    private typeService: TypeService,
-    private route: ActivatedRoute,
-  ) {
+    private typeLoaderService: MethodElementLoaderService<Type>,
+    private typeService: TypeService
+  ) {}
+
+  async updateValue(value: any) {
+    await this.typeService.update(this.type._id, value);
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe(map => this.load(map.get('id')));
+  get type() {
+    return this.typeLoaderService.methodElement;
   }
 
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
+  get listNames() {
+    return this.typeLoaderService.listNames;
   }
-
-  load(id: string) {
-    this.typeService.get(id).then((type) => {
-      this.type = type;
-    }).catch(error => console.log('Load: ' + error));
-    this.typeService.getLists().then((lists) => this.listNames = lists.map((list) => list.listName)).catch(
-      error => console.log('LoadLists: ' + error)
-    );
-  }
-
-  updateValue(value: any) {
-    const update = (currentElement: Type) => {
-      currentElement.update(value);
-      return currentElement;
-    };
-    this.typeService.update(this.type._id, update).then(
-      () => this.load(this.type._id)
-    ).catch((error) => console.log('UpdateValue: ' + error));
-  }
-
 }

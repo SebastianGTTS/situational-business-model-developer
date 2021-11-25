@@ -13,10 +13,11 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-create-canvas-configuration',
   templateUrl: './create-canvas-configuration.component.html',
-  styleUrls: ['./create-canvas-configuration.component.css']
+  styleUrls: ['./create-canvas-configuration.component.css'],
 })
-export class CreateCanvasConfigurationComponent implements OnInit, DecisionConfigurationFormComponent {
-
+export class CreateCanvasConfigurationComponent
+  implements OnInit, DecisionConfigurationFormComponent
+{
   formGroup: FormGroup;
   bmProcess: BmProcess;
   predefinedInput: any;
@@ -30,7 +31,7 @@ export class CreateCanvasConfigurationComponent implements OnInit, DecisionConfi
 
   private modalReference: NgbModalRef;
 
-  @ViewChild('createModal', {static: true}) createModal: any;
+  @ViewChild('createModal', { static: true }) createModal: any;
 
   constructor(
     private canvasDefinitionService: CanvasDefinitionService,
@@ -38,49 +39,65 @@ export class CreateCanvasConfigurationComponent implements OnInit, DecisionConfi
     private fb: FormBuilder,
     private featureModelFormService: FeatureModelFormService,
     private modalService: NgbModal,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
   ngOnInit() {
-    this.loadCompanyModels().then();
+    void this.loadCompanyModels();
     this.createForm = this.fb.group({
       featureModel: this.featureModelFormService.createForm(),
     });
   }
 
   openCreateCompanyModelModal() {
-    this.modalReference = this.modalService.open(this.createModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.createModal, {
+      size: 'lg',
+    });
   }
 
   async createCompanyModel() {
-    const model: Partial<CompanyModel> = this.featureModelFormService.get(this.createForm.get('featureModel').value);
-    const canvasDefinition = await this.canvasDefinitionService.get(this.predefinedInput.definitionId);
-    const companyModel = await this.companyModelService.createCompanyModel(model, canvasDefinition);
-    this.forceUpdate.emit({companyModelId: companyModel._id, automaticCreation: true});
+    const model: Partial<CompanyModel> = this.featureModelFormService.get(
+      this.createForm.get('featureModel').value
+    );
+    const canvasDefinition = await this.canvasDefinitionService.get(
+      this.predefinedInput.definitionId
+    );
+    const companyModel = this.companyModelService.createFeatureModel(
+      model,
+      canvasDefinition
+    );
+    await this.companyModelService.add(companyModel.toDb());
+    this.forceUpdate.emit({
+      companyModelId: companyModel._id,
+      automaticCreation: true,
+    });
     this.modalService.dismissAll();
-    this.router.navigate(['companyModels', companyModel._id, 'select'], {
+    await this.router.navigate(['companyModels', companyModel._id, 'select'], {
       queryParams: {
         bmProcessId: this.bmProcess._id,
-      }
-    }).then();
+      },
+    });
   }
 
-  navigateSelectExpertKnowledge() {
+  async navigateSelectExpertKnowledge() {
     this.modalService.dismissAll();
-    this.router.navigate(['companyModels', this.stepDecision.companyModelId, 'select'], {
-      queryParams: {
-        bmProcessId: this.bmProcess._id,
+    await this.router.navigate(
+      ['companyModels', this.stepDecision.companyModelId, 'select'],
+      {
+        queryParams: {
+          bmProcessId: this.bmProcess._id,
+        },
       }
-    }).then();
+    );
   }
 
-  private async loadCompanyModels() {
-    this.companyModels = (await this.companyModelService.getList(this.predefinedInput.definitionId)).docs;
+  private async loadCompanyModels(): Promise<void> {
+    this.companyModels = await this.companyModelService.getList(
+      this.predefinedInput.definitionId
+    );
   }
 
   get companyModelIdControl() {
     return this.formGroup.get('companyModelId') as FormControl;
   }
-
 }

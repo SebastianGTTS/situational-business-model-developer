@@ -1,23 +1,38 @@
 <div class="my-3 p-3 bg-white rounded shadow-sm">
-  <h6 class="border-bottom border-gray pb-2">Explanation of the Situational Business Model Developer (SBMD)</h6>
-  <p>The Situational Business Model Developer that allows the enaction of situation-specific Business Model
-    Development Methods.
-    It uses the Method Modeler together with the Feature Modeler to support the business modeler in the
-    enaction. The business modeler is guided through the method in a kanban board and also sees the
-    enacted method.</p>
+  <h6 class="border-bottom border-gray pb-2">
+    Explanation of the Situational Business Model Developer (SBMD)
+  </h6>
+  <p>
+    The Situational Business Model Developer that allows the enaction of
+    situation-specific Business Model Development Methods. It uses the Method
+    Modeler together with the Feature Modeler to support the business modeler in
+    the enaction. The business modeler is guided through the method in a kanban
+    board and also sees the enacted method.
+  </p>
 
-  <p class="mb-0">Additionally, the Situational Business Model Developer redirects the business developer to
-    the correct locations in the Feature Modeler to support the creation of different canvases, e.g., business
-    model canvas and value proposition canvas.</p>
+  <p class="mb-0">
+    Additionally, the Situational Business Model Developer redirects the
+    business developer to the correct locations in the Feature Modeler to
+    support the creation of different canvases, e.g., business model canvas and
+    value proposition canvas.
+  </p>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Execution Steps</h6>
 
-    <ngb-carousel interval="0" [showNavigationArrows]="false" [showNavigationIndicators]="false"
-                  (slide)="updatePagination($event)">
+    <ngb-carousel
+      interval="0"
+      [showNavigationArrows]="false"
+      [showNavigationIndicators]="false"
+      (slide)="updatePagination($event)"
+    >
       <ng-template ngbSlide id="1">
         <figure class="figure">
-          <img src="assets/create_running_method.png" alt="Create running method" class="carousel-image figure-img">
+          <img
+            src="assets/create_running_method.png"
+            alt="Create running method"
+            class="carousel-image figure-img"
+          />
           <figcaption class="figure-caption">
             1. Create a running method
           </figcaption>
@@ -25,8 +40,11 @@
       </ng-template>
       <ng-template ngbSlide id="2">
         <figure class="figure">
-          <img src="assets/kanban_board.png" alt="Kanban board to manage the enaction"
-               class="carousel-image figure-img">
+          <img
+            src="assets/kanban_board.png"
+            alt="Kanban board to manage the enaction"
+            class="carousel-image figure-img"
+          />
           <figcaption class="figure-caption">
             2. Manage the enaction in a kanban board
           </figcaption>
@@ -34,7 +52,11 @@
       </ng-template>
       <ng-template ngbSlide id="3">
         <figure class="figure">
-          <img src="assets/execute_method.png" alt="The building block execution page" class="carousel-image figure-img">
+          <img
+            src="assets/execute_method.png"
+            alt="The building block execution page"
+            class="carousel-image figure-img"
+          />
           <figcaption class="figure-caption">
             3. Execute building blocks
           </figcaption>
@@ -42,25 +64,33 @@
       </ng-template>
     </ngb-carousel>
 
-    <ngb-pagination aria-label="Controls for the above images" class="d-flex justify-content-center"
-                    [collectionSize]="3" [pageSize]="1" (pageChange)="updateCarousel($event)"></ngb-pagination>
+    <ngb-pagination
+      aria-label="Controls for the above images"
+      class="d-flex justify-content-center"
+      [collectionSize]="3"
+      [pageSize]="1"
+      (pageChange)="updateCarousel($event)"
+    ></ngb-pagination>
 
-    <p class="mt-2">
-      Information about the execution steps:
-    </p>
+    <p class="mt-2">Information about the execution steps:</p>
 
     <ol class="mb-0">
-      <li><strong>Create a running method:</strong> In the first step, an business developer has to create
-        a running method by selecting a method to enact and giving it a name.
+      <li>
+        <strong>Create a running method:</strong> In the first step, an business
+        developer has to create a running method by selecting a method to enact
+        and giving it a name.
       </li>
-      <li><strong>Manage the enaction in a kanban board:</strong> In a kanban board it is visible which
-        building blocks are currently ready to be executed, are executed, and were executed.
+      <li>
+        <strong>Manage the enaction in a kanban board:</strong> In a kanban
+        board it is visible which building blocks are currently ready to be
+        executed, are executed, and were executed.
       </li>
-      <li><strong>Execute building blocks:</strong> On a page for the execution of building blocks an overview
-        of a building block is given and the steps to execute are shown. On this page it is also possible to
-        communicate with other stakeholders through comments.
+      <li>
+        <strong>Execute building blocks:</strong> On a page for the execution of
+        building blocks an overview of a building block is given and the steps
+        to execute are shown. On this page it is also possible to communicate
+        with other stakeholders through comments.
       </li>
     </ol>
   </div>
-
 </div>

@@ -1,7 +1,6 @@
 import PaletteProvider from 'bpmn-js/lib/features/palette/PaletteProvider';
 
 export default class BmProcessPaletteProvider extends PaletteProvider {
-
   getPaletteEntries(element) {
     const actions = super.getPaletteEntries(element);
     return {
@@ -10,5 +9,4 @@ export default class BmProcessPaletteProvider extends PaletteProvider {
       'lasso-tool': actions['lasso-tool'],
     };
   }
-
 }

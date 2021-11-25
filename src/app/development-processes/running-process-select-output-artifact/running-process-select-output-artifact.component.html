@@ -1,0 +1,65 @@
+<div [formGroup]="formGroup" class="my-3 p-3 bg-white rounded shadow-sm">
+  <h6 class="border-bottom border-gray pb-2">
+    {{ artifact.name }} ({{ artifact.list | list }})
+  </h6>
+  <div class="form-group">
+    <div
+      class="btn-group btn-group-toggle"
+      ngbRadioGroup
+      name="selectIsDefinition"
+      formControlName="isDefinition"
+    >
+      <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" [value]="false" /> Merge
+      </label>
+      <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" [value]="true" /> New Artifact
+      </label>
+    </div>
+  </div>
+  <div *ngIf="!definitionControl.value" class="form-group">
+    <label for="artifact">Artifact</label>
+    <div class="input-group">
+      <select class="form-control" id="artifact" formControlName="artifact">
+        <ng-container *ngFor="let a of processArtifacts; let index = index">
+          <option *ngIf="a.artifact._id === artifact._id" [ngValue]="index">
+            {{ a.identifier }}
+          </option>
+        </ng-container>
+      </select>
+      <div *ngIf="!artifact.internalArtifact" class="input-group-append">
+        <button
+          [disabled]="artifactControl.value == null"
+          class="btn btn-outline-primary"
+          type="button"
+          (click)="loadData(artifactControl.value)"
+        >
+          Load
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="form-group" *ngIf="definitionControl.value">
+    <label for="name">Name</label>
+    <div class="input-group">
+      <input class="form-control" id="name" formControlName="artifactName" />
+      <div *ngIf="artifact.internalArtifact" class="input-group-append">
+        <button
+          class="btn btn-outline-primary"
+          type="button"
+          (click)="setDefaultName()"
+        >
+          Set default name
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="form-group" *ngIf="showNotes">
+    <label for="externalOutputArtifactData">Note</label>
+    <quill-editor
+      [styles]="{ 'min-height': '250px' }"
+      id="externalOutputArtifactData"
+      formControlName="data"
+    ></quill-editor>
+  </div>
+</div>

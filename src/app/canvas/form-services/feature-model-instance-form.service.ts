@@ -8,14 +8,10 @@ export interface InstanceFormValue {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeatureModelInstanceFormService {
-
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   createForm(instance: Instance = null): FormGroup {
     const form = this.fb.group({
@@ -34,5 +30,4 @@ export class FeatureModelInstanceFormService {
       description: formValue.description,
     };
   }
-
 }

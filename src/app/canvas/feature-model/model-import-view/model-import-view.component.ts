@@ -6,24 +6,22 @@ import { ImportExportService } from '../import-export.service';
 @Component({
   selector: 'app-model-import-view',
   templateUrl: './model-import-view.component.html',
-  styleUrls: ['./model-import-view.component.css']
+  styleUrls: ['./model-import-view.component.css'],
 })
 export class ModelImportViewComponent {
-
   @Input() importExpertModel: boolean;
   @Input() formTitle: string;
 
   @Output() imported = new EventEmitter<null>();
 
   file = null;
-  form = this.fb.group({file: null});
+  form = this.fb.group({ file: null });
   importError: string = null;
 
   constructor(
     private fb: FormBuilder,
-    private importExportService: ImportExportService,
-  ) {
-  }
+    private importExportService: ImportExportService
+  ) {}
 
   fileChange(event) {
     this.importError = null;
@@ -46,9 +44,9 @@ export class ModelImportViewComponent {
         const ajvError = e as Ajv.ErrorObject[];
         this.importError = ajvError[0].message;
       } else {
-        this.importError = 'Unknown Error. See browser\'s console for more info.';
+        this.importError =
+          "Unknown Error. See browser's console for more info.";
       }
     }
   }
-
 }

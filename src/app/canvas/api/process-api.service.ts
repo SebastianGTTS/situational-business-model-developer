@@ -1,68 +1,114 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { RunningProcess } from '../../development-process-registry/running-process/running-process';
 import { RunningMethod } from '../../development-process-registry/running-process/running-method';
 import { StepInfo } from '../../development-process-registry/module-api/step-info';
 import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ProcessApiService {
+@Injectable()
+export class ProcessApiService implements OnDestroy {
+  private _loadedObservable: Observable<void>;
+  private _loaded: Subject<void>;
+  get loaded(): Observable<void> {
+    return this._loadedObservable;
+  }
 
   runningProcess: RunningProcess = null;
   runningMethod: RunningMethod = null;
+  errorLoading = false;
 
   stepInfo: StepInfo = null;
 
   private querySubscription: Subscription = null;
+  private changesFeed: Subscription = null;
 
   constructor(
-    private runningProcessService: RunningProcessService,
+    private route: ActivatedRoute,
+    private runningProcessService: RunningProcessService
   ) {
+    this.init();
   }
 
-  init(route: ActivatedRoute) {
-    if (this.querySubscription != null) {
-      console.warn('QuerySubscription already activated');
-      this.querySubscription.unsubscribe();
-    }
-    this.querySubscription = route.queryParamMap.subscribe((params) => {
+  private init(): void {
+    this._loaded = new Subject<void>();
+    this._loadedObservable = this._loaded.asObservable();
+    this.querySubscription = this.route.queryParamMap.subscribe((params) => {
       this.stepInfo = {
         step: params.has('step') ? +params.get('step') : undefined,
-        runningProcessId: params.get('runningProcessId'),
-        executionId: params.has('executionId') ? params.get('executionId') : undefined,
+        runningProcessId: params.has('runningProcessId')
+          ? params.get('runningProcessId')
+          : undefined,
+        executionId: params.has('executionId')
+          ? params.get('executionId')
+          : undefined,
       };
-      this.loadProcessInfo().then();
+      this.checkUnsubscribeChangesFeed();
+      if (this.stepInfo.runningProcessId != null) {
+        this.changesFeed = this.runningProcessService
+          .getChangesFeed(this.stepInfo.runningProcessId)
+          .subscribe(() => this.loadProcessInfo());
+        void this.loadProcessInfo();
+      }
     });
   }
 
-  destroy() {
-    if (this.querySubscription) {
-      this.querySubscription.unsubscribe();
-      this.querySubscription = null;
-      this.runningProcess = null;
-      this.runningMethod = null;
-      this.stepInfo = null;
-    }
+  ngOnDestroy(): void {
+    this.checkUnsubscribeChangesFeed();
+    this.querySubscription.unsubscribe();
+    this._loaded.complete();
   }
 
   isInitialized(): boolean {
     return this.runningProcess != null;
   }
 
-  get queryParams() {
+  isCorrectStep(): boolean {
+    return this.runningMethod.currentStepNumber === this.stepInfo.step;
+  }
+
+  get queryParams(): {
+    step: number;
+    runningProcessId: string;
+    executionId: string;
+  } {
     return {
       step: this.stepInfo.step != null ? this.stepInfo.step : undefined,
-      runningProcessId: this.runningProcess._id,
-      executionId: this.runningMethod != null ? this.runningMethod.executionId : undefined,
+      runningProcessId: this.runningProcess
+        ? this.runningProcess._id
+        : undefined,
+      executionId:
+        this.runningMethod != null ? this.runningMethod.executionId : undefined,
     };
   }
 
-  private async loadProcessInfo() {
-    this.runningProcess = await this.runningProcessService.getRunningProcess(this.stepInfo.runningProcessId);
-    this.runningMethod = this.runningProcess.getRunningMethod(this.stepInfo.executionId);
+  private async loadProcessInfo(): Promise<void> {
+    try {
+      this.runningProcess = await this.runningProcessService.get(
+        this.stepInfo.runningProcessId
+      );
+    } catch (error) {
+      console.error(error);
+      this.errorLoading = true;
+      this.runningProcess = null;
+      this.runningMethod = null;
+      return;
+    }
+    this.runningMethod = this.runningProcess.getRunningMethod(
+      this.stepInfo.executionId
+    );
+    if (this.runningMethod == null) {
+      this.errorLoading = true;
+      this.runningMethod = null;
+    } else {
+      this._loaded.next();
+    }
   }
 
+  private checkUnsubscribeChangesFeed(): void {
+    if (this.changesFeed) {
+      this.changesFeed.unsubscribe();
+      this.changesFeed = null;
+    }
+  }
 }

@@ -1,15 +1,41 @@
-import { Relationships, RelationshipType } from './relationships';
+import {
+  Relationships,
+  RelationshipsEntry,
+  RelationshipType,
+} from './relationships';
+import { DatabaseModelPart } from '../database/database-model-part';
+import { DatabaseEntry } from '../database/database-entry';
 
 export enum FeatureType {
-  OPTIONAL = 'optional', MANDATORY = 'mandatory'
+  OPTIONAL = 'optional',
+  MANDATORY = 'mandatory',
 }
 
 export enum SubfeatureConnectionsType {
-  OR = 'or', XOR = 'xor'
+  OR = 'or',
+  XOR = 'xor',
 }
 
-export class Feature {
+export interface FeatureEntry extends DatabaseEntry {
+  name: string;
+  description: string;
+  type: FeatureType;
+  subfeatures: { [id: string]: FeatureEntry };
+  subfeatureConnections: SubfeatureConnectionsType;
+  relationships: RelationshipsEntry;
+  expertModelTrace: { [expertModel: string]: string };
+}
 
+interface FeatureJsonSchema {
+  name: string;
+  description: string;
+  type: FeatureType;
+  subfeatures: { [id: string]: Feature };
+  subfeatureConnections: SubfeatureConnectionsType;
+  relationships: Relationships;
+}
+
+export class Feature implements DatabaseModelPart {
   // JSON Schema (stored)
   name: string;
   description: string;
@@ -26,13 +52,31 @@ export class Feature {
   parent: Feature = null;
   level: number;
 
+  // Fix the id for ng bootstrap
+  _fixId: string;
+
+  get fixId(): string {
+    if (this._fixId === undefined) {
+      this._fixId = this.getFixId();
+    }
+    return this._fixId;
+  }
+
+  private getFixId(): string {
+    if (this.id == null) {
+      return null;
+    }
+    return '_' + this.id.replace(/[&/]/, '');
+  }
+
   constructor(id: string, parent: Feature, feature: Partial<Feature>) {
     Object.assign(this, feature);
     this.id = id;
     this.parent = parent;
     this.level = this.parent ? this.parent.level + 1 : 1;
     Object.entries(this.subfeatures).forEach(
-      ([subId, innerFeature]) => this.subfeatures[subId] = new Feature(subId, this, innerFeature)
+      ([subId, innerFeature]) =>
+        (this.subfeatures[subId] = new Feature(subId, this, innerFeature))
     );
     this.relationships = new Relationships(this.relationships);
   }
@@ -42,7 +86,7 @@ export class Feature {
    *
    * @param feature the new values of this feature (values will be copied to the current object)
    */
-  update(feature: Partial<Feature>) {
+  update(feature: Partial<Feature>): void {
     Object.assign(this, feature);
   }
 
@@ -63,9 +107,11 @@ export class Feature {
    *
    * @param featureId the featureId of the feature to remove
    */
-  removeSubfeature(featureId: string) {
+  removeSubfeature(featureId: string): void {
     if (!(featureId in this.subfeatures)) {
-      throw new Error('Feature ' + this.name + ' has no subfeature with id ' + featureId);
+      throw new Error(
+        'Feature ' + this.name + ' has no subfeature with id ' + featureId
+      );
     }
     delete this.subfeatures[featureId];
   }
@@ -77,7 +123,7 @@ export class Feature {
    */
   getAllSubfeatures(): Feature[] {
     const featureList = [];
-    const addFeature = (feature: Feature) => {
+    const addFeature = (feature: Feature): boolean => {
       featureList.push(feature);
       return false;
     };
@@ -100,7 +146,10 @@ export class Feature {
    * @param relationshipType the relationship type
    * @param toFeatureId the id of the other feature
    */
-  addRelationship(relationshipType: RelationshipType, toFeatureId: string) {
+  addRelationship(
+    relationshipType: RelationshipType,
+    toFeatureId: string
+  ): void {
     this.relationships.addRelationship(relationshipType, toFeatureId);
   }
 
@@ -110,7 +159,10 @@ export class Feature {
    * @param relationshipType the relationship type
    * @param toFeatureId the id of the other feature
    */
-  removeRelationship(relationshipType: RelationshipType, toFeatureId: string) {
+  removeRelationship(
+    relationshipType: RelationshipType,
+    toFeatureId: string
+  ): void {
     this.relationships.removeRelationship(relationshipType, toFeatureId);
   }
 
@@ -119,7 +171,7 @@ export class Feature {
    *
    * @param featureIds the feature ids
    */
-  removeRelationships(featureIds: string[]) {
+  removeRelationships(featureIds: string[]): void {
     this.relationships.removeRelationships(featureIds);
   }
 
@@ -131,7 +183,7 @@ export class Feature {
    * @param expertModelId the expert model id
    * @param expertFeatureId the id of the feature of the expert model
    */
-  addTrace(expertModelId: string, expertFeatureId: string) {
+  addTrace(expertModelId: string, expertFeatureId: string): void {
     if (this.expertModelTrace[expertModelId]) {
       throw new Error('Trace for this feature is already defined');
     }
@@ -143,34 +195,36 @@ export class Feature {
    *
    * @param expertModelId the expert model id
    */
-  removeTrace(expertModelId: string) {
+  removeTrace(expertModelId: string): void {
     delete this.expertModelTrace[expertModelId];
   }
 
   // Export
 
-  toPouchDb(): any {
+  toDb(): FeatureEntry {
     const subfeatures = {};
-    Object.entries(this.subfeatures).forEach(([id, feature]) => subfeatures[id] = feature.toPouchDb());
+    Object.entries(this.subfeatures).forEach(
+      ([id, feature]) => (subfeatures[id] = feature.toDb())
+    );
     return {
       name: this.name,
       description: this.description,
       type: this.type,
       subfeatures,
       subfeatureConnections: this.subfeatureConnections,
-      relationships: this.relationships.toPouchDb(),
-      expertModelTrace: this.expertModelTrace
+      relationships: this.relationships.toDb(),
+      expertModelTrace: this.expertModelTrace,
     };
   }
 
-  toJSON() {
+  toJSON(): FeatureJsonSchema {
     return {
       name: this.name,
       description: this.description ? this.description : undefined,
       type: this.type,
       subfeatures: this.subfeatures,
       subfeatureConnections: this.subfeatureConnections,
-      relationships: this.relationships
+      relationships: this.relationships,
     };
   }
 
@@ -182,7 +236,7 @@ export class Feature {
    *
    * @param func function to use on the features
    */
-  private iterateFeatures(func: (feature: Feature) => boolean) {
+  private iterateFeatures(func: (feature: Feature) => boolean): void {
     const featureStack: Feature[] = [];
 
     featureStack.push(...Object.values(this.subfeatures).reverse());
@@ -197,5 +251,4 @@ export class Feature {
       featureStack.push(...Object.values(current.subfeatures).reverse());
     }
   }
-
 }

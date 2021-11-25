@@ -1,7 +1,4 @@
-image: hub.cs.upb.de/sego/bmdl-expert-modeler/chrome-headless
-
-variables:
-  CHROME_BIN: chromium
+image: node:14
 
 stages:
   - build
@@ -10,7 +7,7 @@ stages:
 
 # https://docs.gitlab.com/ee/ci/caching/#caching-nodejs-dependencies
 cache:
-  key: "$CI_COMMIT_REF_SLUG"
+  key: '$CI_COMMIT_REF_SLUG'
   paths:
     - .npm/
   policy: pull
@@ -21,57 +18,70 @@ before_script:
 
 build:
   stage: build
-  script: npm run build -- --prod
+  script: npm run build -- --configuration production
   cache:
-    key: "$CI_COMMIT_REF_SLUG"
+    key: '$CI_COMMIT_REF_SLUG'
     paths:
       - .npm/
     policy: push
   artifacts:
-    name: "$CI_COMMIT_REF_SLUG-$CI_JOB_NAME"
+    name: '$CI_COMMIT_REF_SLUG-$CI_JOB_NAME'
     paths:
-      - "dist/"
+      - 'dist/'
     expire_in: 1 week
 
-tslint:
+eslint:
   stage: test
   script: npm -s run lint -- --format=stylish > report
   artifacts:
-    name: "$CI_COMMIT_REF_SLUG-$CI_JOB_NAME"
+    name: '$CI_COMMIT_REF_SLUG-$CI_JOB_NAME'
     when: on_failure
     paths:
-      - "report"
+      - 'report'
     expire_in: 1 week
   dependencies: []
-  allow_failure: true # TODO: remove after testing deployment
+
+prettier:
+  stage: test
+  script: npm -s run style > report
+  artifacts:
+    name: '$CI_COMMIT_REF_SLUG-$CI_JOB_NAME'
+    when: on_failure
+    paths:
+      - 'report'
+    expire_in: 1 week
+  dependencies: []
 
 unittest:
   stage: test
-  script: npm -s run test -- --codeCoverage --progress=false --watch=false --browsers=ChromeHeadlessCI --reporters junit,dots
+  script: npm -s run test -- --coverage --reporters="default" --reporters="jest-junit"
   artifacts:
-    name: "$CI_COMMIT_REF_SLUG-$CI_JOB_NAME"
+    name: '$CI_COMMIT_REF_SLUG-$CI_JOB_NAME'
     when: always
     paths:
-      - "coverage/"
-      - "reports/TESTS-*.xml"
+      - 'coverage/'
+      - 'junit.xml'
     reports:
-      cobertura: "coverage/bmdl-modeler/cobertura-coverage.xml"
-      junit: "reports/TESTS-*.xml"
+      cobertura: 'coverage/cobertura-coverage.xml'
+      junit: 'junit.xml'
     expire_in: 1 week
   dependencies: []
 
-e2etest:
-  stage: test
-  script: npm -s run e2e -- --protractor-config=e2e/protractor-ci.conf.js
-  artifacts:
-    name: "$CI_COMMIT_REF_SLUG-$CI_JOB_NAME"
-    when: on_failure
-    paths:
-      - "reports/e2e-report.xml"
-    reports:
-      junit: "reports/e2e-report.xml"
-    expire_in: 1 week
-  dependencies: []
+#e2etest:
+#  image: cypress/browsers:node14.17.0-chrome88-ff89
+#  stage: test
+#  script: npm -s run e2e -- --headless
+#  artifacts:
+#    name: '$CI_COMMIT_REF_SLUG-$CI_JOB_NAME'
+#    when: on_failure
+#    paths:
+#      - 'reports/e2e-report.xml'
+#      - 'cypress/videos/**/*.mp4'
+#      - 'cypress/screenshots/**/*.png'
+#    reports:
+#      junit: 'reports/e2e-report.xml'
+#    expire_in: 1 day
+#  dependencies: []
 
 pages:
   stage: deploy
@@ -91,7 +101,7 @@ pages:
 buildcontainer:
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+    entrypoint: ['']
   stage: deploy
   before_script: []
   script:
@@ -101,4 +111,5 @@ buildcontainer:
   dependencies: []
   only:
     - master
+  needs: []
   when: manual

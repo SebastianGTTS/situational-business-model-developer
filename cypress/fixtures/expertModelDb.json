@@ -1,0 +1,287 @@
+{
+  "docs": [
+    {
+      "type": "CanvasDefinition",
+      "name": "Business Model Canvas",
+      "rows": [
+        [
+          {
+            "isSpacer": false,
+            "name": "Key Partners",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "key-partners"
+          },
+          {
+            "isSpacer": false,
+            "name": "Key Activities",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "key-activities"
+          },
+          {
+            "isSpacer": false,
+            "name": "Value Propositions",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "value-propositions"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Relationships",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "customer-relationships"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Segments",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "customer-segments"
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "name": "Key Resources",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "key-resources"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Channels",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "channels"
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "name": "Cost Structure",
+            "rowspan": 1,
+            "colspan": 5,
+            "id": "cost-structure"
+          },
+          {
+            "isSpacer": false,
+            "name": "Revenue Streams",
+            "rowspan": 1,
+            "colspan": 5,
+            "id": "revenue-streams"
+          }
+        ]
+      ],
+      "relationshipTypes": ["requires", "excludes", "supports", "hurts"],
+      "_id": "1625144329606"
+    },
+    {
+      "type": "ExpertModel",
+      "name": "Test Model",
+      "description": "Test Description",
+      "author": {},
+      "features": {
+        "key-partners": {
+          "name": "Key Partners",
+          "type": "optional",
+          "subfeatures": {
+            "test-feature-a": {
+              "name": "Test Feature A",
+              "description": null,
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              },
+              "expertModelTrace": {}
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "key-activities": {
+          "name": "Key Activities",
+          "description": null,
+          "type": "optional",
+          "subfeatures": {
+            "test-feature-b": {
+              "name": "Test Feature B",
+              "description": null,
+              "type": "mandatory",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              },
+              "expertModelTrace": {}
+            }
+          },
+          "subfeatureConnections": "xor",
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "value-propositions": {
+          "name": "Value Propositions",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "customer-relationships": {
+          "name": "Customer Relationships",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "customer-segments": {
+          "name": "Customer Segments",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "key-resources": {
+          "name": "Key Resources",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "channels": {
+          "name": "Customer Channels",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "cost-structure": {
+          "name": "Cost Structure",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        },
+        "revenue-streams": {
+          "name": "Revenue Streams",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          },
+          "expertModelTrace": {}
+        }
+      },
+      "instances": [],
+      "nextInstanceId": 0,
+      "$definition": {
+        "type": "CanvasDefinition",
+        "_id": "1625144329606",
+        "_rev": "1-046993868fd9587fde38f594ef790187",
+        "name": "Business Model Canvas",
+        "rows": [
+          [
+            {
+              "isSpacer": false,
+              "id": "key-partners",
+              "name": "Key Partners",
+              "rowspan": 2,
+              "colspan": 2
+            },
+            {
+              "isSpacer": false,
+              "id": "key-activities",
+              "name": "Key Activities",
+              "rowspan": 1,
+              "colspan": 2
+            },
+            {
+              "isSpacer": false,
+              "id": "value-propositions",
+              "name": "Value Propositions",
+              "rowspan": 2,
+              "colspan": 2
+            },
+            {
+              "isSpacer": false,
+              "id": "customer-relationships",
+              "name": "Customer Relationships",
+              "rowspan": 1,
+              "colspan": 2
+            },
+            {
+              "isSpacer": false,
+              "id": "customer-segments",
+              "name": "Customer Segments",
+              "rowspan": 2,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "isSpacer": false,
+              "id": "key-resources",
+              "name": "Key Resources",
+              "rowspan": 1,
+              "colspan": 2
+            },
+            {
+              "isSpacer": false,
+              "id": "channels",
+              "name": "Customer Channels",
+              "rowspan": 1,
+              "colspan": 2
+            }
+          ],
+          [
+            {
+              "isSpacer": false,
+              "id": "cost-structure",
+              "name": "Cost Structure",
+              "rowspan": 1,
+              "colspan": 5
+            },
+            {
+              "isSpacer": false,
+              "id": "revenue-streams",
+              "name": "Revenue Streams",
+              "rowspan": 1,
+              "colspan": 5
+            }
+          ]
+        ],
+        "relationshipTypes": ["requires", "excludes", "supports", "hurts"]
+      },
+      "domains": [],
+      "_id": "1635594633414"
+    }
+  ],
+  "identifier": "SBMD-v1"
+}

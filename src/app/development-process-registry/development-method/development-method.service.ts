@@ -1,27 +1,24 @@
 import { Injectable } from '@angular/core';
-import { PouchdbService } from '../../database/pouchdb.service';
-import PouchDB from 'pouchdb-browser';
 import { DevelopmentMethod } from './development-method';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { Type } from '../method-elements/type/type';
+import { DefaultElementService } from '../../database/default-element.service';
+import { PouchdbService } from '../../database/pouchdb.service';
+import { ModuleService } from '../module-api/module.service';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
-export class DevelopmentMethodService {
-
-  constructor(
-    private pouchdbService: PouchdbService,
-  ) {
+export class DevelopmentMethodService extends DefaultElementService<DevelopmentMethod> {
+  protected get typeName(): string {
+    return DevelopmentMethod.typeName;
   }
 
-  /**
-   * Get the list of the development methods.
-   */
-  getDevelopmentMethodList() {
-    return this.pouchdbService.find<DevelopmentMethod>(DevelopmentMethod.typeName, {
-      selector: {},
-    });
+  constructor(
+    private moduleService: ModuleService,
+    pouchdbService: PouchdbService
+  ) {
+    super(pouchdbService);
   }
 
   /**
@@ -30,25 +27,18 @@ export class DevelopmentMethodService {
    * @param needed needed types
    * @param forbidden forbidden types
    */
-  getValidDevelopmentMethods(
-    needed: { list: string, element: { _id: string, name: string } }[],
-    forbidden: { list: string, element: { _id: string, name: string } }[],
-  ) {
-    return this.pouchdbService.find<DevelopmentMethod>(DevelopmentMethod.typeName, {
-      selector: {},
-    }).then((methods) => {
-      methods.docs = methods.docs.filter((method) => Type.validTypes(method.types, needed, forbidden));
-      return methods;
-    });
-  }
-
-  /**
-   * Add new development method.
-   *
-   * @param name name of the development method
-   */
-  addDevelopmentMethod(name: string) {
-    return this.pouchdbService.post(new DevelopmentMethod({name}));
+  async getValidDevelopmentMethods(
+    needed: { list: string; element: { _id: string; name: string } }[],
+    forbidden: { list: string; element: { _id: string; name: string } }[]
+  ): Promise<DevelopmentMethod[]> {
+    return (
+      await this.pouchdbService.find<DevelopmentMethod>(
+        DevelopmentMethod.typeName,
+        {
+          selector: {},
+        }
+      )
+    ).filter((method) => Type.validTypes(method.types, needed, forbidden));
   }
 
   /**
@@ -57,50 +47,126 @@ export class DevelopmentMethodService {
    * @param id id of the development method
    * @param developmentMethod the new values of the object (values will be copied)
    */
-  updateDevelopmentMethod(id: string, developmentMethod: Partial<DevelopmentMethod>) {
-    return this.getDevelopmentMethod(id).then((method) => {
+  update(id: string, developmentMethod: Partial<DevelopmentMethod>) {
+    return this.get(id).then((method) => {
       method.update(developmentMethod);
-      return this.saveDevelopmentMethod(method);
+      return this.save(method);
     });
   }
 
   /**
-   * Get the development method.
+   * Checks whether the development method is correctly defined
    *
-   * @param id id of the development method
+   * @param developmentMethod the development method to check
+   * @return true if the development method is correctly defined and can
+   * be used in processes
    */
-  getDevelopmentMethod(id: string): Promise<DevelopmentMethod> {
-    return this.pouchdbService.get<DevelopmentMethod>(id).then((e) => new DevelopmentMethod(e));
+  isCorrectlyDefined(developmentMethod: DevelopmentMethod): boolean {
+    return this.isExecutionStepsCorrectlyDefined(developmentMethod);
   }
 
   /**
-   * Get development methods by their ids
+   * Checks whether the execution steps of the development method are
+   * correctly defined
    *
-   * @param ids the ids to query
+   * @param developmentMethod the development method to check
+   * @return true if the development method's execution steps are correctly
+   * defined
    */
-  getDevelopmentMethods(ids: string[]): Promise<DevelopmentMethod[]> {
-    return this.pouchdbService.find<DevelopmentMethod>(DevelopmentMethod.typeName, {
-      selector: {
-        _id: {
-          $in: ids,
-        }
-      },
-    }).then((res) => res.docs.map((doc) => new DevelopmentMethod(doc)));
+  isExecutionStepsCorrectlyDefined(
+    developmentMethod: DevelopmentMethod
+  ): boolean {
+    return developmentMethod.executionSteps.every((executionStep, index) =>
+      this.isExecutionStepCorrectlyDefined(developmentMethod, index)
+    );
   }
 
   /**
-   * Remove the development method.
+   * Checks whether a single execution step is correctly defined
    *
-   * @param id id of the development method
+   * @param developmentMethod the development method to check
+   * @param step the step to check
+   * @return true if the execution step is correctly defined
    */
-  deleteDevelopmentMethod(id: string) {
-    return this.pouchdbService.get(id).then(result => {
-      return this.pouchdbService.remove(result);
+  isExecutionStepCorrectlyDefined(
+    developmentMethod: DevelopmentMethod,
+    step: number
+  ): boolean {
+    return (
+      this.hasInputArtifactForStep(developmentMethod, step) &&
+      this.isPredefinedInputDefined(developmentMethod, step)
+    );
+  }
+
+  /**
+   * Checks whether a single execution step has predefined input defined
+   * or does not need it
+   *
+   * @param developmentMethod the development method to check
+   * @param step the step to check
+   * @return true if the execution step has predefined input defined or does not
+   * need it
+   */
+  isPredefinedInputDefined(
+    developmentMethod: DevelopmentMethod,
+    step: number
+  ): boolean {
+    const executionStep = developmentMethod.executionSteps[step];
+    const method = this.moduleService.getModuleMethod(
+      executionStep.module,
+      executionStep.method
+    );
+    if (method.createConfigurationForm != null) {
+      const form = method.createConfigurationForm(
+        executionStep.predefinedInput
+      );
+      return form.valid;
+    }
+    return true;
+  }
+
+  /**
+   * Checks whether all input artifacts can be gathered through any input group
+   * or a previous step
+   *
+   * @param developmentMethod the development method to check
+   * @param step the step to check
+   * @return true if the execution step will have input artifacts available
+   */
+  hasInputArtifactForStep(
+    developmentMethod: DevelopmentMethod,
+    step: number
+  ): boolean {
+    const executionStep = developmentMethod.executionSteps[step];
+    const method = this.moduleService.getModuleMethod(
+      executionStep.module,
+      executionStep.method
+    );
+    const artifactInputs = developmentMethod.checkStepInputArtifacts(
+      step,
+      method.input.length
+    );
+    return artifactInputs.every((artifactInput) => {
+      if (artifactInput.length === 0) {
+        return false;
+      }
+      return (
+        artifactInput
+          .filter((input) => input.isStep)
+          .some((input) => input.index < step) ||
+        developmentMethod.inputArtifacts.every(
+          (group, index) =>
+            artifactInput.filter(
+              (input) => !input.isStep && input.index === index
+            ).length > 0
+        )
+      );
     });
   }
 
-  private saveDevelopmentMethod(developmentMethod: DevelopmentMethod): Promise<PouchDB.Core.Response> {
-    return this.pouchdbService.put(developmentMethod);
+  protected createElement(
+    element: Partial<DevelopmentMethod>
+  ): DevelopmentMethod {
+    return new DevelopmentMethod(element);
   }
-
 }

@@ -1,29 +1,44 @@
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline" *ngIf="developmentMethod">
-    <a class="nav-link active" [routerLink]="[]">{{developmentMethod.name}}</a>
+    <a class="nav-link active" [routerLink]="[]">{{
+      developmentMethod.name
+    }}</a>
   </nav>
 </div>
 
 <main *ngIf="developmentMethod" role="main" class="container">
-
   <div class="alert alert-info mt-3" role="alert">
-    <p>Create a Method Building Block to insert it later into activities of Method Patterns. A Method Building Block
-      needs at least a Type to be inserted into an activity of a Method Pattern.</p>
+    <p>
+      Create a Method Building Block to insert it later into activities of
+      Method Patterns. A Method Building Block needs at least a Type to be
+      inserted into an activity of a Method Pattern.
+    </p>
 
-    <p>It is possible to only select a value for
-      the list input field and let the second input field empty. Then the Business Developer can decide later, when
-      creating the Business Model Development Method, which concrete element to use. Additionally, it is possible to
-      select multiple to define that a Business Developer will be able to select multiple concrete elements.</p>
+    <p>
+      It is possible to only select a value for the list input field and let the
+      second input field empty. Then the Business Developer can decide later,
+      when creating the Business Model Development Method, which concrete
+      element to use. Additionally, it is possible to select multiple to define
+      that a Business Developer will be able to select multiple concrete
+      elements.
+    </p>
 
-    <p class="mb-0">Artifacts and Stakeholders allow the creation of different groups. Later, when creating the
-      Business Model Development Method, one group can be chosen to be used.</p>
+    <p class="mb-0">
+      Artifacts and Stakeholders allow the creation of different groups. Later,
+      when creating the Business Model Development Method, one group can be
+      chosen to be used.
+    </p>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Types</h6>
     <div class="text-muted pt-3">
-      <app-types-selection-form [types]="developmentMethod.types"
-                                (submitTypesForm)="updateDevelopmentMethodValue({types: $event.value})"></app-types-selection-form>
+      <app-types-selection-form
+        [types]="developmentMethod.types"
+        (submitTypesForm)="
+          updateDevelopmentMethodValue({ types: $event.value })
+        "
+      ></app-types-selection-form>
     </div>
   </div>
 
@@ -32,74 +47,107 @@
     <div class="text-muted pt-3">
       <app-situational-factors-selection-form
         [situationalFactors]="developmentMethod.situationalFactors"
-        (submitSituationalFactorsForm)="updateDevelopmentMethodValue({situationalFactors: $event.value})"></app-situational-factors-selection-form>
+        (submitSituationalFactorsForm)="
+          updateDevelopmentMethodValue({ situationalFactors: $event.value })
+        "
+      ></app-situational-factors-selection-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Description</h6>
     <div class="text-muted pt-3">
-      <app-description-form [description]="developmentMethod.description"
-                            (submitDescriptionForm)="updateDevelopmentMethod($event)"></app-description-form>
+      <app-description-form
+        [description]="developmentMethod.description"
+        (submitDescriptionForm)="updateDevelopmentMethod($event)"
+      ></app-description-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Examples</h6>
     <div class="text-muted pt-3">
-      <app-examples-form [examples]="developmentMethod.examples"
-                         (submitExamplesForm)="updateDevelopmentMethodValue({examples: $event.value})"></app-examples-form>
+      <app-examples-form
+        [examples]="developmentMethod.examples"
+        (submitExamplesForm)="
+          updateDevelopmentMethodValue({ examples: $event.value })
+        "
+      ></app-examples-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Input Artifacts</h6>
     <div class="pt-3">
-      <app-artifacts-selection-form [artifacts]="developmentMethod.inputArtifacts"
-                                    [developmentMethod]="developmentMethod"
-                                    (submitArtifactsForm)="updateDevelopmentMethodValue({inputArtifacts: $event.value})"></app-artifacts-selection-form>
+      <app-artifacts-selection-form
+        [artifacts]="developmentMethod.inputArtifacts"
+        [developmentMethod]="developmentMethod"
+        (submitArtifactsForm)="
+          updateDevelopmentMethodValue({ inputArtifacts: $event.value })
+        "
+      ></app-artifacts-selection-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Output Artifacts</h6>
     <div class="pt-3">
-      <app-artifacts-selection-form [artifacts]="developmentMethod.outputArtifacts"
-                                    (submitArtifactsForm)="updateDevelopmentMethodValue({outputArtifacts: $event.value})"></app-artifacts-selection-form>
+      <app-artifacts-selection-form
+        [artifacts]="developmentMethod.outputArtifacts"
+        (submitArtifactsForm)="
+          updateDevelopmentMethodValue({ outputArtifacts: $event.value })
+        "
+      ></app-artifacts-selection-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Stakeholders</h6>
     <div class="text-muted pt-3">
-      <app-stakeholders-selection-form [stakeholders]="developmentMethod.stakeholders"
-                                       (submitStakeholdersForm)="updateDevelopmentMethodValue({stakeholders: $event.value})"></app-stakeholders-selection-form>
+      <app-stakeholders-selection-form
+        [stakeholders]="developmentMethod.stakeholders"
+        (submitStakeholdersForm)="
+          updateDevelopmentMethodValue({ stakeholders: $event.value })
+        "
+      ></app-stakeholders-selection-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Tools</h6>
     <div class="text-muted pt-3">
-      <app-tools-selection-form [tools]="developmentMethod.tools"
-                                (submitToolsForm)="updateDevelopmentMethodValue({tools: $event.value})"></app-tools-selection-form>
+      <app-tools-selection-form
+        [tools]="developmentMethod.tools"
+        (submitToolsForm)="
+          updateDevelopmentMethodValue({ tools: $event.value })
+        "
+      ></app-tools-selection-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Execution steps</h6>
     <div class="pt-3">
+      <div class="alert alert-info">
+        The modules must first be added in the tools before they can be selected
+        here.
+      </div>
       <app-development-method-select-execution-steps
         [developmentMethod]="developmentMethod"
-        (submitExecutionStepsSelectionForm)="updateExecutionSteps($event)"></app-development-method-select-execution-steps>
+        (submitExecutionStepsSelectionForm)="updateExecutionSteps($event)"
+      ></app-development-method-select-execution-steps>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Edit Author Information</h6>
     <div class="text-muted pt-3">
-      <app-author-form [author]="developmentMethod.author"
-                       (submitAuthorForm)="updateDevelopmentMethodValue({author: $event.value})"></app-author-form>
+      <app-author-form
+        [author]="developmentMethod.author"
+        (submitAuthorForm)="
+          updateDevelopmentMethodValue({ author: $event.value })
+        "
+      ></app-author-form>
     </div>
   </div>
-
 </main>

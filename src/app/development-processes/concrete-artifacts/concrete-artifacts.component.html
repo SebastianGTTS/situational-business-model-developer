@@ -1,0 +1,65 @@
+<ng-template #deleteArtifactModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    (dismiss)="d()"
+    (delete)="deleteArtifact(modalArtifact); c()"
+  >
+    <div modalTitle>Delete Artifact {{ modalArtifact.identifier }}</div>
+    You are deleting the concrete artifact {{ modalArtifact.identifier }}. This
+    can not be undone.
+  </app-delete-modal>
+</ng-template>
+
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Concrete Artifacts</a>
+  </nav>
+</div>
+
+<main role="main" class="container">
+  <div class="my-3 alert alert-info" role="alert">
+    Artifacts that can be imported into running methods.
+  </div>
+
+  <app-list-wrapper
+    listTitle="Concrete Artifacts"
+    [reloading]="reloading"
+    [loading]="loading"
+    [noResults]="noResults"
+  >
+    <div noResults>No artifacts available.</div>
+    <ul results class="list-group">
+      <li
+        class="
+          d-flex
+          list-group-item
+          justify-content-between
+          align-items-baseline
+        "
+        *ngFor="let artifact of artifacts"
+      >
+        <div>
+          <span>
+            {{ artifact.identifier }} &ndash;
+            {{ artifact.artifact.name }}
+          </span>
+        </div>
+        <div>
+          <a
+            [routerLink]="getRouterLink(artifact)"
+            type="button"
+            class="btn btn-dark btn-xs mr-1"
+          >
+            View
+          </a>
+          <button
+            (click)="openDeleteArtifactModal(artifact)"
+            type="button"
+            class="btn btn-danger btn-xs"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </app-list-wrapper>
+</main>

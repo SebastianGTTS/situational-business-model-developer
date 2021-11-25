@@ -1,65 +1,70 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CanvasDefinition } from '../../../canvas-meta-model/canvas-definition';
 import { CanvasDefinitionService } from '../../../canvas-meta-model/canvas-definition.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ELEMENT_SERVICE, ListService } from '../../../shared/list.service';
 
 @Component({
   selector: 'app-canvas-definitions',
   templateUrl: './canvas-definitions.component.html',
-  styleUrls: ['./canvas-definitions.component.css']
+  styleUrls: ['./canvas-definitions.component.css'],
+  providers: [
+    ListService,
+    { provide: ELEMENT_SERVICE, useExisting: CanvasDefinitionService },
+  ],
 })
-export class CanvasDefinitionsComponent implements OnInit {
-
-  canvasDefinitions: CanvasDefinition[];
-
-  addCanvasDefinitionForm: FormGroup;
+export class CanvasDefinitionsComponent {
+  addCanvasDefinitionForm: FormGroup = this.fb.group({
+    name: ['', Validators.required],
+  });
 
   modalCanvas: CanvasDefinition;
   private modalReference: NgbModalRef;
 
-  @ViewChild('deleteCanvasDefinitionModal', {static: true}) deleteCanvasDefinitionModal: any;
+  @ViewChild('deleteCanvasDefinitionModal', { static: true })
+  deleteCanvasDefinitionModal: any;
 
   constructor(
-    private canvasDefinitionService: CanvasDefinitionService,
     private fb: FormBuilder,
-    private modalService: NgbModal,
-  ) {
-  }
-
-  ngOnInit() {
-    this.loadCanvasDefinitions().then();
-    this.initForm();
-  }
-
-  initForm() {
-    this.addCanvasDefinitionForm = this.fb.group({
-      name: ['', Validators.required],
-    });
-  }
+    private listService: ListService<CanvasDefinition>,
+    private modalService: NgbModal
+  ) {}
 
   async addCanvasDefinition() {
-    await this.canvasDefinitionService.add({name: this.nameControl.value});
-    this.initForm();
-    await this.loadCanvasDefinitions();
+    await this.listService.add({ name: this.nameControl.value });
+    this.addCanvasDefinitionForm.reset();
   }
 
-  async openDeleteCanvasDefinitionModal(canvasDefinitionId: string) {
-    this.modalCanvas = await this.canvasDefinitionService.get(canvasDefinitionId);
-    this.modalReference = this.modalService.open(this.deleteCanvasDefinitionModal, {size: 'lg'});
+  openDeleteCanvasDefinitionModal(canvasDefinition: CanvasDefinition) {
+    this.modalCanvas = canvasDefinition;
+    this.modalReference = this.modalService.open(
+      this.deleteCanvasDefinitionModal,
+      { size: 'lg' }
+    );
   }
 
   async deleteCanvasDefinition(canvasDefinitionId: string) {
-    await this.canvasDefinitionService.delete(canvasDefinitionId);
-    await this.loadCanvasDefinitions();
-  }
-
-  async loadCanvasDefinitions() {
-    this.canvasDefinitions = (await this.canvasDefinitionService.getList()).docs;
+    await this.listService.delete(canvasDefinitionId);
   }
 
   get nameControl() {
     return this.addCanvasDefinitionForm.get('name');
   }
 
+  get canvasDefinitions(): CanvasDefinition[] {
+    return this.listService.elements;
+  }
+
+  get noResults(): boolean {
+    return this.listService.noResults;
+  }
+
+  get loading(): boolean {
+    return this.listService.loading;
+  }
+
+  get reloading(): boolean {
+    return this.listService.reloading;
+  }
 }

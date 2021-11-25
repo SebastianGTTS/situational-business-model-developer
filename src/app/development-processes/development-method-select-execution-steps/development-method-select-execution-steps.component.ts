@@ -1,16 +1,30 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
 import { ExecutionStep } from '../../development-process-registry/development-method/execution-step';
 import { ExecutionStepsFormService } from '../shared/execution-steps-form.service';
+import { Subscription } from 'rxjs';
+import { debounceTime, tap } from 'rxjs/operators';
+import { equalsList } from '../../shared/utils';
+import { ModuleService } from '../../development-process-registry/module-api/module.service';
 
 @Component({
   selector: 'app-development-method-select-execution-steps',
   templateUrl: './development-method-select-execution-steps.component.html',
-  styleUrls: ['./development-method-select-execution-steps.component.css']
+  styleUrls: ['./development-method-select-execution-steps.component.css'],
 })
-export class DevelopmentMethodSelectExecutionStepsComponent implements OnChanges {
-
+export class DevelopmentMethodSelectExecutionStepsComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input() developmentMethod: DevelopmentMethod;
 
   @Output() submitExecutionStepsSelectionForm = new EventEmitter<FormArray>();
@@ -18,36 +32,103 @@ export class DevelopmentMethodSelectExecutionStepsComponent implements OnChanges
   executionStepsSelectionForm: FormGroup = this.fb.group({
     steps: this.fb.array([]),
   });
+  changed = false;
+
+  private changeSubscription: Subscription;
 
   constructor(
     private executionStepsFormService: ExecutionStepsFormService,
     private fb: FormBuilder,
-  ) {
+    private moduleService: ModuleService
+  ) {}
+
+  ngOnInit(): void {
+    this.changeSubscription = this.executionStepsSelectionForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap(
+          (value) =>
+            (this.changed = !this.equalExecutionSteps(
+              this.developmentMethod.executionSteps,
+              this.executionStepsFormService.getExecutionSteps(value.steps)
+            ))
+        )
+      )
+      .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.developmentMethod) {
-      this.loadForm(changes.developmentMethod.currentValue.executionSteps);
+      const oldDevelopmentMethod: DevelopmentMethod =
+        changes.developmentMethod.previousValue;
+      const newDevelopmentMethod: DevelopmentMethod =
+        changes.developmentMethod.currentValue;
+      if (
+        oldDevelopmentMethod == null ||
+        !this.equalExecutionSteps(
+          oldDevelopmentMethod.executionSteps,
+          newDevelopmentMethod.executionSteps
+        )
+      ) {
+        this.loadForm(newDevelopmentMethod.executionSteps);
+      }
     }
   }
 
-  addStep() {
-    this.formArray.push(this.executionStepsFormService.createExecutionStepForm());
+  ngOnDestroy(): void {
+    if (this.changeSubscription) {
+      this.changeSubscription.unsubscribe();
+    }
   }
 
-  removeStep(index: number) {
+  addStep(): void {
+    this.formArray.push(
+      this.executionStepsFormService.createExecutionStepForm()
+    );
+  }
+
+  removeStep(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  loadForm(executionSteps: ExecutionStep[]) {
-    this.executionStepsSelectionForm.setControl('steps', this.executionStepsFormService.createForm(executionSteps));
+  loadForm(executionSteps: ExecutionStep[]): void {
+    this.executionStepsSelectionForm.setControl(
+      'steps',
+      this.executionStepsFormService.createForm(executionSteps)
+    );
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitExecutionStepsSelectionForm.emit(this.formArray);
   }
 
-  get formArray() {
+  private equalExecutionSteps(
+    executionStepsA: ExecutionStep[],
+    executionStepsB: ExecutionStep[]
+  ): boolean {
+    if (!equalsList(executionStepsA, executionStepsB)) {
+      return false;
+    }
+    return executionStepsA.every((stepA, index) => {
+      if (stepA.module != null && stepA.method != null) {
+        const method = this.moduleService.getModuleMethod(
+          stepA.module,
+          stepA.method
+        );
+        if (method.equalPredefinedInput) {
+          return method.equalPredefinedInput(
+            stepA.predefinedInput,
+            executionStepsB[index].predefinedInput
+          );
+        } else {
+          return true;
+        }
+      }
+      return false;
+    });
+  }
+
+  get formArray(): FormArray {
     return this.executionStepsSelectionForm.get('steps') as FormArray;
   }
 }

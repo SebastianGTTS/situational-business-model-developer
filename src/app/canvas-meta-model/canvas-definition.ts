@@ -1,42 +1,98 @@
 import { Feature } from './feature';
-import { PouchdbModel } from '../database/pouchdb-model';
-import { CanvasDefinitionCell } from './canvas-definition-cell';
+import { DatabaseModel } from '../database/database-model';
+import {
+  CanvasDefinitionCell,
+  CanvasDefinitionCellEntry,
+} from './canvas-definition-cell';
+import { getId } from '../model/utils';
+import { DatabaseRootEntry } from '../database/database-entry';
 
-export class CanvasDefinition extends PouchdbModel {
+export interface CanvasDefinitionEntry extends DatabaseRootEntry {
+  name: string;
+  description: string;
+  rows: CanvasDefinitionCellEntry[][];
+  relationshipTypes: string[];
+}
 
+interface CanvasDefinitionJsonSchema {
+  name: string;
+  description: string;
+  rows: CanvasDefinitionCellEntry[][];
+  relationshipTypes: string[];
+}
+
+export class CanvasDefinition extends DatabaseModel {
   static readonly typeName = 'CanvasDefinition';
 
   name: string;
+  description: string;
 
   rows: CanvasDefinitionCell[][] = [];
+
+  relationshipTypes: string[] = [];
 
   constructor(canvasDefinition: Partial<CanvasDefinition>) {
     super(CanvasDefinition.typeName);
     Object.assign(this, canvasDefinition);
-    this.rows = this.rows.map((row) => row.map((cell) => new CanvasDefinitionCell(cell)));
+    this.rows = this.rows.map((row) =>
+      row.map((cell) => new CanvasDefinitionCell(cell))
+    );
+  }
+
+  update(canvasDefinition: Partial<CanvasDefinition>): void {
+    Object.assign(this, canvasDefinition);
+  }
+
+  /**
+   * Update the rows of this canvas definition and give them correct ids
+   *
+   * @param newRows the new rows
+   */
+  updateRows(newRows: CanvasDefinitionCell[][]): void {
+    const ids = new Set<string>();
+    newRows.forEach((row) =>
+      row
+        .filter((cell) => !cell.isSpacer)
+        .forEach((cell) => {
+          if (!cell.id) {
+            cell.id = getId(cell.name, Array.from(ids));
+          } else if (ids.has(cell.id)) {
+            cell.id = getId(cell.name, Array.from(ids));
+          }
+          ids.add(cell.id);
+        })
+    );
+    this.rows = newRows;
   }
 
   get rootFeatures(): Feature[] {
     const rootFeatures: Feature[] = [];
-    this.rows.forEach((row) => row.filter((cell) => !cell.isSpacer).forEach((cell) => {
-      rootFeatures.push(new Feature(cell.id, null, {name: cell.name}));
-    }));
+    this.rows.forEach((row) =>
+      row
+        .filter((cell) => !cell.isSpacer)
+        .forEach((cell) => {
+          rootFeatures.push(new Feature(cell.id, null, { name: cell.name }));
+        })
+    );
     return rootFeatures;
   }
 
-  toPouchDb(): any {
+  toDb(): CanvasDefinitionEntry {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
       name: this.name,
-      rows: this.rows,
+      description: this.description,
+      rows: this.rows.map((row) => row.map((cell) => cell.toDb())),
+      relationshipTypes: this.relationshipTypes,
     };
   }
 
-  toJSON() {
+  toJSON(): CanvasDefinitionJsonSchema {
     return {
       name: this.name,
-      rows: this.rows.map((row) => row.map((cell) => cell.toPouchDb())),
+      description: this.description,
+      rows: this.rows.map((row) => row.map((cell) => cell.toDb())),
+      relationshipTypes: this.relationshipTypes,
     };
   }
-
 }

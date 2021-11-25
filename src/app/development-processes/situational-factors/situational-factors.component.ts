@@ -1,52 +1,60 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SituationalFactorService } from '../../development-process-registry/method-elements/situational-factor/situational-factor.service';
-import { MethodElement } from '../../development-process-registry/method-elements/method-element';
 import { FormGroup } from '@angular/forms';
+import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-situational-factors',
   templateUrl: './situational-factors.component.html',
-  styleUrls: ['./situational-factors.component.css']
+  styleUrls: ['./situational-factors.component.css'],
 })
 export class SituationalFactorsComponent implements OnInit {
-
-  elementLists: { listName: string, elements: MethodElement[] }[] = null;
+  elementLists: {
+    listName: string;
+    elements: SituationalFactorDefinition[];
+  }[] = null;
   listNames: string[] = [];
+
+  modalSituationalFactor: SituationalFactorDefinition;
+  private modalReference: NgbModalRef;
+
+  @ViewChild('deleteSituationalFactorModal', { static: true })
+  deleteSituationalFactorModal: any;
 
   constructor(
     private situationalFactorService: SituationalFactorService,
-  ) {
-  }
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
-    this.loadSituationalFactors();
+    void this.loadSituationalFactors();
   }
 
-  private loadSituationalFactors() {
-    this.situationalFactorService.getLists().then(
-      lists => {
-        this.elementLists = lists;
-        this.listNames = this.elementLists.map((list) => list.listName);
-      },
-    ).catch(
-      error => console.log('LoadSituationalFactors: ' + error)
+  private async loadSituationalFactors(): Promise<void> {
+    this.elementLists = await this.situationalFactorService.getLists();
+    this.listNames = this.elementLists.map((list) => list.listName);
+  }
+
+  openDeleteSituationalFactorModal(
+    situationalFactor: SituationalFactorDefinition
+  ) {
+    this.modalSituationalFactor = situationalFactor;
+    this.modalReference = this.modalService.open(
+      this.deleteSituationalFactorModal,
+      {
+        size: 'lg',
+      }
     );
   }
 
-  deleteSituationalFactor(id: string) {
-    this.situationalFactorService.delete(id).then(
-      () => this.loadSituationalFactors()
-    ).catch(
-      error => console.log('DeleteSituationalFactor: ' + error)
-    );
+  async deleteSituationalFactor(id: string): Promise<void> {
+    await this.situationalFactorService.delete(id);
+    await this.loadSituationalFactors();
   }
 
-  addSituationalFactor(situationalFactorForm: FormGroup) {
-    this.situationalFactorService.add(situationalFactorForm.value).then(
-      () => this.loadSituationalFactors()
-    ).catch(
-      error => console.log('AddSituationalFactor: ' + error)
-    );
+  async addSituationalFactor(situationalFactorForm: FormGroup): Promise<void> {
+    await this.situationalFactorService.add(situationalFactorForm.value);
+    await this.loadSituationalFactors();
   }
-
 }

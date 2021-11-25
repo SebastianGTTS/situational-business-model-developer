@@ -1,17 +1,28 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { MethodElement } from '../../development-process-registry/method-elements/method-element';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { GroupSelection } from '../../development-process-registry/bm-process/decision';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
+import { debounceTime, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-method-element-group-info',
   templateUrl: './method-element-group-info.component.html',
-  styleUrls: ['./method-element-group-info.component.css']
+  styleUrls: ['./method-element-group-info.component.css'],
 })
-export class MethodElementGroupInfoComponent implements OnInit, OnChanges, OnDestroy {
-
+export class MethodElementGroupInfoComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input() methodElementName: string;
 
   @Input() groups: MultipleSelection<MethodElement>[][];
@@ -25,27 +36,46 @@ export class MethodElementGroupInfoComponent implements OnInit, OnChanges, OnDes
     selectedGroup: [null, Validators.required],
     elements: this.fb.array([]),
   });
+  changed = false;
 
   private selectedIndexSubscription: Subscription;
+  private changeSubscription: Subscription;
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.selectedIndexSubscription = this.selectedGroupControl.valueChanges.subscribe((value) => this.generateControls(value));
+    this.selectedIndexSubscription =
+      this.selectedGroupControl.valueChanges.subscribe((value) =>
+        this.generateControls(value)
+      );
+    this.changeSubscription = this.form.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap((value) => (this.changed = !this.selection.equals(value)))
+      )
+      .subscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.selection || changes.groups) {
+    if (changes.groups) {
       this.loadForm();
+    } else if (changes.selection) {
+      const oldSelection: GroupSelection<MethodElement> =
+        changes.selection.previousValue;
+      const newSelection: GroupSelection<MethodElement> =
+        changes.selection.currentValue;
+      if (!newSelection.equals(oldSelection)) {
+        this.loadForm();
+      }
     }
   }
 
   ngOnDestroy() {
     if (this.selectedIndexSubscription) {
       this.selectedIndexSubscription.unsubscribe();
+    }
+    if (this.changeSubscription) {
+      this.changeSubscription.unsubscribe();
     }
   }
 
@@ -54,7 +84,9 @@ export class MethodElementGroupInfoComponent implements OnInit, OnChanges, OnDes
   }
 
   private loadForm() {
-    this.selectedGroupControl.setValue(this.selection.selectedGroup, {emitEvent: false});
+    this.selectedGroupControl.setValue(this.selection.selectedGroup, {
+      emitEvent: false,
+    });
     this.generateControls(this.selection.selectedGroup);
     if (this.selection.elements) {
       this.elementsFormArray.patchValue(this.selection.elements);
@@ -64,8 +96,16 @@ export class MethodElementGroupInfoComponent implements OnInit, OnChanges, OnDes
   private generateControls(selectedGroup: number) {
     if (selectedGroup !== null) {
       const elements = this.groups[selectedGroup].map((element, index) => {
-        if (element.multiple && this.selection.elements && this.selection.elements[index]) {
-          return this.fb.array(this.selection.elements[index].map(() => this.fb.control(null, Validators.required)));
+        if (
+          element.multiple &&
+          this.selection.elements &&
+          this.selection.elements[index]
+        ) {
+          return this.fb.array(
+            this.selection.elements[index].map(() =>
+              this.fb.control(null, Validators.required)
+            )
+          );
         }
         return this.fb.array(element.multiple ? [] : [this.fb.control(null)]);
       });
@@ -86,5 +126,4 @@ export class MethodElementGroupInfoComponent implements OnInit, OnChanges, OnDes
   get elementsFormArray() {
     return this.form.get('elements') as FormArray;
   }
-
 }

@@ -1,22 +1,20 @@
 import { StepArtifact } from './step-artifact';
 
 export class StepInputArtifact extends StepArtifact {
-
   versionInfo: {
-    number: number,
-    time: number,
-    createdBy: string,
+    number: number;
+    time: number;
+    createdBy: string;
   };
 
   constructor(stepInputArtifact: Partial<StepInputArtifact>) {
     super(stepInputArtifact);
   }
 
-  toPouchDb() {
+  toDb() {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
       versionInfo: this.versionInfo,
     };
   }
-
 }

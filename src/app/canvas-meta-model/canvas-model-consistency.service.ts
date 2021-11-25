@@ -2,26 +2,27 @@ import { Injectable } from '@angular/core';
 import { FeatureModel } from './feature-model';
 import { Feature, FeatureType, SubfeatureConnectionsType } from './feature';
 import { Instance } from './instance';
-import { ConformanceReport } from './conformance-report';
+import { ConformanceReport, PatternHint } from './conformance-report';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CanvasModelConsistencyService {
-
   /**
    * Called to check whether a feature model is consistent. Raises an error if not.
    *
    * @param featureModel the feature model to check
    */
-  checkFormalConsistency(featureModel: FeatureModel) {
+  checkFormalConsistency(featureModel: FeatureModel): void {
     // has a definition
     if (!featureModel.definition) {
       throw new Error('Missing definition');
     }
 
     // has the root canvas blocks of the definition
-    const blocks = featureModel.definition.rootFeatures.map((feature) => feature.id);
+    const blocks = featureModel.definition.rootFeatures.map(
+      (feature) => feature.id
+    );
     if (!blocks.every((id) => id in featureModel.features)) {
       throw new Error('Missing canvas blocks');
     }
@@ -37,19 +38,48 @@ export class CanvasModelConsistencyService {
       return false;
     });
     featureModel.iterateFeatures((feature: Feature) => {
-      if (!feature.relationships.getAllReferencedFeatureIds().every((id) => featureIds.has(id))) {
-        throw new Error('Relationships of feature ' + feature.id + ' reference a non existing feature id');
+      if (
+        !feature.relationships
+          .getAllReferencedFeatureIds()
+          .every((id) => featureIds.has(id))
+      ) {
+        throw new Error(
+          'Relationships of feature ' +
+            feature.id +
+            ' reference a non existing feature id'
+        );
+      }
+      if (
+        feature.relationships
+          .getRelationshipTypes()
+          .some(
+            (type) => !featureModel.definition.relationshipTypes.includes(type)
+          )
+      ) {
+        throw new Error(
+          'Feature ' +
+            feature.id +
+            ' has a relationship types that does not exist in the definition'
+        );
       }
       return false;
     });
 
     // instances use at least the nine root canvas blocks
-    if (!featureModel.instances.every((instance) => blocks.every((id) => instance.usedFeatures.includes(id)))) {
+    if (
+      !featureModel.instances.every((instance) =>
+        blocks.every((id) => instance.usedFeatures.includes(id))
+      )
+    ) {
       throw new Error('Instance does not reference all root canvas blocks');
     }
 
     // instances only reference valid features
-    if (!featureModel.instances.every((instance) => instance.usedFeatures.every((id) => featureIds.has(id)))) {
+    if (
+      !featureModel.instances.every((instance) =>
+        instance.usedFeatures.every((id) => featureIds.has(id))
+      )
+    ) {
       throw new Error('Instance references non existing feature id');
     }
   }
@@ -59,12 +89,20 @@ export class CanvasModelConsistencyService {
    *
    * @param featureModel the feature model to check
    */
-  instanceIsPossible(featureModel: FeatureModel): { problems: string[], problemFeatureIds: string[], possibleInstance: Instance } {
+  instanceIsPossible(featureModel: FeatureModel): {
+    problems: string[];
+    problemFeatureIds: string[];
+    possibleInstance: Instance;
+  } {
     const featureMap = featureModel.getFeatureMap();
     const testInstance = new Instance(-1, {});
     testInstance.usedFeatures = [];
 
-    const instances = this.addFeaturesToPossibleInstances([testInstance], Object.values(featureModel.features), featureMap);
+    const instances = this.addFeaturesToPossibleInstances(
+      [testInstance],
+      Object.values(featureModel.features),
+      featureMap
+    );
 
     const results = instances.map((instance) => {
       return {
@@ -91,42 +129,79 @@ export class CanvasModelConsistencyService {
    * @param feature the feature to add
    * @param featureMap the feature map of the feature model
    */
-  private addFeatureToPossibleInstance(instance: Instance, feature: Feature, featureMap: { [id: string]: Feature }): Instance[] {
+  private addFeatureToPossibleInstance(
+    instance: Instance,
+    feature: Feature,
+    featureMap: { [id: string]: Feature }
+  ): Instance[] {
     instance.addFeature(feature.id);
 
     let instances = [instance];
 
     // Add parent of feature
     if (feature.parent !== null) {
-      instances = this.addFeatureToPossibleInstances(instances, feature.parent, featureMap);
+      instances = this.addFeatureToPossibleInstances(
+        instances,
+        feature.parent,
+        featureMap
+      );
     }
 
     // Add all required features
-    instances = this.addFeaturesToPossibleInstances(instances, feature.relationships.requires.map((id) => featureMap[id]), featureMap);
+    instances = this.addFeaturesToPossibleInstances(
+      instances,
+      feature.relationships
+        .getRelationships('required')
+        .map((id) => featureMap[id]),
+      featureMap
+    );
 
     // Check for new mandatory features
     instances = this.addFeaturesToPossibleInstances(
-      instances, Object.values(feature.subfeatures).filter((subfeature) => subfeature.type === FeatureType.MANDATORY), featureMap
+      instances,
+      Object.values(feature.subfeatures).filter(
+        (subfeature) => subfeature.type === FeatureType.MANDATORY
+      ),
+      featureMap
     );
 
     // Check OR and XOR
-    if (feature.subfeatureConnections === SubfeatureConnectionsType.XOR || feature.subfeatureConnections === SubfeatureConnectionsType.OR) {
+    if (
+      feature.subfeatureConnections === SubfeatureConnectionsType.XOR ||
+      feature.subfeatureConnections === SubfeatureConnectionsType.OR
+    ) {
       const newInstances = [
-        ...instances.filter((inst) => Object.keys(feature.subfeatures).filter((id) => inst.usedFeatures.includes(id)).length > 0)
+        ...instances.filter(
+          (inst) =>
+            Object.keys(feature.subfeatures).filter((id) =>
+              inst.usedFeatures.includes(id)
+            ).length > 0
+        ),
       ];
-      instances.filter(
-        (inst) => Object.keys(feature.subfeatures).filter((id) => inst.usedFeatures.includes(id)).length === 0
-      ).forEach((inst) => {
-        if (Object.keys(feature.subfeatures).length === 0) {
-          newInstances.push(inst);
-        } else {
-          Object.values(feature.subfeatures).forEach((subfeature) => {
-            const tmpInstance = new Instance(-1, inst);
-            tmpInstance.usedFeatures = [...tmpInstance.usedFeatures];
-            newInstances.push(...this.addFeatureToPossibleInstance(tmpInstance, subfeature, featureMap));
-          });
-        }
-      });
+      instances
+        .filter(
+          (inst) =>
+            Object.keys(feature.subfeatures).filter((id) =>
+              inst.usedFeatures.includes(id)
+            ).length === 0
+        )
+        .forEach((inst) => {
+          if (Object.keys(feature.subfeatures).length === 0) {
+            newInstances.push(inst);
+          } else {
+            Object.values(feature.subfeatures).forEach((subfeature) => {
+              const tmpInstance = new Instance(-1, inst);
+              tmpInstance.usedFeatures = [...tmpInstance.usedFeatures];
+              newInstances.push(
+                ...this.addFeatureToPossibleInstance(
+                  tmpInstance,
+                  subfeature,
+                  featureMap
+                )
+              );
+            });
+          }
+        });
       instances = newInstances;
     }
 
@@ -140,14 +215,19 @@ export class CanvasModelConsistencyService {
    * @param feature the feature to add
    * @param featureMap the feature map of the feature model
    */
-  private addFeatureToPossibleInstances(instances: Instance[], feature: Feature, featureMap: { [id: string]: Feature }): Instance[] {
+  private addFeatureToPossibleInstances(
+    instances: Instance[],
+    feature: Feature,
+    featureMap: { [id: string]: Feature }
+  ): Instance[] {
     const newInstances = [];
     instances.forEach((instance) => {
-        instance.usedFeatures.includes(feature.id)
-          ? newInstances.push(instance)
-          : newInstances.push(...this.addFeatureToPossibleInstance(instance, feature, featureMap));
-      }
-    );
+      instance.usedFeatures.includes(feature.id)
+        ? newInstances.push(instance)
+        : newInstances.push(
+            ...this.addFeatureToPossibleInstance(instance, feature, featureMap)
+          );
+    });
     return newInstances;
   }
 
@@ -158,8 +238,19 @@ export class CanvasModelConsistencyService {
    * @param features the features to add
    * @param featureMap the feature map of the feature model
    */
-  private addFeaturesToPossibleInstances(instances: Instance[], features: Feature[], featureMap: { [id: string]: Feature }): Instance[] {
-    features.forEach((feature) => instances = this.addFeatureToPossibleInstances(instances, feature, featureMap));
+  private addFeaturesToPossibleInstances(
+    instances: Instance[],
+    features: Feature[],
+    featureMap: { [id: string]: Feature }
+  ): Instance[] {
+    features.forEach(
+      (feature) =>
+        (instances = this.addFeatureToPossibleInstances(
+          instances,
+          feature,
+          featureMap
+        ))
+    );
     return instances;
   }
 
@@ -169,38 +260,60 @@ export class CanvasModelConsistencyService {
    * @param featureModel the feature model
    * @param instance the instance to check
    */
-  private checkPossibleInstanceErrors(featureModel: FeatureModel, instance: Instance): { problems: string[], problemFeatureIds: string[] } {
+  private checkPossibleInstanceErrors(
+    featureModel: FeatureModel,
+    instance: Instance
+  ): { problems: string[]; problemFeatureIds: string[] } {
     const featureMap = featureModel.getFeatureMap();
     const problems: string[] = [];
     const problemFeatureIds: Set<string> = new Set<string>();
 
-    featureModel.iterateFeatures((feature) => {
-      // Check for XOR problem
-      if (
-        feature.subfeatureConnections === SubfeatureConnectionsType.XOR &&
-        Object.keys(feature.subfeatures).filter((id) => instance.usedFeatures.includes(id)).length !== 1
-      ) {
-        problems.push(feature.name + ' is XOR, but can not have exactly one subfeature');
-        problemFeatureIds.add(feature.id);
-      }
+    featureModel.iterateFeatures(
+      (feature) => {
+        // Check for XOR problem
+        if (
+          feature.subfeatureConnections === SubfeatureConnectionsType.XOR &&
+          Object.keys(feature.subfeatures).filter((id) =>
+            instance.usedFeatures.includes(id)
+          ).length !== 1
+        ) {
+          problems.push(
+            feature.name + ' is XOR, but can not have exactly one subfeature'
+          );
+          problemFeatureIds.add(feature.id);
+        }
 
-      // Check for OR problem
-      if (
-        feature.subfeatureConnections === SubfeatureConnectionsType.OR &&
-        Object.keys(feature.subfeatures).filter((id) => instance.usedFeatures.includes(id)).length === 0
-      ) {
-        problems.push(feature.name + ' is OR, but can not have at least one subfeature');
-        problemFeatureIds.add(feature.id);
-      }
+        // Check for OR problem
+        if (
+          feature.subfeatureConnections === SubfeatureConnectionsType.OR &&
+          Object.keys(feature.subfeatures).filter((id) =>
+            instance.usedFeatures.includes(id)
+          ).length === 0
+        ) {
+          problems.push(
+            feature.name + ' is OR, but can not have at least one subfeature'
+          );
+          problemFeatureIds.add(feature.id);
+        }
 
-      // Check excludes problem
-      feature.relationships.excludes.filter((id) => instance.usedFeatures.includes(id)).forEach(id => {
-        const excludedFeature = featureMap[id];
-        problems.push(feature.name + ' excludes the feature ' + excludedFeature.name + ', but both features have to be included');
-        problemFeatureIds.add(feature.id);
-      });
-      return false;
-    }, (feature) => instance.usedFeatures.includes(feature.id));
+        // Check excludes problem
+        feature.relationships
+          .getRelationships('excludes')
+          .filter((id) => instance.usedFeatures.includes(id))
+          .forEach((id) => {
+            const excludedFeature = featureMap[id];
+            problems.push(
+              feature.name +
+                ' excludes the feature ' +
+                excludedFeature.name +
+                ', but both features have to be included'
+            );
+            problemFeatureIds.add(feature.id);
+          });
+        return false;
+      },
+      (feature) => instance.usedFeatures.includes(feature.id)
+    );
     return {
       problems,
       problemFeatureIds: Array.from(problemFeatureIds),
@@ -213,18 +326,34 @@ export class CanvasModelConsistencyService {
    * @param featureModel the feature model to check
    * @return problems and problem feature ids of the features that have an incorrect relationship
    */
-  checkHurtsSupports(featureModel: FeatureModel): { problems: string[], problemFeatureIds: string[] } {
+  checkHurtsSupports(featureModel: FeatureModel): {
+    problems: string[];
+    problemFeatureIds: string[];
+  } {
     const featureMap = featureModel.getFeatureMap();
     const problems: string[] = [];
     const problemFeatureIds: Set<string> = new Set<string>();
 
     featureModel.iterateFeatures((feature) => {
-      const features = feature.relationships.supports
+      const features = feature.relationships
+        .getRelationships('supports')
         .map((id) => featureMap[id])
-        .filter((relatedFeature) => relatedFeature.relationships.hurts.includes(feature.id));
+        .filter((relatedFeature) =>
+          relatedFeature.relationships
+            .getRelationships('hurts')
+            .includes(feature.id)
+        );
       features.forEach((relatedFeature) => {
         problems.push(
-          'Feature ' + feature.name + ' supports ' + relatedFeature.name + ', but ' + relatedFeature.name + ' hurts ' + feature.name + '.'
+          'Feature ' +
+            feature.name +
+            ' supports ' +
+            relatedFeature.name +
+            ', but ' +
+            relatedFeature.name +
+            ' hurts ' +
+            feature.name +
+            '.'
         );
         problemFeatureIds.add(relatedFeature.id);
       });
@@ -236,10 +365,9 @@ export class CanvasModelConsistencyService {
 
     return {
       problems,
-      problemFeatureIds: Array.from(problemFeatureIds)
+      problemFeatureIds: Array.from(problemFeatureIds),
     };
   }
-
 
   /**
    * Checks the conformance of an instance of a feature model
@@ -249,13 +377,17 @@ export class CanvasModelConsistencyService {
    * @param patterns the patterns
    * @return featureIds that have problems and errors as messages
    */
-  checkConformanceOfInstance(featureModel: FeatureModel, instanceId: number, patterns: Instance[]): ConformanceReport {
+  checkConformanceOfInstance(
+    featureModel: FeatureModel,
+    instanceId: number,
+    patterns: Instance[]
+  ): ConformanceReport {
     const instance = featureModel.instances.find((i) => i.id === instanceId);
 
     return new ConformanceReport({
       ...this.getConformanceMessages(featureModel, instance),
       ...this.getHints(featureModel, instance),
-      ...this.getPatternHints(featureModel, instance, patterns)
+      ...this.getPatternHints(featureModel, instance, patterns),
     });
   }
 
@@ -265,13 +397,16 @@ export class CanvasModelConsistencyService {
    * @param featureModel the feature model
    * @param instance the instance
    */
-  private getConformanceMessages(featureModel: FeatureModel, instance: Instance): {
-    errorFeatureIds: string[],
-    errors: string[],
-    warningFeatureIds: string[],
-    warnings: string[],
-    strengthFeatureIds: string[],
-    strengths: string[],
+  private getConformanceMessages(
+    featureModel: FeatureModel,
+    instance: Instance
+  ): {
+    errorFeatureIds: string[];
+    errors: string[];
+    warningFeatureIds: string[];
+    warnings: string[];
+    strengthFeatureIds: string[];
+    strengths: string[];
   } {
     const errorFeatureIds = new Set<string>();
     const warningFeatureIds = new Set<string>();
@@ -280,10 +415,14 @@ export class CanvasModelConsistencyService {
     const warnings: string[] = [];
     const strengths: string[] = [];
 
-    const filter = (feature: Feature) => instance.usedFeatures.includes(feature.id) || feature.type === FeatureType.MANDATORY;
-    const checkFeature = (feature: Feature) => {
+    const filter = (feature: Feature): boolean =>
+      instance.usedFeatures.includes(feature.id) ||
+      feature.type === FeatureType.MANDATORY;
+    const checkFeature = (feature: Feature): boolean => {
       const selected = instance.usedFeatures.includes(feature.id);
-      const selectedSubfeaturesLength = Object.keys(feature.subfeatures).filter((id: string) => instance.usedFeatures.includes(id)).length;
+      const selectedSubfeaturesLength = Object.keys(feature.subfeatures).filter(
+        (id: string) => instance.usedFeatures.includes(id)
+      ).length;
 
       if (feature.type === FeatureType.MANDATORY && !selected) {
         errorFeatureIds.add(feature.id);
@@ -305,35 +444,59 @@ export class CanvasModelConsistencyService {
           break;
       }
 
-      const missingRequiredFeatures = feature.relationships.requires.filter((id: string) => !instance.usedFeatures.includes(id));
+      const missingRequiredFeatures = feature.relationships
+        .getRelationships('requires')
+        .filter((id: string) => !instance.usedFeatures.includes(id));
       if (missingRequiredFeatures.length > 0) {
         errorFeatureIds.add(feature.id);
-        missingRequiredFeatures.forEach((id: string) => errors.push(
-          feature.name + ' requires the feature ' + featureModel.getFeature(id).name)
+        missingRequiredFeatures.forEach((id: string) =>
+          errors.push(
+            feature.name +
+              ' requires the feature ' +
+              featureModel.getFeature(id).name
+          )
         );
       }
 
-      const disallowedFeatures = feature.relationships.excludes.filter((id: string) => instance.usedFeatures.includes(id));
+      const disallowedFeatures = feature.relationships
+        .getRelationships('excludes')
+        .filter((id: string) => instance.usedFeatures.includes(id));
       if (disallowedFeatures.length > 0) {
         errorFeatureIds.add(feature.id);
-        disallowedFeatures.forEach((id: string) => errors.push(
-          feature.name + ' excludes the feature ' + featureModel.getFeature(id).name)
+        disallowedFeatures.forEach((id: string) =>
+          errors.push(
+            feature.name +
+              ' excludes the feature ' +
+              featureModel.getFeature(id).name
+          )
         );
       }
 
-      const supportedFeatures = feature.relationships.supports.filter((id: string) => instance.usedFeatures.includes(id));
+      const supportedFeatures = feature.relationships
+        .getRelationships('supports')
+        .filter((id: string) => instance.usedFeatures.includes(id));
       if (supportedFeatures.length > 0) {
         strengthFeatureIds.add(feature.id);
-        supportedFeatures.forEach((id: string) => strengths.push(
-          feature.name + ' supports the feature ' + featureModel.getFeature(id).name)
+        supportedFeatures.forEach((id: string) =>
+          strengths.push(
+            feature.name +
+              ' supports the feature ' +
+              featureModel.getFeature(id).name
+          )
         );
       }
 
-      const hurtedFeatures = feature.relationships.hurts.filter((id: string) => instance.usedFeatures.includes(id));
+      const hurtedFeatures = feature.relationships
+        .getRelationships('hurts')
+        .filter((id: string) => instance.usedFeatures.includes(id));
       if (hurtedFeatures.length > 0) {
         warningFeatureIds.add(feature.id);
-        hurtedFeatures.forEach((id: string) => warnings.push(
-          feature.name + ' hurts the feature ' + featureModel.getFeature(id).name)
+        hurtedFeatures.forEach((id: string) =>
+          warnings.push(
+            feature.name +
+              ' hurts the feature ' +
+              featureModel.getFeature(id).name
+          )
         );
       }
 
@@ -347,7 +510,7 @@ export class CanvasModelConsistencyService {
       warningFeatureIds: Array.from(warningFeatureIds),
       warnings,
       strengthFeatureIds: Array.from(strengthFeatureIds),
-      strengths
+      strengths,
     };
   }
 
@@ -357,16 +520,26 @@ export class CanvasModelConsistencyService {
    * @param featureModel the feature model
    * @param instance the instance
    */
-  private getHints(featureModel: FeatureModel, instance: Instance): { hintFeatureIds: string[], hints: string[] } {
+  private getHints(
+    featureModel: FeatureModel,
+    instance: Instance
+  ): { hintFeatureIds: string[]; hints: string[] } {
     const hintFeatureIds = new Set<string>();
     const hints: string[] = [];
 
-    const checkHint = (feature: Feature) => {
-
-      if (!instance.usedFeatures.includes(feature.id) && this.isFeatureEasyAddable(featureModel, instance, feature)) {
-        feature.relationships.supports.forEach((id) => {
+    const checkHint = (feature: Feature): boolean => {
+      if (
+        !instance.usedFeatures.includes(feature.id) &&
+        this.isFeatureEasyAddable(featureModel, instance, feature)
+      ) {
+        feature.relationships.getRelationships('supports').forEach((id) => {
           if (instance.usedFeatures.includes(id)) {
-            hints.push('Including ' + feature.name + ' would support ' + featureModel.getFeature(id).name);
+            hints.push(
+              'Including ' +
+                feature.name +
+                ' would support ' +
+                featureModel.getFeature(id).name
+            );
             hintFeatureIds.add(feature.id);
             for (let f = feature.parent; f !== null; f = f.parent) {
               if (instance.usedFeatures.includes(f.id)) {
@@ -384,7 +557,7 @@ export class CanvasModelConsistencyService {
 
     return {
       hintFeatureIds: Array.from(hintFeatureIds),
-      hints
+      hints,
     };
   }
 
@@ -395,59 +568,84 @@ export class CanvasModelConsistencyService {
    * @param instance the instance
    * @param patterns the patterns in the format of this feature model
    */
-  getPatternHints(featureModel: FeatureModel, instance: Instance, patterns: Instance[]): {
-    patternHintFeatureIds: string[], patternHints: string[], usedPatterns: string[]
+  getPatternHints(
+    featureModel: FeatureModel,
+    instance: Instance,
+    patterns: Instance[]
+  ): {
+    patternHintFeatureIds: string[];
+    patternHints: PatternHint[];
+    usedPatterns: Instance[];
   } {
     const patternHintFeatureIds = new Set<string>();
-    const patternHints: string[] = [];
-    const usedPatterns: string[] = [];
+    const patternHints: PatternHint[] = [];
+    const usedPatterns: Instance[] = [];
 
     patterns.forEach((pattern) => {
       let leafFeatures = 0;
       let usedLeafFeatures = 0;
-      featureModel.iterateFeatures((feature) => {
-        if (feature.parent === null) { // do not count main features
-          return false;
-        }
-        if (Object.keys(feature.subfeatures).every((id) => !pattern.usedFeatures.includes(id))) {
-          leafFeatures += 1;
-          if (instance.usedFeatures.includes(feature.id)) {
-            usedLeafFeatures += 1;
+      featureModel.iterateFeatures(
+        (feature) => {
+          if (feature.parent === null) {
+            // do not count main features
+            return false;
           }
-        }
-        return false;
-      }, (feature) => pattern.usedFeatures.includes(feature.id));
-      if (usedLeafFeatures / leafFeatures >= 0.5) {
-        let hasMissingFeatures = false;
-        let isPossible = true;
-        let hint = 'You could add the pattern ' + pattern.name + ' by adding the following features: ';
-        const featureIds = new Set<string>();
-        featureModel.iterateFeatures((feature) => {
-          if (!instance.usedFeatures.includes(feature.id)) {
-            if (!this.isFeatureEasyAddable(featureModel, instance, feature)) {
-              isPossible = false;
-              return true;
-            } else {
-              featureIds.add(feature.id);
-              hint += feature.name + ', ';
-              hasMissingFeatures = true;
+          if (
+            Object.keys(feature.subfeatures).every(
+              (id) => !pattern.usedFeatures.includes(id)
+            )
+          ) {
+            leafFeatures += 1;
+            if (instance.usedFeatures.includes(feature.id)) {
+              usedLeafFeatures += 1;
             }
           }
           return false;
-        }, (feature) => pattern.usedFeatures.includes(feature.id));
+        },
+        (feature) => pattern.usedFeatures.includes(feature.id)
+      );
+      if (usedLeafFeatures / leafFeatures >= 0.5) {
+        let hasMissingFeatures = false;
+        let isPossible = true;
+        const hint: PatternHint = {
+          pattern: pattern,
+          missingFeatures: [],
+        };
+        const features = new Set<Feature>();
+        featureModel.iterateFeatures(
+          (feature) => {
+            if (!instance.usedFeatures.includes(feature.id)) {
+              if (!this.isFeatureEasyAddable(featureModel, instance, feature)) {
+                isPossible = false;
+                return true;
+              } else {
+                features.add(feature);
+                hasMissingFeatures = true;
+              }
+            }
+            return false;
+          },
+          (feature) => pattern.usedFeatures.includes(feature.id)
+        );
         if (isPossible) {
           if (hasMissingFeatures) {
-            hint = hint.substring(0, hint.length - 2);
+            hint.missingFeatures.push(...Array.from(features));
             patternHints.push(hint);
-            featureIds.forEach((id) => patternHintFeatureIds.add(id));
+            features.forEach((feature) =>
+              patternHintFeatureIds.add(feature.id)
+            );
           } else {
-            usedPatterns.push(pattern.name);
+            usedPatterns.push(pattern);
           }
         }
       }
     });
 
-    return {patternHintFeatureIds: Array.from(patternHintFeatureIds), patternHints, usedPatterns};
+    return {
+      patternHintFeatureIds: Array.from(patternHintFeatureIds),
+      patternHints,
+      usedPatterns,
+    };
   }
 
   /**
@@ -460,16 +658,34 @@ export class CanvasModelConsistencyService {
    * @param feature the feature to add to the instance
    * @return whether it would be easily possible to add the feature
    */
-  private isFeatureEasyAddable(featureModel: FeatureModel, instance: Instance, feature: Feature): boolean {
-    return instance.usedFeatures.includes(feature.id) ||
-      feature.relationships.excludes.every((id) => !instance.usedFeatures.includes(id)) &&
-      instance.usedFeatures.every((id) => !featureModel.getFeature(id).relationships.excludes.includes(feature.id)) &&
-      (
-        feature.parent === null ||
-        feature.parent.subfeatureConnections !== SubfeatureConnectionsType.XOR ||
-        Object.keys(feature.parent.subfeatures).every((id) => !instance.usedFeatures.includes(id))
-      ) &&
-      feature.relationships.requires.every((id) => instance.usedFeatures.includes(id)) &&
-      (feature.parent === null || this.isFeatureEasyAddable(featureModel, instance, feature.parent));
+  private isFeatureEasyAddable(
+    featureModel: FeatureModel,
+    instance: Instance,
+    feature: Feature
+  ): boolean {
+    return (
+      instance.usedFeatures.includes(feature.id) ||
+      (feature.relationships
+        .getRelationships('excludes')
+        .every((id) => !instance.usedFeatures.includes(id)) &&
+        instance.usedFeatures.every(
+          (id) =>
+            !featureModel
+              .getFeature(id)
+              .relationships.getRelationships('excludes')
+              .includes(feature.id)
+        ) &&
+        (feature.parent === null ||
+          feature.parent.subfeatureConnections !==
+            SubfeatureConnectionsType.XOR ||
+          Object.keys(feature.parent.subfeatures).every(
+            (id) => !instance.usedFeatures.includes(id)
+          )) &&
+        feature.relationships
+          .getRelationships('requires')
+          .every((id) => instance.usedFeatures.includes(id)) &&
+        (feature.parent === null ||
+          this.isFeatureEasyAddable(featureModel, instance, feature.parent)))
+    );
   }
 }

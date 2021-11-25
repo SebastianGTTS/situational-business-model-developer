@@ -1,35 +1,44 @@
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline" *ngIf="processPattern">
-    <a class="nav-link active" [routerLink]="[]">{{processPattern.name}}</a>
+    <a class="nav-link active" [routerLink]="[]">{{ processPattern.name }}</a>
   </nav>
 </div>
 
 <main *ngIf="processPattern">
-
   <div class="alert alert-info container mt-3" role="alert">
-    <p>Create a Method Pattern by using activities as placeholders for Method Building Blocks.
-      Call activities are placeholders for both Method Building Blocks and other Method Patterns.
-      Name processes and activities as you like and define
-      needed and forbidden types on them.</p>
+    <p>
+      Create a Method Pattern by using activities as placeholders for Method
+      Building Blocks. Call activities are placeholders for both Method Building
+      Blocks and other Method Patterns. Name processes and activities as you
+      like and define needed and forbidden types on them.
+    </p>
 
-    <p>A later selected Method Building Block or Method Pattern must have at least one type
-      that is in the needed types and must not have any type that is in the forbidden types to be inserted into the
-      placeholder.</p>
+    <p>
+      A later selected Method Building Block or Method Pattern must have at
+      least one type that is in the needed types and must not have any type that
+      is in the forbidden types to be inserted into the placeholder.
+    </p>
 
-    <p class="mb-0"><strong>Important:</strong> Select a type for an activity through the gear icon that is shown
-      if an activity is selected.
-      If the gear icon is red, no type is selected. If it is green, a type is selected.</p>
+    <p class="mb-0">
+      <strong>Important:</strong> Select a type for an activity through the gear
+      icon that is shown if an activity is selected. If the gear icon is red, no
+      type is selected. If it is green, a type is selected.
+    </p>
   </div>
 
-  <app-process-pattern-diagram [processPattern]="processPattern"
-                               (saveProcessPattern)="save($event)"></app-process-pattern-diagram>
+  <app-process-pattern-diagram
+    [processPattern]="processPattern"
+    (saveProcessPattern)="save($event)"
+  ></app-process-pattern-diagram>
 
   <div class="container">
     <div class="my-3 p-3 bg-white rounded shadow-sm">
       <h6 class="border-bottom border-gray pb-2 mb-0">Types</h6>
       <div class="text-muted pt-3">
-        <app-types-selection-form [types]="processPattern.types"
-                                  (submitTypesForm)="updateProcessPatternValue({types: $event.value})"></app-types-selection-form>
+        <app-types-selection-form
+          [types]="processPattern.types"
+          (submitTypesForm)="updateProcessPatternValue({ types: $event.value })"
+        ></app-types-selection-form>
       </div>
     </div>
 
@@ -38,23 +47,36 @@
       <div class="text-muted pt-3">
         <app-situational-factors-selection-form
           [situationalFactors]="processPattern.situationalFactors"
-          (submitSituationalFactorsForm)="updateProcessPatternValue({situationalFactors: $event.value})"></app-situational-factors-selection-form>
+          (submitSituationalFactorsForm)="
+            updateProcessPatternValue({ situationalFactors: $event.value })
+          "
+        ></app-situational-factors-selection-form>
       </div>
     </div>
 
     <div class="my-3 p-3 bg-white rounded shadow-sm">
       <h6 class="border-bottom border-gray pb-2 mb-0">Description</h6>
       <div class="text-muted pt-3">
-        <app-description-form [description]="processPattern.description"
-                              (submitDescriptionForm)="updateProcessPatternValue({description: $event.value.description})"></app-description-form>
+        <app-description-form
+          [description]="processPattern.description"
+          (submitDescriptionForm)="
+            updateProcessPatternValue({ description: $event.value.description })
+          "
+        ></app-description-form>
       </div>
     </div>
 
     <div class="my-3 p-3 bg-white rounded shadow-sm">
-      <h6 class="border-bottom border-gray pb-2 mb-0">Edit Author Information</h6>
+      <h6 class="border-bottom border-gray pb-2 mb-0">
+        Edit Author Information
+      </h6>
       <div class="text-muted pt-3">
-        <app-author-form [author]="processPattern.author"
-                         (submitAuthorForm)="updateProcessPatternValue({author: $event.value})"></app-author-form>
+        <app-author-form
+          [author]="processPattern.author"
+          (submitAuthorForm)="
+            updateProcessPatternValue({ author: $event.value })
+          "
+        ></app-author-form>
       </div>
     </div>
   </div>

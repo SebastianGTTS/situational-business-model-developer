@@ -5,64 +5,98 @@ import { StepInfo } from '../development-process-registry/module-api/step-info';
 import { InstanceArtifactData } from '../canvas-meta-model/instance-artifact-data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CanvasApiService implements ModuleApiService {
-
   createCanvas(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    input.router.navigate(['canvas', 'instance', 'create'], {queryParams: stepInfo}).then();
+    void input.router.navigate(['canvas', 'instance', 'create'], {
+      queryParams: stepInfo,
+    });
   }
 
   editCanvas(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(['canvas', reference.id, 'instance', reference.instanceId, 'edit'], {queryParams: stepInfo}).then();
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
+      ['canvas', reference.id, 'instance', reference.instanceId, 'edit'],
+      { queryParams: stepInfo }
+    );
   }
 
   refineCanvas(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(['canvas', reference.id, 'instance', reference.instanceId, 'refine'], {queryParams: stepInfo}).then();
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
+      ['canvas', reference.id, 'instance', reference.instanceId, 'refine'],
+      { queryParams: stepInfo }
+    );
   }
 
   compareCompetitors(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(['canvas', reference.id, 'instance', reference.instanceId, 'compare'], {queryParams: stepInfo}).then();
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
+      ['canvas', reference.id, 'instance', reference.instanceId, 'compare'],
+      { queryParams: stepInfo }
+    );
   }
 
   createCompetitors(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(['canvas', reference.id, 'instance', reference.instanceId, 'competitors'], {queryParams: stepInfo}).then();
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
+      ['canvas', reference.id, 'instance', reference.instanceId, 'competitors'],
+      { queryParams: stepInfo }
+    );
   }
 
   manageCompetitors(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(
-      ['canvas', reference.id, 'instance', reference.instanceId, 'competitors', 'edit'],
-      {queryParams: stepInfo}
-    ).then();
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
+      [
+        'canvas',
+        reference.id,
+        'instance',
+        reference.instanceId,
+        'competitors',
+        'edit',
+      ],
+      { queryParams: stepInfo }
+    );
   }
 
   viewCanvas(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
       ['canvas', reference.id, 'instance', reference.instanceId, 'view'],
-      {queryParams: stepInfo}
-    ).then();
+      { queryParams: stepInfo }
+    );
   }
 
   editModel(input: MethodExecutionInput): void {
     const stepInfo = this.getStepInfo(input);
-    const reference: InstanceArtifactData = input.inputStepArtifacts[0].data.data;
-    input.router.navigate(
-      ['canvas', reference.id, 'instance', reference.instanceId, 'model', 'edit'],
-      {queryParams: stepInfo}
-    ).then();
+    const reference: InstanceArtifactData =
+      input.inputStepArtifacts[0].data.data;
+    void input.router.navigate(
+      [
+        'canvas',
+        reference.id,
+        'instance',
+        reference.instanceId,
+        'model',
+        'edit',
+      ],
+      { queryParams: stepInfo }
+    );
   }
 
   executeMethod(methodName: string, input: MethodExecutionInput): void {
@@ -101,5 +135,4 @@ export class CanvasApiService implements ModuleApiService {
       runningProcessId: input.runningProcess._id,
     };
   }
-
 }

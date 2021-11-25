@@ -1,30 +1,49 @@
 <!-- Show Explanation -->
 <div class="my-3 p-3 bg-white rounded shadow-sm">
-  <h6 class="border-bottom border-gray pb-2">Explanation of the BMDL Modeler</h6>
-  <p>The BMDL Method Modeler is a tool to describe situation-specific Business Model Development Methods.
-    Business Model Development Methods can be described by combining Method Patterns and inserting
-    Method Building Blocks into them. Method Patterns and Method Building Blocks are constructed from
-    Method Elements. Method Elements are Artifacts, Situational Factors, Stakeholders, Tools and Types.
-    Types are special, as they are used to determine which Method Building Blocks or Method Patterns can be
-    inserted into activities of Method Patterns.</p>
+  <h6 class="border-bottom border-gray pb-2">
+    Explanation of the BMDL Modeler
+  </h6>
+  <p>
+    The BMDL Method Modeler is a tool to describe situation-specific Business
+    Model Development Methods. Business Model Development Methods can be
+    described by combining Method Patterns and inserting Method Building Blocks
+    into them. Method Patterns and Method Building Blocks are constructed from
+    Method Elements. Method Elements are Artifacts, Situational Factors,
+    Stakeholders, Tools and Types. Types are special, as they are used to
+    determine which Method Building Blocks or Method Patterns can be inserted
+    into activities of Method Patterns.
+  </p>
 
-  <p class="mb-0">Additionally, Method Building Blocks allow to select abstract list types for input/output Artifacts,
-    Stakeholders and Tools. The user can later decide when developing the Business Model Development Methods,
-    which concrete Method Element to use, e.g. an expert selected the abstract list type Users for stakeholders and
-    the business developer can choose whether these are Customers, Experts or Early Adopters. Furthermore, the tool
-    allows to define that a user is later able
-    to select multiple instances of an abstract list type, e.g., in the example above, Customers and Experts.
-    It is also possible to select between different Groups of input artifacts, output artifacts and Stakeholders.</p>
+  <p class="mb-0">
+    Additionally, Method Building Blocks allow to select abstract list types for
+    input/output Artifacts, Stakeholders and Tools. The user can later decide
+    when developing the Business Model Development Methods, which concrete
+    Method Element to use, e.g. an expert selected the abstract list type Users
+    for stakeholders and the business developer can choose whether these are
+    Customers, Experts or Early Adopters. Furthermore, the tool allows to define
+    that a user is later able to select multiple instances of an abstract list
+    type, e.g., in the example above, Customers and Experts. It is also possible
+    to select between different Groups of input artifacts, output artifacts and
+    Stakeholders.
+  </p>
 </div>
 
 <div class="my-3 p-3 bg-white rounded shadow-sm">
   <h6 class="border-bottom border-gray pb-2">Execution Steps</h6>
 
-  <ngb-carousel interval="0" [showNavigationArrows]="false" [showNavigationIndicators]="false"
-                (slide)="updatePagination($event)">
+  <ngb-carousel
+    interval="0"
+    [showNavigationArrows]="false"
+    [showNavigationIndicators]="false"
+    (slide)="updatePagination($event)"
+  >
     <ng-template ngbSlide id="1">
       <figure class="figure">
-        <img src="assets/situational-factor.png" alt="Situational factor page" class="carousel-image figure-img">
+        <img
+          src="assets/situational-factor.png"
+          alt="Situational factor page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
           1. Create Method Elements (in Picture: a situational factor)
         </figcaption>
@@ -32,7 +51,11 @@
     </ng-template>
     <ng-template ngbSlide id="2">
       <figure class="figure">
-        <img src="assets/building-block.png" alt="Method Building Block page" class="carousel-image figure-img">
+        <img
+          src="assets/building-block.png"
+          alt="Method Building Block page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
           2. Create Method Building Blocks
         </figcaption>
@@ -40,7 +63,11 @@
     </ng-template>
     <ng-template ngbSlide id="3">
       <figure class="figure">
-        <img src="assets/pattern.png" alt="Method Pattern page" class="carousel-image figure-img">
+        <img
+          src="assets/pattern.png"
+          alt="Method Pattern page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
           3. Create Method Patterns
         </figcaption>
@@ -48,8 +75,11 @@
     </ng-template>
     <ng-template ngbSlide id="4">
       <figure class="figure">
-        <img src="assets/process.png" alt="Business Model Development Method page"
-             class="carousel-image figure-img">
+        <img
+          src="assets/process.png"
+          alt="Business Model Development Method page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
           4. Create Business Model Development Methods
         </figcaption>
@@ -57,47 +87,64 @@
     </ng-template>
   </ngb-carousel>
 
-  <ngb-pagination aria-label="Controls for the above images" class="d-flex justify-content-center"
-                  [collectionSize]="4" [pageSize]="1" (pageChange)="updateCarousel($event)"></ngb-pagination>
+  <ngb-pagination
+    aria-label="Controls for the above images"
+    class="d-flex justify-content-center"
+    [collectionSize]="4"
+    [pageSize]="1"
+    (pageChange)="updateCarousel($event)"
+  ></ngb-pagination>
 
-  <p class="mt-2">
-    Information about the execution steps:
-  </p>
+  <p class="mt-2">Information about the execution steps:</p>
 
   <ol class="mb-0">
-    <li><strong>Create Method Elements:</strong> In the first step, an expert has to create Method Elements that
-      are later used to define Method Building Blocks and Method Patterns. Method Elements are Artifacts,
-      Situational Factors, Stakeholders, Tools and Types. Every Method Element belongs to a list of other Method
-      Elements to group them. Later, when creating Method Building Blocks or Method Patterns, it is possible to
-      reference such an abstract list of Method Elements to allow the user to select a fitting concrete
-      Method Element when defining the Business Model Development Method.
-      Special Method Elements are Types and Situational Factors. Types are used to filter which Method Building
-      Blocks and Method Patterns can be used together and Situational Factors are used to analyze whether
-      the used Method Patterns and Method Building Blocks fit to the development context. Additionally, Situational
-      Factors can define values. In this tool examples for Method Elements are already created.
+    <li>
+      <strong>Create Method Elements:</strong> In the first step, an expert has
+      to create Method Elements that are later used to define Method Building
+      Blocks and Method Patterns. Method Elements are Artifacts, Situational
+      Factors, Stakeholders, Tools and Types. Every Method Element belongs to a
+      list of other Method Elements to group them. Later, when creating Method
+      Building Blocks or Method Patterns, it is possible to reference such an
+      abstract list of Method Elements to allow the user to select a fitting
+      concrete Method Element when defining the Business Model Development
+      Method. Special Method Elements are Types and Situational Factors. Types
+      are used to filter which Method Building Blocks and Method Patterns can be
+      used together and Situational Factors are used to analyze whether the used
+      Method Patterns and Method Building Blocks fit to the development context.
+      Additionally, Situational Factors can define values. In this tool examples
+      for Method Elements are already created.
     </li>
-    <li><strong>Create Method Building Blocks:</strong> In the second step, an expert can create Method Building
-      Blocks. Method Building Blocks consist of input and output artifacts, involved stakeholders and tools.
-      Additionally, they have types and situational factors. Examples for Method Building Blocks are already defined
-      in this tool.
+    <li>
+      <strong>Create Method Building Blocks:</strong> In the second step, an
+      expert can create Method Building Blocks. Method Building Blocks consist
+      of input and output artifacts, involved stakeholders and tools.
+      Additionally, they have types and situational factors. Examples for Method
+      Building Blocks are already defined in this tool.
     </li>
-    <li><strong>Create Method Patterns:</strong> In the third step, the expert can create Method Patterns. They
-      define the structure of the later Business Model Development Methods. Method Patterns have types. A special
-      type is <i>initialisation</i> that defines that the pattern can be used as a starting point. Additionally, a
-      Method Pattern defines activities. The expert can choose whether only Method Building Blocks or
-      Method Building Blocks and Method Patterns can be inserted into a single activity when the
-      Business Model Development Method is defined. Examples for Method Patterns are already included
-      in this tool.
+    <li>
+      <strong>Create Method Patterns:</strong> In the third step, the expert can
+      create Method Patterns. They define the structure of the later Business
+      Model Development Methods. Method Patterns have types. A special type is
+      <i>initialisation</i> that defines that the pattern can be used as a
+      starting point. Additionally, a Method Pattern defines activities. The
+      expert can choose whether only Method Building Blocks or Method Building
+      Blocks and Method Patterns can be inserted into a single activity when the
+      Business Model Development Method is defined. Examples for Method Patterns
+      are already included in this tool.
     </li>
-    <li><strong>Create Business Model Development Methods</strong> In the last step, a business developer can create
-      Business Model Development Methods. To do this, the business developer first has to choose a Method Pattern
-      as a starting point. Then, it is possible to insert fitting Method Building Blocks or Method Patterns
-      into the activities of the Method Pattern. Additionally, the business developer can use situational factors
-      to define the development context. This context is checked against the internal situational factors
-      of the used Method Patterns and Method Building Blocks and mismatches are reported. Furthermore, the business
-      developer can select per Method Building Block how the Method Building Block should be used, e.g., the
-      business developer can select from lists which tools to use if the Method Building Block was created with
-      an abstract definition.
+    <li>
+      <strong>Create Business Model Development Methods</strong> In the last
+      step, a business developer can create Business Model Development Methods.
+      To do this, the business developer first has to choose a Method Pattern as
+      a starting point. Then, it is possible to insert fitting Method Building
+      Blocks or Method Patterns into the activities of the Method Pattern.
+      Additionally, the business developer can use situational factors to define
+      the development context. This context is checked against the internal
+      situational factors of the used Method Patterns and Method Building Blocks
+      and mismatches are reported. Furthermore, the business developer can
+      select per Method Building Block how the Method Building Block should be
+      used, e.g., the business developer can select from lists which tools to
+      use if the Method Building Block was created with an abstract definition.
     </li>
   </ol>
 </div>

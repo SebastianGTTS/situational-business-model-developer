@@ -1,11 +1,15 @@
-import { MethodElement } from '../method-element';
+import { MethodElement, MethodElementEntry } from '../method-element';
+
+export interface ArtifactEntry extends MethodElementEntry {
+  internalArtifact: boolean;
+  metaModel: { name: string; type: any };
+}
 
 export class Artifact extends MethodElement {
-
   static readonly typeName = 'Artifact';
 
   internalArtifact = false;
-  metaModel: { name: string, type: any } = null;
+  metaModel: { name: string; type: any } = null;
 
   constructor(artifact: Partial<Artifact>) {
     super(Artifact.typeName);
@@ -17,19 +21,20 @@ export class Artifact extends MethodElement {
    *
    * @param artifact the new values of this artifact (values will be copied to the current object)
    */
-  update(artifact: Partial<Artifact>) {
+  update(artifact: Partial<Artifact>): void {
     Object.assign(this, artifact);
   }
 
-  toPouchDb(): any {
+  toDb(): ArtifactEntry {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
       internalArtifact: this.internalArtifact,
-      metaModel: this.metaModel ? {
-        name: this.metaModel.name,
-        type: this.metaModel.type,
-      } : null,
+      metaModel: this.metaModel
+        ? {
+            name: this.metaModel.name,
+            type: this.metaModel.type,
+          }
+        : null,
     };
   }
-
 }

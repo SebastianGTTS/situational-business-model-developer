@@ -1,0 +1,242 @@
+{
+  "docs": [
+    {
+      "type": "CanvasDefinition",
+      "name": "Business Model Canvas",
+      "rows": [
+        [
+          {
+            "isSpacer": false,
+            "name": "Key Partners",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "key-partners"
+          },
+          {
+            "isSpacer": false,
+            "name": "Key Activities",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "key-activities"
+          },
+          {
+            "isSpacer": false,
+            "name": "Value Propositions",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "value-propositions"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Relationships",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "customer-relationships"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Segments",
+            "rowspan": 2,
+            "colspan": 2,
+            "id": "customer-segments"
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "name": "Key Resources",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "key-resources"
+          },
+          {
+            "isSpacer": false,
+            "name": "Customer Channels",
+            "rowspan": 1,
+            "colspan": 2,
+            "id": "channels"
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "name": "Cost Structure",
+            "rowspan": 1,
+            "colspan": 5,
+            "id": "cost-structure"
+          },
+          {
+            "isSpacer": false,
+            "name": "Revenue Streams",
+            "rowspan": 1,
+            "colspan": 5,
+            "id": "revenue-streams"
+          }
+        ]
+      ],
+      "relationshipTypes": ["requires", "excludes", "supports", "hurts"],
+      "_id": "1625144329606"
+    },
+    {
+      "type": "DevelopmentMethod",
+      "name": "Incomplete",
+      "examples": [],
+      "author": {},
+      "types": [
+        {
+          "list": "Test List",
+          "element": {
+            "type": "Type",
+            "_id": "1635786440495",
+            "_rev": "1-feb1b3539890215c8a48f61eb04c2387",
+            "list": "Test List",
+            "name": "Test Type",
+            "description": ""
+          }
+        }
+      ],
+      "situationalFactors": [],
+      "inputArtifacts": [],
+      "outputArtifacts": [],
+      "stakeholders": [],
+      "tools": [
+        [
+          {
+            "list": "Canvas Tools",
+            "element": {
+              "type": "Tool",
+              "_id": "1635786357380",
+              "list": "Canvas Tools",
+              "name": "Canvas Module"
+            },
+            "multiple": false,
+            "multipleElements": false
+          }
+        ]
+      ],
+      "executionSteps": [
+        {
+          "module": "Canvas Module",
+          "method": "editCanvas",
+          "outputMappings": [[]]
+        }
+      ],
+      "_id": "1635786343509"
+    },
+    {
+      "type": "ProcessPattern",
+      "name": "Test Pattern",
+      "author": {},
+      "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1atngv9</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz\" name=\"&#60;&#60;Test&#62;&#62;\"><bpmn:incoming>Flow_1atngv9</bpmn:incoming><bpmn:outgoing>Flow_02e30wy</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_1atngv9\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0n9oedz\" /><bpmn:endEvent id=\"Event_1qmn2f6\"><bpmn:incoming>Flow_02e30wy</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_02e30wy\" sourceRef=\"Activity_0n9oedz\" targetRef=\"Event_1qmn2f6\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_02e30wy_di\" bpmnElement=\"Flow_02e30wy\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_di\" bpmnElement=\"Flow_1atngv9\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_di\" bpmnElement=\"Activity_0n9oedz\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_di\" bpmnElement=\"Event_1qmn2f6\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+      "types": [
+        {
+          "list": "initialisation",
+          "element": null
+        }
+      ],
+      "situationalFactors": [],
+      "_id": "1635786424077"
+    },
+    {
+      "type": "Type",
+      "list": "Test List",
+      "name": "Test Type",
+      "description": "",
+      "_id": "1635786440495"
+    },
+    {
+      "type": "BmProcess",
+      "initial": false,
+      "name": "Test Method",
+      "processDiagram": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0d2ovd0</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id=\"Activity_1gi6djm\" name=\"Test Pattern\"><bpmn:incoming>Flow_0d2ovd0</bpmn:incoming><bpmn:startEvent id=\"StartEvent_1_1635786528694\"><bpmn:outgoing>Flow_1atngv9_1635786528694</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz_1635786528694\" name=\"&#60;&#60;Test&#62;&#62;\"><bpmn:incoming>Flow_1atngv9_1635786528694</bpmn:incoming><bpmn:outgoing>Flow_02e30wy_1635786528694</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:endEvent id=\"Event_1qmn2f6_1635786528694\"><bpmn:incoming>Flow_02e30wy_1635786528694</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1atngv9_1635786528694\" sourceRef=\"StartEvent_1_1635786528694\" targetRef=\"Activity_0n9oedz_1635786528694\" /><bpmn:sequenceFlow id=\"Flow_02e30wy_1635786528694\" sourceRef=\"Activity_0n9oedz_1635786528694\" targetRef=\"Event_1qmn2f6_1635786528694\" /><bmdl:processPatternId>1635786424077</bmdl:processPatternId></bpmn:subProcess><bpmn:sequenceFlow id=\"Flow_0d2ovd0\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1gi6djm\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0d2ovd0_di\" bpmnElement=\"Flow_0d2ovd0\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"259\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1gi6djm_di\" bpmnElement=\"Activity_1gi6djm\" isExpanded=\"true\"><dc:Bounds x=\"259\" y=\"55\" width=\"315\" height=\"130\" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id=\"Flow_02e30wy_1635786528694_di\" bpmnElement=\"Flow_02e30wy_1635786528694\"><di:waypoint x=\"466\" y=\"125\" /><di:waypoint x=\"518\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_1635786528694_di\" bpmnElement=\"Flow_1atngv9_1635786528694\"><di:waypoint x=\"315\" y=\"125\" /><di:waypoint x=\"366\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"StartEvent_1_1635786528694_di\" bpmnElement=\"StartEvent_1_1635786528694\"><dc:Bounds x=\"279\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_1635786528694_di\" bpmnElement=\"Activity_0n9oedz_1635786528694\"><dc:Bounds x=\"366\" y=\"85\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_1635786528694_di\" bpmnElement=\"Event_1qmn2f6_1635786528694\"><dc:Bounds x=\"518\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+      "domains": [],
+      "situationalFactors": [],
+      "decisions": {},
+      "_id": "1635786513910"
+    },
+    {
+      "type": "RunningProcess",
+      "name": "Test",
+      "process": {
+        "type": "BmProcess",
+        "_id": "1635786513910",
+        "_rev": "4-8c3cf6a0561f465a720cd9cf76029451",
+        "initial": false,
+        "name": "Test Method",
+        "processDiagram": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:rbmp=\"http://localhost/schema/rbmp\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\" rbmp:executed=\"true\"><bpmn:outgoing>Flow_0d2ovd0</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id=\"Activity_1gi6djm\" name=\"Test Pattern\"><bpmn:incoming>Flow_0d2ovd0</bpmn:incoming><bpmn:startEvent id=\"StartEvent_1_1635786528694\" rbmp:executed=\"true\"><bpmn:outgoing>Flow_1atngv9_1635786528694</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz_1635786528694\" name=\"&#60;&#60;Test&#62;&#62;\" rbmp:executed=\"true\"><bpmn:incoming>Flow_1atngv9_1635786528694</bpmn:incoming><bpmn:outgoing>Flow_02e30wy_1635786528694</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:endEvent id=\"Event_1qmn2f6_1635786528694\" rbmp:executed=\"true\"><bpmn:incoming>Flow_02e30wy_1635786528694</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1atngv9_1635786528694\" sourceRef=\"StartEvent_1_1635786528694\" targetRef=\"Activity_0n9oedz_1635786528694\" rbmp:used=\"true\" /><bpmn:sequenceFlow id=\"Flow_02e30wy_1635786528694\" sourceRef=\"Activity_0n9oedz_1635786528694\" targetRef=\"Event_1qmn2f6_1635786528694\" rbmp:used=\"true\" /><bmdl:processPatternId>1635786424077</bmdl:processPatternId></bpmn:subProcess><bpmn:sequenceFlow id=\"Flow_0d2ovd0\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1gi6djm\" rbmp:used=\"true\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0d2ovd0_di\" bpmnElement=\"Flow_0d2ovd0\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"259\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1gi6djm_di\" bpmnElement=\"Activity_1gi6djm\" isExpanded=\"true\"><dc:Bounds x=\"259\" y=\"55\" width=\"315\" height=\"130\" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id=\"Flow_02e30wy_1635786528694_di\" bpmnElement=\"Flow_02e30wy_1635786528694\"><di:waypoint x=\"466\" y=\"125\" /><di:waypoint x=\"518\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_1635786528694_di\" bpmnElement=\"Flow_1atngv9_1635786528694\"><di:waypoint x=\"315\" y=\"125\" /><di:waypoint x=\"366\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"StartEvent_1_1635786528694_di\" bpmnElement=\"StartEvent_1_1635786528694\"><dc:Bounds x=\"279\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_1635786528694_di\" bpmnElement=\"Activity_0n9oedz_1635786528694\"><dc:Bounds x=\"366\" y=\"85\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_1635786528694_di\" bpmnElement=\"Event_1qmn2f6_1635786528694\"><dc:Bounds x=\"518\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+        "domains": [],
+        "situationalFactors": [],
+        "decisions": {}
+      },
+      "todoMethods": [],
+      "runningMethods": [],
+      "executedMethods": [],
+      "artifacts": [],
+      "_id": "1635786550057"
+    },
+    {
+      "type": "DevelopmentMethod",
+      "name": "Complete",
+      "examples": [],
+      "author": {},
+      "types": [
+        {
+          "list": "Test List",
+          "element": {
+            "type": "Type",
+            "_id": "1635786440495",
+            "_rev": "1-1d7b62d8bfb767545d763fe368167e7e",
+            "list": "Test List",
+            "name": "Test Type",
+            "description": ""
+          }
+        }
+      ],
+      "situationalFactors": [],
+      "inputArtifacts": [],
+      "outputArtifacts": [],
+      "stakeholders": [],
+      "tools": [
+        [
+          {
+            "list": "Canvas Tools",
+            "element": {
+              "type": "Tool",
+              "_id": "1635787433228",
+              "list": "Canvas Tools",
+              "name": "Canvas Module"
+            },
+            "multiple": false,
+            "multipleElements": false
+          }
+        ]
+      ],
+      "executionSteps": [
+        {
+          "module": "Canvas Module",
+          "method": "createCanvas",
+          "predefinedInput": {
+            "definitionId": "1625144329606"
+          },
+          "outputMappings": [
+            [
+              {
+                "artifact": 0,
+                "output": false,
+                "step": 1
+              }
+            ]
+          ]
+        },
+        {
+          "module": "Canvas Module",
+          "method": "editCanvas",
+          "predefinedInput": null,
+          "outputMappings": [[]]
+        }
+      ],
+      "_id": "1635787346356"
+    }
+  ],
+  "identifier": "SBMD-v1"
+}

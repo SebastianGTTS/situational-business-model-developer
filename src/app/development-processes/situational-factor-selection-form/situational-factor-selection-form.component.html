@@ -10,9 +10,12 @@
       aria-describedby="listInputFeedback"
       [ngbTypeahead]="searchLists"
       (click)="openListInput.next($any($event.target).value)"
-      (focus)="openListInput.next($any($event.target).value)">
+      (focus)="openListInput.next($any($event.target).value)"
+    />
     <div id="listInputFeedback" class="invalid-feedback">
-      <span *ngIf="listControl.hasError('required')">This field is required.</span>
+      <span *ngIf="listControl.hasError('required')"
+        >This field is required.</span
+      >
     </div>
   </div>
   <ng-container formGroupName="element">
@@ -28,16 +31,25 @@
         [resultFormatter]="formatter"
         [inputFormatter]="formatter"
         (click)="openElementInput.next($any($event.target).value)"
-        (focus)="openElementInput.next($any($event.target).value)">
+        (focus)="openElementInput.next($any($event.target).value)"
+      />
     </div>
     <div class="form-group col">
       <label for="factorValue">Value</label>
       <div class="input-group">
         <select class="form-control" formControlName="value" id="factorValue">
-          <option *ngFor="let value of values" [ngValue]="value">{{value}}</option>
+          <option *ngFor="let value of values" [ngValue]="value">
+            {{ value }}
+          </option>
         </select>
         <div class="input-group-append">
-          <button (click)="remove.emit()" class="btn btn-secondary align-self-baseline" type="button">Remove</button>
+          <button
+            (click)="remove.emit()"
+            class="btn btn-secondary align-self-baseline"
+            type="button"
+          >
+            Remove
+          </button>
         </div>
       </div>
     </div>

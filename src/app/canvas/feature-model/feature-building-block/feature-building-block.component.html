@@ -1,6 +1,9 @@
-<strong>{{buildingBlockName}}</strong>
+<strong>{{ buildingBlockName }}</strong>
 <div class="list-group">
-  <a *ngFor="let f of features" class="list-group-item list-group-item-action p-2">
+  <a
+    *ngFor="let f of features"
+    class="list-group-item list-group-item-action p-2"
+  >
     <ng-container *ngIf="f.type === 'mandatory'">
       <i class="fa fa-circle mr-1" aria-hidden="true" title="mandatory"></i>
       <span class="sr-only">mandatory</span>
@@ -9,6 +12,6 @@
       <i class="fa fa-circle-o mr-1" aria-hidden="true" title="optional"></i>
       <span class="sr-only">optional</span>
     </ng-container>
-    {{f.name}}
+    {{ f.name }}
   </a>
 </div>

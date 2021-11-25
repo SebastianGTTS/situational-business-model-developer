@@ -1,5 +1,9 @@
+import { DatabaseModelPart } from '../../database/database-model-part';
+
 export enum ArtifactDataType {
-  CUSTOM, STRING, REFERENCE
+  CUSTOM,
+  STRING,
+  REFERENCE,
 }
 
 export interface ArtifactDataReference {
@@ -7,8 +11,7 @@ export interface ArtifactDataReference {
   type: string;
 }
 
-export class ArtifactData {
-
+export class ArtifactData implements DatabaseModelPart {
   type: ArtifactDataType = ArtifactDataType.STRING;
   data: any;
 
@@ -16,11 +19,10 @@ export class ArtifactData {
     Object.assign(this, artifactData);
   }
 
-  toPouchDb() {
+  toDb(): any {
     return {
       type: this.type,
       data: this.data,
     };
   }
-
 }

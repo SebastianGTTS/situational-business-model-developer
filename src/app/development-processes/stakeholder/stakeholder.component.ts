@@ -1,54 +1,33 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { Component } from '@angular/core';
 import { Stakeholder } from '../../development-process-registry/method-elements/stakeholder/stakeholder';
 import { StakeholderService } from '../../development-process-registry/method-elements/stakeholder/stakeholder.service';
+import { MethodElementLoaderService } from '../shared/method-element-loader.service';
+import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
 
 @Component({
   selector: 'app-stakeholder',
   templateUrl: './stakeholder.component.html',
-  styleUrls: ['./stakeholder.component.css']
+  styleUrls: ['./stakeholder.component.css'],
+  providers: [
+    MethodElementLoaderService,
+    { provide: MethodElementService, useExisting: StakeholderService },
+  ],
 })
-export class StakeholderComponent implements OnInit, OnDestroy {
-
-  stakeholder: Stakeholder;
-  listNames: string[] = [];
-
-  private routeSubscription: Subscription;
-
+export class StakeholderComponent {
   constructor(
-    private stakeholderService: StakeholderService,
-    private route: ActivatedRoute,
-  ) {
+    private stakeholderLoaderService: MethodElementLoaderService<Stakeholder>,
+    private stakeholderService: StakeholderService
+  ) {}
+
+  async updateValue(value: any) {
+    await this.stakeholderService.update(this.stakeholder._id, value);
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe(map => this.load(map.get('id')));
+  get stakeholder() {
+    return this.stakeholderLoaderService.methodElement;
   }
 
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
+  get listNames() {
+    return this.stakeholderLoaderService.listNames;
   }
-
-  load(id: string) {
-    this.stakeholderService.get(id).then((stakeholder) => {
-      this.stakeholder = stakeholder;
-    }).catch(error => console.log('Load: ' + error));
-    this.stakeholderService.getLists().then((lists) => this.listNames = lists.map((list) => list.listName)).catch(
-      error => console.log('LoadLists: ' + error)
-    );
-  }
-
-  updateValue(value: any) {
-    const update = (currentElement: Stakeholder) => {
-      currentElement.update(value);
-      return currentElement;
-    };
-    this.stakeholderService.update(this.stakeholder._id, update).then(
-      () => this.load(this.stakeholder._id)
-    ).catch((error) => console.log('UpdateValue: ' + error));
-  }
-
 }

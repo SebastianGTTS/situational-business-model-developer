@@ -8,10 +8,9 @@ import { ControlContainer, FormControl } from '@angular/forms';
 @Component({
   selector: 'app-domain-selection-form',
   templateUrl: './domain-selection-form.component.html',
-  styleUrls: ['./domain-selection-form.component.css']
+  styleUrls: ['./domain-selection-form.component.css'],
 })
 export class DomainSelectionFormComponent {
-
   @Input() domainDefinitions: Domain[] = [];
   @Input() index: number;
 
@@ -19,17 +18,19 @@ export class DomainSelectionFormComponent {
 
   openDomainInput = new Subject<string>();
 
-  constructor(
-    private controlContainer: ControlContainer,
-  ) {
-  }
+  constructor(private controlContainer: ControlContainer) {}
 
   searchDomains = (input: Observable<string>) => {
-    return merge(getTypeaheadInputPipe(input), this.openDomainInput).pipe(map(
-      (term) => this.domainDefinitions.filter((domain) => domain.name.toLowerCase().includes(term.toLowerCase())
-      ).slice(0, 7)),
+    return merge(getTypeaheadInputPipe(input), this.openDomainInput).pipe(
+      map((term) =>
+        this.domainDefinitions
+          .filter((domain) =>
+            domain.name.toLowerCase().includes(term.toLowerCase())
+          )
+          .slice(0, 7)
+      )
     );
-  }
+  };
 
   formatter(x: { name: string }) {
     return x.name;
@@ -38,5 +39,4 @@ export class DomainSelectionFormComponent {
   get formControl() {
     return this.controlContainer.control as FormControl;
   }
-
 }

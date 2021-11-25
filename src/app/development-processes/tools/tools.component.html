@@ -1,3 +1,12 @@
+<ng-template #deleteToolModal let-d="dismiss" let-c="close">
+  <app-delete-modal (dismiss)="d()" (delete)="delete(modalTool._id); c()">
+    <div modalTitle>Delete Tool {{ modalTool.name }}</div>
+    You are deleting the tool {{ modalTool.name }}. This can not be undone. This
+    action will not delete the tool from method building blocks that are using
+    it.
+  </app-delete-modal>
+</ng-template>
+
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
     <a class="nav-link active" [routerLink]="[]">Tools</a>
@@ -5,23 +14,47 @@
 </div>
 
 <main role="main" class="container">
-
   <div class="my-3 alert alert-info" role="alert">
     Create Tools to use them for the definition of Method Fragments
   </div>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2">Tools</h6>
-    <app-method-element-list [elementLists]="elementLists"
-                             (deleteElement)="delete($event._id)"></app-method-element-list>
-  </div>
+  <app-method-element-list
+    listTitle="Tools"
+    [elementLists]="elementLists"
+    (deleteElement)="openDeleteToolModal($event)"
+  ></app-method-element-list>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Add Tool</h6>
     <div class="text-muted pt-3">
-      <app-method-element-form [listNames]="listNames"
-                               (submitMethodElementForm)="add($event)"></app-method-element-form>
+      <app-method-element-form
+        [listNames]="listNames"
+        (submitMethodElementForm)="add($event)"
+      ></app-method-element-form>
     </div>
   </div>
 
+  <app-list-wrapper
+    listTitle="Loaded Modules"
+    [loading]="moduleLists == null"
+    [noResults]="moduleLists && moduleLists.length === 0"
+  >
+    <div noResults>No modules loaded.</div>
+    <div
+      results
+      *ngFor="let list of moduleLists"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
+      <h6 class="border-bottom border-gray pb-2">{{ list.listName }}</h6>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let module of list.elements">
+          <h6>{{ module.name }}</h6>
+          Methods:
+          <ul>
+            <li *ngFor="let method of module.methodNames">{{ method }}</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </app-list-wrapper>
 </main>

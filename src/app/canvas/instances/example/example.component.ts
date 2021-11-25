@@ -13,10 +13,9 @@ import { CanvasModelConsistencyService } from '../../../canvas-meta-model/canvas
 @Component({
   selector: 'app-example',
   templateUrl: './example.component.html',
-  styleUrls: ['./example.component.css']
+  styleUrls: ['./example.component.css'],
 })
 export class ExampleComponent implements OnInit {
-
   expertModel: ExpertModel;
   example: Instance;
 
@@ -32,15 +31,19 @@ export class ExampleComponent implements OnInit {
   });
 
   // used patterns
-  usedPatterns: string[] = null;
+  usedPatterns: Instance[] = null;
 
   // Compare / Heatmap
-  selectOtherInstanceForm: FormGroup = this.fb.group({instance: [null, Validators.required]});
+  selectOtherInstanceForm: FormGroup = this.fb.group({
+    instance: [null, Validators.required],
+  });
   compareInstance: Instance = null;
   percentages: { [id: string]: number } = null;
 
   // Show pattern
-  selectPatternForm: FormGroup = this.fb.group({pattern: [null, Validators.required]});
+  selectPatternForm: FormGroup = this.fb.group({
+    pattern: [null, Validators.required],
+  });
   patternInstance: Instance = null;
 
   activeId: string;
@@ -53,11 +56,10 @@ export class ExampleComponent implements OnInit {
     private expertModelService: ExpertModelService,
     private instanceService: InstanceService,
     private route: ActivatedRoute,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
       const expertModelId = paramMap.get('id');
       const exampleId = +paramMap.get('exampleId');
@@ -67,11 +69,11 @@ export class ExampleComponent implements OnInit {
       this.clearView();
       this.initConformanceOptionsForm(this.activeId);
 
-      this.load(expertModelId, exampleId);
+      void this.load(expertModelId, exampleId);
     });
   }
 
-  async load(expertModelId, exampleId) {
+  async load(expertModelId, exampleId): Promise<void> {
     const expertModel = await this.expertModelService.get(expertModelId);
     this.expertModel = expertModel;
     this.example = expertModel.getInstance(exampleId);
@@ -91,28 +93,36 @@ export class ExampleComponent implements OnInit {
     }
   }
 
-  async updateExpertModel() {
+  async updateExpertModel(): Promise<void> {
     await this.expertModelService.save(this.expertModel);
-    this.load(this.expertModel._id, this.example.id);
+    await this.load(this.expertModel._id, this.example.id);
   }
 
   /**
    * Create adaptation of the business model.
    */
-  async createAdaptation() {
-    const adaptationName = this.instanceService.getAdaptionName(this.example.name);
+  async createAdaptation(): Promise<void> {
+    const adaptationName = this.instanceService.getAdaptionName(
+      this.example.name
+    );
     this.expertModel.adaptInstance(this.example.id, adaptationName);
-    const instance = this.expertModel.instances[this.expertModel.instances.length - 1];
+    const instance =
+      this.expertModel.instances[this.expertModel.instances.length - 1];
     await this.expertModelService.save(this.expertModel);
-    this.router.navigate(['expertModels', this.expertModel._id, 'examples', instance.id]);
+    await this.router.navigate([
+      'expertModels',
+      this.expertModel._id,
+      'examples',
+      instance.id,
+    ]);
   }
 
-  switchView(event: NgbNavChangeEvent) {
+  switchView(event: NgbNavChangeEvent): void {
     this.clearView();
     this.initConformanceOptionsForm(event.nextId);
   }
 
-  private clearView() {
+  private clearView(): void {
     this.uncheckConformance();
     this.clearCompare();
     this.clearPattern();
@@ -122,7 +132,7 @@ export class ExampleComponent implements OnInit {
   /**
    * Uncheck the conformance.
    */
-  uncheckConformance() {
+  uncheckConformance(): void {
     this.conformanceIsChecked = false;
     this.conformance = new ConformanceReport();
   }
@@ -130,34 +140,38 @@ export class ExampleComponent implements OnInit {
   /**
    * Check the conformance.
    */
-  checkConformance() {
+  checkConformance(): void {
     this.clearCompare();
     this.clearPattern();
-    this.conformance = this.canvasModelConsistencyService.checkConformanceOfInstance(
-      this.expertModel,
-      this.example.id,
-      this.expertModel.getPatterns(),
-    );
+    this.conformance =
+      this.canvasModelConsistencyService.checkConformanceOfInstance(
+        this.expertModel,
+        this.example.id,
+        this.expertModel.getPatterns()
+      );
     this.conformanceIsChecked = true;
   }
-
 
   /**
    * Compare this instance with another instance and generate a heatmap
    */
-  compare() {
+  compare(): void {
     this.uncheckConformance();
     this.clearPattern();
     const id = this.selectOtherInstanceForm.value.instance;
     this.compareInstance = this.expertModel.getInstance(id);
-    this.percentages = this.instanceService.compareInstances(this.expertModel, this.example, this.compareInstance);
+    this.percentages = this.instanceService.compareInstances(
+      this.expertModel,
+      this.example,
+      this.compareInstance
+    );
     this.selectOtherInstanceForm.get('instance').disable();
   }
 
   /**
    * Clear comparison and remove heatmap
    */
-  clearCompare() {
+  clearCompare(): void {
     this.compareInstance = null;
     this.percentages = null;
     this.selectOtherInstanceForm.get('instance').enable();
@@ -166,35 +180,38 @@ export class ExampleComponent implements OnInit {
   /**
    * Show pattern in business model canvas
    */
-  showPattern() {
+  showPattern(): void {
     this.uncheckConformance();
     this.clearCompare();
-    const id = this.selectPatternForm.value.pattern;
-    this.patternInstance = this.expertModel.getInstance(id);
+    this.patternInstance = this.selectPatternForm.value.pattern;
     this.selectPatternForm.get('pattern').disable();
   }
 
   /**
    * Do not show pattern in business model canvas any longer
    */
-  clearPattern() {
+  clearPattern(): void {
     this.patternInstance = null;
     this.selectPatternForm.get('pattern').enable();
   }
 
-  showUsedPatterns() {
+  showUsedPatterns(): void {
     this.usedPatterns = this.canvasModelConsistencyService.getPatternHints(
       this.expertModel,
       this.example,
-      this.expertModel.getPatterns(),
+      this.expertModel.getPatterns()
     ).usedPatterns;
   }
 
-  hideUsedPatterns() {
+  hideUsedPatterns(): void {
     this.usedPatterns = null;
   }
 
-  private initConformanceOptionsForm(activeId: string) {
+  get selectedPattern(): Instance | undefined {
+    return this.selectPatternForm.value.pattern;
+  }
+
+  private initConformanceOptionsForm(activeId: string): void {
     if (activeId === 'stepHints') {
       this.conformanceOptionsForm.setValue({
         showWarnings: true,
@@ -213,5 +230,4 @@ export class ExampleComponent implements OnInit {
       });
     }
   }
-
 }

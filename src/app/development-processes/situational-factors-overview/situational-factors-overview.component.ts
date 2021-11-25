@@ -1,20 +1,23 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
-import {
-  SituationalFactorDefinition
-} from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
 
 @Component({
   selector: 'app-situational-factors-overview',
   templateUrl: './situational-factors-overview.component.html',
-  styleUrls: ['./situational-factors-overview.component.css']
+  styleUrls: ['./situational-factors-overview.component.css'],
 })
 export class SituationalFactorsOverviewComponent implements OnChanges {
-
   @Input() needed: SituationalFactor[];
   @Input() provided: SituationalFactor[];
 
-  factors: { list: string, name: string, needed: string, provided: string, fulfills: boolean | undefined }[] = [];
+  factors: {
+    list: string;
+    name: string;
+    needed: string;
+    provided: string;
+    fulfills: boolean | undefined;
+  }[] = [];
   factorsMap: { [list: string]: { [name: string]: string } };
 
   ngOnChanges(changes: SimpleChanges) {
@@ -35,7 +38,9 @@ export class SituationalFactorsOverviewComponent implements OnChanges {
           fulfills = true;
         } else {
           if (factor.factor.ordered) {
-            fulfills = factor.factor.values.indexOf(factor.value) <= factor.factor.values.indexOf(provided);
+            fulfills =
+              factor.factor.values.indexOf(factor.value) <=
+              factor.factor.values.indexOf(provided);
           } else {
             fulfills = false;
           }
@@ -66,5 +71,4 @@ export class SituationalFactorsOverviewComponent implements OnChanges {
     }
     return null;
   }
-
 }

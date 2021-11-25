@@ -1,62 +1,32 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
 import { ProcessPatternService } from '../../development-process-registry/process-pattern/process-pattern.service';
-import { ProcessPattern } from '../../development-process-registry/process-pattern/process-pattern';
 import { DiagramComponentInterface } from '../shared/diagram-component-interface';
 import { ProcessPatternDiagramComponent } from '../process-pattern-diagram/process-pattern-diagram.component';
+import { ProcessPatternLoaderService } from '../shared/process-pattern-loader.service';
 
 @Component({
   selector: 'app-process-pattern',
   templateUrl: './process-pattern.component.html',
-  styleUrls: ['./process-pattern.component.css']
+  styleUrls: ['./process-pattern.component.css'],
+  providers: [ProcessPatternLoaderService],
 })
-export class ProcessPatternComponent implements DiagramComponentInterface, OnInit, OnDestroy {
-
-  processPattern: ProcessPattern;
-
-  private routeSubscription: Subscription;
-
-  @ViewChild(ProcessPatternDiagramComponent, {static: false}) diagramComponent: ProcessPatternDiagramComponent;
+export class ProcessPatternComponent implements DiagramComponentInterface {
+  @ViewChild(ProcessPatternDiagramComponent)
+  diagramComponent: ProcessPatternDiagramComponent;
 
   constructor(
-    private processPatternService: ProcessPatternService,
-    private route: ActivatedRoute,
-  ) {
+    private processPatternLoaderService: ProcessPatternLoaderService,
+    private processPatternService: ProcessPatternService
+  ) {}
+
+  async save(pattern: string) {
+    await this.processPatternService.update(this.processPattern._id, {
+      pattern,
+    });
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe(map => this.loadProcessPattern(map.get('id')));
-  }
-
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-  }
-
-  loadProcessPattern(id: string) {
-    this.processPatternService.getProcessPattern(id).then(
-      processPattern => this.processPattern = processPattern
-    ).catch(
-      error => console.log('LoadProcessPattern: ' + error)
-    );
-  }
-
-  save(pattern: string) {
-    this.processPatternService.updateProcessPattern(this.processPattern._id, {pattern}).then(
-      () => this.loadProcessPattern(this.processPattern._id)
-    ).catch(
-      error => console.log('Save: ' + error)
-    );
-  }
-
-  updateProcessPatternValue(value: any) {
-    this.processPatternService.updateProcessPattern(this.processPattern._id, value).then(
-      () => this.loadProcessPattern(this.processPattern._id)
-    ).catch(
-      error => console.log('UpdateProcessPattern: ' + error)
-    );
+  async updateProcessPatternValue(value: any) {
+    await this.processPatternService.update(this.processPattern._id, value);
   }
 
   diagramChanged(): Promise<boolean> {
@@ -65,5 +35,9 @@ export class ProcessPatternComponent implements DiagramComponentInterface, OnIni
 
   saveDiagram(): Promise<void> {
     return this.diagramComponent.saveDiagram();
+  }
+
+  get processPattern() {
+    return this.processPatternLoaderService.processPattern;
   }
 }

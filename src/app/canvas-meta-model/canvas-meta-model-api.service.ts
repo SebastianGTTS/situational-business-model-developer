@@ -2,41 +2,55 @@ import { Injectable } from '@angular/core';
 import { ArtifactDataReference } from '../development-process-registry/running-process/artifact-data';
 import { CompanyModel } from './company-model';
 import { CompanyModelService } from './company-model.service';
-import { MetaModelApi } from '../development-process-registry/meta-model-definition';
+import {
+  MetaModelApi,
+  Reference,
+} from '../development-process-registry/meta-model-definition';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class CanvasMetaModelApiService implements MetaModelApi {
+  viewMethod: (
+    model: ArtifactDataReference,
+    router: Router,
+    reference: Reference
+  ) => void;
 
-  viewMethod: (model: ArtifactDataReference, router: Router, runningProcessId: string, executionId?: string) => void;
+  constructor(private companyModelService: CompanyModelService) {}
 
-  constructor(
-    private companyModelService: CompanyModelService,
-  ) {
-  }
-
-  view(model: ArtifactDataReference, router: Router, runningProcessId: string, executionId?: string) {
+  view(
+    model: ArtifactDataReference,
+    router: Router,
+    reference: Reference
+  ): void {
     if (this.viewMethod == null) {
       console.warn('No module for viewing of canvas models added');
     } else {
-      this.viewMethod(model, router, runningProcessId, executionId);
+      this.viewMethod(model, router, reference);
     }
+  }
+
+  async getName(model: ArtifactDataReference): Promise<string | undefined> {
+    const companyModel = await this.companyModelService.get(model.id);
+    if (companyModel.instances.length > 0) {
+      return companyModel.instances[0].name;
+    }
+    return undefined;
   }
 
   async copy(model: ArtifactDataReference): Promise<ArtifactDataReference> {
     const companyModel = await this.companyModelService.get(model.id);
     companyModel.resetDatabaseState();
     companyModel.createdByMethod = true;
-    const {id} = await this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
     return {
       ...model,
-      id,
+      id: companyModel._id,
       type: CompanyModel.typeName,
     };
   }
 
-  async remove(model: ArtifactDataReference) {
+  async remove(model: ArtifactDataReference): Promise<void> {
     await this.companyModelService.delete(model.id);
   }
-
 }

@@ -11,76 +11,116 @@ import { RunningProcessService } from './development-process-registry/running-pr
 import { RunningProcess } from './development-process-registry/running-process/running-process';
 import { DomainService } from './development-process-registry/knowledge/domain.service';
 import { Domain } from './development-process-registry/knowledge/domain';
+import { NgbConfig } from '@ng-bootstrap/ng-bootstrap';
+import { PouchdbService } from './database/pouchdb.service';
+import { AuthService } from './database/auth.service';
+import { version } from '../environments/app.version';
+import { environment } from '../environments/environment';
+import { CanvasDefinitionService } from './canvas-meta-model/canvas-definition.service';
+import { CanvasDefinition } from './canvas-meta-model/canvas-definition';
+import { DatabaseMeta } from './database/database-entry';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  VERSION = version;
 
   constructor(
+    private authService: AuthService,
     private bmProcessService: BmProcessService,
+    private canvasDefinitionService: CanvasDefinitionService,
     private companyModelService: CompanyModelService,
     private developmentMethodService: DevelopmentMethodService,
     private domainService: DomainService,
     private expertModelService: ExpertModelService,
-    private runningProcessService: RunningProcessService,
+    ngbConfig: NgbConfig,
+    private pouchdbService: PouchdbService,
+    private runningProcessService: RunningProcessService
   ) {
+    ngbConfig.animation = false;
   }
 
-  async printDevelopmentMethods() {
-    const methods = (await this.developmentMethodService.getDevelopmentMethodList()).docs.map(
+  logout(): void {
+    this.authService.logout().subscribe();
+  }
+
+  async addDefaultData(): Promise<void> {
+    await this.pouchdbService.addDefaultData();
+  }
+
+  async printDevelopmentMethods(): Promise<void> {
+    const methods = (await this.developmentMethodService.getList()).map(
       (method) => new DevelopmentMethod(method)
     );
-    const out = methods.map((method) => method.toPouchDb());
-    out.forEach((method) => delete method._rev);
+    const out = methods.map((method) => method.toDb());
+    out.forEach((method) => delete (method as DatabaseMeta)._rev);
     console.log(out);
   }
 
-  async printBmProcesses() {
-    const processes = (await this.bmProcessService.getBmProcessList()).docs.map(
+  async printBmProcesses(): Promise<void> {
+    const processes = (await this.bmProcessService.getList()).map(
       (process) => new BmProcess(process)
     );
-    const out = processes.map((process) => process.toPouchDb());
+    const out = processes.map((process) => process.toDb());
     out.forEach((process) => delete process._rev);
     console.log(out);
   }
 
-  async printRunningProcesses() {
-    const processes = (await this.runningProcessService.getRunningProcessesList()).docs.map(
+  async printRunningProcesses(): Promise<void> {
+    const processes = (await this.runningProcessService.getList()).map(
       (process) => new RunningProcess(process)
     );
-    const out = processes.map((process) => process.toPouchDb());
+    const out = processes.map((process) => process.toDb());
     out.forEach((process) => delete process._rev);
     console.log(out);
   }
 
-  async printExpertModels() {
-    const models = (await this.expertModelService.getList()).docs.map(
+  async printExpertModels(): Promise<void> {
+    const models = (await this.expertModelService.getList()).map(
       (model) => new ExpertModel(model)
     );
-    const out = models.map((model) => model.toPouchDb());
+    const out = models.map((model) => model.toDb());
     out.forEach((model) => delete model._rev);
     console.log(out);
   }
 
-  async printCompanyModels() {
-    const models = (await this.companyModelService.getAll()).docs.map(
+  async printCompanyModels(): Promise<void> {
+    const models = (await this.companyModelService.getAll()).map(
       (model) => new CompanyModel(model)
     );
-    const out = models.map((model) => model.toPouchDb());
+    const out = models.map((model) => model.toDb());
     out.forEach((model) => delete model._rev);
     console.log(out);
   }
 
-  async printDomains() {
-    const models = (await this.domainService.getList()).docs.map(
+  async printDomains(): Promise<void> {
+    const models = (await this.domainService.getList()).map(
       (domain) => new Domain(domain)
     );
-    const out = models.map((domain) => domain.toPouchDb());
+    const out = models.map((domain) => domain.toDb());
     out.forEach((domain) => delete domain._rev);
     console.log(out);
   }
 
+  async printCanvasDefinitions(): Promise<void> {
+    const models = (await this.canvasDefinitionService.getList()).map(
+      (canvasDefinition) => new CanvasDefinition(canvasDefinition)
+    );
+    const out = models.map((canvasDefinition) => canvasDefinition.toDb());
+    out.forEach(
+      (canvasDefinition) => delete (canvasDefinition as DatabaseMeta)._rev
+    );
+    console.log(out);
+  }
+
+  get showNavbar(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  isLocalDatabase(): boolean {
+    return environment.localDatabase === true;
+  }
 }

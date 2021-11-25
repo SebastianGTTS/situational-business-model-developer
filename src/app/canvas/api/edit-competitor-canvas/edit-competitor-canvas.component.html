@@ -1,41 +1,60 @@
-<div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="processApiService.runningProcess">
-    <a class="nav-link"
-       [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id]">
-      {{processApiService.runningProcess.process.name}} &ndash; {{processApiService.runningProcess.name}}
-    </a>
-    <a
-      class="nav-link"
-      [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id, 'method', processApiService.runningMethod.executionId]">
-      {{processApiService.runningMethod.methodName}}
-    </a>
-    <a
-      class="nav-link"
-      [routerLink]="['/', 'canvas', this.companyModel._id, 'instance', this.instanceId, 'competitors', 'edit']"
-      [queryParams]="processApiService.queryParams">
-      Edit Competitors
-    </a>
-    <a
-      class="nav-link active"
-      [routerLink]="['/', 'canvas', this.companyModel._id, 'instance', this.instanceId, 'competitors', competitor.id, 'edit']"
-      [queryParams]="processApiService.queryParams">
-      Edit {{competitor.name}}
-    </a>
-  </nav>
-</div>
+<app-api-navigation [apiName]="'Edit ' + (competitor ? competitor.name : '')">
+  <a
+    *ngIf="companyModel != null"
+    class="nav-link"
+    [routerLink]="[
+      '/',
+      'canvas',
+      this.companyModel._id,
+      'instance',
+      this.instanceId,
+      'competitors',
+      'edit'
+    ]"
+    [queryParams]="queryParams"
+  >
+    Edit Competitors
+  </a>
+</app-api-navigation>
 
-<main *ngIf="competitor && processApiService.isInitialized()" role="main" class="container">
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="competitor && runningMethod != null && isCorrectStep()"
+  role="main"
+  class="container"
+>
   <app-instance
     [featureModel]="companyModel"
     [instance]="competitor"
     [adaptable]="false"
     [updatable]="true"
-    (updateFeatureModel)="updateCompetitor()"></app-instance>
+    (updateFeatureModel)="updateCompetitor()"
+  ></app-instance>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <a
       class="btn btn-sm btn-primary btn-block"
-      [routerLink]="['/', 'canvas', this.companyModel._id, 'instance', this.instanceId, 'competitors', 'edit']"
-      [queryParams]="processApiService.queryParams">Go back to overview of competitors</a>
+      [routerLink]="[
+        '/',
+        'canvas',
+        this.companyModel._id,
+        'instance',
+        this.instanceId,
+        'competitors',
+        'edit'
+      ]"
+      [queryParams]="queryParams"
+      >Go back to overview of competitors</a
+    >
   </div>
 </main>

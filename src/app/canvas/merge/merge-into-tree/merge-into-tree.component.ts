@@ -1,13 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Feature } from '../../../canvas-meta-model/feature';
 
 @Component({
   selector: 'app-merge-into-tree',
   templateUrl: './merge-into-tree.component.html',
-  styleUrls: ['./merge-into-tree.component.css']
+  styleUrls: ['./merge-into-tree.component.css'],
 })
-export class MergeIntoTreeComponent implements OnInit {
-
+export class MergeIntoTreeComponent {
   @Input() expertModelId: string;
   @Input() features: { [id: string]: Feature };
 
@@ -17,12 +16,6 @@ export class MergeIntoTreeComponent implements OnInit {
   @Output() deleteFeature = new EventEmitter<string>();
 
   @Input() openPanels: string[];
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
 
   panelChange(id: string, state: boolean) {
     if (state && !this.openPanels.includes(id)) {
@@ -35,5 +28,4 @@ export class MergeIntoTreeComponent implements OnInit {
   asList(map: { [id: string]: Feature }): Feature[] {
     return Object.values(map);
   }
-
 }

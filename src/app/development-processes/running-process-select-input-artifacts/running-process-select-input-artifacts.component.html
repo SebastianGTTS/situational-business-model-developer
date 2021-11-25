@@ -3,51 +3,50 @@
     This building block has no input artifacts.
   </div>
   <div class="d-flex">
-    <button type="button" class="btn btn-block btn-primary" (click)="nextStep()">Confirm</button>
+    <button
+      type="button"
+      class="btn btn-block btn-primary"
+      (click)="nextStep()"
+    >
+      Confirm
+    </button>
   </div>
 </ng-container>
-<form [formGroup]="form" *ngIf="inputArtifacts.length > 0" (ngSubmit)="submitForm()">
-  <table class="table" formArrayName="inputArtifacts">
-    <thead>
-    <tr>
-      <th scope="col">Artifact Type</th>
-      <th scope="col">Select Artifact</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let artifact of inputArtifacts; let index = index" formGroupName="{{index}}">
-      <td>{{artifact.name}} (<<{{artifact.list}}>>)</td>
-      <td>
-        <div class="form-row">
-          <div class="form-group col">
-            <label for="artifact">Artifact</label>
-            <select class="form-control" id="artifact" formControlName="artifact">
-              <ng-container *ngFor="let a of runningProcess.artifacts; let index = index">
-                <option *ngIf="a.artifact._id === artifact._id" [ngValue]="index">{{a.identifier}}</option>
-              </ng-container>
-            </select>
-          </div>
-          <div class="form-group col">
-            <label for="version">Version</label>
-            <select class="form-control" id="version" formControlName="version">
-              <ng-container *ngIf="formArray.at(index).get('artifact').value !== null">
-                <option [ngValue]="'latest'">latest</option>
-                <option
-                  *ngFor="let version of $any(runningProcess.artifacts[formArray.at(index).get('artifact').value].versions); let versionIndex = index"
-                  [ngValue]="versionIndex">
-                  Version #{{versionIndex + 1}}
-                  &ndash; {{runningProcess.getExecutedMethod(version.executedBy).methodName}}
-                  &ndash; {{version.time | date}}
-                </option>
-              </ng-container>
-            </select>
-          </div>
-        </div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<form
+  [formGroup]="form"
+  *ngIf="inputArtifacts.length > 0"
+  (ngSubmit)="submitForm()"
+>
+  <div formArrayName="inputArtifacts">
+    <div
+      class="my-3 p-3 bg-white rounded shadow-sm"
+      *ngFor="let artifact of inputArtifacts; let index = index"
+      formGroupName="{{ index }}"
+    >
+      <h6 class="border-bottom border-gray pb-2">
+        Artifact Type: {{ artifact.name }} ({{ artifact.list | list }})
+      </h6>
+      <div class="form-group">
+        <label for="artifact">Artifact</label>
+        <select class="form-control" id="artifact" formControlName="artifact">
+          <ng-container
+            *ngFor="let a of runningProcess.artifacts; let index = index"
+          >
+            <option *ngIf="a.artifact._id === artifact._id" [ngValue]="index">
+              {{ a.identifier }}
+            </option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+  </div>
   <div class="d-flex">
-    <button type="submit" class="btn btn-block btn-primary" [disabled]="!form.valid">Confirm</button>
+    <button
+      type="submit"
+      class="btn btn-block btn-primary"
+      [disabled]="!form.valid"
+    >
+      Confirm
+    </button>
   </div>
 </form>

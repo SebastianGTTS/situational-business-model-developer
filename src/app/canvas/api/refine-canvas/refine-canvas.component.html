@@ -1,24 +1,12 @@
-<div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="processApiService.runningProcess">
-    <a class="nav-link"
-       [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id]">
-      {{processApiService.runningProcess.process.name}} &ndash; {{processApiService.runningProcess.name}}
-    </a>
-    <a
-      class="nav-link"
-      [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id, 'method', processApiService.runningMethod.executionId]">
-      {{processApiService.runningMethod.methodName}}
-    </a>
-    <a
-      class="nav-link active"
-      [routerLink]="[]"
-      [queryParams]="processApiService.queryParams">
-      Refine Canvas
-    </a>
-  </nav>
-</div>
+<app-api-navigation apiName="Refine Canvas"></app-api-navigation>
 
-<main *ngIf="instance" role="main" class="container">
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="instance && runningMethod != null && isCorrectStep()"
+  role="main"
+  class="container"
+>
   <app-instance
     [conformanceIsChecked]="conformanceIsChecked"
     [conformance]="conformance"
@@ -28,64 +16,106 @@
     [patternInstance]="patternInstance"
     [adaptable]="false"
     [updatable]="false"
-    (updateFeatureModel)="updateCompanyModel()"></app-instance>
+    (updateFeatureModel)="updateCompanyModel()"
+  ></app-instance>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Hints</h6>
     <div class="container">
-      <div class="row" style="margin-top:20px;">
-        <button type="button" *ngIf="!conformanceIsChecked" (click)="checkConformance()"
-                class="btn btn-dark btn-sm btn-block">
+      <div class="row" style="margin-top: 20px">
+        <button
+          type="button"
+          *ngIf="!conformanceIsChecked"
+          (click)="checkConformance()"
+          class="btn btn-dark btn-sm btn-block"
+        >
           <span>Show Hints of Business Model</span>
         </button>
-        <button type="button" *ngIf="conformanceIsChecked" (click)="uncheckConformance()"
-                class="btn btn-dark btn-sm btn-block">
+        <button
+          type="button"
+          *ngIf="conformanceIsChecked"
+          (click)="uncheckConformance()"
+          class="btn btn-dark btn-sm btn-block"
+        >
           <span>Hide Hints of Business Model</span>
         </button>
       </div>
-      <div *ngIf="conformanceIsChecked" style="margin-top:20px;">
+      <div *ngIf="conformanceIsChecked" style="margin-top: 20px">
         <form [formGroup]="conformanceOptionsForm">
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showWarnings" type="checkbox" class="custom-control-input" id="optionShowWarnings">
+            <input
+              formControlName="showWarnings"
+              type="checkbox"
+              class="custom-control-input"
+              id="optionShowWarnings"
+            />
             <label class="custom-control-label" for="optionShowWarnings">
               Show weaknesses
-              <small class="text-muted d-block">Used features that have a hurt cross-tree relationship to
-                other used features</small>
+              <small class="text-muted d-block"
+                >Used features that have a hurt cross-tree relationship to other
+                used features</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showStrengths" type="checkbox" class="custom-control-input" id="showStrengths">
+            <input
+              formControlName="showStrengths"
+              type="checkbox"
+              class="custom-control-input"
+              id="showStrengths"
+            />
             <label class="custom-control-label" for="showStrengths">
               Show strengths
-              <small class="text-muted d-block">Used features that have a supports cross-tree relationship to
-                other used features</small>
+              <small class="text-muted d-block"
+                >Used features that have a supports cross-tree relationship to
+                other used features</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showHints" type="checkbox" class="custom-control-input" id="showHints">
+            <input
+              formControlName="showHints"
+              type="checkbox"
+              class="custom-control-input"
+              id="showHints"
+            />
             <label class="custom-control-label" for="showHints">
               Show hints
-              <small class="text-muted d-block">Unused features that have a supports cross-tree relationship to
-                other used features and can be added without requirements and do not lead to other errors</small>
+              <small class="text-muted d-block"
+                >Unused features that have a supports cross-tree relationship to
+                other used features and can be added without requirements and do
+                not lead to other errors</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showPatternHints" type="checkbox" class="custom-control-input"
-                   id="showPatternHints">
+            <input
+              formControlName="showPatternHints"
+              type="checkbox"
+              class="custom-control-input"
+              id="showPatternHints"
+            />
             <label class="custom-control-label" for="showPatternHints">
               Show pattern hints
-              <small class="text-muted d-block">A pattern is shown as a hint, if at least half of the pattern is
-                included in
-                the current business model</small>
+              <small class="text-muted d-block"
+                >A pattern is shown as a hint, if at least half of the pattern
+                is included in the current business model</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showUsedPatterns" type="checkbox" class="custom-control-input"
-                   id="showUsedPatterns">
+            <input
+              formControlName="showUsedPatterns"
+              type="checkbox"
+              class="custom-control-input"
+              id="showUsedPatterns"
+            />
             <label class="custom-control-label" for="showUsedPatterns">
               Show used patterns
-              <small class="text-muted d-block">A pattern is shown as used, if it is completely included in the current
-                business model</small>
+              <small class="text-muted d-block"
+                >A pattern is shown as used, if it is completely included in the
+                current business model</small
+              >
             </label>
           </div>
         </form>
@@ -93,42 +123,61 @@
           <div class="col">
             <h6>Errors</h6>
             <ul>
-              <li *ngFor="let error of conformance.errors">{{error}}</li>
+              <li *ngFor="let error of conformance.errors">{{ error }}</li>
             </ul>
           </div>
-          <div class="col border-left"
-               *ngIf="conformanceOptionsForm.value.showWarnings || conformanceOptionsForm.value.showStrengths">
+          <div
+            class="col border-left"
+            *ngIf="
+              conformanceOptionsForm.value.showWarnings ||
+              conformanceOptionsForm.value.showStrengths
+            "
+          >
             <div *ngIf="conformanceOptionsForm.value.showWarnings">
               <h6>Weaknesses</h6>
               <ul>
-                <li *ngFor="let warning of conformance.warnings">{{warning}}</li>
+                <li *ngFor="let warning of conformance.warnings">
+                  {{ warning }}
+                </li>
               </ul>
             </div>
             <div *ngIf="conformanceOptionsForm.value.showStrengths">
               <h6>Strengths</h6>
               <ul>
-                <li *ngFor="let strength of conformance.strengths">{{strength}}</li>
+                <li *ngFor="let strength of conformance.strengths">
+                  {{ strength }}
+                </li>
               </ul>
             </div>
           </div>
-          <div class="col border-left"
-               *ngIf="conformanceOptionsForm.value.showHints || conformanceOptionsForm.value.showPatternHints || conformanceOptionsForm.value.showUsedPatterns">
+          <div
+            class="col border-left"
+            *ngIf="
+              conformanceOptionsForm.value.showHints ||
+              conformanceOptionsForm.value.showPatternHints ||
+              conformanceOptionsForm.value.showUsedPatterns
+            "
+          >
             <div *ngIf="conformanceOptionsForm.value.showHints">
               <h6>Hints</h6>
               <ul>
-                <li *ngFor="let hint of conformance.hints">{{hint}}</li>
+                <li *ngFor="let hint of conformance.hints">{{ hint }}</li>
               </ul>
             </div>
             <div *ngIf="conformanceOptionsForm.value.showPatternHints">
               <h6>Pattern Hints</h6>
               <ul>
-                <li *ngFor="let hint of conformance.patternHints">{{hint}}</li>
+                <li *ngFor="let hint of conformance.patternHints">
+                  <app-pattern-hint [patternHint]="hint"></app-pattern-hint>
+                </li>
               </ul>
             </div>
             <div *ngIf="conformanceOptionsForm.value.showUsedPatterns">
               <h6>Used Patterns</h6>
               <ul>
-                <li *ngFor="let pattern of conformance.usedPatterns">{{pattern}}</li>
+                <li *ngFor="let pattern of conformance.usedPatterns">
+                  <app-pattern-view [pattern]="pattern"></app-pattern-view>
+                </li>
               </ul>
             </div>
           </div>
@@ -144,12 +193,24 @@
         [expertModels]="expertModels"
         [showsPattern]="patternInstance != null"
         (showPattern)="showPattern($event.instance)"
-        (clearPattern)="clearPattern()"></app-instance-select-pattern-form>
+        (clearPattern)="clearPattern()"
+      ></app-instance-select-pattern-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Finish refinement</h6>
-    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">Finish refinement</button>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">
+      Finish refinement
+    </button>
   </div>
 </main>

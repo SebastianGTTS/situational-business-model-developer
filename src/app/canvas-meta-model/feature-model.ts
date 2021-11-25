@@ -1,4 +1,4 @@
-import { PouchdbModel } from '../database/pouchdb-model';
+import { DatabaseModel } from '../database/database-model';
 import { Author } from '../model/author';
 import { Feature } from './feature';
 import { Instance } from './instance';
@@ -6,8 +6,7 @@ import { RelationshipType } from './relationships';
 import { getId } from '../model/utils';
 import { CanvasDefinition } from './canvas-definition';
 
-export class FeatureModel extends PouchdbModel {
-
+export class FeatureModel extends DatabaseModel {
   // JSON Schema (stored)
   name: string;
   description: string;
@@ -23,15 +22,23 @@ export class FeatureModel extends PouchdbModel {
   constructor(featureModel: Partial<FeatureModel>, type: string) {
     super(type);
     this.init();
-    this.nextInstanceId = featureModel.instances ? featureModel.instances.length : 0;
+    this.nextInstanceId = featureModel.instances
+      ? featureModel.instances.length
+      : 0;
     Object.assign(this, featureModel);
     this.author = new Author(this.author);
-    Object.entries(this.features).forEach(([id, feature]) => this.features[id] = new Feature(id, null, feature));
-    this.instances = this.instances.map((instance, index) => new Instance(index, instance));
-    this.$definition = this.$definition ? new CanvasDefinition(this.$definition) : null;
+    Object.entries(this.features).forEach(
+      ([id, feature]) => (this.features[id] = new Feature(id, null, feature))
+    );
+    this.instances = this.instances.map(
+      (instance, index) => new Instance(index, instance)
+    );
+    this.$definition = this.$definition
+      ? new CanvasDefinition(this.$definition)
+      : null;
   }
 
-  protected init() {
+  protected init(): void {
     this.features = {};
     this.instances = [];
   }
@@ -40,14 +47,17 @@ export class FeatureModel extends PouchdbModel {
     this.$definition = definition;
     this.features = {};
     this.instances = [];
-    this.$definition.rootFeatures.forEach((feature) => this.features[feature.id] = new Feature(feature.id, null, feature));
+    this.$definition.rootFeatures.forEach(
+      (feature) =>
+        (this.features[feature.id] = new Feature(feature.id, null, feature))
+    );
   }
 
-  get definition() {
+  get definition(): CanvasDefinition {
     return this.$definition;
   }
 
-  update(featureModel: Partial<FeatureModel>) {
+  update(featureModel: Partial<FeatureModel>): void {
     if (featureModel.name !== undefined) {
       this.name = featureModel.name;
     }
@@ -64,7 +74,7 @@ export class FeatureModel extends PouchdbModel {
    *
    * @param author the new values of the author (values will be copied to the current object)
    */
-  updateAuthor(author: Partial<Author>) {
+  updateAuthor(author: Partial<Author>): void {
     this.author.update(author);
   }
 
@@ -88,8 +98,11 @@ export class FeatureModel extends PouchdbModel {
    *
    * @param featureName the name of the feature
    */
-  private getFeatureId(featureName: string) {
-    return getId(featureName, this.getFeatureList().map((f) => f.id));
+  private getFeatureId(featureName: string): string {
+    return getId(
+      featureName,
+      this.getFeatureList().map((f) => f.id)
+    );
   }
 
   /**
@@ -97,7 +110,7 @@ export class FeatureModel extends PouchdbModel {
    *
    * @param featureId the feature of the feature
    */
-  removeFeature(featureId: string) {
+  removeFeature(featureId: string): void {
     const feature = this.getFeature(featureId);
     const parent = feature.parent;
     if (parent === null) {
@@ -112,16 +125,21 @@ export class FeatureModel extends PouchdbModel {
     this.cleanReferences(featureIdList, featureList);
   }
 
-  protected cleanReferences(featureIdList: string[], featureList: Feature[]) {
+  protected cleanReferences(
+    featureIdList: string[],
+    featureList: Feature[]
+  ): void {
     // ** Relationships
-    const removeRelationships = (f: Feature) => {
+    const removeRelationships = (f: Feature): boolean => {
       f.removeRelationships(featureIdList);
       return false;
     };
     this.iterateFeatures(removeRelationships);
 
     // ** Instances
-    this.instances.forEach((instance) => instance.removeFeatures(featureIdList));
+    this.instances.forEach((instance) =>
+      instance.removeFeatures(featureIdList)
+    );
   }
 
   /**
@@ -131,7 +149,11 @@ export class FeatureModel extends PouchdbModel {
    * @param parentFeatureId the feature id of the parent feature
    * @param feature the new values of the feature (values will be copied to the current object)
    */
-  updateFeature(featureId: string, parentFeatureId: string, feature: Partial<Feature>) {
+  updateFeature(
+    featureId: string,
+    parentFeatureId: string,
+    feature: Partial<Feature>
+  ): void {
     const currentFeature = this.getFeature(featureId);
     currentFeature.update(feature);
     const currentParent = currentFeature.parent;
@@ -151,10 +173,10 @@ export class FeatureModel extends PouchdbModel {
   /**
    * Get a list of all features with their id and their levelname
    */
-  getFeatureList(): { id: string, levelname: string }[] {
-    const featureList: { id: string, levelname: string }[] = [];
-    const addToFeatureList = (feature: Feature) => {
-      featureList.push({id: feature.id, levelname: feature.getLevelname()});
+  getFeatureList(): { id: string; levelname: string }[] {
+    const featureList: { id: string; levelname: string }[] = [];
+    const addToFeatureList = (feature: Feature): boolean => {
+      featureList.push({ id: feature.id, levelname: feature.getLevelname() });
       return false;
     };
     this.iterateFeatures(addToFeatureList);
@@ -168,7 +190,7 @@ export class FeatureModel extends PouchdbModel {
    */
   getFeatureMap(): { [id: string]: Feature } {
     const featureMap: { [id: string]: Feature } = {};
-    const addToFeatureMap = (feature: Feature) => {
+    const addToFeatureMap = (feature: Feature): boolean => {
       featureMap[feature.id] = feature;
       return false;
     };
@@ -181,9 +203,9 @@ export class FeatureModel extends PouchdbModel {
    *
    * @param featureId the feature id of the feature to get
    */
-  getFeature(featureId: string) {
+  getFeature(featureId: string): Feature {
     let feature: Feature = null;
-    const isFeature = (f: Feature) => {
+    const isFeature = (f: Feature): boolean => {
       if (f.id === featureId) {
         feature = f;
         return true;
@@ -192,20 +214,47 @@ export class FeatureModel extends PouchdbModel {
     };
     this.iterateFeatures(isFeature);
     if (feature === null) {
-      throw new Error('Feature with id ' + featureId + ' does not exist on feature model ' + this.name);
+      throw new Error(
+        'Feature with id ' +
+          featureId +
+          ' does not exist on feature model ' +
+          this.name
+      );
     }
     return feature;
   }
 
   // Relationships between features
 
-  addRelationship(relationshipType: RelationshipType, fromFeatureId: string, toFeatureId: string) {
+  addRelationship(
+    relationshipType: RelationshipType,
+    fromFeatureId: string,
+    toFeatureId: string
+  ): void {
+    if (!this.definition.relationshipTypes.includes(relationshipType)) {
+      throw new Error(
+        'Relationship type ' +
+          relationshipType +
+          ' is not defined for this feature model.'
+      );
+    }
     const fromFeature = this.getFeature(fromFeatureId);
     this.getFeature(toFeatureId); // to check whether the feature really exists
     fromFeature.addRelationship(relationshipType, toFeatureId);
   }
 
-  removeRelationship(relationshipType: RelationshipType, fromFeatureId: string, toFeatureId: string) {
+  removeRelationship(
+    relationshipType: RelationshipType,
+    fromFeatureId: string,
+    toFeatureId: string
+  ): void {
+    if (!this.definition.relationshipTypes.includes(relationshipType)) {
+      throw new Error(
+        'Relationship type ' +
+          relationshipType +
+          ' is not defined for this feature model.'
+      );
+    }
     const fromFeature = this.getFeature(fromFeatureId);
     fromFeature.removeRelationship(relationshipType, toFeatureId);
   }
@@ -220,8 +269,14 @@ export class FeatureModel extends PouchdbModel {
    */
   addInstance(instance: Partial<Instance>): Instance {
     const addedInstance = new Instance(this.nextInstanceId++, instance);
-    if (!this.definition.rootFeatures.every((rootFeature) => addedInstance.usedFeatures.includes(rootFeature.id))) {
-      this.definition.rootFeatures.forEach((feature) => addedInstance.addFeature(feature.id));
+    if (
+      !this.definition.rootFeatures.every((rootFeature) =>
+        addedInstance.usedFeatures.includes(rootFeature.id)
+      )
+    ) {
+      this.definition.rootFeatures.forEach((feature) =>
+        addedInstance.addFeature(feature.id)
+      );
     }
     this.instances.push(addedInstance);
     return addedInstance;
@@ -232,7 +287,7 @@ export class FeatureModel extends PouchdbModel {
    *
    * @param instanceId the id of the instance
    */
-  getInstance(instanceId: number) {
+  getInstance(instanceId: number): Instance {
     return this.instances.find((instance) => instance.id === instanceId);
   }
 
@@ -241,8 +296,10 @@ export class FeatureModel extends PouchdbModel {
    *
    * @param instanceId the id of the instance
    */
-  removeInstance(instanceId: number) {
-    this.instances = this.instances.filter((instance) => instance.id !== instanceId);
+  removeInstance(instanceId: number): void {
+    this.instances = this.instances.filter(
+      (instance) => instance.id !== instanceId
+    );
   }
 
   /**
@@ -251,7 +308,7 @@ export class FeatureModel extends PouchdbModel {
    * @param instanceId the id of the instance
    * @param instance the new values of the instance (values will be copied to the current object)
    */
-  updateInstance(instanceId: number, instance: Partial<Instance>) {
+  updateInstance(instanceId: number, instance: Partial<Instance>): void {
     const currentInstance = this.instances.find((i) => i.id === instanceId);
     currentInstance.update(instance);
   }
@@ -262,10 +319,10 @@ export class FeatureModel extends PouchdbModel {
    * @param instanceId the id of the instance
    * @param adaptationName the new name of the instance
    */
-  adaptInstance(instanceId: number, adaptationName: string) {
+  adaptInstance(instanceId: number, adaptationName: string): void {
     const instance = this.instances.find((i) => i.id === instanceId);
     const addedInstance = this.addInstance(instance);
-    addedInstance.update({id: this.nextInstanceId - 1, name: adaptationName});
+    addedInstance.update({ id: this.nextInstanceId - 1, name: adaptationName });
   }
 
   /**
@@ -274,7 +331,7 @@ export class FeatureModel extends PouchdbModel {
    * @param instanceId the id of the instance
    * @param featureId the feature id of the feature to add to the instance
    */
-  addFeatureToInstance(instanceId: number, featureId: string) {
+  addFeatureToInstance(instanceId: number, featureId: string): void {
     this.getFeature(featureId); // to check whether the feature really exists
     const instance = this.instances.find((i) => i.id === instanceId);
     instance.addFeature(featureId);
@@ -286,7 +343,7 @@ export class FeatureModel extends PouchdbModel {
    * @param instanceId the id of the instance
    * @param featureId the feature id of the feature to remove from the instance
    */
-  removeFeatureFromInstance(instanceId: number, featureId: string) {
+  removeFeatureFromInstance(instanceId: number, featureId: string): void {
     const instance = this.getInstance(instanceId);
     const feature = this.getFeature(featureId);
     const featureIds = feature.getAllSubfeatures().map((f) => f.id);
@@ -296,19 +353,21 @@ export class FeatureModel extends PouchdbModel {
 
   // Export
 
-  toPouchDb(): any {
+  toDb(): any {
     const features = {};
-    Object.entries(this.features).forEach(([id, feature]) => features[id] = feature.toPouchDb());
+    Object.entries(this.features).forEach(
+      ([id, feature]) => (features[id] = feature.toDb())
+    );
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
       name: this.name,
       description: this.description,
       copyright: this.copyright,
-      author: this.author.toPouchDb(),
+      author: this.author.toDb(),
       features,
-      instances: this.instances.map((instance) => instance.toPouchDb()),
+      instances: this.instances.map((instance) => instance.toDb()),
       nextInstanceId: this.nextInstanceId,
-      $definition: this.$definition ? this.$definition.toPouchDb() : null,
+      $definition: this.$definition ? this.$definition.toDb() : null,
     };
   }
 
@@ -320,7 +379,7 @@ export class FeatureModel extends PouchdbModel {
       copyright: this.copyright,
       author: this.author,
       features: this.features,
-      instances: this.instances
+      instances: this.instances,
     };
   }
 
@@ -333,7 +392,10 @@ export class FeatureModel extends PouchdbModel {
    * @param func function to use on the features
    * @param filter function to decide whether to walk through this part of the tree
    */
-  iterateFeatures(func: (feature: Feature) => boolean, filter: (feature: Feature) => boolean = () => true) {
+  iterateFeatures(
+    func: (feature: Feature) => boolean,
+    filter: (feature: Feature) => boolean = (): boolean => true
+  ): void {
     const featureStack: Feature[] = [];
 
     featureStack.push(...Object.values(this.features).reverse().filter(filter));
@@ -345,8 +407,9 @@ export class FeatureModel extends PouchdbModel {
         return;
       }
 
-      featureStack.push(...Object.values(current.subfeatures).reverse().filter(filter));
+      featureStack.push(
+        ...Object.values(current.subfeatures).reverse().filter(filter)
+      );
     }
   }
-
 }

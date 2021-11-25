@@ -1,56 +1,68 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
 import { DevelopmentMethodService } from '../../development-process-registry/development-method/development-method.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
 
 @Component({
   selector: 'app-development-methods',
   templateUrl: './development-methods.component.html',
-  styleUrls: ['./development-methods.component.css']
+  styleUrls: ['./development-methods.component.css'],
+  providers: [
+    ListService,
+    { provide: ELEMENT_SERVICE, useExisting: DevelopmentMethodService },
+  ],
 })
-export class DevelopmentMethodsComponent implements OnInit {
-
-  developmentMethodsList: DevelopmentMethod[];
-
+export class DevelopmentMethodsComponent {
   developmentMethodForm = this.fb.group({
     name: this.fb.control('', Validators.required),
   });
 
+  modalDevelopmentMethod: DevelopmentMethod;
+  private modalReference: NgbModalRef;
+
+  @ViewChild('deleteDevelopmentMethodModal', { static: true })
+  deleteDevelopmentMethodModal: any;
+
   constructor(
-    private developmentMethodService: DevelopmentMethodService,
+    private listService: ListService<DevelopmentMethod>,
     private fb: FormBuilder,
-  ) {
-  }
+    private modalService: NgbModal
+  ) {}
 
-  ngOnInit() {
-    this.loadDevelopmentMethods();
-  }
-
-  loadDevelopmentMethods() {
-    this.developmentMethodService.getDevelopmentMethodList().then(
-      list => this.developmentMethodsList = list.docs
-    ).catch(
-      error => console.log('LoadDevelopmentMethods: ' + error)
-    );
-  }
-
-  deleteDevelopmentMethod(id: string) {
-    this.developmentMethodService.deleteDevelopmentMethod(id).then(
-      () => this.loadDevelopmentMethods()
-    ).catch(
-      error => console.log('DeleteDevelopmentMethod: ' + error)
-    );
-  }
-
-  addDevelopmentMethod(developmentMethodForm: FormGroup) {
-    this.developmentMethodService.addDevelopmentMethod(developmentMethodForm.value.name).then(
-      () => {
-        this.developmentMethodForm.reset();
-        this.loadDevelopmentMethods();
+  openDeleteDevelopmentMethodModal(developmentMethod: DevelopmentMethod) {
+    this.modalDevelopmentMethod = developmentMethod;
+    this.modalReference = this.modalService.open(
+      this.deleteDevelopmentMethodModal,
+      {
+        size: 'lg',
       }
-    ).catch(
-      error => console.log('AddDevelopmentMethod: ' + error)
     );
   }
 
+  async deleteDevelopmentMethod(id: string) {
+    await this.listService.delete(id);
+  }
+
+  async addDevelopmentMethod(developmentMethodForm: FormGroup) {
+    await this.listService.add({ name: developmentMethodForm.value.name });
+    this.developmentMethodForm.reset();
+  }
+
+  get developmentMethodsList(): DevelopmentMethod[] {
+    return this.listService.elements;
+  }
+
+  get noResults(): boolean {
+    return this.listService.noResults;
+  }
+
+  get loading(): boolean {
+    return this.listService.loading;
+  }
+
+  get reloading(): boolean {
+    return this.listService.reloading;
+  }
 }

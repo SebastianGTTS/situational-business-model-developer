@@ -1,0 +1,2001 @@
+{
+  "$definition": {
+    "name": "Business Model Canvas",
+    "rows": [
+      [
+        {
+          "isSpacer": false,
+          "id": "key-partners",
+          "name": "Key Partners",
+          "rowspan": 2,
+          "colspan": 2
+        },
+        {
+          "isSpacer": false,
+          "id": "key-activities",
+          "name": "Key Activities",
+          "rowspan": 1,
+          "colspan": 2
+        },
+        {
+          "isSpacer": false,
+          "id": "value-propositions",
+          "name": "Value Propositions",
+          "rowspan": 2,
+          "colspan": 2
+        },
+        {
+          "isSpacer": false,
+          "id": "customer-relationships",
+          "name": "Customer Relationships",
+          "rowspan": 1,
+          "colspan": 2
+        },
+        {
+          "isSpacer": false,
+          "id": "customer-segments",
+          "name": "Customer Segments",
+          "rowspan": 2,
+          "colspan": 2
+        }
+      ],
+      [
+        {
+          "isSpacer": false,
+          "id": "key-resources",
+          "name": "Key Resources",
+          "rowspan": 1,
+          "colspan": 2
+        },
+        {
+          "isSpacer": false,
+          "id": "channels",
+          "name": "Customer Channels",
+          "rowspan": 1,
+          "colspan": 2
+        }
+      ],
+      [
+        {
+          "isSpacer": false,
+          "id": "cost-structure",
+          "name": "Cost Structure",
+          "rowspan": 1,
+          "colspan": 5
+        },
+        {
+          "isSpacer": false,
+          "id": "revenue-streams",
+          "name": "Revenue Streams",
+          "rowspan": 1,
+          "colspan": 5
+        }
+      ]
+    ],
+    "relationshipTypes": ["requires", "excludes", "supports", "hurts"]
+  },
+  "name": "Mobile Todo-Apps",
+  "description": "An example of expert knowledge about mobile Todo-Apps",
+  "copyright": "MIT License",
+  "author": {
+    "name": "Sebastian Gottschalk",
+    "company": "Paderborn University",
+    "email": "xxxx@xxxx.xx",
+    "website": "upb.de"
+  },
+  "features": {
+    "value-propositions": {
+      "name": "Value Propositions",
+      "type": "optional",
+      "subfeatures": {
+        "accessibility": {
+          "name": "Accessibility",
+          "type": "optional",
+          "subfeatures": {
+            "anonymous-access": {
+              "name": "Anonymous Access",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["personalized-recommendations"]
+                }
+              }
+            },
+            "simplified-sign-in-servies": {
+              "name": "Simplified Sign-In Servies",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "multi-os-access": {
+              "name": "Multi-OS Access",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["single-homed"]
+                }
+              }
+            },
+            "device-syncronisation": {
+              "name": "Device Syncronisation",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "customization": {
+          "name": "Customization",
+          "type": "optional",
+          "subfeatures": {
+            "personalized-recommendations": {
+              "name": "Personalized Recommendations",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["anonymous-access"]
+                }
+              }
+            },
+            "changeable-user-interfaces": {
+              "name": "Changeable User Interfaces",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "design-/-usability": {
+          "name": "Design / Usability",
+          "type": "optional",
+          "subfeatures": {
+            "execution-step-reduction": {
+              "name": "Execution Step Reduction",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "design-pattern-usage": {
+              "name": "Design Pattern Usage",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "price": {
+          "name": "Price",
+          "type": "optional",
+          "subfeatures": {
+            "free-for-all": {
+              "name": "Free for All",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["money-back-guarantee"]
+                }
+              }
+            },
+            "low-price-strategy": {
+              "name": "Low-Price Strategy",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "money-back-guarantee": {
+              "name": "Money-Back Guarantee",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["free-for-all"]
+                }
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "network": {
+          "name": "Network",
+          "type": "optional",
+          "subfeatures": {
+            "quantity-network-size": {
+              "name": "Quantity Network Size",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "quality-network-users": {
+              "name": "Quality Network Users",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "excludes": ["single-user"]
+            }
+          }
+        },
+        "function-scope": {
+          "name": "Function Scope",
+          "type": "optional",
+          "subfeatures": {
+            "minimized-scope": {
+              "name": "Minimized Scope",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "maximized-scope": {
+              "name": "Maximized Scope",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "medium-scope": {
+              "name": "Medium Scope",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "task-management": {
+          "name": "Task Management",
+          "type": "optional",
+          "subfeatures": {
+            "splitting-of-tasks": {
+              "name": "Splitting of Tasks",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "work-together": {
+              "name": "Work Together",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["single-user"]
+                }
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "workflow-management": {
+          "name": "Workflow Management",
+          "type": "optional",
+          "subfeatures": {
+            "workflow-templates": {
+              "name": "Workflow Templates",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "workflow-tracker": {
+              "name": "Workflow Tracker",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "intelligent-flow-planer": {
+              "name": "Intelligent Flow Planer",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "connect-to-calender": {
+              "name": "Connect To Calender",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "productivity-analysis": {
+          "name": "Productivity Analysis",
+          "type": "optional",
+          "subfeatures": {
+            "light-weight-tooling": {
+              "name": "Light-Weight Tooling",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "productivity-optimization": {
+              "name": "Productivity Optimization",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "segment-optimized-functions": {
+          "name": "Segment Optimized Functions",
+          "type": "optional",
+          "subfeatures": {
+            "general": {
+              "name": "General",
+              "type": "optional",
+              "subfeatures": {
+                "automatic-task-breakdown": {
+                  "name": "Automatic Task Breakdown",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "task-time-prediction": {
+                  "name": "Task Time Prediction",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "connect-to-friends": {
+                  "name": "Connect To Friends",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {
+                      "excludes": ["single-user"]
+                    }
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "fitness-functions": {
+              "name": "Fitness Functions",
+              "type": "optional",
+              "subfeatures": {
+                "time-to-sport": {
+                  "name": "Time To Sport",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "calories-tracker": {
+                  "name": "Calories Tracker",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "work&life-balance": {
+              "name": "Work&Life Balance",
+              "type": "optional",
+              "subfeatures": {
+                "optimize-scheduling": {
+                  "name": "Optimize Scheduling",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "optimize-concentration": {
+                  "name": "Optimize Concentration",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "business-functions": {
+              "name": "Business Functions",
+              "type": "optional",
+              "subfeatures": {
+                "automatic-task-scheduling": {
+                  "name": "Automatic Task Scheduling",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "workflow-tracking": {
+                  "name": "Workflow Tracking",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "customer-segments": {
+      "name": "Customer Segment",
+      "type": "optional",
+      "subfeatures": {
+        "interaction-type": {
+          "name": "Interaction Type",
+          "type": "optional",
+          "subfeatures": {
+            "single-user": {
+              "name": "Single-User",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": [
+                    "network",
+                    "work-together",
+                    "connect-to-friends",
+                    "friend-challenges"
+                  ]
+                }
+              }
+            },
+            "single-sided-market": {
+              "name": "Single-Sided-Market",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "multi-sided-market": {
+              "name": "Multi-Sided-Market",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": "xor",
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "market-size": {
+          "name": "Market Size",
+          "type": "optional",
+          "subfeatures": {
+            "niche-market": {
+              "name": "Niche Market",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "mass-market": {
+              "name": "Mass Market",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": "xor",
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "target-group": {
+          "name": "Target Group",
+          "type": "optional",
+          "subfeatures": {
+            "fitness-improver": {
+              "name": "Fitness Improver",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "requires": ["fitness-functions"]
+                }
+              }
+            },
+            "life-improver": {
+              "name": "Life Improver",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "requires": ["work&life-balance"]
+                }
+              }
+            },
+            "business-improver": {
+              "name": "Business Improver",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "requires": ["business-functions"]
+                }
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "user-type": {
+          "name": "User Type",
+          "type": "optional",
+          "subfeatures": {
+            "private-user": {
+              "name": "Private User",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "professional-user": {
+              "name": "Professional User",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "homing": {
+          "name": "Homing",
+          "type": "optional",
+          "subfeatures": {
+            "single-homed": {
+              "name": "Single-Homed",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "excludes": ["multi-os-access"]
+                }
+              }
+            },
+            "multi-homed": {
+              "name": "Multi-Homed",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": "xor",
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "customer-relationships": {
+      "name": "Customer Relationships",
+      "type": "optional",
+      "subfeatures": {
+        "customer-aquisition": {
+          "name": "Customer Aquisition",
+          "type": "optional",
+          "subfeatures": {
+            "advertisements": {
+              "name": "Advertisements",
+              "type": "optional",
+              "subfeatures": {
+                "facbook-ads": {
+                  "name": "Facbook Ads",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "friend-invitation-system": {
+              "name": "Friend Invitation System",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "existing-customer-base": {
+              "name": "Existing Customer Base",
+              "type": "optional",
+              "subfeatures": {
+                "brand-customer-base": {
+                  "name": "Brand Customer Base",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "os-customer-base": {
+                  "name": "OS Customer Base",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "online-communities-1": {
+              "name": "Online Communities",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "facebook-groups-1": {
+              "name": "Facebook Groups",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "requires": ["marketing"]
+                }
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "customer-retention": {
+          "name": "Customer Retention",
+          "type": "optional",
+          "subfeatures": {
+            "locked-in": {
+              "name": "Locked-In",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "gamification": {
+              "name": "Gamification",
+              "type": "optional",
+              "subfeatures": {
+                "progress-discovery": {
+                  "name": "Progress Discovery",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                },
+                "friend-challenges": {
+                  "name": "Friend Challenges",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {
+                      "excludes": ["single-user"]
+                    }
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "customer-support": {
+              "name": "Customer Support",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "free-usage": {
+              "name": "Free Usage",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "boosting-sales": {
+          "name": "Boosting Sales",
+          "type": "optional",
+          "subfeatures": {
+            "forced-stops": {
+              "name": "Forced Stops",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "channels": {
+      "name": "Customer Channels",
+      "type": "optional",
+      "subfeatures": {
+        "awareness": {
+          "name": "Awareness",
+          "type": "optional",
+          "subfeatures": {
+            "word-of-mouth": {
+              "name": "Word-of-Mouth",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "store-placement": {
+              "name": "Store Placement",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "facebook-groups": {
+              "name": "Facebook Groups",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "online-communities": {
+              "name": "Online Communities",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "social-media-ads": {
+              "name": "Social Media Ads",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "influencer-marketing": {
+              "name": "Influencer Marketing",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "evaluation": {
+          "name": "Evaluation",
+          "type": "optional",
+          "subfeatures": {
+            "freemium": {
+              "name": "Freemium",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "appstore-optimization": {
+              "name": "AppStore Optimization",
+              "type": "optional",
+              "subfeatures": {
+                "review-reactions": {
+                  "name": "Review Reactions",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "company-branding": {
+              "name": "Company Branding",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "purchase": {
+          "name": "Purchase",
+          "type": "mandatory",
+          "subfeatures": {
+            "in-store-purchase": {
+              "name": "In-Store Purchase",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "out-of-store-purchase": {
+              "name": "Out-of-Store Purchase",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {
+                  "requires": ["payment-provider"]
+                }
+              }
+            },
+            "no-purchase": {
+              "name": "No Purchase",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "delivery": {
+          "name": "Delivery",
+          "type": "mandatory",
+          "subfeatures": {
+            "in-store-delivery": {
+              "name": "In-Store Delivery",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "out-of-store-delivery": {
+              "name": "Out-of-Store Delivery",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "after-sales": {
+          "name": "After Sales",
+          "type": "optional",
+          "subfeatures": {
+            "app-updates": {
+              "name": "App Updates",
+              "type": "optional",
+              "subfeatures": {
+                "update-with-os": {
+                  "name": "Update with OS",
+                  "type": "optional",
+                  "subfeatures": {},
+                  "subfeatureConnections": null,
+                  "relationships": {
+                    "relationships": {}
+                  }
+                }
+              },
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "content-updates": {
+              "name": "Content Updates",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "included-in-os": {
+          "name": "Included in OS",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "key-partners": {
+      "name": "Key Partners",
+      "type": "optional",
+      "subfeatures": {
+        "advertisement-partner": {
+          "name": "Advertisement Partner",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["advertisement"]
+            }
+          }
+        },
+        "app-developer": {
+          "name": "App Developer",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "content-provider": {
+          "name": "Content Provider",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "instrastructure-provider": {
+          "name": "Instrastructure Provider",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "manufacturing-provider": {
+          "name": "Manufacturing Provider",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "payment-provider": {
+          "name": "Payment Provider",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "store-provider": {
+          "name": "Store Provider",
+          "type": "mandatory",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "third-party-developer": {
+          "name": "Third-Party Developer",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["developer-api"]
+            }
+          }
+        },
+        "influencer": {
+          "name": "Influencer",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "key-activities": {
+      "name": "Key Activities",
+      "type": "optional",
+      "subfeatures": {
+        "develop-hard--and-software": {
+          "name": "Develop Hard- and Software",
+          "type": "mandatory",
+          "subfeatures": {
+            "develop-software": {
+              "name": "Develop Software",
+              "type": "mandatory",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "develop-hardware": {
+              "name": "Develop Hardware",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["development"]
+            }
+          }
+        },
+        "negotiate-licsenses": {
+          "name": "Negotiate Licenses",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["licenses"]
+            }
+          }
+        },
+        "manage-infrastructure": {
+          "name": "Manage Infrastructure",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["infrastructure"]
+            }
+          }
+        },
+        "produce-content": {
+          "name": "Produce Content",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["production-"]
+            }
+          }
+        },
+        "plan-marketing-campaigns": {
+          "name": "Plan Marketing Campaigns",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["marketing"]
+            }
+          }
+        },
+        "support-customer": {
+          "name": "Support Customer",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["support"]
+            }
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "key-resources": {
+      "name": "Key Resources",
+      "type": "optional",
+      "subfeatures": {
+        "algorithms": {
+          "name": "Algorithms",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "brands": {
+          "name": "Brands",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "content": {
+          "name": "Content",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "developer-licsense": {
+          "name": "Developer License",
+          "type": "mandatory",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "patents": {
+          "name": "Patents",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "infrastructure-1": {
+          "name": "Infrastructure",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {
+              "requires": ["infrastructure"]
+            }
+          }
+        },
+        "developer-api": {
+          "name": "Developer API",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "revenue-streams": {
+      "name": "Revenue Streams",
+      "type": "optional",
+      "subfeatures": {
+        "advertisement": {
+          "name": "Advertisement",
+          "type": "optional",
+          "subfeatures": {
+            "inn-app-ads": {
+              "name": "In-App Ads",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "personalized-ads": {
+              "name": "Personalized Ads",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "brokerage": {
+          "name": "Brokerage",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "donation": {
+          "name": "Donation",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "sale": {
+          "name": "Sale",
+          "type": "optional",
+          "subfeatures": {
+            "app-purchase": {
+              "name": "App Purchase",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "in-app-purchase": {
+              "name": "In-App Purchase",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "subscription": {
+          "name": "Subscription",
+          "type": "optional",
+          "subfeatures": {
+            "normal-account": {
+              "name": "Normal Account",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "professional-account": {
+              "name": "Professional Account",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "business-account": {
+              "name": "Business Account",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "cross-financed": {
+          "name": "Cross-Financed",
+          "type": "optional",
+          "subfeatures": {
+            "hardware": {
+              "name": "Hardware",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            },
+            "software": {
+              "name": "Software",
+              "type": "optional",
+              "subfeatures": {},
+              "subfeatureConnections": null,
+              "relationships": {
+                "relationships": {}
+              }
+            }
+          },
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": "or",
+      "relationships": {
+        "relationships": {}
+      }
+    },
+    "cost-structure": {
+      "name": "Cost Structure",
+      "type": "optional",
+      "subfeatures": {
+        "development": {
+          "name": "Development",
+          "type": "mandatory",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "infrastructure": {
+          "name": "Infrastructure",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "licenses": {
+          "name": "Licenses",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "marketing": {
+          "name": "Marketing",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "production-": {
+          "name": "Production ",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        },
+        "support": {
+          "name": "Support",
+          "type": "optional",
+          "subfeatures": {},
+          "subfeatureConnections": null,
+          "relationships": {
+            "relationships": {}
+          }
+        }
+      },
+      "subfeatureConnections": null,
+      "relationships": {
+        "relationships": {}
+      }
+    }
+  },
+  "instances": [
+    {
+      "name": "Microsoft Todo",
+      "type": "example",
+      "description": "",
+      "usedFeatures": [
+        "value-propositions",
+        "accessibility",
+        "simplified-sign-in-servies",
+        "multi-os-access",
+        "customization",
+        "personalized-recommendations",
+        "function-scope",
+        "medium-scope",
+        "task-management",
+        "work-together",
+        "workflow-management",
+        "intelligent-flow-planer",
+        "customer-segments",
+        "interaction-type",
+        "single-sided-market",
+        "market-size",
+        "mass-market",
+        "user-type",
+        "private-user",
+        "professional-user",
+        "homing",
+        "multi-homed",
+        "customer-relationships",
+        "customer-aquisition",
+        "existing-customer-base",
+        "customer-retention",
+        "customer-support",
+        "free-usage",
+        "channels",
+        "awareness",
+        "word-of-mouth",
+        "evaluation",
+        "company-branding",
+        "purchase",
+        "in-store-purchase",
+        "delivery",
+        "in-store-delivery",
+        "after-sales",
+        "app-updates",
+        "key-partners",
+        "store-provider",
+        "key-activities",
+        "develop-hard--and-software",
+        "manage-infrastructure",
+        "plan-marketing-campaigns",
+        "support-customer",
+        "key-resources",
+        "developer-licsense",
+        "infrastructure-1",
+        "revenue-streams",
+        "cross-financed",
+        "cost-structure",
+        "development",
+        "infrastructure",
+        "marketing",
+        "support"
+      ]
+    },
+    {
+      "name": "Wunderlist",
+      "type": "example",
+      "description": "",
+      "usedFeatures": [
+        "value-propositions",
+        "accessibility",
+        "simplified-sign-in-servies",
+        "multi-os-access",
+        "device-syncronisation",
+        "design-/-usability",
+        "design-pattern-usage",
+        "function-scope",
+        "maximized-scope",
+        "task-management",
+        "splitting-of-tasks",
+        "work-together",
+        "workflow-management",
+        "customer-segments",
+        "interaction-type",
+        "single-sided-market",
+        "market-size",
+        "mass-market",
+        "user-type",
+        "private-user",
+        "professional-user",
+        "homing",
+        "multi-homed",
+        "customer-relationships",
+        "customer-aquisition",
+        "advertisements",
+        "friend-invitation-system",
+        "customer-retention",
+        "customer-support",
+        "channels",
+        "awareness",
+        "word-of-mouth",
+        "store-placement",
+        "social-media-ads",
+        "evaluation",
+        "freemium",
+        "appstore-optimization",
+        "purchase",
+        "in-store-purchase",
+        "out-of-store-purchase",
+        "delivery",
+        "in-store-delivery",
+        "after-sales",
+        "app-updates",
+        "key-partners",
+        "instrastructure-provider",
+        "payment-provider",
+        "store-provider",
+        "third-party-developer",
+        "key-activities",
+        "develop-hard--and-software",
+        "develop-software",
+        "manage-infrastructure",
+        "plan-marketing-campaigns",
+        "support-customer",
+        "key-resources",
+        "algorithms",
+        "developer-licsense",
+        "infrastructure-1",
+        "developer-api",
+        "revenue-streams",
+        "subscription",
+        "normal-account",
+        "professional-account",
+        "cost-structure",
+        "development",
+        "infrastructure",
+        "marketing",
+        "support"
+      ]
+    },
+    {
+      "name": "Any.do",
+      "type": "example",
+      "description": "",
+      "usedFeatures": [
+        "value-propositions",
+        "design-/-usability",
+        "execution-step-reduction",
+        "design-pattern-usage",
+        "function-scope",
+        "maximized-scope",
+        "task-management",
+        "splitting-of-tasks",
+        "work-together",
+        "workflow-management",
+        "connect-to-calender",
+        "customer-segments",
+        "interaction-type",
+        "single-sided-market",
+        "market-size",
+        "mass-market",
+        "user-type",
+        "private-user",
+        "professional-user",
+        "homing",
+        "multi-homed",
+        "customer-relationships",
+        "customer-aquisition",
+        "advertisements",
+        "friend-invitation-system",
+        "customer-retention",
+        "customer-support",
+        "channels",
+        "awareness",
+        "word-of-mouth",
+        "store-placement",
+        "social-media-ads",
+        "evaluation",
+        "freemium",
+        "purchase",
+        "in-store-purchase",
+        "out-of-store-purchase",
+        "delivery",
+        "in-store-delivery",
+        "after-sales",
+        "app-updates",
+        "key-partners",
+        "instrastructure-provider",
+        "payment-provider",
+        "store-provider",
+        "third-party-developer",
+        "key-activities",
+        "develop-hard--and-software",
+        "develop-software",
+        "manage-infrastructure",
+        "plan-marketing-campaigns",
+        "support-customer",
+        "key-resources",
+        "developer-licsense",
+        "infrastructure-1",
+        "developer-api",
+        "revenue-streams",
+        "subscription",
+        "normal-account",
+        "professional-account",
+        "business-account",
+        "cost-structure",
+        "development",
+        "infrastructure",
+        "marketing",
+        "support"
+      ]
+    },
+    {
+      "name": "Todoist",
+      "type": "example",
+      "description": "",
+      "usedFeatures": [
+        "value-propositions",
+        "customization",
+        "changeable-user-interfaces",
+        "design-/-usability",
+        "design-pattern-usage",
+        "function-scope",
+        "maximized-scope",
+        "task-management",
+        "workflow-management",
+        "workflow-templates",
+        "productivity-analysis",
+        "light-weight-tooling",
+        "customer-segments",
+        "interaction-type",
+        "single-sided-market",
+        "market-size",
+        "mass-market",
+        "user-type",
+        "private-user",
+        "professional-user",
+        "homing",
+        "multi-homed",
+        "customer-relationships",
+        "customer-aquisition",
+        "advertisements",
+        "friend-invitation-system",
+        "customer-retention",
+        "locked-in",
+        "customer-support",
+        "channels",
+        "awareness",
+        "word-of-mouth",
+        "social-media-ads",
+        "evaluation",
+        "freemium",
+        "purchase",
+        "in-store-purchase",
+        "out-of-store-purchase",
+        "delivery",
+        "in-store-delivery",
+        "after-sales",
+        "app-updates",
+        "key-partners",
+        "instrastructure-provider",
+        "payment-provider",
+        "store-provider",
+        "third-party-developer",
+        "key-activities",
+        "develop-hard--and-software",
+        "develop-software",
+        "manage-infrastructure",
+        "plan-marketing-campaigns",
+        "support-customer",
+        "key-resources",
+        "developer-licsense",
+        "infrastructure-1",
+        "developer-api",
+        "revenue-streams",
+        "subscription",
+        "normal-account",
+        "business-account",
+        "cost-structure",
+        "development",
+        "infrastructure",
+        "marketing",
+        "support"
+      ]
+    },
+    {
+      "name": "Apples iOS",
+      "type": "example",
+      "description": "",
+      "usedFeatures": [
+        "value-propositions",
+        "design-/-usability",
+        "design-pattern-usage",
+        "function-scope",
+        "minimized-scope",
+        "task-management",
+        "customer-segments",
+        "interaction-type",
+        "single-user",
+        "market-size",
+        "mass-market",
+        "user-type",
+        "private-user",
+        "homing",
+        "single-homed",
+        "customer-relationships",
+        "customer-aquisition",
+        "existing-customer-base",
+        "channels",
+        "included-in-os",
+        "key-partners",
+        "key-activities",
+        "develop-hard--and-software",
+        "develop-software",
+        "manage-infrastructure",
+        "support-customer",
+        "key-resources",
+        "infrastructure-1",
+        "revenue-streams",
+        "cross-financed",
+        "hardware",
+        "software",
+        "cost-structure",
+        "development",
+        "infrastructure",
+        "support"
+      ]
+    },
+    {
+      "name": "Googles Android",
+      "type": "example",
+      "description": "",
+      "usedFeatures": [
+        "value-propositions",
+        "design-/-usability",
+        "design-pattern-usage",
+        "function-scope",
+        "minimized-scope",
+        "task-management",
+        "customer-segments",
+        "interaction-type",
+        "single-user",
+        "market-size",
+        "mass-market",
+        "user-type",
+        "private-user",
+        "homing",
+        "single-homed",
+        "customer-relationships",
+        "customer-aquisition",
+        "existing-customer-base",
+        "channels",
+        "included-in-os",
+        "key-partners",
+        "key-activities",
+        "develop-hard--and-software",
+        "manage-infrastructure",
+        "support-customer",
+        "key-resources",
+        "infrastructure-1",
+        "revenue-streams",
+        "cross-financed",
+        "software",
+        "cost-structure",
+        "development",
+        "infrastructure",
+        "support"
+      ]
+    }
+  ],
+  "version": "1.0.0"
+}

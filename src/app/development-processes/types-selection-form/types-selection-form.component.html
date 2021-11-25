@@ -5,11 +5,18 @@
     [createFormGroupFactory]="createFormGroupFactory"
     [listNames]="listNames"
     [methodElements]="methodElements"
-    methodElementName="Type"></app-method-elements-selection-form>
+    methodElementName="Type"
+  ></app-method-elements-selection-form>
   <div class="form-group row">
     <div class="col-sm-12">
-      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!typesForm.valid">
-        <ng-container>Update</ng-container>
+      <button
+        type="submit"
+        class="btn btn-sm btn-block"
+        [class.btn-dark]="!changed"
+        [class.btn-primary]="changed"
+        [disabled]="!typesForm.valid"
+      >
+        Update<span *ngIf="changed"> (unsaved changes)</span>
       </button>
     </div>
   </div>

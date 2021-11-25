@@ -4,10 +4,9 @@ import { KanbanBoardMethodInfo } from './kanban-board-method-info';
 @Component({
   selector: 'app-kanban-board',
   templateUrl: './kanban-board.component.html',
-  styleUrls: ['./kanban-board.component.css']
+  styleUrls: ['./kanban-board.component.css'],
 })
 export class KanbanBoardComponent {
-
   @Input() todo: KanbanBoardMethodInfo[];
   @Input() doing: KanbanBoardMethodInfo[];
   @Input() done: KanbanBoardMethodInfo[];
@@ -37,5 +36,4 @@ export class KanbanBoardComponent {
       this.startNodeExecution.emit(info.nodeId);
     }
   }
-
 }

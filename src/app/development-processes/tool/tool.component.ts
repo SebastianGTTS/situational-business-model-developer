@@ -1,54 +1,33 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { Component } from '@angular/core';
 import { Tool } from '../../development-process-registry/method-elements/tool/tool';
 import { ToolService } from '../../development-process-registry/method-elements/tool/tool.service';
+import { MethodElementLoaderService } from '../shared/method-element-loader.service';
+import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
 
 @Component({
   selector: 'app-tool',
   templateUrl: './tool.component.html',
-  styleUrls: ['./tool.component.css']
+  styleUrls: ['./tool.component.css'],
+  providers: [
+    MethodElementLoaderService,
+    { provide: MethodElementService, useExisting: ToolService },
+  ],
 })
-export class ToolComponent implements OnInit, OnDestroy {
-
-  tool: Tool;
-  listNames: string[] = [];
-
-  private routeSubscription: Subscription;
-
+export class ToolComponent {
   constructor(
-    private toolService: ToolService,
-    private route: ActivatedRoute,
-  ) {
+    private toolLoaderService: MethodElementLoaderService<Tool>,
+    private toolService: ToolService
+  ) {}
+
+  async updateValue(value: any) {
+    await this.toolService.update(this.tool._id, value);
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe(map => this.load(map.get('id')));
+  get tool() {
+    return this.toolLoaderService.methodElement;
   }
 
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
+  get listNames() {
+    return this.toolLoaderService.listNames;
   }
-
-  load(id: string) {
-    this.toolService.get(id).then((tool) => {
-      this.tool = tool;
-    }).catch(error => console.log('Load: ' + error));
-    this.toolService.getLists().then((lists) => this.listNames = lists.map((list) => list.listName)).catch(
-      error => console.log('LoadLists: ' + error)
-    );
-  }
-
-  updateValue(value: any) {
-    const update = (currentElement: Tool) => {
-      currentElement.update(value);
-      return currentElement;
-    };
-    this.toolService.update(this.tool._id, update).then(
-      () => this.load(this.tool._id)
-    ).catch((error) => console.log('UpdateValue: ' + error));
-  }
-
 }

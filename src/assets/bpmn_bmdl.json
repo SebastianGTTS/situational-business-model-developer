@@ -8,9 +8,7 @@
   "types": [
     {
       "name": "ActivityWithType",
-      "extends": [
-        "bpmn:Activity"
-      ],
+      "extends": ["bpmn:Activity"],
       "properties": [
         {
           "name": "inherit",
@@ -36,9 +34,7 @@
     },
     {
       "name": "ProcessPattern",
-      "extends": [
-        "bpmn:SubProcess"
-      ],
+      "extends": ["bpmn:SubProcess"],
       "properties": [
         {
           "name": "processPatternId",
@@ -48,9 +44,7 @@
     },
     {
       "name": "InnerSubProcess",
-      "extends": [
-        "bpmn:SubProcess"
-      ],
+      "extends": ["bpmn:SubProcess"],
       "properties": [
         {
           "name": "taskName",
@@ -86,9 +80,7 @@
     },
     {
       "name": "MethodActivity",
-      "extends": [
-        "bpmn:Activity"
-      ],
+      "extends": ["bpmn:Activity"],
       "properties": [
         {
           "name": "method",

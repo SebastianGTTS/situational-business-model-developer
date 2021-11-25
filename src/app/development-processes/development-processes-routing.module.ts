@@ -22,34 +22,129 @@ import { RunningProcessComponent } from './running-process/running-process.compo
 import { RunningProcessMethodComponent } from './running-process-method/running-process-method.component';
 import { DomainsComponent } from './domains/domains.component';
 import { DomainComponent } from './domain/domain.component';
+import { AuthGuard } from '../database/auth.guard';
+import { MethodElementsComponent } from './method-elements/method-elements.component';
+import { ConcreteArtifactsComponent } from './concrete-artifacts/concrete-artifacts.component';
+import { ConcreteArtifactComponent } from './concrete-artifact/concrete-artifact.component';
 
 const routes: Routes = [
-  {path: 'bmprocess', component: BmProcessesComponent},
-  {path: 'bmprocess/bmprocessview/:id', component: BmProcessComponent, canDeactivate: [DiagramChangeGuard]},
-  {path: 'methods', component: DevelopmentMethodsComponent},
-  {path: 'methods/methodview/:id', component: DevelopmentMethodComponent},
-  {path: 'process', component: ProcessPatternsComponent},
-  {path: 'process/processview/:id', component: ProcessPatternComponent, canDeactivate: [DiagramChangeGuard]},
-  {path: 'domains', component: DomainsComponent},
-  {path: 'domains/detail/:id', component: DomainComponent},
-  {path: 'artifacts', component: ArtifactsComponent},
-  {path: 'artifacts/detail/:id', component: ArtifactComponent},
-  {path: 'situationalFactors', component: SituationalFactorsComponent},
-  {path: 'situationalFactors/detail/:id', component: SituationalFactorComponent},
-  {path: 'stakeholders', component: StakeholdersComponent},
-  {path: 'stakeholders/detail/:id', component: StakeholderComponent},
-  {path: 'tools', component: ToolsComponent},
-  {path: 'tools/detail/:id', component: ToolComponent},
-  {path: 'types', component: TypesComponent},
-  {path: 'types/detail/:id', component: TypeComponent},
-  {path: 'runningprocess', component: RunningProcessesComponent},
-  {path: 'runningprocess/runningprocessview/:id', component: RunningProcessComponent},
-  {path: 'runningprocess/runningprocessview/:id/method/:executionId', component: RunningProcessMethodComponent},
+  {
+    path: 'bmprocess',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: BmProcessesComponent },
+      {
+        path: 'bmprocessview/:id',
+        component: BmProcessComponent,
+        canDeactivate: [DiagramChangeGuard],
+      },
+    ],
+  },
+  {
+    path: 'concreteArtifacts',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: ConcreteArtifactsComponent },
+      {
+        path: 'detail/:id',
+        component: ConcreteArtifactComponent,
+      },
+    ],
+  },
+  {
+    path: 'methods',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: DevelopmentMethodsComponent },
+      { path: 'methodview/:id', component: DevelopmentMethodComponent },
+    ],
+  },
+  {
+    path: 'process',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: ProcessPatternsComponent },
+      {
+        path: 'processview/:id',
+        component: ProcessPatternComponent,
+        canDeactivate: [DiagramChangeGuard],
+      },
+    ],
+  },
+  {
+    path: 'domains',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: DomainsComponent },
+      { path: 'detail/:id', component: DomainComponent },
+    ],
+  },
+  {
+    path: 'methodElements',
+    component: MethodElementsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'artifacts',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: ArtifactsComponent },
+      { path: 'detail/:id', component: ArtifactComponent },
+    ],
+  },
+  {
+    path: 'situationalFactors',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: SituationalFactorsComponent },
+      { path: 'detail/:id', component: SituationalFactorComponent },
+    ],
+  },
+  {
+    path: 'stakeholders',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: StakeholdersComponent },
+      { path: 'detail/:id', component: StakeholderComponent },
+    ],
+  },
+  {
+    path: 'tools',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: ToolsComponent },
+      { path: 'detail/:id', component: ToolComponent },
+    ],
+  },
+  {
+    path: 'types',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: TypesComponent },
+      { path: 'detail/:id', component: TypeComponent },
+    ],
+  },
+  {
+    path: 'runningprocess',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: RunningProcessesComponent },
+      {
+        path: 'runningprocessview/:id',
+        children: [
+          { path: '', component: RunningProcessComponent },
+          {
+            path: 'method/:executionId',
+            component: RunningProcessMethodComponent,
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DevelopmentProcessesRoutingModule {
-}
+export class DevelopmentProcessesRoutingModule {}

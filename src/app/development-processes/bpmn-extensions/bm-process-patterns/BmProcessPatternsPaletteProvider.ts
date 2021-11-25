@@ -1,7 +1,6 @@
 import PaletteProvider from 'bpmn-js/lib/features/palette/PaletteProvider';
 
 export default class BmProcessPatternsPaletteProvider extends PaletteProvider {
-
   getPaletteEntries(element) {
     const actionNames = [
       'hand-tool',
@@ -21,5 +20,4 @@ export default class BmProcessPatternsPaletteProvider extends PaletteProvider {
     }
     return newActions;
   }
-
 }

@@ -9,14 +9,10 @@ export interface FeatureModelFormValue {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeatureModelFormService {
-
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   createForm(featureModel: FeatureModel = null): FormGroup {
     const form = this.fb.group({
@@ -37,5 +33,4 @@ export class FeatureModelFormService {
       copyright: formValue.copyright,
     };
   }
-
 }

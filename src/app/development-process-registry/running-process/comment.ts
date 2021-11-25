@@ -1,8 +1,7 @@
-import { PouchdbModelPart } from '../../database/pouchdb-model-part';
+import { DatabaseModelPart } from '../../database/database-model-part';
 import { v4 as uuidv4 } from 'uuid';
 
-export class Comment implements PouchdbModelPart {
-
+export class Comment implements DatabaseModelPart {
   id: string;
   time: number;
   userName: string;
@@ -23,7 +22,7 @@ export class Comment implements PouchdbModelPart {
     Object.assign(this, comment);
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
       id: this.id,
       time: this.time,
@@ -32,5 +31,4 @@ export class Comment implements PouchdbModelPart {
       comment: this.comment,
     };
   }
-
 }

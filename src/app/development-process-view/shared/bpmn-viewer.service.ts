@@ -4,14 +4,17 @@ import { getBBox } from 'diagram-js/lib/util/Elements';
 
 @Injectable()
 export abstract class BpmnViewerService {
-
   /**
    * Resize the view to view the diagram correctly
    *
    * @param modeler the modeler that currently displays the process
    */
   resizeView(modeler: any) {
-    const bbox = getBBox(modeler.get('elementRegistry').filter((element) => !is(element, 'bpmn:Process')));
+    const bbox = getBBox(
+      modeler
+        .get('elementRegistry')
+        .filter((element) => !is(element, 'bpmn:Process'))
+    );
     const canvas = modeler.get('canvas');
     const view = canvas.viewbox();
     canvas.viewbox({
@@ -54,5 +57,4 @@ export abstract class BpmnViewerService {
     viewbox.y = element.y - viewbox.height / 2 + element.height / 2;
     canvas.viewbox(viewbox);
   }
-
 }

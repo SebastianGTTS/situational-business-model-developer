@@ -1,12 +1,10 @@
 <div class="text-muted small">
   <div *ngIf="author && author.name">
-    Author: {{author.name}}
-    <ng-container *ngIf="author.email">
-      ({{author.email}})
-    </ng-container>
-    <ng-container *ngIf="author.company"> from {{author.company}}</ng-container>
+    Author: {{ author.name }}
+    <ng-container *ngIf="author.email"> ({{ author.email }}) </ng-container>
+    <ng-container *ngIf="author.company">
+      from {{ author.company }}</ng-container
+    >
   </div>
-  <div *ngIf="author.website">
-    Website: {{author.website}}
-  </div>
+  <div *ngIf="author.website">Website: {{ author.website }}</div>
 </div>

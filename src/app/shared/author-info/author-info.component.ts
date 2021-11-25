@@ -4,10 +4,8 @@ import { Author } from '../../model/author';
 @Component({
   selector: 'app-author-info',
   templateUrl: './author-info.component.html',
-  styleUrls: ['./author-info.component.css']
+  styleUrls: ['./author-info.component.css'],
 })
 export class AuthorInfoComponent {
-
   @Input() author: Author;
-
 }

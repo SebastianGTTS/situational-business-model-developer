@@ -1,49 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ExpertModelService } from '../../../canvas-meta-model/expert-model.service';
 import { ExpertModel } from '../../../canvas-meta-model/expert-model';
 import { Router } from '@angular/router';
 import { CanvasDefinition } from '../../../canvas-meta-model/canvas-definition';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ELEMENT_SERVICE, ListService } from '../../../shared/list.service';
+import { ModelListComponent } from '../../feature-model/model-list/model-list.component';
+import { ModelList } from '../../feature-model/model-list/model-list';
 
 @Component({
   selector: 'app-expert-models',
   templateUrl: './expert-models.component.html',
-  styleUrls: ['./expert-models.component.css']
+  styleUrls: ['./expert-models.component.css'],
+  providers: [
+    ListService,
+    { provide: ELEMENT_SERVICE, useExisting: ExpertModelService },
+  ],
 })
-export class ExpertModelsComponent implements OnInit {
+export class ExpertModelsComponent {
+  modalExpertModel: ExpertModel;
+  private modalReference: NgbModalRef;
 
-  expertModelList: ExpertModel[];
+  @ViewChild(ModelListComponent) modelList: ModelList;
+  @ViewChild('deleteExpertModelModal', { static: true })
+  deleteExpertModelModal: any;
 
   constructor(
     private expertModelService: ExpertModelService,
-    private router: Router,
+    private listService: ListService<ExpertModel>,
+    private modalService: NgbModal,
+    private router: Router
+  ) {}
+
+  async addExpertModel(
+    definition: CanvasDefinition,
+    name: string,
+    description: string
   ) {
+    const expertModel = await this.expertModelService.createFeatureModel(
+      { name, description },
+      definition
+    );
+    await this.listService.add(expertModel.toDb());
+    this.modelList.resetAddForm();
   }
 
-  ngOnInit() {
-    this.loadExpertModelList();
+  async viewExpertModel(expertModelId: string): Promise<void> {
+    await this.router.navigate(['/expertModels', expertModelId]);
   }
 
-  async addExpertModel(definition: CanvasDefinition, name: string, description: string) {
-    await this.expertModelService.createExpertModel({name, description}, definition);
-    this.loadExpertModelList();
+  async editExpertModel(expertModelId: string): Promise<void> {
+    await this.router.navigate(['/expertModels', expertModelId, 'edit']);
   }
 
-  viewExpertModel(expertModelId: string): void {
-    this.router.navigate(['/expertModels', expertModelId]);
+  async openDeleteExpertModelModal(featureModelId: string) {
+    this.modalExpertModel = await this.expertModelService.get(featureModelId);
+    this.modalReference = this.modalService.open(this.deleteExpertModelModal, {
+      size: 'lg',
+    });
   }
 
-  editExpertModel(expertModelId: string): void {
-    this.router.navigate(['/expertModels', expertModelId, 'edit']);
+  async reload() {
+    await this.listService.load();
   }
 
   async deleteExpertModel(featureModelId: string) {
-    await this.expertModelService.remove(featureModelId);
-    this.loadExpertModelList();
+    await this.listService.delete(featureModelId);
   }
-
-  async loadExpertModelList() {
-    const result = await this.expertModelService.getList();
-    this.expertModelList = result.docs;
-  }
-
 }

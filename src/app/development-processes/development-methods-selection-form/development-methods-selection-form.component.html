@@ -1,23 +1,14 @@
-<form [formGroup]="searchForm" class="form-inline">
-  <label class="sr-only" for="search">Search</label>
-  <input formControlName="search" type="text" class="form-control mb-2 mr-sm-2" id="search" placeholder="Search">
-</form>
-<h5>Building Blocks</h5>
-<div *ngIf="!developmentMethods" class="alert alert-info">
-  Loading...
-</div>
-<div *ngIf="developmentMethods && developmentMethods.length === 0" class="alert alert-info">
-  No fitting Method Building Blocks
-</div>
-<div
-  *ngIf="developmentMethods && developmentMethods.length > 0 && filteredDevelopmentMethods && filteredDevelopmentMethods.length === 0">
-  No fitting Method Building Blocks for search {{searchForm.value.search}}.
-</div>
-<ul *ngIf="filteredDevelopmentMethods && filteredDevelopmentMethods.length > 0" class="list-group shadow-sm">
-  <li *ngFor="let developmentMethod of filteredDevelopmentMethods" class="list-group-item">
-    <app-development-method-selection-form
-      [contextSituationalFactors]="contextSituationalFactors"
-      [developmentMethod]="developmentMethod"
-      (selectDevelopmentMethod)="selectDevelopmentMethod.emit($event)"></app-development-method-selection-form>
-  </li>
-</ul>
+<ng-template #ref let-item>
+  <app-development-method-selection-form
+    [contextSituationalFactors]="contextSituationalFactors"
+    [developmentMethod]="item"
+    (selectDevelopmentMethod)="selectDevelopmentMethod.emit($event)"
+  ></app-development-method-selection-form>
+</ng-template>
+
+<app-search
+  heading="Building Blocks"
+  itemName="Method Building Blocks"
+  [content]="ref"
+  [items]="developmentMethods"
+></app-search>

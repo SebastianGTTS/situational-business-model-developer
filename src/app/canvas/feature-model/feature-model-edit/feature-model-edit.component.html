@@ -2,7 +2,8 @@
   <app-delete-feature-confirm
     [feature]="modalFeature"
     (deletionResult)="deleteFeature($event)"
-    (closeModal)="closeModal()"></app-delete-feature-confirm>
+    (closeModal)="closeModal()"
+  ></app-delete-feature-confirm>
 </ng-template>
 
 <ng-template #dependencyModal>
@@ -10,13 +11,21 @@
     [featureModel]="featureModel"
     [feature]="modalFeature"
     (closeModal)="closeModal()"
-    (removeRelationship)="removeRelationship($event.type, $event.fromFeatureId, $event.toFeatureId)"></app-cross-tree-relationship-modal>
+    (removeRelationship)="
+      removeRelationship($event.type, $event.fromFeatureId, $event.toFeatureId)
+    "
+  ></app-cross-tree-relationship-modal>
 </ng-template>
 
 <ng-template #updateModal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">{{modalFeature.name}}</h4>
-    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+    <h4 class="modal-title" id="modal-basic-title">{{ modalFeature.name }}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="closeModal()"
+    >
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -26,25 +35,31 @@
         [feature]="modalFeature"
         [disabledSubfeatures]="modalSubfeatureIds"
         [featureList]="featureList"
-        (submitFeatureForm)="updateFeature($event)"></app-feature-form>
+        (submitFeatureForm)="updateFeature($event)"
+      ></app-feature-form>
     </div>
   </div>
 </ng-template>
 
 <div class="my-3 alert alert-info container" role="alert">
-  <p>View and edit the feature model tree. You can:</p>
+  <p>View and edit the feature tree. You can:</p>
   <ul>
-    <li>at the bottom of the page
+    <li>
+      at the bottom of the page
       <ul>
         <li>Check for problems (e.g. inconsistencies)</li>
         <li>Add new features</li>
         <li>Add Cross-Tree Relationships</li>
       </ul>
     </li>
-    <li>in the feature tree
+    <li>
+      in the feature tree
       <ul>
         <li>List and remove Cross-Tree Relationships</li>
-        <li>Update features (e.g. change name/description, Tree relationship (XOR, OR), &hellip;)</li>
+        <li>
+          Update features (e.g. change name/description, Tree relationship (XOR,
+          OR), &hellip;)
+        </li>
         <li>Remove features</li>
       </ul>
     </li>
@@ -53,7 +68,7 @@
 
 <!-- List of Features -->
 <div class="my-3 p-3 bg-white rounded shadow-sm">
-  <h6 class="border-bottom border-gray pb-2 mb-0">Model List</h6>
+  <h6 class="border-bottom border-gray pb-2 mb-0">Feature tree</h6>
 
   <div class="row">
     <div class="col-sm-12">
@@ -62,34 +77,48 @@
         (openDependenciesEmitter)="openDependenciesModal($event)"
         (updateFeatureEmitter)="updateFeatureModal($event)"
         (deleteFeatureEmitter)="deleteFeatureModal($event)"
-        [features]="featureModel.features" [problemFeatureIds]="problemFeatureIds"
-        [supportsHurtsProblemFeatureIds]="supportsHurtsProblemFeatureIds">
+        [features]="featureModel.features"
+        [problemFeatureIds]="problemFeatureIds"
+        [supportsHurtsProblemFeatureIds]="supportsHurtsProblemFeatureIds"
+      >
       </app-feature-tree>
     </div>
   </div>
 
   <div class="row">
     <div class="col-4"><strong>Legend:</strong></div>
-    <div class="col-4"><i class="fa fa-circle" aria-hidden="true"></i><span class="sr-only">mandatory</span>
+    <div class="col-4">
+      <i class="fa fa-circle" aria-hidden="true"></i
+      ><span class="sr-only">mandatory</span>
       Mandatory Feature
     </div>
-    <div class="col-4"><i class="fa fa-circle-o" aria-hidden="true"></i><span class="sr-only">optional</span>
+    <div class="col-4">
+      <i class="fa fa-circle-o" aria-hidden="true"></i
+      ><span class="sr-only">optional</span>
       Optional Feature
     </div>
   </div>
   <div class="row">
     <div class="col-4">&nbsp;</div>
-    <div class="col-4"><i class="fa fa-angle-up" aria-hidden="true"></i><span class="sr-only">xor subfeatures</span>
+    <div class="col-4">
+      <i class="fa fa-angle-up" aria-hidden="true"></i
+      ><span class="sr-only">xor subfeatures</span>
       Alternative (Xor)
     </div>
-    <div class="col-4"><i class="fa fa-caret-up" aria-hidden="true"></i><span class="sr-only">or subfeatures</span>
+    <div class="col-4">
+      <i class="fa fa-caret-up" aria-hidden="true"></i
+      ><span class="sr-only">or subfeatures</span>
       Or
     </div>
   </div>
   <div class="row" *ngIf="problems">
     <div class="col-4">&nbsp;</div>
-    <div class="col-4"><span class="text-warning">Supports/Hurts error (see below)</span></div>
-    <div class="col-4"><span class="text-danger">Instantiation errors (see below)</span></div>
+    <div class="col-4">
+      <span class="text-warning">Supports/Hurts error (see below)</span>
+    </div>
+    <div class="col-4">
+      <span class="text-danger">Instantiation errors (see below)</span>
+    </div>
   </div>
 </div>
 
@@ -97,19 +126,28 @@
   <h6 class="border-bottom border-gray pb-2 mb-0">Check for problems</h6>
   <div class="pt-3">
     <div>
-      <button class="btn btn-sm btn-dark btn-block" *ngIf="!problems" (click)="checkInstantiationPossible()">
+      <button
+        class="btn btn-sm btn-dark btn-block"
+        *ngIf="!problems"
+        (click)="checkInstantiationPossible()"
+      >
         Activate check
       </button>
-      <button class="btn btn-sm btn-dark btn-block" *ngIf="problems" (click)="deactivateInstantiationCheck()">
+      <button
+        class="btn btn-sm btn-dark btn-block"
+        *ngIf="problems"
+        (click)="deactivateInstantiationCheck()"
+      >
         Deactivate check
       </button>
     </div>
     <div class="mt-4" *ngIf="problems">
+      <!-- TODO: maybe rename -->
       <h6>Instantiation problems:</h6>
       <p *ngIf="problems.length === 0">No problems detected.</p>
       <ul *ngIf="problems.length > 0">
         <li *ngFor="let problem of problems">
-          {{problem}}
+          {{ problem }}
         </li>
       </ul>
     </div>
@@ -118,7 +156,7 @@
       <p *ngIf="supportsHurtsProblems.length === 0">No problems detected.</p>
       <ul *ngIf="supportsHurtsProblems.length > 0">
         <li *ngFor="let problem of supportsHurtsProblems">
-          {{problem}}
+          {{ problem }}
         </li>
       </ul>
     </div>
@@ -132,15 +170,21 @@
     <app-feature-form
       submitButtonText="Add Feature"
       [featureList]="featureList"
-      (submitFeatureForm)="insertFeature($event)"></app-feature-form>
+      (submitFeatureForm)="insertFeature($event)"
+    ></app-feature-form>
   </div>
 </div>
 
 <!-- Add a Relationship-->
 <div class="my-3 p-3 bg-white rounded shadow-sm">
-  <h6 class="border-bottom border-gray pb-2 mb-0">Add Cross-Tree Relationship</h6>
+  <h6 class="border-bottom border-gray pb-2 mb-0">
+    Add Cross-Tree Relationship
+  </h6>
   <div class="text-muted pt-3">
-    <app-cross-tree-relationship-form [featureList]="featureList"
-                                      (submitRelationshipForm)="addRelationship($event)"></app-cross-tree-relationship-form>
+    <app-cross-tree-relationship-form
+      [featureList]="featureList"
+      [relationshipTypes]="featureModel.definition.relationshipTypes"
+      (submitRelationshipForm)="addRelationship($event)"
+    ></app-cross-tree-relationship-form>
   </div>
 </div>

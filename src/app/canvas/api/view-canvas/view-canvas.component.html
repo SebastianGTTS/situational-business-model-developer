@@ -1,19 +1,54 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="processApiService.runningProcess">
-    <a class="nav-link"
-       [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id]">
-      {{processApiService.runningProcess.process.name}} &ndash; {{processApiService.runningProcess.name}}
+  <nav class="nav nav-underline">
+    <a
+      *ngIf="processApiService.runningProcess"
+      class="nav-link"
+      [routerLink]="[
+        '/',
+        'runningprocess',
+        'runningprocessview',
+        processApiService.runningProcess._id
+      ]"
+    >
+      {{ processApiService.runningProcess.process.name }} &ndash;
+      {{ processApiService.runningProcess.name }}
     </a>
     <a
       *ngIf="processApiService.runningMethod != null"
       class="nav-link"
-      [routerLink]="['/', 'runningprocess', 'runningprocessview', processApiService.runningProcess._id, 'method', processApiService.runningMethod.executionId]">
-      {{processApiService.runningMethod.methodName}}
+      [routerLink]="[
+        '/',
+        'runningprocess',
+        'runningprocessview',
+        processApiService.runningProcess._id,
+        'method',
+        processApiService.runningMethod.executionId
+      ]"
+    >
+      {{ processApiService.runningMethod.methodName }}
     </a>
     <a
-      class="nav-link active"
-      [routerLink]="[]"
-      [queryParams]="processApiService.queryParams">
+      *ngIf="artifact != null"
+      class="nav-link"
+      [routerLink]="['/', 'concreteArtifacts']"
+    >
+      Concrete Artifacts
+    </a>
+    <a
+      *ngIf="artifact != null"
+      class="nav-link"
+      [routerLink]="['/', 'concreteArtifacts', 'detail', artifact._id]"
+    >
+      {{ artifact.identifier }}
+    </a>
+    <a
+      *ngIf="artifact != null && version != null"
+      class="nav-link"
+      [routerLink]="['/', 'concreteArtifacts', 'detail', artifact._id]"
+    >
+      Version #{{ version + 1 }}
+    </a>
+    <a class="nav-link active" [routerLink]="[]" [queryParams]="queryParams">
       View Canvas
     </a>
   </nav>
@@ -25,10 +60,16 @@
     [instance]="instance"
     [adaptable]="false"
     [editable]="false"
-    [updatable]="false"></app-instance>
+    [updatable]="false"
+  ></app-instance>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="processApiService.stepInfo.step != null">
+  <div
+    class="my-3 p-3 bg-white rounded shadow-sm"
+    *ngIf="processApiService.stepInfo.step != null"
+  >
     <h6 class="border-bottom border-gray pb-2">Finish viewing</h6>
-    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">Finish viewing</button>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">
+      Finish viewing
+    </button>
   </div>
 </main>

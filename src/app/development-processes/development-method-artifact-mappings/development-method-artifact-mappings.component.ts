@@ -1,34 +1,34 @@
 import { Component, Input } from '@angular/core';
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
-import { FormArrayName } from '@angular/forms';
+import { FormArray, FormArrayName } from '@angular/forms';
 import { ArtifactMappingFormService } from '../shared/artifact-mapping-form.service';
+import { ExecutionStepsFormValue } from '../shared/execution-steps-form.service';
 
 @Component({
   selector: 'app-development-method-artifact-mappings',
   templateUrl: './development-method-artifact-mappings.component.html',
-  styleUrls: ['./development-method-artifact-mappings.component.css']
+  styleUrls: ['./development-method-artifact-mappings.component.css'],
 })
 export class DevelopmentMethodArtifactMappingsComponent {
-
+  @Input() executionStepsFormValue?: ExecutionStepsFormValue[];
   @Input() developmentMethod: DevelopmentMethod;
-  @Input() metaModel: { name: string, metaModelType: any };
+  @Input() metaModel: { name: string; metaModelType: any };
+  @Input() stepNumber: number = null;
 
   constructor(
     private artifactMappingService: ArtifactMappingFormService,
-    private formArrayName: FormArrayName,
-  ) {
-  }
+    private formArrayName: FormArrayName
+  ) {}
 
-  addMapping() {
+  addMapping(): void {
     this.formArray.push(this.artifactMappingService.createMappingForm());
   }
 
-  removeMapping(index: number) {
+  removeMapping(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  get formArray() {
+  get formArray(): FormArray {
     return this.formArrayName.control;
   }
-
 }

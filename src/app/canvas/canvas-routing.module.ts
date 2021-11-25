@@ -14,9 +14,7 @@ import { CreateCanvasComponent } from './api/create-canvas/create-canvas.compone
 import { EditCanvasComponent } from './api/edit-canvas/edit-canvas.component';
 import { CanvasDefinitionsComponent } from './canvas-definition/canvas-definitions/canvas-definitions.component';
 import { CanvasDefinitionComponent } from './canvas-definition/canvas-definition/canvas-definition.component';
-import {
-  CompanyModelSelectExpertKnowledgeComponent
-} from './company-model/company-model-select-expert-knowledge/company-model-select-expert-knowledge.component';
+import { CompanyModelSelectExpertKnowledgeComponent } from './company-model/company-model-select-expert-knowledge/company-model-select-expert-knowledge.component';
 import { CompareComponent } from './api/compare/compare.component';
 import { CreateCompetitorCanvasComponent } from './api/create-competitor-canvas/create-competitor-canvas.component';
 import { EditCompetitorsComponent } from './api/edit-competitors/edit-competitors.component';
@@ -24,36 +22,84 @@ import { EditCompetitorCanvasComponent } from './api/edit-competitor-canvas/edit
 import { RefineCanvasComponent } from './api/refine-canvas/refine-canvas.component';
 import { ViewCanvasComponent } from './api/view-canvas/view-canvas.component';
 import { EditModelComponent } from './api/edit-model/edit-model.component';
-
+import { AuthGuard } from '../database/auth.guard';
+import { CanvasElementsComponent } from './elements/canvas-elements/canvas-elements.component';
 
 const routes: Routes = [
-  {path: 'canvas/definitions', component: CanvasDefinitionsComponent},
-  {path: 'canvas/definitions/:id', component: CanvasDefinitionComponent},
-  {path: 'canvas/instance/create', component: CreateCanvasComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/edit', component: EditCanvasComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/refine', component: RefineCanvasComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/view', component: ViewCanvasComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/model/edit', component: EditModelComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/competitors', component: CreateCompetitorCanvasComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/competitors/edit', component: EditCompetitorsComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/competitors/:competitorId/edit', component: EditCompetitorCanvasComponent},
-  {path: 'canvas/:companyModelId/instance/:instanceId/compare', component: CompareComponent},
-  {path: 'companyModels', component: CompanyModelsComponent},
-  {path: 'companyModels/:id', component: CompanyModelComponent},
-  {path: 'companyModels/:id/edit', component: CompanyModelEditComponent},
-  {path: 'companyModels/:id/select', component: CompanyModelSelectExpertKnowledgeComponent},
-  {path: 'expertModels', component: ExpertModelsComponent},
-  {path: 'expertModels/:id', component: ExpertModelComponent},
-  {path: 'expertModels/:id/edit', component: ExpertModelEditComponent},
-  {path: 'expertModels/:id/examples/:exampleId', component: ExampleComponent},
-  {path: 'expertModels/:id/patterns/:patternId', component: PatternComponent},
-  {path: 'merge/:companyModelId', component: MergeExpertModelsComponent},
-  {path: 'merge/:companyModelId/:expertModelId', component: MergeModelViewComponent},
+  {
+    path: 'canvas',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'definitions', component: CanvasDefinitionsComponent },
+      { path: 'definitions/:id', component: CanvasDefinitionComponent },
+      { path: 'instance/create', component: CreateCanvasComponent },
+      {
+        path: ':companyModelId/instance/:instanceId',
+        children: [
+          { path: 'edit', component: EditCanvasComponent },
+          { path: 'refine', component: RefineCanvasComponent },
+          { path: 'view', component: ViewCanvasComponent },
+          { path: 'model/edit', component: EditModelComponent },
+          {
+            path: 'competitors',
+            children: [
+              { path: '', component: CreateCompetitorCanvasComponent },
+              { path: 'edit', component: EditCompetitorsComponent },
+              {
+                path: ':competitorId/edit',
+                component: EditCompetitorCanvasComponent,
+              },
+            ],
+          },
+          { path: 'compare', component: CompareComponent },
+        ],
+      },
+    ],
+  },
+  {
+    path: 'companyModels',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: CompanyModelsComponent },
+      { path: ':id', component: CompanyModelComponent },
+      { path: ':id/edit', component: CompanyModelEditComponent },
+      {
+        path: ':id/select',
+        component: CompanyModelSelectExpertKnowledgeComponent,
+      },
+    ],
+  },
+  {
+    path: 'expertModels',
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: ExpertModelsComponent },
+      { path: ':id', component: ExpertModelComponent },
+      { path: ':id/edit', component: ExpertModelEditComponent },
+      { path: ':id/examples/:exampleId', component: ExampleComponent },
+      { path: ':id/patterns/:patternId', component: PatternComponent },
+    ],
+  },
+  {
+    path: 'merge',
+    canActivate: [AuthGuard],
+    children: [
+      { path: ':companyModelId', component: MergeExpertModelsComponent },
+      {
+        path: ':companyModelId/:expertModelId',
+        component: MergeModelViewComponent,
+      },
+    ],
+  },
+  {
+    path: 'canvasElements',
+    component: CanvasElementsComponent,
+    canActivate: [AuthGuard],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CanvasRoutingModule {
-}
+export class CanvasRoutingModule {}

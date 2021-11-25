@@ -4,5 +4,5 @@ import RunningProcessViewRenderer from './RunningProcessViewRenderer';
 export default {
   __depends__: [CoreModule],
   __init__: ['runningProcessViewRenderer'],
-  runningProcessViewRenderer: ['type', RunningProcessViewRenderer]
+  runningProcessViewRenderer: ['type', RunningProcessViewRenderer],
 };

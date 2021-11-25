@@ -1,34 +1,55 @@
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
-    <a *ngIf="expertModel" class="nav-link"
-       [routerLink]="['/expertModels', expertModel._id]">{{expertModel.name}}</a>
-    <a *ngIf="expertModel" class="nav-link active"
-       [routerLink]="['/expertModels', expertModel._id, 'examples', example.id]">{{example.name}}</a>
+    <a class="nav-link" [routerLink]="['/', 'expertModels']">
+      Canvas Building Blocks
+    </a>
+    <a
+      *ngIf="expertModel"
+      class="nav-link"
+      [routerLink]="['/', 'expertModels', expertModel._id]"
+    >
+      {{ expertModel.name }}
+    </a>
+    <a *ngIf="expertModel" class="nav-link active" [routerLink]="[]">
+      {{ example.name }}
+    </a>
   </nav>
 </div>
 
 <main *ngIf="expertModel" role="main" class="container">
-
-  <app-instance [featureModel]="expertModel" [instance]="example" [conformance]="conformance"
-                [conformanceIsChecked]="conformanceIsChecked" [conformanceOptions]="conformanceOptionsForm.value"
-                [compareInstance]="compareInstance" [percentages]="percentages" [patternInstance]="patternInstance"
-                [editable]="activeId !== 'stepView'"
-                (updateFeatureModel)="updateExpertModel()" (createAdaptation)="createAdaptation()"></app-instance>
+  <app-instance
+    [featureModel]="expertModel"
+    [instance]="example"
+    [conformance]="conformance"
+    [conformanceIsChecked]="conformanceIsChecked"
+    [conformanceOptions]="conformanceOptionsForm.value"
+    [compareInstance]="compareInstance"
+    [percentages]="percentages"
+    [patternInstance]="patternInstance"
+    [editable]="activeId !== 'stepView'"
+    (updateFeatureModel)="updateExpertModel()"
+    (createAdaptation)="createAdaptation()"
+  ></app-instance>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Steps</h6>
-    <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" (navChange)="switchView($event)" class="nav-pills nav-justified">
+    <ul
+      ngbNav
+      #nav="ngbNav"
+      [(activeId)]="activeId"
+      (navChange)="switchView($event)"
+      class="nav-pills nav-justified"
+    >
       <li ngbNavItem="stepCreate" #stepCreate="ngbNavItem">
         <a ngbNavLink>1. Creation & Conformance</a>
         <ng-template ngbNavContent>
-          Create the example and check the conformance with the conformance checker
+          Create the example and check the conformance with the conformance
+          checker
         </ng-template>
       </li>
       <li ngbNavItem="stepHints" #stepHints="ngbNavItem">
         <a ngbNavLink>2. Hints</a>
-        <ng-template ngbNavContent>
-          Adapt the example with hints
-        </ng-template>
+        <ng-template ngbNavContent> Adapt the example with hints</ng-template>
       </li>
       <li ngbNavItem="stepCompare" #stepCompare="ngbNavItem">
         <a ngbNavLink>3. Compare & Adaption</a>
@@ -38,73 +59,123 @@
       </li>
       <li ngbNavItem="stepView">
         <a ngbNavLink>4. View</a>
-        <ng-template ngbNavContent>
-          Just view the example
-        </ng-template>
+        <ng-template ngbNavContent> Just view the example</ng-template>
       </li>
     </ul>
     <div class="mt-1" [ngbNavOutlet]="nav"></div>
   </div>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="stepCreate.active || stepHints.active">
-    <h6 *ngIf="stepCreate.active" class="border-bottom border-gray pb-2 mb-0">Conformance Check</h6>
-    <h6 *ngIf="stepHints.active" class="border-bottom border-gray pb-2 mb-0">Hints</h6>
+  <div
+    class="my-3 p-3 bg-white rounded shadow-sm"
+    *ngIf="stepCreate.active || stepHints.active"
+  >
+    <h6 *ngIf="stepCreate.active" class="border-bottom border-gray pb-2 mb-0">
+      Conformance Check
+    </h6>
+    <h6 *ngIf="stepHints.active" class="border-bottom border-gray pb-2 mb-0">
+      Hints
+    </h6>
     <div class="container">
-      <div class="row" style="margin-top:20px;">
-        <button type="button" *ngIf="!conformanceIsChecked" (click)="checkConformance()"
-                class="btn btn-dark btn-sm btn-block">
-          <span *ngIf="stepCreate.active">Activate Conformance Checking of Business Model</span>
+      <div class="row" style="margin-top: 20px">
+        <button
+          type="button"
+          *ngIf="!conformanceIsChecked"
+          (click)="checkConformance()"
+          class="btn btn-dark btn-sm btn-block"
+        >
+          <span *ngIf="stepCreate.active"
+            >Activate Conformance Checking of Business Model</span
+          >
           <span *ngIf="stepHints.active">Show Hints of Business Model</span>
         </button>
-        <button type="button" *ngIf="conformanceIsChecked" (click)="uncheckConformance()"
-                class="btn btn-dark btn-sm btn-block">
-          <span *ngIf="stepCreate.active">Deactivate Conformance Checking of Business Model</span>
+        <button
+          type="button"
+          *ngIf="conformanceIsChecked"
+          (click)="uncheckConformance()"
+          class="btn btn-dark btn-sm btn-block"
+        >
+          <span *ngIf="stepCreate.active"
+            >Deactivate Conformance Checking of Business Model</span
+          >
           <span *ngIf="stepHints.active">Hide Hints of Business Model</span>
         </button>
       </div>
-      <div *ngIf="conformanceIsChecked" style="margin-top:20px;">
+      <div *ngIf="conformanceIsChecked" style="margin-top: 20px">
         <form [formGroup]="conformanceOptionsForm" *ngIf="stepHints.active">
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showWarnings" type="checkbox" class="custom-control-input" id="optionShowWarnings">
+            <input
+              formControlName="showWarnings"
+              type="checkbox"
+              class="custom-control-input"
+              id="optionShowWarnings"
+            />
             <label class="custom-control-label" for="optionShowWarnings">
               Show weaknesses
-              <small class="text-muted d-block">Used features that have a hurt cross-tree relationship to
-                other used features</small>
+              <small class="text-muted d-block"
+                >Used features that have a hurt cross-tree relationship to other
+                used features</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showStrengths" type="checkbox" class="custom-control-input" id="showStrengths">
+            <input
+              formControlName="showStrengths"
+              type="checkbox"
+              class="custom-control-input"
+              id="showStrengths"
+            />
             <label class="custom-control-label" for="showStrengths">
               Show strengths
-              <small class="text-muted d-block">Used features that have a supports cross-tree relationship to
-                other used features</small>
+              <small class="text-muted d-block"
+                >Used features that have a supports cross-tree relationship to
+                other used features</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showHints" type="checkbox" class="custom-control-input" id="showHints">
+            <input
+              formControlName="showHints"
+              type="checkbox"
+              class="custom-control-input"
+              id="showHints"
+            />
             <label class="custom-control-label" for="showHints">
               Show hints
-              <small class="text-muted d-block">Unused features that have a supports cross-tree relationship to
-                other used features and can be added without requirements and do not lead to other errors</small>
+              <small class="text-muted d-block"
+                >Unused features that have a supports cross-tree relationship to
+                other used features and can be added without requirements and do
+                not lead to other errors</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showPatternHints" type="checkbox" class="custom-control-input"
-                   id="showPatternHints">
+            <input
+              formControlName="showPatternHints"
+              type="checkbox"
+              class="custom-control-input"
+              id="showPatternHints"
+            />
             <label class="custom-control-label" for="showPatternHints">
               Show pattern hints
-              <small class="text-muted d-block">A pattern is shown as a hint, if at least half of the pattern is
-                included in
-                the current business model</small>
+              <small class="text-muted d-block"
+                >A pattern is shown as a hint, if at least half of the pattern
+                is included in the current business model</small
+              >
             </label>
           </div>
           <div class="custom-control custom-switch mb-2">
-            <input formControlName="showUsedPatterns" type="checkbox" class="custom-control-input"
-                   id="showUsedPatterns">
+            <input
+              formControlName="showUsedPatterns"
+              type="checkbox"
+              class="custom-control-input"
+              id="showUsedPatterns"
+            />
             <label class="custom-control-label" for="showUsedPatterns">
               Show used patterns
-              <small class="text-muted d-block">A pattern is shown as used, if it is completely included in the current
-                business model</small>
+              <small class="text-muted d-block"
+                >A pattern is shown as used, if it is completely included in the
+                current business model</small
+              >
             </label>
           </div>
         </form>
@@ -112,42 +183,61 @@
           <div class="col">
             <h6>Errors</h6>
             <ul>
-              <li *ngFor="let error of conformance.errors">{{error}}</li>
+              <li *ngFor="let error of conformance.errors">{{ error }}</li>
             </ul>
           </div>
-          <div class="col border-left"
-               *ngIf="conformanceOptionsForm.value.showWarnings || conformanceOptionsForm.value.showStrengths">
+          <div
+            class="col border-left"
+            *ngIf="
+              conformanceOptionsForm.value.showWarnings ||
+              conformanceOptionsForm.value.showStrengths
+            "
+          >
             <div *ngIf="conformanceOptionsForm.value.showWarnings">
               <h6>Weaknesses</h6>
               <ul>
-                <li *ngFor="let warning of conformance.warnings">{{warning}}</li>
+                <li *ngFor="let warning of conformance.warnings">
+                  {{ warning }}
+                </li>
               </ul>
             </div>
             <div *ngIf="conformanceOptionsForm.value.showStrengths">
               <h6>Strengths</h6>
               <ul>
-                <li *ngFor="let strength of conformance.strengths">{{strength}}</li>
+                <li *ngFor="let strength of conformance.strengths">
+                  {{ strength }}
+                </li>
               </ul>
             </div>
           </div>
-          <div class="col border-left"
-               *ngIf="conformanceOptionsForm.value.showHints || conformanceOptionsForm.value.showPatternHints || conformanceOptionsForm.value.showUsedPatterns">
+          <div
+            class="col border-left"
+            *ngIf="
+              conformanceOptionsForm.value.showHints ||
+              conformanceOptionsForm.value.showPatternHints ||
+              conformanceOptionsForm.value.showUsedPatterns
+            "
+          >
             <div *ngIf="conformanceOptionsForm.value.showHints">
               <h6>Hints</h6>
               <ul>
-                <li *ngFor="let hint of conformance.hints">{{hint}}</li>
+                <li *ngFor="let hint of conformance.hints">{{ hint }}</li>
               </ul>
             </div>
             <div *ngIf="conformanceOptionsForm.value.showPatternHints">
               <h6>Pattern Hints</h6>
               <ul>
-                <li *ngFor="let hint of conformance.patternHints">{{hint}}</li>
+                <li *ngFor="let hint of conformance.patternHints">
+                  <app-pattern-hint [patternHint]="hint"></app-pattern-hint>
+                </li>
               </ul>
             </div>
             <div *ngIf="conformanceOptionsForm.value.showUsedPatterns">
               <h6>Used Patterns</h6>
               <ul>
-                <li *ngFor="let pattern of conformance.usedPatterns">{{pattern}}</li>
+                <li *ngFor="let pattern of conformance.usedPatterns">
+                  <app-pattern-view [pattern]="pattern"></app-pattern-view>
+                </li>
               </ul>
             </div>
           </div>
@@ -159,20 +249,30 @@
   <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="stepCompare.active">
     <h6 class="border-bottom border-gray pb-2 mb-0">Patterns</h6>
     <div class="container">
-      <div class="row" style="margin-top:20px;">
-        <button type="button" *ngIf="!usedPatterns" (click)="showUsedPatterns()"
-                class="btn btn-dark btn-sm btn-block">
+      <div class="row" style="margin-top: 20px">
+        <button
+          type="button"
+          *ngIf="!usedPatterns"
+          (click)="showUsedPatterns()"
+          class="btn btn-dark btn-sm btn-block"
+        >
           Show used Patterns of Business Model
         </button>
-        <button type="button" *ngIf="usedPatterns" (click)="hideUsedPatterns()"
-                class="btn btn-dark btn-sm btn-block">
+        <button
+          type="button"
+          *ngIf="usedPatterns"
+          (click)="hideUsedPatterns()"
+          class="btn btn-dark btn-sm btn-block"
+        >
           Hide used Patterns of Business Model
         </button>
       </div>
-      <div *ngIf="usedPatterns" style="margin-top:20px;">
+      <div *ngIf="usedPatterns" style="margin-top: 20px">
         <h6>Used Patterns</h6>
         <ul>
-          <li *ngFor="let pattern of usedPatterns">{{pattern}}</li>
+          <li *ngFor="let pattern of usedPatterns">
+            <app-pattern-view [pattern]="pattern"></app-pattern-view>
+          </li>
         </ul>
       </div>
     </div>
@@ -182,26 +282,43 @@
     <h6 class="border-bottom border-gray pb-2 mb-0">Compare</h6>
     <div class="text-muted pt-3">
       <form [formGroup]="selectOtherInstanceForm" (ngSubmit)="compare()">
-        <div class="form-group row">
-          <label for="instance" class="col-sm-4 col-form-label">Business Model</label>
+        <div class="form-group form-row">
+          <label for="instance" class="col-sm-4 col-form-label"
+            >Business Model</label
+          >
           <div class="col-sm-8">
-            <select id="instance" formControlName="instance" class="form-control">
+            <select
+              id="instance"
+              formControlName="instance"
+              class="form-control"
+            >
               <ng-container *ngFor="let instance of expertModel.getExamples()">
-                <option *ngIf="instance.id !== example.id" [ngValue]="instance.id">
+                <option
+                  *ngIf="instance.id !== example.id"
+                  [ngValue]="instance.id"
+                >
                   {{ instance.name }}
                 </option>
               </ng-container>
             </select>
           </div>
         </div>
-        <div class="form-group row">
+        <div class="form-group form-row">
           <div class="col-sm-12">
-            <button *ngIf="compareInstance === null" type="submit" class="btn btn-sm btn-dark btn-block"
-                    [disabled]="!selectOtherInstanceForm.valid">
+            <button
+              *ngIf="compareInstance === null"
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!selectOtherInstanceForm.valid"
+            >
               Compare
             </button>
-            <button *ngIf="compareInstance !== null" type="button" class="btn btn-sm btn-dark btn-block"
-                    (click)="clearCompare()">
+            <button
+              *ngIf="compareInstance !== null"
+              type="button"
+              class="btn btn-sm btn-dark btn-block"
+              (click)="clearCompare()"
+            >
               Clear Compare
             </button>
           </div>
@@ -214,26 +331,47 @@
     <h6 class="border-bottom border-gray pb-2 mb-0">Show pattern</h6>
     <div class="text-muted pt-3">
       <form [formGroup]="selectPatternForm" (ngSubmit)="showPattern()">
-        <div class="form-group row">
+        <div class="form-group form-row">
           <label for="pattern" class="col-sm-4 col-form-label">Pattern</label>
           <div class="col-sm-8">
             <select id="pattern" formControlName="pattern" class="form-control">
               <ng-container *ngFor="let instance of expertModel.getPatterns()">
-                <option [ngValue]="instance.id">
+                <option [ngValue]="instance">
                   {{ instance.name }}
                 </option>
               </ng-container>
             </select>
           </div>
         </div>
-        <div class="form-group row">
+        <div
+          *ngIf="
+            (selectPatternForm.valid || patternInstance != null) &&
+            selectedPattern != null &&
+            selectedPattern.description
+          "
+          class="form-group form-row"
+        >
+          <label class="col-sm-4 col-form-label">Description</label>
+          <div class="col-sm-8">
+            {{ selectedPattern.description }}
+          </div>
+        </div>
+        <div class="form-group form-row">
           <div class="col-sm-12">
-            <button *ngIf="patternInstance === null" type="submit" class="btn btn-sm btn-dark btn-block"
-                    [disabled]="!selectPatternForm.valid">
+            <button
+              *ngIf="patternInstance === null"
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!selectPatternForm.valid"
+            >
               Show
             </button>
-            <button *ngIf="patternInstance !== null" type="button" class="btn btn-sm btn-dark btn-block"
-                    (click)="clearPattern()">
+            <button
+              *ngIf="patternInstance !== null"
+              type="button"
+              class="btn btn-sm btn-dark btn-block"
+              (click)="clearPattern()"
+            >
               Clear
             </button>
           </div>

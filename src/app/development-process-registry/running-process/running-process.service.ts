@@ -1,64 +1,46 @@
 import { Injectable } from '@angular/core';
 import { PouchdbService } from '../../database/pouchdb.service';
-import PouchDB from 'pouchdb-browser';
 import { RunningProcess } from './running-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
-import { BmProcess } from '../bm-process/bm-process';
-import { ArtifactData, ArtifactDataType } from './artifact-data';
+import { ArtifactDataType } from './artifact-data';
 import { ProcessExecutionService } from './process-execution.service';
 import { MethodExecutionService } from './method-execution.service';
 import { Decision } from '../bm-process/decision';
 import { MethodExecutionOutput } from '../module-api/method-execution-output';
 import { StepInfo } from '../module-api/step-info';
-import { MetaModelService } from '../meta-model.service';
 import { Comment } from './comment';
+import { ArtifactDataService } from './artifact-data.service';
+import { RunningArtifact } from './running-artifact';
+import { DefaultElementService } from '../../database/default-element.service';
+import { OutputArtifactMapping } from './output-artifact-mapping';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
-export class RunningProcessService {
-
-  constructor(
-    private metaModelService: MetaModelService,
-    private methodExecutionService: MethodExecutionService,
-    private pouchdbService: PouchdbService,
-    private processExecutionService: ProcessExecutionService,
-  ) {
+export class RunningProcessService extends DefaultElementService<RunningProcess> {
+  protected get typeName(): string {
+    return RunningProcess.typeName;
   }
 
-  /**
-   * Get the list of the running processes.
-   */
-  getRunningProcessesList() {
-    return this.pouchdbService.find<RunningProcess>(RunningProcess.typeName, {
-      selector: {},
-    });
+  constructor(
+    private artifactDataService: ArtifactDataService,
+    private methodExecutionService: MethodExecutionService,
+    pouchdbService: PouchdbService,
+    private processExecutionService: ProcessExecutionService
+  ) {
+    super(pouchdbService);
   }
 
   /**
    * Add new running process from a process.
    *
-   * @param process the process from which to derive the running process
-   * @param name the name of the running process
+   * @param element the running process
    */
-  async addRunningProcess(process: BmProcess, name: string) {
-    const runningProcess = new RunningProcess({
-      name,
-      process,
-    });
+  async add(element: Partial<RunningProcess>) {
+    const runningProcess = new RunningProcess(element);
     await this.processExecutionService.initRunningProcess(runningProcess);
     await this.processExecutionService.jumpToNextMethod(runningProcess);
-    return this.saveRunningProcess(runningProcess);
-  }
-
-  /**
-   * Get the running process.
-   *
-   * @param id id of the running process
-   */
-  async getRunningProcess(id: string): Promise<RunningProcess> {
-    const e = await this.pouchdbService.get<RunningProcess>(id);
-    return new RunningProcess(e);
+    return this.save(runningProcess);
   }
 
   /**
@@ -68,13 +50,23 @@ export class RunningProcessService {
    * @param nodeId the id of the node to execute
    * @param flowId the flow id to take after the execution if it is an exclusive gateway
    */
-  async executeStep(runningProcess: RunningProcess, nodeId: string = null, flowId: string = null) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+  async executeStep(
+    runningProcess: RunningProcess,
+    nodeId: string = null,
+    flowId: string = null
+  ) {
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
-    await this.processExecutionService.moveToNextStep(runningProcess, nodeId, flowId);
-    return this.saveRunningProcess(runningProcess);
+    await this.processExecutionService.moveToNextStep(
+      runningProcess,
+      nodeId,
+      flowId
+    );
+    return this.save(runningProcess);
   }
 
   /**
@@ -83,45 +75,52 @@ export class RunningProcessService {
    * @param runningProcess the running process
    */
   async jumpSteps(runningProcess: RunningProcess) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
     await this.processExecutionService.jumpToNextMethod(runningProcess);
-    return this.saveRunningProcess(runningProcess);
+    return this.save(runningProcess);
   }
 
   /**
    * Start the execution of a method
    *
-   * @param runningProcess the running process
+   * @param runningProcessId the id of the running process
    * @param nodeId the id of the node to execute
    */
-  async startMethodExecution(runningProcess: RunningProcess, nodeId: string) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
-    if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
-    }
-    if (!(await this.processExecutionService.canExecuteNode(runningProcess, nodeId))) {
+  async startMethodExecution(runningProcessId: string, nodeId: string) {
+    const databaseProcess = await this.get(runningProcessId);
+    if (
+      !(await this.processExecutionService.canExecuteNode(
+        databaseProcess,
+        nodeId
+      ))
+    ) {
       throw new Error('Can not execute node');
     }
-    this.methodExecutionService.startMethodExecution(runningProcess, nodeId);
-    return this.saveRunningProcess(runningProcess);
+    this.methodExecutionService.startMethodExecution(databaseProcess, nodeId);
+    return this.save(databaseProcess);
   }
 
   /**
    * Start the execution of a todomethod
    *
-   * @param runningProcess the running process
+   * @param runningProcessId the id of the running process
    * @param executionId the execution id of the todomethod
    */
-  async startTodoMethodExecution(runningProcess: RunningProcess, executionId: string) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
-    if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
-    }
-    this.methodExecutionService.startTodoMethodExecution(runningProcess, executionId);
-    return this.saveRunningProcess(runningProcess);
+  async startTodoMethodExecution(
+    runningProcessId: string,
+    executionId: string
+  ) {
+    const databaseProcess = await this.get(runningProcessId);
+    this.methodExecutionService.startTodoMethodExecution(
+      databaseProcess,
+      executionId
+    );
+    return this.save(databaseProcess);
   }
 
   /**
@@ -131,17 +130,27 @@ export class RunningProcessService {
    * @param executionId the id of the executed method
    */
   async executeMethodStep(runningProcess: RunningProcess, executionId: string) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
-    if (!this.methodExecutionService.isExecutionStepPrepared(runningProcess, executionId)) {
-      await this.methodExecutionService.prepareExecuteStep(runningProcess, executionId);
-      await this.saveRunningProcess(runningProcess);
-      runningProcess = await this.getRunningProcess(runningProcess._id);
+    if (
+      !this.methodExecutionService.isExecutionStepPrepared(
+        runningProcess,
+        executionId
+      )
+    ) {
+      await this.methodExecutionService.prepareExecuteStep(
+        runningProcess,
+        executionId
+      );
+      await this.save(runningProcess);
+      runningProcess = await this.get(runningProcess._id);
     }
     await this.methodExecutionService.executeStep(runningProcess, executionId);
-    return this.saveRunningProcess(runningProcess);
+    return this.save(runningProcess);
   }
 
   /**
@@ -151,9 +160,14 @@ export class RunningProcessService {
    * @param output the output of the method of the module
    */
   async finishExecuteStep(stepInfo: StepInfo, output: MethodExecutionOutput) {
-    const databaseProcess = await this.getRunningProcess(stepInfo.runningProcessId);
-    this.methodExecutionService.finishExecuteStep(databaseProcess, stepInfo.executionId, stepInfo.step, output);
-    return this.saveRunningProcess(databaseProcess);
+    const databaseProcess = await this.get(stepInfo.runningProcessId);
+    this.methodExecutionService.finishExecuteStep(
+      databaseProcess,
+      stepInfo.executionId,
+      stepInfo.step,
+      output
+    );
+    return this.save(databaseProcess);
   }
 
   /**
@@ -162,17 +176,28 @@ export class RunningProcessService {
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async stopMethodExecution(runningProcess: RunningProcess, executionId: string) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+  async stopMethodExecution(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
     const nodeId = runningProcess.getRunningMethod(executionId).nodeId;
-    await this.methodExecutionService.stopMethodExecution(runningProcess, executionId);
+    await this.methodExecutionService.stopMethodExecution(
+      runningProcess,
+      executionId
+    );
     if (nodeId != null) {
-      await this.processExecutionService.moveToNextMethod(runningProcess, nodeId);
+      await this.processExecutionService.moveToNextMethod(
+        runningProcess,
+        nodeId
+      );
     }
-    return this.saveRunningProcess(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -181,13 +206,21 @@ export class RunningProcessService {
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async abortMethodExecution(runningProcess: RunningProcess, executionId: string) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+  async abortMethodExecution(
+    runningProcess: RunningProcess,
+    executionId: string
+  ) {
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
-    await this.methodExecutionService.abortMethodExecution(runningProcess, executionId);
-    return this.saveRunningProcess(runningProcess);
+    await this.methodExecutionService.abortMethodExecution(
+      runningProcess,
+      executionId
+    );
+    return this.save(runningProcess);
   }
 
   async getExecutableElements(runningProcess: RunningProcess): Promise<any[]> {
@@ -200,8 +233,12 @@ export class RunningProcessService {
    * @param runningProcess the running process
    * @return the decision nodes
    */
-  async getExecutableDecisionNodes(runningProcess: RunningProcess): Promise<any[]> {
-    return this.processExecutionService.getExecutableDecisionNodes(runningProcess);
+  async getExecutableDecisionNodes(
+    runningProcess: RunningProcess
+  ): Promise<any[]> {
+    return this.processExecutionService.getExecutableDecisionNodes(
+      runningProcess
+    );
   }
 
   /**
@@ -211,35 +248,64 @@ export class RunningProcessService {
    * @return a list of nodes which have methods that can be executed
    */
   async getExecutableMethods(runningProcess: RunningProcess): Promise<any[]> {
-    const executableNodes = await this.processExecutionService.getExecutableNodes(runningProcess);
-    const methods = executableNodes.filter((node) => runningProcess.isExecutable(node.id));
-    return methods.filter((node) => runningProcess.getRunningMethodByNode(node.id) == null);
+    const executableNodes =
+      await this.processExecutionService.getExecutableNodes(runningProcess);
+    const methods = executableNodes.filter((node) =>
+      runningProcess.isExecutable(node.id)
+    );
+    return methods.filter(
+      (node) => runningProcess.getRunningMethodByNode(node.id) == null
+    );
   }
 
   async setInputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    inputArtifactMapping: { artifact: number, version: number }[],
+    inputArtifactMapping: { artifact: number; version: number }[]
   ) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
-    this.methodExecutionService.selectInputArtifacts(runningProcess, executionId, inputArtifactMapping);
-    return this.saveRunningProcess(runningProcess);
+    this.methodExecutionService.selectInputArtifacts(
+      databaseProcess,
+      executionId,
+      inputArtifactMapping
+    );
+    return this.save(databaseProcess);
   }
 
-  async addOutputArtifacts(
+  async updateOutputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    outputArtifactsMapping: { isDefinition: boolean, artifact: number, artifactName: string, data: ArtifactData }[]
-  ) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+    outputArtifactsMapping: OutputArtifactMapping[]
+  ): Promise<void> {
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
-    await this.methodExecutionService.addOutputArtifacts(runningProcess, executionId, outputArtifactsMapping);
-    return this.saveRunningProcess(runningProcess);
+    this.methodExecutionService.updateOutputArtifacts(
+      databaseProcess,
+      executionId,
+      outputArtifactsMapping
+    );
+    await this.save(databaseProcess);
+  }
+
+  /**
+   * Import an artifact into a process
+   *
+   * @param runningProcessId the id of the running process
+   * @param artifact the artifact to import into the running process
+   */
+  async importArtifact(runningProcessId: string, artifact: RunningArtifact) {
+    const runningProcess = await this.get(runningProcessId);
+    runningProcess.importArtifact(artifact);
+    return this.save(runningProcess);
   }
 
   /**
@@ -249,12 +315,14 @@ export class RunningProcessService {
    * @param decision the method decisions
    */
   async addMethod(runningProcess: RunningProcess, decision: Decision) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
     this.methodExecutionService.addMethod(runningProcess, decision);
-    return this.saveRunningProcess(runningProcess);
+    return this.save(runningProcess);
   }
 
   /**
@@ -264,12 +332,14 @@ export class RunningProcessService {
    * @param executionId the id of the method to remove
    */
   async removeMethod(runningProcess: RunningProcess, executionId: string) {
-    const databaseProcess = await this.getRunningProcess(runningProcess._id);
+    const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
-      throw new Error('Reload needed, process in database does not fit current process');
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
     }
     this.methodExecutionService.removeMethod(runningProcess, executionId);
-    return this.saveRunningProcess(runningProcess);
+    return this.save(runningProcess);
   }
 
   /**
@@ -277,22 +347,25 @@ export class RunningProcessService {
    *
    * @param id id of the running process
    */
-  async deleteRunningProcess(id: string) {
+  async delete(id: string): Promise<void> {
     const result = await this.pouchdbService.get<RunningProcess>(id);
     const runningProcess = new RunningProcess(result);
     // abort all running methods
-    runningProcess.runningMethods.forEach(
-      (method) => this.methodExecutionService.abortMethodExecution(runningProcess, method.executionId)
+    runningProcess.runningMethods.forEach((method) =>
+      this.methodExecutionService.abortMethodExecution(
+        runningProcess,
+        method.executionId
+      )
     );
     // delete all referenced artifacts
     for (const artifact of runningProcess.artifacts) {
       for (const version of artifact.versions) {
         if (version.data.type === ArtifactDataType.REFERENCE) {
-          await this.methodExecutionService.removeArtifact(version.data);
+          await this.artifactDataService.remove(version.data);
         }
       }
     }
-    return this.pouchdbService.remove(result);
+    await this.pouchdbService.remove(result);
   }
 
   /**
@@ -303,10 +376,10 @@ export class RunningProcessService {
    * @param comment the comment to add
    */
   async addComment(id: string, executionId: string, comment: Comment) {
-    const process = await this.getRunningProcess(id);
+    const process = await this.get(id);
     const method = process.getRunningMethod(executionId);
     method.addComment(comment);
-    return this.saveRunningProcess(process);
+    return this.save(process);
   }
 
   /**
@@ -317,11 +390,11 @@ export class RunningProcessService {
    * @param comment the comment to add
    */
   async updateComment(id: string, executionId: string, comment: Comment) {
-    const process = await this.getRunningProcess(id);
+    const process = await this.get(id);
     const method = process.getRunningMethod(executionId);
     const dbComment = method.getComment(comment.id);
     dbComment.update(comment);
-    return this.saveRunningProcess(process);
+    return this.save(process);
   }
 
   /**
@@ -332,13 +405,35 @@ export class RunningProcessService {
    * @param commentId the id of the comment to remove
    */
   async removeComment(id: string, executionId: string, commentId: string) {
-    const process = await this.getRunningProcess(id);
+    const process = await this.get(id);
     const method = process.getRunningMethod(executionId);
     method.removeComment(commentId);
-    return this.saveRunningProcess(process);
+    return this.save(process);
   }
 
-  private saveRunningProcess(runningProcess: RunningProcess): Promise<PouchDB.Core.Response> {
-    return this.pouchdbService.put(runningProcess);
+  /**
+   * Change a running artifact's identifier
+   *
+   * @param runningProcess the running process
+   * @param runningArtifact the running artifact to change
+   * @param identifier the new identifier
+   */
+  async renameArtifact(
+    runningProcess: RunningProcess,
+    runningArtifact: RunningArtifact,
+    identifier: string
+  ) {
+    const databaseProcess = await this.get(runningProcess._id);
+    if (databaseProcess._rev !== runningProcess._rev) {
+      throw new Error(
+        'Reload needed, process in database does not fit current process'
+      );
+    }
+    runningProcess.renameArtifact(runningArtifact, identifier);
+    return this.save(runningProcess);
+  }
+
+  protected createElement(element: Partial<RunningProcess>): RunningProcess {
+    return new RunningProcess(element);
   }
 }

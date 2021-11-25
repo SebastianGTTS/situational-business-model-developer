@@ -1,23 +1,25 @@
 import { Component, Input, Optional } from '@angular/core';
 import { MethodElement } from '../../development-process-registry/method-elements/method-element';
 import { merge, Observable, Subject } from 'rxjs';
-import { FormArrayName, FormBuilder, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormArrayName,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { getTypeaheadInputPipe } from '../../shared/utils';
 import { filter, map } from 'rxjs/operators';
+import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
 
 @Component({
   selector: 'app-method-element-info',
   templateUrl: './method-element-info.component.html',
-  styleUrls: ['./method-element-info.component.css']
+  styleUrls: ['./method-element-info.component.css'],
 })
 export class MethodElementInfoComponent {
-
   @Input() methodElementName: string;
 
-  @Input() listName: string;
-  @Input() methodElement: MethodElement = null;
-  @Input() multiple = false;
-  @Input() multipleElements = false;
+  @Input() element: MultipleSelection<MethodElement>;
 
   @Input() methodElements: MethodElement[] = [];
 
@@ -25,57 +27,48 @@ export class MethodElementInfoComponent {
 
   constructor(
     private fb: FormBuilder,
-    @Optional() private formArrayName: FormArrayName,
-  ) {
-  }
+    @Optional() private formArrayName: FormArrayName
+  ) {}
 
-  searchElements = (field: HTMLInputElement) => (input: Observable<string>) => {
-    return merge(getTypeaheadInputPipe(input), this.openElementInput.pipe(
-      filter(([f]) => f === field),
-      map(([, i]) => i),
-    )).pipe(
-      map(
-        (term) => this.methodElements.filter((methodElement) =>
-          methodElement.list.toLowerCase() === this.listName.toLowerCase() &&
-          methodElement.name.toLowerCase().includes(term.toLowerCase())
-        ).slice(0, 7)
-      ),
-    );
-  }
+  searchElements =
+    (field: HTMLInputElement) =>
+    (input: Observable<string>): Observable<MethodElement[]> => {
+      return merge(
+        getTypeaheadInputPipe(input),
+        this.openElementInput.pipe(
+          filter(([f]) => f === field),
+          map(([, i]) => i)
+        )
+      ).pipe(
+        map((term) =>
+          this.methodElements
+            .filter(
+              (methodElement) =>
+                methodElement.list.toLowerCase() ===
+                  this.element.list.toLowerCase() &&
+                methodElement.name.toLowerCase().includes(term.toLowerCase())
+            )
+            .slice(0, 7)
+        )
+      );
+    };
 
-  add(index: number = null) {
+  add(index: number = null): void {
     if (index === null) {
       index = this.formArray.length;
     }
     this.formArray.insert(index, this.fb.control(null, Validators.required));
   }
 
-  remove(index: number) {
+  remove(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  formatter(x: { name: string }) {
+  formatter(x: { name: string }): string {
     return x.name;
   }
 
-  get formArray() {
+  get formArray(): FormArray {
     return this.formArrayName ? this.formArrayName.control : null;
   }
-
-  get listValue() {
-    if (this.multiple) {
-      return '[' + this.listName + ']';
-    } else {
-      return this.listName;
-    }
-  }
-
-  get elementValue() {
-    if (this.multipleElements) {
-      return '[' + this.methodElement.name + ']';
-    } else {
-      return this.methodElement.name;
-    }
-  }
-
 }

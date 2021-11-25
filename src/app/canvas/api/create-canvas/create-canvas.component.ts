@@ -1,52 +1,69 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FeatureModelInstanceFormService } from '../../form-services/feature-model-instance-form.service';
-import { ActivatedRoute } from '@angular/router';
 import { Instance } from '../../../canvas-meta-model/instance';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { CanvasResolveService } from '../../canvas-resolve.service';
 import { ProcessApiService } from '../process-api.service';
+import { RunningMethod } from '../../../development-process-registry/running-process/running-method';
+import { CompanyModel } from '../../../canvas-meta-model/company-model';
 
 @Component({
   selector: 'app-create-canvas',
   templateUrl: './create-canvas.component.html',
-  styleUrls: ['./create-canvas.component.css']
+  styleUrls: ['./create-canvas.component.css'],
+  providers: [ProcessApiService],
 })
-export class CreateCanvasComponent implements OnInit, OnDestroy {
-
+export class CreateCanvasComponent implements OnInit {
+  companyModel: CompanyModel;
   form: FormGroup;
 
   constructor(
     private canvasResolveService: CanvasResolveService,
     private companyModelService: CompanyModelService,
     private featureModelInstanceFormService: FeatureModelInstanceFormService,
-    public processApiService: ProcessApiService,
-    private route: ActivatedRoute,
-  ) {
-  }
+    private processApiService: ProcessApiService
+  ) {}
 
-  ngOnInit() {
-    this.processApiService.init(this.route);
+  ngOnInit(): void {
     this.form = this.featureModelInstanceFormService.createForm();
+    this.processApiService.loaded.subscribe(() => this.loadCompanyModel());
   }
 
-  ngOnDestroy() {
-    this.processApiService.destroy();
-  }
-
-  async submit() {
+  async submit(): Promise<void> {
     if (this.processApiService.stepInfo) {
-      const runningMethod = this.processApiService.runningMethod;
       const companyModel = await this.companyModelService.get(
-        runningMethod.decision.stepDecisions[runningMethod.currentStepNumber].companyModelId
+        this.runningMethod.decision.stepDecisions[
+          this.runningMethod.currentStepNumber
+        ].companyModelId
       );
-      const instance: Partial<Instance> = this.featureModelInstanceFormService.get(this.form.value);
+      const instance: Partial<Instance> =
+        this.featureModelInstanceFormService.get(this.form.value);
       const instanceId = companyModel.addInstance(instance).id;
       companyModel.resetDatabaseState();
       companyModel.createdByMethod = true;
-      const {id} = await this.companyModelService.save(companyModel);
-      this.canvasResolveService.resolveCreateCanvas(this.processApiService.stepInfo, id, instanceId);
+      await this.companyModelService.save(companyModel);
+      this.canvasResolveService.resolveCreateCanvas(
+        this.processApiService.stepInfo,
+        companyModel._id,
+        instanceId
+      );
     }
   }
 
+  private async loadCompanyModel(): Promise<void> {
+    this.companyModel = await this.companyModelService.get(
+      this.runningMethod.decision.stepDecisions[
+        this.runningMethod.currentStepNumber
+      ].companyModelId
+    );
+  }
+
+  get runningMethod(): RunningMethod {
+    return this.processApiService.runningMethod;
+  }
+
+  isCorrectStep(): boolean {
+    return this.processApiService.isCorrectStep();
+  }
 }

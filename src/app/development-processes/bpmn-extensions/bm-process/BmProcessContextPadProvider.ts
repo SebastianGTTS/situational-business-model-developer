@@ -1,11 +1,7 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 export default class BmProcessContextPadProvider {
-
-  static $inject = [
-    'contextPad',
-    'eventBus',
-  ];
+  static $inject = ['contextPad', 'eventBus'];
 
   constructor(contextPad, private eventBus) {
     contextPad.registerProvider(this);
@@ -14,26 +10,28 @@ export default class BmProcessContextPadProvider {
   getContextPadEntries(element) {
     const controls = {};
     if (
-      is(element, 'bpmn:SubProcess') && is(element.parent, 'bpmn:SubProcess') ||
+      (is(element, 'bpmn:SubProcess') &&
+        is(element.parent, 'bpmn:SubProcess')) ||
       is(element, 'bpmn:Task') ||
-      is(element, 'bpmn:CallActivity')) {
+      is(element, 'bpmn:CallActivity')
+    ) {
       controls['bmp.showTypes'] = {
         group: 'info',
         className: 'fas fa-list font-bpmn-adaption',
         title: 'Show types',
         action: {
           click: () => this.eventBus.fire('bmp.showTypes', element),
-        }
+        },
       };
     }
     if (is(element, 'bpmn:SubProcess')) {
       controls['bmp.showPattern'] = {
         group: 'info',
         className: 'fas fa-info-circle font-bpmn-adaption',
-        title: 'Show pattern details',
+        title: 'Show Method Pattern details',
         action: {
           click: () => this.eventBus.fire('bmp.showPattern', element),
-        }
+        },
       };
       controls['bmp.deletePattern'] = {
         group: 'edit',
@@ -41,17 +39,20 @@ export default class BmProcessContextPadProvider {
         title: 'Delete Method Pattern',
         action: {
           click: () => this.eventBus.fire('bmp.deletePattern', element),
-        }
+        },
       };
     }
-    if ((is(element, 'bpmn:StartEvent') || is(element, 'bpmn:SubProcess')) && element.businessObject.get('outgoing').length === 0) {
+    if (
+      (is(element, 'bpmn:StartEvent') || is(element, 'bpmn:SubProcess')) &&
+      element.businessObject.get('outgoing').length === 0
+    ) {
       controls['bmp.processPatterns'] = {
         group: 'edit',
         className: 'far fa-plus-square font-bpmn-adaption',
         title: 'Add Method Pattern',
         action: {
           click: () => this.eventBus.fire('bmp.processPatterns', element),
-        }
+        },
       };
     }
     if (is(element, 'bpmn:Task') || is(element, 'bpmn:CallActivity')) {
@@ -61,7 +62,7 @@ export default class BmProcessContextPadProvider {
         title: 'Select Method Building Block',
         action: {
           click: () => this.eventBus.fire('bmp.selectMethod', element),
-        }
+        },
       };
       if (element.businessObject.method) {
         controls['bmp.showMethod'] = {
@@ -70,7 +71,7 @@ export default class BmProcessContextPadProvider {
           title: 'Edit Method Building Block details',
           action: {
             click: () => this.eventBus.fire('bmp.showMethod', element),
-          }
+          },
         };
         controls['bmp.summary'] = {
           group: 'info',
@@ -78,7 +79,7 @@ export default class BmProcessContextPadProvider {
           title: 'Show Method Building Block summary',
           action: {
             click: () => this.eventBus.fire('bmp.summary', element),
-          }
+          },
         };
         controls['bmp.removeMethod'] = {
           group: 'edit',
@@ -86,7 +87,7 @@ export default class BmProcessContextPadProvider {
           title: 'Remove Method Building Block from task',
           action: {
             click: () => this.eventBus.fire('bmp.removeMethod', element),
-          }
+          },
         };
       }
     }
@@ -97,10 +98,9 @@ export default class BmProcessContextPadProvider {
         title: 'Insert Method Pattern',
         action: {
           click: () => this.eventBus.fire('bmp.selectPattern', element),
-        }
+        },
       };
     }
     return controls;
   }
-
 }

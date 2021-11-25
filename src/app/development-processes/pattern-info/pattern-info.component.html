@@ -1,18 +1,23 @@
 <table class="table mb-0">
   <tbody>
-  <tr>
-    <th scope="row">Pattern Name</th>
-    <td>{{processPattern.name}}</td>
-  </tr>
-  <tr>
-    <th scope="row">Pattern Description</th>
-    <td class="show-new-lines">{{processPattern.description}}</td>
-  </tr>
-  <tr *ngIf="contextSituationalFactors && contextSituationalFactors.length > 0">
-    <th scope="row">Situational Factors</th>
-    <td>
-      <app-situational-factors-overview [needed]="needed" [provided]="provided"></app-situational-factors-overview>
-    </td>
-  </tr>
+    <tr>
+      <th scope="row">Pattern Name</th>
+      <td>{{ processPattern.name }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Pattern Description</th>
+      <td class="show-new-lines">{{ processPattern.description }}</td>
+    </tr>
+    <tr
+      *ngIf="contextSituationalFactors && contextSituationalFactors.length > 0"
+    >
+      <th scope="row">Situational Factors</th>
+      <td>
+        <app-situational-factors-overview
+          [needed]="needed"
+          [provided]="provided"
+        ></app-situational-factors-overview>
+      </td>
+    </tr>
   </tbody>
 </table>

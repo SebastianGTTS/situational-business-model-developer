@@ -9,7 +9,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 
 import Modeler from 'bpmn-js/lib/Modeler';
@@ -23,10 +23,16 @@ import { Type } from '../../development-process-registry/method-elements/type/ty
 @Component({
   selector: 'app-process-pattern-diagram',
   templateUrl: './process-pattern-diagram.component.html',
-  styleUrls: ['./process-pattern-diagram.component.css']
+  styleUrls: ['./process-pattern-diagram.component.css'],
 })
-export class ProcessPatternDiagramComponent implements DiagramComponentInterface, OnInit, AfterContentInit, OnChanges, OnDestroy {
-
+export class ProcessPatternDiagramComponent
+  implements
+    DiagramComponentInterface,
+    OnInit,
+    AfterContentInit,
+    OnChanges,
+    OnDestroy
+{
   @Input() processPattern: ProcessPattern;
 
   @Output() saveProcessPattern = new EventEmitter<string>();
@@ -34,27 +40,30 @@ export class ProcessPatternDiagramComponent implements DiagramComponentInterface
   private modeler: Modeler;
 
   modalTask: {
-    id: string,
-    name: string,
-    inherit: boolean,
-    neededType: { list: string, element: Type }[],
-    forbiddenType: { list: string, element: Type }[],
+    id: string;
+    name: string;
+    inherit: boolean;
+    neededType: { list: string; element: Type }[];
+    forbiddenType: { list: string; element: Type }[];
   };
   private modalReference: NgbModalRef;
 
-  @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLDivElement>;
-  @ViewChild('manageTypesModal', {static: true}) manageTypesModal: any;
+  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLDivElement>;
+  @ViewChild('manageTypesModal', { static: true }) manageTypesModal: any;
 
   constructor(
     private bpmnService: BpmnService,
     private fb: FormBuilder,
-    private modalService: NgbModal,
-  ) {
-  }
+    private modalService: NgbModal
+  ) {}
 
   ngOnInit() {
     this.modeler = this.bpmnService.getBpmnProcessPatternModeler();
-    this.modeler.get('eventBus').on('bmdl.types', (event, businessTask) => this.openManageTypesModal(businessTask));
+    this.modeler
+      .get('eventBus')
+      .on('bmdl.types', (event, businessTask) =>
+        this.openManageTypesModal(businessTask)
+      );
     if (this.processPattern) {
       this.loadProcessPattern(this.processPattern, true);
     }
@@ -62,7 +71,10 @@ export class ProcessPatternDiagramComponent implements DiagramComponentInterface
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.processPattern && this.modeler) {
-      this.loadProcessPattern(changes.processPattern.currentValue, changes.processPattern.firstChange);
+      this.loadProcessPattern(
+        changes.processPattern.currentValue,
+        changes.processPattern.firstChange
+      );
     }
   }
 
@@ -75,9 +87,9 @@ export class ProcessPatternDiagramComponent implements DiagramComponentInterface
   }
 
   saveDiagram(): Promise<void> {
-    return this.modeler.saveXML().then(
-      result => this.saveProcessPattern.emit(result.xml)
-    );
+    return this.modeler
+      .saveXML()
+      .then((result) => this.saveProcessPattern.emit(result.xml));
   }
 
   openManageTypesModal(businessTask) {
@@ -88,33 +100,44 @@ export class ProcessPatternDiagramComponent implements DiagramComponentInterface
       neededType: businessTask.get('neededType'),
       forbiddenType: businessTask.get('forbiddenType'),
     };
-    this.modalReference = this.modalService.open(this.manageTypesModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.manageTypesModal, {
+      size: 'lg',
+    });
   }
 
-  updateTypes(typesForm: FormGroup) {
+  async updateTypes(typesForm: FormGroup) {
     this.bpmnService.setTypesOfActivity(
-      this.modeler, this.modalTask.id, typesForm.value.inherit, typesForm.value.neededType, typesForm.value.forbiddenType,
+      this.modeler,
+      this.modalTask.id,
+      typesForm.value.inherit,
+      typesForm.value.neededType,
+      typesForm.value.forbiddenType
     );
     this.modalReference.close();
-    this.saveDiagram();
+    await this.saveDiagram();
   }
 
-  private loadProcessPattern(processPattern: ProcessPattern, firstLoad: boolean) {
+  private loadProcessPattern(
+    processPattern: ProcessPattern,
+    firstLoad: boolean
+  ) {
     if (processPattern.pattern) {
-      this.modeler.importXML(processPattern.pattern).then(() => {
-        if (firstLoad) {
-          this.bpmnService.resizeView(this.modeler);
-        }
-      }).catch(
-        error => console.log('LoadProcessPattern: ' + error)
-      );
+      this.modeler
+        .importXML(processPattern.pattern)
+        .then(() => {
+          if (firstLoad) {
+            this.bpmnService.resizeView(this.modeler);
+          }
+        })
+        .catch((error) => console.log('LoadProcessPattern: ' + error));
     } else {
       this.modeler.createDiagram();
     }
   }
 
   diagramChanged(): Promise<boolean> {
-    return this.modeler.saveXML().then((result) => result.xml !== this.processPattern.pattern);
+    return this.modeler
+      .saveXML()
+      .then((result) => result.xml !== this.processPattern.pattern);
   }
-
 }

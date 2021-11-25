@@ -1,5 +1,6 @@
-export class Trace {
+import { DatabaseModelPart } from '../database/database-model-part';
 
+export class Trace implements DatabaseModelPart {
   // stored
   expertFeatureIdMap: { [expertModelFeatureId: string]: string } = {};
 
@@ -15,10 +16,9 @@ export class Trace {
     delete this.expertFeatureIdMap[expertFeatureId];
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
       expertFeatureIdMap: this.expertFeatureIdMap,
     };
   }
-
 }

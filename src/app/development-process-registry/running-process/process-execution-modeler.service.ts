@@ -10,7 +10,6 @@ import { DevelopmentProcessRegistryModule } from '../development-process-registr
   providedIn: DevelopmentProcessRegistryModule,
 })
 export class ProcessExecutionModelerService {
-
   /**
    * Get a BpmnModeler with the imported running process
    *
@@ -29,9 +28,12 @@ export class ProcessExecutionModelerService {
    * @param runningProcess the running process to update
    * @param modeler the modeler
    */
-  async endModeling(runningProcess: RunningProcess, modeler: BpmnModeler): Promise<void> {
+  async endModeling(
+    runningProcess: RunningProcess,
+    modeler: BpmnModeler
+  ): Promise<void> {
     const result = await modeler.saveXML();
-    runningProcess.process.update({processDiagram: result.xml});
+    runningProcess.process.update({ processDiagram: result.xml });
     modeler.destroy();
   }
 
@@ -88,7 +90,11 @@ export class ProcessExecutionModelerService {
    * @return the start event node
    */
   getStartNode(modeler: BpmnModeler): any {
-    return modeler.get('elementRegistry').find((node) => is(node, 'bpmn:StartEvent') && is(node.parent, 'bpmn:Process'));
+    return modeler
+      .get('elementRegistry')
+      .find(
+        (node) => is(node, 'bpmn:StartEvent') && is(node.parent, 'bpmn:Process')
+      );
   }
 
   /**
@@ -153,10 +159,12 @@ export class ProcessExecutionModelerService {
    * @return true if the node is a common node
    */
   isCommonNode(node): boolean {
-    return is(node, 'bpmn:StartEvent') ||
+    return (
+      is(node, 'bpmn:StartEvent') ||
       is(node, 'bpmn:EndEvent') ||
       is(node, 'bpmn:ExclusiveGateway') ||
-      is(node, 'bpmn:ParallelGateway');
+      is(node, 'bpmn:ParallelGateway')
+    );
   }
 
   /**
@@ -186,8 +194,7 @@ export class ProcessExecutionModelerService {
    * @return true if the node is executable
    */
   isExecutable(node): boolean {
-    return is(node, 'bpmn:Task') ||
-      is(node, 'bpmn:CallActivity');
+    return is(node, 'bpmn:Task') || is(node, 'bpmn:CallActivity');
   }
 
   /**
@@ -208,7 +215,7 @@ export class ProcessExecutionModelerService {
    * @param value whether the node is executed or not
    */
   setExecuted(modeler: BpmnModeler, node, value: boolean = true): void {
-    modeler.get('modeling').updateProperties(node, {executed: value});
+    modeler.get('modeling').updateProperties(node, { executed: value });
   }
 
   /**
@@ -219,7 +226,7 @@ export class ProcessExecutionModelerService {
    * @param value whether the flow is used or not
    */
   setUsed(modeler: BpmnModeler, flow, value: boolean = true): void {
-    modeler.get('modeling').updateProperties(flow, {used: value});
+    modeler.get('modeling').updateProperties(flow, { used: value });
   }
 
   /**
@@ -233,7 +240,9 @@ export class ProcessExecutionModelerService {
     const modeling = modeler.get('modeling');
     let current = node;
     while (current && !is(current, 'bpmn:Process')) {
-      modeling.updateProperties(current, {tokens: this.getTokens(current) + delta});
+      modeling.updateProperties(current, {
+        tokens: this.getTokens(current) + delta,
+      });
       current = current.parent;
     }
   }

@@ -1,45 +1,46 @@
 import { Injectable } from '@angular/core';
-import { PouchdbService } from '../database/pouchdb.service';
-import PouchDB from 'pouchdb-browser';
 import { ExpertModel } from './expert-model';
-import { CanvasDefinition } from './canvas-definition';
+import { Domain } from '../development-process-registry/knowledge/domain';
+import { Instance } from './instance';
+import { FeatureModelService } from './feature-model.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ExpertModelService {
-
-  constructor(
-    private pouchdbService: PouchdbService,
-  ) {
+export class ExpertModelService extends FeatureModelService<ExpertModel> {
+  protected get typeName(): string {
+    return ExpertModel.typeName;
   }
 
-  async createExpertModel(model: Partial<ExpertModel>, definition: CanvasDefinition) {
-    const {id} = await this.add(model);
+  async getList(selector = {}): Promise<ExpertModel[]> {
+    return this.pouchdbService.find<ExpertModel>(ExpertModel.typeName, {
+      selector,
+    });
+  }
+
+  async updateDomains(id: string, domains: Partial<Domain>[]): Promise<void> {
     const expertModel = await this.get(id);
-    expertModel.definition = definition;
+    expertModel.updateDomains(domains);
     await this.save(expertModel);
-    return this.get(id);
   }
 
-  add(expertModel: Partial<ExpertModel>) {
-    return this.pouchdbService.post(new ExpertModel(expertModel));
+  async addInstance(id: string, instance: Partial<Instance>): Promise<void> {
+    const expertModel = await this.get(id);
+    expertModel.addInstance(instance);
+    await this.save(expertModel);
   }
 
-  async remove(id: string) {
-    const result = await this.pouchdbService.get(id);
-    return this.pouchdbService.remove(result);
+  async removeInstance(id: string, instanceId: number): Promise<void> {
+    const expertModel = await this.get(id);
+    expertModel.removeInstance(instanceId);
+    await this.save(expertModel);
   }
 
-  getList(selector = {}) {
-    return this.pouchdbService.find<ExpertModel>(ExpertModel.typeName, {selector});
+  async save(expertModel: ExpertModel): Promise<void> {
+    await this.pouchdbService.put(expertModel);
   }
 
-  get(id: string) {
-    return this.pouchdbService.get(id).then((f) => new ExpertModel(f));
-  }
-
-  save(expertModel: ExpertModel): Promise<PouchDB.Core.Response> {
-    return this.pouchdbService.put(expertModel);
+  protected createElement(element: Partial<ExpertModel>): ExpertModel {
+    return new ExpertModel(element);
   }
 }

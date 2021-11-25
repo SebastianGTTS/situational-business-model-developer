@@ -4,16 +4,14 @@ import { Artifact } from './artifact';
 import { DevelopmentProcessRegistryModule } from '../../development-process-registry.module';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
 export class ArtifactService extends MethodElementService<Artifact> {
-
-  protected createMethodElement(element: Partial<Artifact>): Artifact {
+  protected createElement(element: Partial<Artifact>): Artifact {
     return new Artifact(element);
   }
 
-  protected getTypeName(): string {
+  protected get typeName(): string {
     return Artifact.typeName;
   }
-
 }

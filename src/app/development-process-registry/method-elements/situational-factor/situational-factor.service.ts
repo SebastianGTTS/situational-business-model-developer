@@ -4,16 +4,16 @@ import { DevelopmentProcessRegistryModule } from '../../development-process-regi
 import { MethodElementService } from '../method-element.service';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
 export class SituationalFactorService extends MethodElementService<SituationalFactorDefinition> {
-
-  protected createMethodElement(element: Partial<SituationalFactorDefinition>): SituationalFactorDefinition {
+  protected createElement(
+    element: Partial<SituationalFactorDefinition>
+  ): SituationalFactorDefinition {
     return new SituationalFactorDefinition(element);
   }
 
-  protected getTypeName(): string {
+  protected get typeName(): string {
     return SituationalFactorDefinition.typeName;
   }
-
 }

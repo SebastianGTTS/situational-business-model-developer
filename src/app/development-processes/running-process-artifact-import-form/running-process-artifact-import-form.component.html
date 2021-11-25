@@ -1,0 +1,31 @@
+<ng-template #ref let-item>
+  <div class="d-flex align-items-baseline">
+    <h5>{{ item.identifier }}</h5>
+    <button
+      (click)="selectArtifact.emit(item)"
+      type="button"
+      class="btn btn-primary ml-auto btn-xs"
+    >
+      Select
+    </button>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">Artifact Type</div>
+    <div class="col-sm-8">
+      {{ item.artifact.name }}
+    </div>
+  </div>
+  <div class="row" *ngIf="item.artifact.internalArtifact">
+    <div class="col-sm-4">Artifact Meta Model</div>
+    <div class="col-sm-8">
+      {{ item.artifact.metaModel.name }}
+    </div>
+  </div>
+</ng-template>
+
+<app-search
+  heading="Artifacts"
+  itemName="Artifact"
+  [content]="ref"
+  [items]="artifacts"
+></app-search>

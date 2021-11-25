@@ -1,37 +1,29 @@
 import { Injectable } from '@angular/core';
-import { PouchdbService } from '../../database/pouchdb.service';
-import PouchDB from 'pouchdb-browser';
 import { Domain } from './domain';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
+import { DefaultElementService } from '../../database/default-element.service';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
-export class DomainService {
-
-  constructor(
-    private pouchdbService: PouchdbService,
-  ) {
+export class DomainService extends DefaultElementService<Domain> {
+  protected get typeName(): string {
+    return Domain.typeName;
   }
 
-  add(domain: Partial<Domain>) {
-    return this.pouchdbService.post(new Domain(domain));
+  /**
+   * Update a domain.
+   *
+   * @param id id of the domain
+   * @param domain the new values of the object (values will be copied)
+   */
+  async update(id: string, domain: Partial<Domain>) {
+    const dbDomain = await this.get(id);
+    dbDomain.update(domain);
+    return this.save(dbDomain);
   }
 
-  getList() {
-    return this.pouchdbService.find<Domain>(Domain.typeName, {selector: {}});
-  }
-
-  async get(id: string): Promise<Domain> {
-    return new Domain(await this.pouchdbService.get<Domain>(id));
-  }
-
-  async delete(id: string) {
-    const result = await this.pouchdbService.get(id);
-    return this.pouchdbService.remove(result);
-  }
-
-  save(element: Domain): Promise<PouchDB.Core.Response> {
-    return this.pouchdbService.put(element);
+  protected createElement(element: Partial<Domain>): Domain {
+    return new Domain(element);
   }
 }

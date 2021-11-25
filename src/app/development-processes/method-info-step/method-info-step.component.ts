@@ -1,4 +1,13 @@
-import { Component, ComponentFactoryResolver, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { ExecutionStep } from '../../development-process-registry/development-method/execution-step';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { ConfigurationFormPlaceholderDirective } from '../configuration-form-placeholder.directive';
@@ -9,10 +18,9 @@ import { BmProcess } from '../../development-process-registry/bm-process/bm-proc
 @Component({
   selector: 'app-method-info-step',
   templateUrl: './method-info-step.component.html',
-  styleUrls: ['./method-info-step.component.css']
+  styleUrls: ['./method-info-step.component.css'],
 })
 export class MethodInfoStepComponent implements OnChanges {
-
   @Input() bmProcess: BmProcess;
   @Input() contextDomains: Domain[];
   @Input() step: ExecutionStep;
@@ -20,14 +28,14 @@ export class MethodInfoStepComponent implements OnChanges {
 
   @Output() forceUpdate = new EventEmitter<any>();
 
-  @ViewChild(ConfigurationFormPlaceholderDirective, {static: true}) configurationFormHost: ConfigurationFormPlaceholderDirective;
+  @ViewChild(ConfigurationFormPlaceholderDirective, { static: true })
+  configurationFormHost: ConfigurationFormPlaceholderDirective;
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private controlContainer: ControlContainer,
-    private moduleService: ModuleService,
-  ) {
-  }
+    private moduleService: ModuleService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.bmProcess || changes.step) {
@@ -37,12 +45,19 @@ export class MethodInfoStepComponent implements OnChanges {
 
   initConfiguration(step: ExecutionStep) {
     const method = this.moduleService.getModuleMethod(step.module, step.method);
-    if (method.decisionConfigurationFormComponent != null && method.createDecisionConfigurationForm != null) {
+    if (
+      method.decisionConfigurationFormComponent != null &&
+      method.createDecisionConfigurationForm != null
+    ) {
       const configurationFormComponentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(method.decisionConfigurationFormComponent);
+        this.componentFactoryResolver.resolveComponentFactory(
+          method.decisionConfigurationFormComponent
+        );
       const viewContainerRef = this.configurationFormHost.viewContainerRef;
       viewContainerRef.clear();
-      const componentRef = viewContainerRef.createComponent(configurationFormComponentFactory);
+      const componentRef = viewContainerRef.createComponent(
+        configurationFormComponentFactory
+      );
       componentRef.instance.formGroup = this.formGroup;
       componentRef.instance.bmProcess = this.bmProcess;
       componentRef.instance.predefinedInput = this.step.predefinedInput;
@@ -55,5 +70,4 @@ export class MethodInfoStepComponent implements OnChanges {
   get formGroup() {
     return this.controlContainer.control as FormGroup;
   }
-
 }

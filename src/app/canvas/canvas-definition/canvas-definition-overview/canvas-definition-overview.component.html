@@ -1,0 +1,20 @@
+<table class="table table-bordered" style="table-layout: fixed">
+  <tbody>
+    <tr *ngFor="let row of canvasDefinitionCells">
+      <ng-container *ngFor="let cell of row">
+        <td
+          *ngIf="!cell.isSpacer"
+          [colSpan]="cell.colspan"
+          [rowSpan]="cell.rowspan"
+        >
+          <b>{{ cell.name }}</b>
+        </td>
+        <td
+          *ngIf="cell.isSpacer"
+          [colSpan]="cell.colspan"
+          [rowSpan]="cell.rowspan"
+        ></td>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>

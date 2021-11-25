@@ -1,16 +1,23 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feature } from '../../../canvas-meta-model/feature';
 
 @Component({
   selector: 'app-feature-form',
   templateUrl: './feature-form.component.html',
-  styleUrls: ['./feature-form.component.css']
+  styleUrls: ['./feature-form.component.css'],
 })
 export class FeatureFormComponent implements OnInit, OnChanges {
-
   @Input() feature: Feature = null;
-  @Input() featureList: { id: string, levelname: string }[];
+  @Input() featureList: { id: string; levelname: string }[];
   @Input() disabledSubfeatures: string[] = [];
   @Input() enabledSubfeatures: string[] = null;
   @Input() submitButtonText = 'Update Feature';
@@ -19,34 +26,35 @@ export class FeatureFormComponent implements OnInit, OnChanges {
 
   featureForm: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.feature === null) {
       this.loadForm();
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.feature) {
       this.loadForm(changes.feature.currentValue);
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitFeatureForm.emit(this.featureForm);
     this.loadForm();
   }
 
-  private loadForm(feature: Feature = null) {
+  private loadForm(feature: Feature = null): void {
     if (feature === null) {
       if (this.featureList.length > 0) {
-        feature = new Feature(null, new Feature(this.featureList[0].id, null, {}), {name: ''});
+        feature = new Feature(
+          null,
+          new Feature(this.featureList[0].id, null, {}),
+          { name: '' }
+        );
       } else {
-        feature = new Feature(null, null, {name: ''});
+        feature = new Feature(null, null, { name: '' });
       }
     }
     this.featureForm = this.fb.group({
@@ -60,5 +68,4 @@ export class FeatureFormComponent implements OnInit, OnChanges {
       this.featureForm.get('subfeatureOf').disable();
     }
   }
-
 }

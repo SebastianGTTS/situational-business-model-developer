@@ -4,7 +4,7 @@ import { Feature } from '../../../canvas-meta-model/feature';
 @Component({
   selector: 'app-feature-tree',
   templateUrl: './feature-tree.component.html',
-  styleUrls: ['./feature-tree.component.css']
+  styleUrls: ['./feature-tree.component.css'],
 })
 /**
  * Internal class to display single features of the feature tree.
@@ -12,7 +12,6 @@ import { Feature } from '../../../canvas-meta-model/feature';
  * @author Sebastian Gottschalk
  */
 export class FeatureTreeComponent {
-
   @Input() features: { [id: string]: Feature };
   @Input() problemFeatureIds: string[]; // problem feature ids of instantiation check
   @Input() supportsHurtsProblemFeatureIds: string[];
@@ -75,5 +74,4 @@ export class FeatureTreeComponent {
   hasExpertTraces(feature: Feature) {
     return Object.keys(feature.expertModelTrace).length > 0;
   }
-
 }

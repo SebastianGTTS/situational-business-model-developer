@@ -1,26 +1,34 @@
-import { MethodElement } from '../method-element';
+import { MethodElement, MethodElementEntry } from '../method-element';
+
+export interface SituationalFactorDefinitionEntry extends MethodElementEntry {
+  values: string[];
+  ordered: boolean;
+}
 
 export class SituationalFactorDefinition extends MethodElement {
-
   static readonly typeName = 'SituationalFactorDefinition';
 
   values: string[] = [];
   ordered = false;
 
-  constructor(situationalFactorDefinition: Partial<SituationalFactorDefinition>) {
+  constructor(
+    situationalFactorDefinition: Partial<SituationalFactorDefinition>
+  ) {
     super(SituationalFactorDefinition.typeName);
     this.update(situationalFactorDefinition);
   }
 
-  toPouchDb(): any {
+  toDb(): SituationalFactorDefinitionEntry {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
       values: this.values,
       ordered: this.ordered,
     };
   }
 
-  update(situationalFactorDefinition: Partial<SituationalFactorDefinition>) {
+  update(
+    situationalFactorDefinition: Partial<SituationalFactorDefinition>
+  ): void {
     Object.assign(this, situationalFactorDefinition);
   }
 }

@@ -15,6 +15,14 @@ import { CanvasModule } from './canvas/canvas.module';
 import { MethodModelerExplanationComponent } from './method-modeler-explanation/method-modeler-explanation.component';
 import { FeatureModelerExplanationComponent } from './feature-modeler-explanation/feature-modeler-explanation.component';
 import { EnactionExplanationComponent } from './enaction-explanation/enaction-explanation.component';
+import { LoginComponent } from './login/login.component';
+import { StartComponent } from './start/start.component';
+import { StartBusinessDeveloperComponent } from './start-business-developer/start-business-developer.component';
+import { StartMethodEngineerComponent } from './start-method-engineer/start-method-engineer.component';
+import { ChangePasswordFormComponent } from './change-password-form/change-password-form.component';
+import { ProfileComponent } from './profile/profile.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -25,22 +33,33 @@ import { EnactionExplanationComponent } from './enaction-explanation/enaction-ex
     MethodModelerExplanationComponent,
     FeatureModelerExplanationComponent,
     EnactionExplanationComponent,
+    LoginComponent,
+    StartComponent,
+    StartBusinessDeveloperComponent,
+    StartMethodEngineerComponent,
+    ChangePasswordFormComponent,
+    ProfileComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     DatabaseModule,
     DevelopmentProcessRegistryModule,
     CanvasMetaModelModule,
     NgbModule,
     ReactiveFormsModule,
 
+    QuillModule.forRoot({
+      format: 'json',
+    }),
+
     CanvasModule,
 
     DevelopmentProcessesModule,
+
+    AppRoutingModule, // has to be the last one
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

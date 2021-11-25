@@ -1,8 +1,8 @@
 import { ArtifactData } from './artifact-data';
 import { Artifact } from '../method-elements/artifact/artifact';
+import { DatabaseModelPart } from '../../database/database-model-part';
 
-export class StepArtifact {
-
+export class StepArtifact implements DatabaseModelPart {
   identifier: string;
   artifact: Artifact;
   data: ArtifactData;
@@ -17,12 +17,11 @@ export class StepArtifact {
     return this.artifact.metaModel.type;
   }
 
-  toPouchDb() {
+  toDb(): any {
     return {
       identifier: this.identifier,
-      artifact: this.artifact.toPouchDb(),
-      data: this.data.toPouchDb(),
+      artifact: this.artifact.toDb(),
+      data: this.data.toDb(),
     };
   }
-
 }

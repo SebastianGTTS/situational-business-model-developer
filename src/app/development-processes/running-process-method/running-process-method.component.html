@@ -1,85 +1,197 @@
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline" *ngIf="runningProcess">
-    <a class="nav-link" [routerLink]="['/', 'runningprocess', 'runningprocessview', runningProcess._id]">
-      {{runningProcess.process.name}} &ndash; {{runningProcess.name}}
+    <a
+      class="nav-link"
+      [routerLink]="[
+        '/',
+        'runningprocess',
+        'runningprocessview',
+        runningProcess._id
+      ]"
+    >
+      {{ runningProcess.process.name }} &ndash; {{ runningProcess.name }}
     </a>
-    <a class="nav-link active" [routerLink]="[]">
-      {{runningMethod.methodName}}
+    <a *ngIf="runningMethod" class="nav-link active" [routerLink]="[]">
+      {{ runningMethod.methodName }}
     </a>
   </nav>
 </div>
 
-<main *ngIf="runningMethod" role="main">
+<main *ngIf="error && errorStatus === 404" role="main">
+  <div class="alert alert-info container my-3">
+    <p>This running method does not exist. Reason: {{ errorReason }}.</p>
+    <p class="mb-0">
+      <a [routerLink]="['/', 'runningprocess']">
+        Go back to overview of running methods
+      </a>
+    </p>
+  </div>
+</main>
+
+<main *ngIf="runningMethod === null" role="main">
+  <div class="alert alert-info container my-3">
+    <p>This development step does not exist or is not executed.</p>
+    <p class="mb-0">
+      <a
+        [routerLink]="[
+          '/',
+          'runningprocess',
+          'runningprocessview',
+          runningProcess._id
+        ]"
+      >
+        Go back to kanban board of running method
+      </a>
+    </p>
+  </div>
+</main>
+
+<main *ngIf="runningProcess != null && runningMethod != null" role="main">
   <div class="container">
     <div class="my-3 p-3 bg-white rounded shadow-sm">
-      <div class="d-flex align-items-baseline justify-content-between border-bottom border-gray mb-2">
+      <div
+        class="
+          d-flex
+          align-items-baseline
+          justify-content-between
+          border-bottom border-gray
+          mb-2
+        "
+      >
         <h6 class="pb-2 mb-0">Steps</h6>
         <button class="btn btn-sm btn-warning" (click)="abortMethodExecution()">
-          Abort method execution
+          Abort development step execution
         </button>
       </div>
       <div class="d-flex">
         <ul class="list-group list-group-horizontal ml-auto mr-auto">
-          <li class="list-group-item"
-              [class.active]="getStateInputSelection() === getState()"
-              [class.disabled]="getState() > getStateInputSelection()"
-              [attr.aria-disabled]="getState() > getStateInputSelection()">
-            Select input artifacts<span *ngIf="getStateInputSelection() === getState()" class="sr-only"> (active)</span>
+          <li
+            class="list-group-item"
+            [class.active]="getStateInputSelection() === getState()"
+            [class.disabled]="getState() > getStateInputSelection()"
+            [attr.aria-disabled]="getState() > getStateInputSelection()"
+          >
+            Select input artifacts<span
+              *ngIf="getStateInputSelection() === getState()"
+              class="sr-only"
+            >
+              (active)</span
+            >
           </li>
-          <li *ngIf="runningMethod.hasSteps()" class="list-group-item"
-              [class.active]="getStateExecution() === getState()"
-              [class.disabled]="getState() > getStateExecution()"
-              [attr.aria-disabled]="getState() > getStateExecution()">
-            Execute Building Block<span *ngIf="getStateExecution() === getState()" class="sr-only"> (active)</span>
+          <li
+            *ngIf="runningMethod.hasSteps()"
+            class="list-group-item"
+            [class.active]="getStateExecution() === getState()"
+            [class.disabled]="getState() > getStateExecution()"
+            [attr.aria-disabled]="getState() > getStateExecution()"
+          >
+            Execute Development Step<span
+              *ngIf="getStateExecution() === getState()"
+              class="sr-only"
+            >
+              (active)</span
+            >
           </li>
-          <li class="list-group-item"
-              [class.active]="getStateOutputSelection() === getState()"
-              [class.disabled]="getState() > getStateOutputSelection()"
-              [attr.aria-disabled]="getState() > getStateOutputSelection()">
-            Create/Merge output artifacts<span *ngIf="getStateOutputSelection() === getState()" class="sr-only"> (active)</span>
+          <li
+            class="list-group-item"
+            [class.active]="getStateOutputSelection() === getState()"
+            [class.disabled]="getState() > getStateOutputSelection()"
+            [attr.aria-disabled]="getState() > getStateOutputSelection()"
+          >
+            Create/Merge output artifacts<span
+              *ngIf="getStateOutputSelection() === getState()"
+              class="sr-only"
+            >
+              (active)</span
+            >
           </li>
         </ul>
       </div>
     </div>
-    <div *ngIf="getStateInputSelection() === getState()" class="my-3 p-3 bg-white rounded shadow-sm">
+    <div
+      *ngIf="getStateInputSelection() === getState()"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
       <h6 class="border-bottom border-gray pb-2">Input Mapping</h6>
       <app-running-process-select-input-artifacts
-        [decision]="runningMethod.decision" [runningProcess]="runningProcess"
-        (selectInputArtifacts)="selectInputArtifacts($event)"></app-running-process-select-input-artifacts>
+        [decision]="runningMethod.decision"
+        [runningProcess]="runningProcess"
+        (selectInputArtifacts)="selectInputArtifacts($event)"
+      ></app-running-process-select-input-artifacts>
     </div>
-    <div *ngIf="getState() > getStateInputSelection()" class="my-3 p-3 bg-white rounded shadow-sm">
-      <h6 class="border-bottom border-gray pb-2">Building Block Overview</h6>
+    <div
+      *ngIf="getState() > getStateInputSelection()"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
+      <h6 class="border-bottom border-gray pb-2">Development Step Overview</h6>
       <app-development-method-summary
         [decision]="runningMethod.decision"
         [inputArtifacts]="runningMethod.inputArtifacts"
-        (viewArtifactReference)="viewArtifactReference($event.reference, $event.api)"></app-development-method-summary>
+        (viewArtifactReference)="
+          viewArtifactReference($event.reference, $event.api)
+        "
+      ></app-development-method-summary>
     </div>
-    <div *ngIf="getStateExecution() <= getState() && runningMethod.hasSteps()"
-         class="my-3 p-3 bg-white rounded shadow-sm">
+    <div
+      *ngIf="getStateExecution() <= getState() && runningMethod.hasSteps()"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
       <h6 class="border-bottom border-gray pb-2">Execution Steps</h6>
       <ol>
         <li
-          *ngFor="let step of runningMethod.decision.method.executionSteps; let index = index"
+          *ngFor="
+            let step of runningMethod.decision.method.executionSteps;
+            let index = index
+          "
           [class.text-success]="index < runningMethod.currentStepNumber"
-          [class.text-warning]="index === runningMethod.currentStepNumber">
-          {{step.module}} &ndash; {{step.method}}
-          <span *ngIf="index < runningMethod.currentStepNumber" class="sr-only"> (step already executed)</span>
-          <span *ngIf="index === runningMethod.currentStepNumber" class="sr-only"> (step to execute)</span>
+          [class.text-warning]="index === runningMethod.currentStepNumber"
+        >
+          {{ step.module }} &ndash; {{ step.method }}
+          <span *ngIf="index < runningMethod.currentStepNumber" class="sr-only">
+            (step already executed)</span
+          >
+          <span
+            *ngIf="index === runningMethod.currentStepNumber"
+            class="sr-only"
+          >
+            (step to execute)</span
+          >
         </li>
       </ol>
       <button
         *ngIf="runningMethod.hasStepsLeft()"
         class="btn btn-block btn-primary"
-        (click)="executeMethodStep()">
+        (click)="executeMethodStep()"
+      >
         Execute next step
       </button>
     </div>
-    <div *ngIf="getStateOutputSelection() === getState()" class="my-3 p-3 bg-white rounded shadow-sm">
+    <div
+      *ngIf="getStateOutputSelection() === getState()"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
       <h6 class="border-bottom border-gray pb-2">Output Mapping</h6>
       <app-running-process-select-output-artifacts
         [runningProcess]="runningProcess"
+        [runningMethod]="runningMethod"
         [decision]="runningMethod.decision"
-        (selectOutputArtifacts)="selectOutputArtifacts($event)"></app-running-process-select-output-artifacts>
+        (updateOutputArtifacts)="updateOutputArtifacts($event)"
+      ></app-running-process-select-output-artifacts>
+    </div>
+
+    <div
+      *ngIf="getStateOutputSelection() === getState()"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
+      <h6 class="border-bottom border-gray pb-2">Finish execution</h6>
+      <button
+        type="button"
+        class="btn btn-primary btn-block"
+        [disabled]="!runningMethod.hasOutputArtifactsCorrectlyDefined()"
+        (click)="finishExecution()"
+      >
+        Finish execution
+      </button>
     </div>
 
     <div class="my-3 p-3 bg-white rounded shadow-sm">
@@ -87,7 +199,8 @@
         [comments]="runningMethod.comments"
         (addComment)="addComment($event)"
         (updateComment)="updateComment($event)"
-        (removeComment)="removeComment($event)"></app-running-process-method-comments>
+        (removeComment)="removeComment($event)"
+      ></app-running-process-method-comments>
     </div>
   </div>
 </main>

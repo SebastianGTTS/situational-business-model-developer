@@ -11,24 +11,26 @@ export interface CanvasDefinitionCellFormValue {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CanvasDefinitionRowFormService {
-
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   createForm(canvasDefinitionRows: CanvasDefinitionCell[][] = null): FormArray {
     let forms = [];
     if (canvasDefinitionRows != null) {
-      forms = canvasDefinitionRows.map((row) => this.fb.array(row.map((cell) => this.createCanvasDefinitionCellForm(cell))));
+      forms = canvasDefinitionRows.map((row) =>
+        this.fb.array(
+          row.map((cell) => this.createCanvasDefinitionCellForm(cell))
+        )
+      );
     }
     return this.fb.array(forms);
   }
 
-  createCanvasDefinitionCellForm(canvasDefinitionCell: CanvasDefinitionCell = null) {
+  createCanvasDefinitionCellForm(
+    canvasDefinitionCell: CanvasDefinitionCell = null
+  ) {
     const form = this.fb.group({
       isSpacer: [false, Validators.required],
       name: ['', Validators.required],
@@ -46,17 +48,25 @@ export class CanvasDefinitionRowFormService {
     return form;
   }
 
-  convertCanvasDefinitionCellForm(canvasDefinitionCellForm: FormGroup, spacer: boolean) {
+  convertCanvasDefinitionCellForm(
+    canvasDefinitionCellForm: FormGroup,
+    spacer: boolean
+  ) {
     if (spacer) {
       canvasDefinitionCellForm.removeControl('name');
       canvasDefinitionCellForm.removeControl('id');
     } else {
-      canvasDefinitionCellForm.setControl('name', this.fb.control('', Validators.required));
+      canvasDefinitionCellForm.setControl(
+        'name',
+        this.fb.control('', Validators.required)
+      );
       canvasDefinitionCellForm.setControl('id', this.fb.control(''));
     }
   }
 
-  getCanvasDefinitionCellForm(formValue: CanvasDefinitionCellFormValue): CanvasDefinitionCell {
+  getCanvasDefinitionCellForm(
+    formValue: CanvasDefinitionCellFormValue
+  ): CanvasDefinitionCell {
     if (formValue.isSpacer) {
       return new CanvasDefinitionCell({
         isSpacer: formValue.isSpacer,
@@ -75,6 +85,8 @@ export class CanvasDefinitionRowFormService {
   }
 
   get(formValue: CanvasDefinitionCellFormValue[][]): CanvasDefinitionCell[][] {
-    return formValue.map((row) => row.map((cell) => this.getCanvasDefinitionCellForm(cell)));
+    return formValue.map((row) =>
+      row.map((cell) => this.getCanvasDefinitionCellForm(cell))
+    );
   }
 }

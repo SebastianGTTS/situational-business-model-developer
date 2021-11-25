@@ -7,12 +7,17 @@
         [contextDomains]="contextDomains"
         [step]="step"
         [stepDecision]="stepDecisions[index]"
-        (forceUpdate)="forceUpdate.emit({step: index, stepDecision: $event})"></app-method-info-step>
+        (forceUpdate)="forceUpdate.emit({ step: index, stepDecision: $event })"
+      ></app-method-info-step>
     </li>
   </ul>
   <div *ngIf="steps.length > 0" class="form-group row mt-3">
     <div class="col-sm-12">
-      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!form.valid">
+      <button
+        type="submit"
+        class="btn btn-sm btn-dark btn-block"
+        [disabled]="!form.valid"
+      >
         <ng-container>Update</ng-container>
       </button>
     </div>

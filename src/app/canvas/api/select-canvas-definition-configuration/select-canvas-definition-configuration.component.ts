@@ -7,29 +7,26 @@ import { CanvasDefinitionService } from '../../../canvas-meta-model/canvas-defin
 @Component({
   selector: 'app-select-canvas-definition-configuration',
   templateUrl: './select-canvas-definition-configuration.component.html',
-  styleUrls: ['./select-canvas-definition-configuration.component.css']
+  styleUrls: ['./select-canvas-definition-configuration.component.css'],
 })
-export class SelectCanvasDefinitionConfigurationComponent implements OnInit, ConfigurationFormComponent {
-
+export class SelectCanvasDefinitionConfigurationComponent
+  implements OnInit, ConfigurationFormComponent
+{
   formGroup: FormGroup;
 
   canvasDefinitions: CanvasDefinition[] = null;
 
-  constructor(
-    private canvasDefinitionService: CanvasDefinitionService,
-  ) {
-  }
+  constructor(private canvasDefinitionService: CanvasDefinitionService) {}
 
   ngOnInit() {
-    this.loadCanvasDefinitions().then();
+    void this.loadCanvasDefinitions();
   }
 
-  async loadCanvasDefinitions() {
-    this.canvasDefinitions = (await this.canvasDefinitionService.getList()).docs;
+  async loadCanvasDefinitions(): Promise<void> {
+    this.canvasDefinitions = await this.canvasDefinitionService.getList();
   }
 
   get definitionControl() {
     return this.formGroup.get('definitionId');
   }
-
 }

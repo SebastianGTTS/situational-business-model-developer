@@ -7,26 +7,26 @@ import schema from '../../../assets/schema_beta.json';
 import { CanvasModelConsistencyService } from '../../canvas-meta-model/canvas-model-consistency.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ImportExportService {
-
   private ajv = new Ajv();
 
   constructor(
     private expertModelService: ExpertModelService,
-    private canvasModelConsistencyService: CanvasModelConsistencyService,
-  ) {
-  }
+    private canvasModelConsistencyService: CanvasModelConsistencyService
+  ) {}
 
   /**
    * Export a model to json
    *
    * @param expertModelId the id of the expert model
    */
-  async exportExpertModel(expertModelId: string) {
+  async exportExpertModel(expertModelId: string): Promise<void> {
     const expertModel = await this.expertModelService.get(expertModelId);
-    const json = new Blob([JSON.stringify(expertModel, null, 2)], {type: 'application/json'});
+    const json = new Blob([JSON.stringify(expertModel, null, 2)], {
+      type: 'application/json',
+    });
     saveAs(json, expertModel.name + '.json');
   }
 
@@ -38,10 +38,12 @@ export class ImportExportService {
    */
   async importExpertModel(file): Promise<ExpertModel> {
     const json = await this.importJson(file);
-    const expertModel = new ExpertModel(JSON.parse(JSON.stringify(new ExpertModel(json))));
+    const expertModel = new ExpertModel(
+      JSON.parse(JSON.stringify(new ExpertModel(json)))
+    );
     this.canvasModelConsistencyService.checkFormalConsistency(expertModel);
-    const postResult = await this.expertModelService.add(expertModel);
-    return this.expertModelService.get(postResult.id);
+    await this.expertModelService.save(expertModel);
+    return this.expertModelService.get(expertModel._id);
   }
 
   /**

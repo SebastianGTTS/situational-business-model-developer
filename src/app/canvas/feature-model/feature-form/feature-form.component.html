@@ -2,30 +2,54 @@
   <div class="form-group row">
     <label for="name" class="col-sm-4 col-form-label">Feature Name</label>
     <div class="col-sm-8">
-      <input type="text" [readonly]="feature && feature.parent === null" formControlName="name"
-             class="form-control" id="name">
+      <input
+        type="text"
+        [readonly]="feature && feature.parent === null"
+        formControlName="name"
+        class="form-control"
+        id="name"
+      />
     </div>
   </div>
 
   <div class="form-group row">
-    <label for="description" class="col-sm-4 col-form-label">Feature Description</label>
+    <label for="description" class="col-sm-4 col-form-label"
+      >Feature Description</label
+    >
     <div class="col-sm-8">
-      <input type="text" [readonly]="feature && feature.parent === null" formControlName="description"
-             class="form-control" id="description">
+      <input
+        type="text"
+        [readonly]="feature && feature.parent === null"
+        formControlName="description"
+        class="form-control"
+        id="description"
+      />
     </div>
   </div>
 
   <div *ngIf="!feature || feature.parent !== null" class="form-group row">
-    <label for="subfeatureOf" class="col-sm-4 col-form-label">Subfeature of</label>
+    <label for="subfeatureOf" class="col-sm-4 col-form-label"
+      >Subfeature of</label
+    >
     <div class="col-sm-8">
-      <select id="subfeatureOf" formControlName="subfeatureOf" class="form-control">
-        <option *ngFor="let fl of featureList"
-                [disabled]="disabledSubfeatures.includes(fl.id) || (enabledSubfeatures && !enabledSubfeatures.includes(fl.id))"
-                [ngValue]="fl.id">{{fl.levelname}}
+      <select
+        id="subfeatureOf"
+        formControlName="subfeatureOf"
+        class="form-control"
+      >
+        <option
+          *ngFor="let fl of featureList"
+          [disabled]="
+            disabledSubfeatures.includes(fl.id) ||
+            (enabledSubfeatures && !enabledSubfeatures.includes(fl.id))
+          "
+          [ngValue]="fl.id"
+        >
+          {{ fl.levelname }}
         </option>
       </select>
       <div class="mt-1" *ngIf="featureForm.get('subfeatureOf').disabled">
-        Disabled, because this feature has a trace to an expert model
+        Disabled, because this feature has a trace to a canvas building block
       </div>
     </div>
   </div>
@@ -41,9 +65,15 @@
   </div>
 
   <div class="form-group row">
-    <label for="subfeatureConnections" class="col-sm-4 col-form-label">Subfeature Connections</label>
+    <label for="subfeatureConnections" class="col-sm-4 col-form-label"
+      >Subfeature Connections</label
+    >
     <div class="col-sm-8">
-      <select id="subfeatureConnections" formControlName="subfeatureConnections" class="form-control">
+      <select
+        id="subfeatureConnections"
+        formControlName="subfeatureConnections"
+        class="form-control"
+      >
         <option [ngValue]="null">None</option>
         <option [ngValue]="'xor'">XOR</option>
         <option [ngValue]="'or'">OR</option>
@@ -53,8 +83,12 @@
 
   <div class="form-group row">
     <div class="col-sm-12">
-      <button type="submit" class="btn btn-dark btn-block" [disabled]="!featureForm.valid">
-        {{submitButtonText}}
+      <button
+        type="submit"
+        class="btn btn-dark btn-block"
+        [disabled]="!featureForm.valid"
+      >
+        {{ submitButtonText }}
       </button>
     </div>
   </div>

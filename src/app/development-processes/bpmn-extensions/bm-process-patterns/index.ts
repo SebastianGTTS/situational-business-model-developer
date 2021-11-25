@@ -9,7 +9,11 @@ import PaletteModule from 'bpmn-js/lib/features/palette';
 
 export default {
   __depends__: [ContextPadModule, CoreModule, ModelingModule, PaletteModule],
-  __init__: ['bmProcessPatternsContextPad', 'paletteProvider', 'replaceMenuProvider'],
+  __init__: [
+    'bmProcessPatternsContextPad',
+    'paletteProvider',
+    'replaceMenuProvider',
+  ],
   bmProcessPatternsContextPad: ['type', BmProcessPatternsContextPad],
   contextPadProvider: ['type', BmProcessPatternsOverrideContextPadProvider],
   paletteProvider: ['type', BmProcessPatternsPaletteProvider],

@@ -1,9 +1,18 @@
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
-    <a *ngIf="companyModel" class="nav-link active"
-       [routerLink]="['/companyModels', companyModel._id]">View {{companyModel.name}}</a>
-    <a *ngIf="companyModel" class="nav-link"
-       [routerLink]="['/companyModels', companyModel._id, 'edit']">Edit {{companyModel.name}}</a>
+    <a class="nav-link" [routerLink]="['/', 'companyModels']">
+      Composed Models
+    </a>
+    <a *ngIf="companyModel" class="nav-link active" [routerLink]="[]">
+      {{ companyModel.name }}
+    </a>
+    <a
+      *ngIf="companyModel"
+      class="nav-link"
+      [routerLink]="['/', 'companyModels', companyModel._id, 'edit']"
+    >
+      Edit
+    </a>
   </nav>
 </div>
 
@@ -11,15 +20,19 @@
   <app-model-info-box [featureModel]="companyModel"></app-model-info-box>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Expert Knowledge Model of {{companyModel.name}}</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Composed Model {{ companyModel.name }}
+    </h6>
     <app-feature-model [featureModel]="companyModel"></app-feature-model>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Edit Company Model</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">Edit Composed Model</h6>
     <div class="text-muted pt-3">
-      <app-feature-model-form [featureModel]="companyModel"
-                              (submitFeatureModelForm)="update($event.value)"></app-feature-model-form>
+      <app-feature-model-form
+        [featureModel]="companyModel"
+        (submitFeatureModelForm)="update($event.value)"
+      ></app-feature-model-form>
     </div>
   </div>
 
@@ -28,49 +41,96 @@
     <div class="text-muted pt-3">
       <app-author-form
         [author]="companyModel.author"
-        (submitAuthorForm)="updateAuthor($event.value)"></app-author-form>
+        (submitAuthorForm)="updateAuthor($event.value)"
+      ></app-author-form>
     </div>
   </div>
 
   <!-- List expert models -->
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Selected Expert Business Knowledge Models</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Selected Canvas Building Blocks
+    </h6>
 
-    <ul *ngIf="selectedExpertModelList" class="list-group inner" style="margin:5px;">
-
-      <li *ngFor="let em of selectedExpertModelList"
-          class="d-flex list-group-item justify-content-between align-items-center">
-
+    <ul
+      *ngIf="selectedExpertModelList"
+      class="list-group inner"
+      style="margin: 5px"
+    >
+      <li
+        *ngFor="let em of selectedExpertModelList"
+        class="
+          d-flex
+          list-group-item
+          justify-content-between
+          align-items-center
+        "
+      >
         <span>{{ em.name }}</span>
         <span>
-            <button type="button" (click)="mergeExpertModel(em._id)"
-                    class="btn btn-warning btn-xs">Merge</button>&nbsp;
-            <button (click)="viewExpertModel(em._id)" type="button"
-                    class="btn btn-dark btn-xs">View</button>&nbsp;
-            <button (click)="unselectExpertModel(em._id)" type="button"
-                    class="btn btn-danger btn-xs">Unselect</button>
-          </span>
+          <button
+            type="button"
+            (click)="mergeExpertModel(em._id)"
+            class="btn btn-warning btn-xs"
+          >
+            Merge</button
+          >&nbsp;
+          <button
+            (click)="viewExpertModel(em._id)"
+            type="button"
+            class="btn btn-dark btn-xs"
+          >
+            View</button
+          >&nbsp;
+          <button
+            (click)="unselectExpertModel(em._id)"
+            type="button"
+            class="btn btn-danger btn-xs"
+          >
+            Unselect
+          </button>
+        </span>
       </li>
     </ul>
   </div>
 
   <!-- Select expert model -->
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Select Expert Business Knowledge Model</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Select Canvas Building Block
+    </h6>
     <div class="text-muted pt-3">
-      <form [formGroup]="selectedExpertModelForm" (ngSubmit)="selectExpertModel()">
+      <form
+        [formGroup]="selectedExpertModelForm"
+        (ngSubmit)="selectExpertModel()"
+      >
         <div class="form-group row">
-          <label for="expertModelSelector" class="col-sm-4 col-form-label">Expert Business Knowledge Model</label>
+          <label for="expertModelSelector" class="col-sm-4 col-form-label"
+            >Canvas Building Block</label
+          >
           <div class="col-sm-8">
-            <select id="expertModelSelector" formControlName="expertModelId" class="form-control">
-              <option *ngFor="let em of unselectedExpertModelList" [value]="em._id">{{ em.name }}</option>
+            <select
+              id="expertModelSelector"
+              formControlName="expertModelId"
+              class="form-control"
+            >
+              <option
+                *ngFor="let em of unselectedExpertModelList"
+                [value]="em._id"
+              >
+                {{ em.name }}
+              </option>
             </select>
           </div>
         </div>
         <div class="form-group row">
           <div class="col-sm-12">
-            <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!selectedExpertModelForm.valid">
-              Add Expert Model
+            <button
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!selectedExpertModelForm.valid"
+            >
+              Add Canvas Building Block
             </button>
           </div>
         </div>

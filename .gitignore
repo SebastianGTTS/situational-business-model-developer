@@ -47,3 +47,10 @@ Thumbs.db
 
 # reports (custom)
 /reports
+junit.xml
+
+/local
+
+# cypress
+cypress/videos
+cypress/screenshots

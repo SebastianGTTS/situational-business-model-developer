@@ -43,12 +43,8 @@ import { EditCanvasComponent } from './api/edit-canvas/edit-canvas.component';
 import { CanvasDefinitionsComponent } from './canvas-definition/canvas-definitions/canvas-definitions.component';
 import { CanvasDefinitionComponent } from './canvas-definition/canvas-definition/canvas-definition.component';
 import { CanvasComponent } from './instances/canvas/canvas.component';
-import {
-  SelectCanvasDefinitionConfigurationComponent
-} from './api/select-canvas-definition-configuration/select-canvas-definition-configuration.component';
-import {
-  CompanyModelSelectExpertKnowledgeComponent
-} from './company-model/company-model-select-expert-knowledge/company-model-select-expert-knowledge.component';
+import { SelectCanvasDefinitionConfigurationComponent } from './api/select-canvas-definition-configuration/select-canvas-definition-configuration.component';
+import { CompanyModelSelectExpertKnowledgeComponent } from './company-model/company-model-select-expert-knowledge/company-model-select-expert-knowledge.component';
 import { CompareComponent } from './api/compare/compare.component';
 import { InstanceCompareFormComponent } from './instances/instance-compare-form/instance-compare-form.component';
 import { CreateCompetitorCanvasComponent } from './api/create-competitor-canvas/create-competitor-canvas.component';
@@ -58,23 +54,31 @@ import { RefineCanvasComponent } from './api/refine-canvas/refine-canvas.compone
 import { InstanceSelectPatternFormComponent } from './instances/instance-select-pattern-form/instance-select-pattern-form.component';
 import { ViewCanvasComponent } from './api/view-canvas/view-canvas.component';
 import { EditModelComponent } from './api/edit-model/edit-model.component';
-
+import { StepErrorsComponent } from './api/step-errors/step-errors.component';
+import { CanvasDefinitionFormComponent } from './canvas-definition/canvas-definition-form/canvas-definition-form.component';
+import { CanvasDefinitionRowFormComponent } from './canvas-definition/canvas-definition-row-form/canvas-definition-row-form.component';
+import { ApiNavigationComponent } from './api/api-navigation/api-navigation.component';
+import { CanvasDefinitionRelationshipsFormComponent } from './canvas-definition/canvas-definition-relationships-form/canvas-definition-relationships-form.component';
+import { CanvasElementsComponent } from './elements/canvas-elements/canvas-elements.component';
+import { CanvasDefinitionOverviewComponent } from './canvas-definition/canvas-definition-overview/canvas-definition-overview.component';
+import { PatternDescriptionModalComponent } from './instances/pattern-description-modal/pattern-description-modal.component';
+import { PatternViewComponent } from './instances/pattern-view/pattern-view.component';
+import { PatternHintComponent } from './instances/pattern-hint/pattern-hint.component';
 
 @NgModule({
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: (canvasService: CanvasService) => () => canvasService.init(),
+      useFactory: (canvasService: CanvasService) => (): void =>
+        canvasService.init(),
       deps: [CanvasService],
-      multi: true
+      multi: true,
     },
   ],
-  imports: [
-    SharedModule,
-    CanvasRoutingModule,
-  ],
+  imports: [SharedModule, CanvasRoutingModule],
   declarations: [
     // api
+    ApiNavigationComponent,
     CompareComponent,
     CreateCanvasComponent,
     CreateCanvasConfigurationComponent,
@@ -85,10 +89,15 @@ import { EditModelComponent } from './api/edit-model/edit-model.component';
     EditModelComponent,
     RefineCanvasComponent,
     SelectCanvasDefinitionConfigurationComponent,
+    StepErrorsComponent,
     ViewCanvasComponent,
 
-    // canvas-definitions
+    // canvas-definition
     CanvasDefinitionComponent,
+    CanvasDefinitionFormComponent,
+    CanvasDefinitionOverviewComponent,
+    CanvasDefinitionRelationshipsFormComponent,
+    CanvasDefinitionRowFormComponent,
     CanvasDefinitionsComponent,
 
     // company-model
@@ -96,6 +105,9 @@ import { EditModelComponent } from './api/edit-model/edit-model.component';
     CompanyModelEditComponent,
     CompanyModelSelectExpertKnowledgeComponent,
     CompanyModelsComponent,
+
+    // elements
+    CanvasElementsComponent,
 
     // expert-model
     ExpertModelComponent,
@@ -127,7 +139,11 @@ import { EditModelComponent } from './api/edit-model/edit-model.component';
     InstanceFormComponent,
     InstanceInfoBoxComponent,
     InstanceListComponent,
+    InstanceSelectPatternFormComponent,
     PatternComponent,
+    PatternDescriptionModalComponent,
+    PatternHintComponent,
+    PatternViewComponent,
 
     // merge
     MergeExpertModelsComponent,
@@ -139,12 +155,6 @@ import { EditModelComponent } from './api/edit-model/edit-model.component';
     // relationships
     CrossTreeRelationshipFormComponent,
     CrossTreeRelationshipModalComponent,
-    InstanceSelectPatternFormComponent,
   ],
-  entryComponents: [
-    CreateCanvasConfigurationComponent,
-    SelectCanvasDefinitionConfigurationComponent,
-  ]
 })
-export class CanvasModule {
-}
+export class CanvasModule {}

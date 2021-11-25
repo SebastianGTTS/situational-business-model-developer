@@ -5,10 +5,9 @@ import { FormArrayName, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-method-elements-selection-form',
   templateUrl: './method-elements-selection-form.component.html',
-  styleUrls: ['./method-elements-selection-form.component.css']
+  styleUrls: ['./method-elements-selection-form.component.css'],
 })
 export class MethodElementsSelectionFormComponent {
-
   @Input() methodElementName = 'Element';
   @Input() multipleAllowed = false;
 
@@ -18,10 +17,7 @@ export class MethodElementsSelectionFormComponent {
   @Input() methodElementFormTemplate: TemplateRef<any>;
   @Input() createFormGroupFactory: () => FormGroup;
 
-  constructor(
-    private formArrayName: FormArrayName,
-  ) {
-  }
+  constructor(private formArrayName: FormArrayName) {}
 
   add() {
     this.formArray.push(this.createFormGroupFactory());
@@ -45,5 +41,4 @@ export class MethodElementsSelectionFormComponent {
       remove: this.remove.bind(this),
     };
   }
-
 }

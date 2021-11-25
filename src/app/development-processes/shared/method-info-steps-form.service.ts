@@ -4,22 +4,27 @@ import { ExecutionStep } from '../../development-process-registry/development-me
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MethodInfoStepsFormService {
-
-  constructor(
-    private fb: FormBuilder,
-    private moduleService: ModuleService,
-  ) {
-  }
+  constructor(private fb: FormBuilder, private moduleService: ModuleService) {}
 
   createForm(executionSteps: ExecutionStep[], stepDecisions: any[]): FormArray {
-    return this.fb.array(stepDecisions.map((step, index) => this.createStepDecisionForm(executionSteps[index], step)));
+    return this.fb.array(
+      stepDecisions.map((step, index) =>
+        this.createStepDecisionForm(executionSteps[index], step)
+      )
+    );
   }
 
-  createStepDecisionForm(executionStep: ExecutionStep, stepDecision: any): FormGroup {
-    const method = this.moduleService.getModuleMethod(executionStep.module, executionStep.method);
+  createStepDecisionForm(
+    executionStep: ExecutionStep,
+    stepDecision: any
+  ): FormGroup {
+    const method = this.moduleService.getModuleMethod(
+      executionStep.module,
+      executionStep.method
+    );
     if (method != null && method.createDecisionConfigurationForm != null) {
       return method.createDecisionConfigurationForm(stepDecision);
     }

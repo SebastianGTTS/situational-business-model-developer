@@ -8,10 +8,9 @@ import { ToolService } from '../../development-process-registry/method-elements/
 @Component({
   selector: 'app-tools-group-info',
   templateUrl: './tools-group-info.component.html',
-  styleUrls: ['./tools-group-info.component.css']
+  styleUrls: ['./tools-group-info.component.css'],
 })
 export class ToolsGroupInfoComponent implements OnInit {
-
   @Input() groups: MultipleSelection<Tool>[][];
   @Input() selection: GroupSelection<Tool>;
 
@@ -19,17 +18,13 @@ export class ToolsGroupInfoComponent implements OnInit {
 
   methodElements: Tool[] = [];
 
-  constructor(
-    private toolService: ToolService,
-  ) {
-  }
+  constructor(private toolService: ToolService) {}
 
   ngOnInit() {
-    this.loadMethodElements();
+    void this.loadMethodElements();
   }
 
-  private loadMethodElements() {
-    this.toolService.getAll().then((tool) => this.methodElements = tool.docs);
+  private async loadMethodElements(): Promise<void> {
+    this.methodElements = await this.toolService.getList();
   }
-
 }

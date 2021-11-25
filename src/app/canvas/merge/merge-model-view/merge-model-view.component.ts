@@ -11,31 +11,36 @@ import { CompanyModelService } from '../../../canvas-meta-model/company-model.se
 import { ExpertModelService } from '../../../canvas-meta-model/expert-model.service';
 import { RelationshipType } from '../../../canvas-meta-model/relationships';
 import { MergeService } from '../merge.service';
+import { BmProcessService } from '../../../development-process-registry/bm-process/bm-process.service';
+import { BmProcess } from '../../../development-process-registry/bm-process/bm-process';
 
 @Component({
   selector: 'app-merge-model-view',
   templateUrl: './merge-model-view.component.html',
-  styleUrls: ['./merge-model-view.component.css']
+  styleUrls: ['./merge-model-view.component.css'],
 })
 export class MergeModelViewComponent implements OnInit, OnDestroy {
-
-  @ViewChild('dependencyModal', {static: true}) dependencyModal: any;
-  @ViewChild('mergeModal', {static: true}) mergeModal: any;
-  @ViewChild('addAllModal', {static: true}) addAllModal: any;
-  @ViewChild('updateModal', {static: true}) updateModal: any;
-  @ViewChild('traceModal', {static: true}) traceModal: any;
-  @ViewChild('selectModal', {static: true}) selectModal: any;
-  @ViewChild('deleteModal', {static: true}) deleteModal: any;
+  @ViewChild('dependencyModal', { static: true }) dependencyModal: unknown;
+  @ViewChild('mergeModal', { static: true }) mergeModal: unknown;
+  @ViewChild('addAllModal', { static: true }) addAllModal: unknown;
+  @ViewChild('updateModal', { static: true }) updateModal: unknown;
+  @ViewChild('traceModal', { static: true }) traceModal: unknown;
+  @ViewChild('selectModal', { static: true }) selectModal: unknown;
+  @ViewChild('deleteModal', { static: true }) deleteModal: unknown;
 
   expertModel: ExpertModel;
   companyModel: CompanyModel;
 
-  companyFeatureList: { id: string, levelname: string }[] = [];
+  bmProcessGiven = false;
+  bmProcess?: BmProcess;
+
+  companyFeatureList: { id: string; levelname: string }[] = [];
 
   companyModelId: string;
   expertModelId: string;
 
-  paramSubscription: Subscription;
+  private querySubscription: Subscription;
+  private paramSubscription: Subscription;
 
   modalFeatureModel: FeatureModel;
   modalFeature: Feature;
@@ -49,229 +54,296 @@ export class MergeModelViewComponent implements OnInit, OnDestroy {
   isFullyMerged = false;
 
   constructor(
+    private bmProcessService: BmProcessService,
     private fb: FormBuilder,
     private mergeService: MergeService,
     private modalService: NgbModal,
     private companyModelService: CompanyModelService,
     private expertModelService: ExpertModelService,
-    private route: ActivatedRoute,
-  ) {
-  }
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.querySubscription = this.route.queryParamMap.subscribe((paramMap) => {
+      if (paramMap.has('bmProcessId')) {
+        this.bmProcessGiven = true;
+        void this.loadBmProcess(paramMap.get('bmProcessId'));
+      } else {
+        this.bmProcess = undefined;
+        this.bmProcessGiven = false;
+      }
+    });
     this.paramSubscription = this.route.paramMap.subscribe((params) => {
       this.companyModelId = params.get('companyModelId');
       this.expertModelId = params.get('expertModelId');
-      this.loadModels();
+      void this.loadModels();
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
+    if (this.querySubscription !== null) {
+      this.querySubscription.unsubscribe();
+    }
     if (this.paramSubscription !== null) {
       this.paramSubscription.unsubscribe();
     }
   }
 
-  loadModels() {
-    Promise.all([this.loadExpertModel(), this.loadCompanyModel()]).then(() => this.isFullyMerged = this.checkIsFullyMerged());
+  async loadBmProcess(bmProcessId: string): Promise<void> {
+    this.bmProcess = await this.bmProcessService.get(bmProcessId);
   }
 
-  loadExpertModel(): Promise<any> {
-    return this.expertModelService.get(this.expertModelId).then((expertModel) => this.expertModel = expertModel);
+  async loadModels(): Promise<void> {
+    await Promise.all([this.loadExpertModel(), this.loadCompanyModel()]);
+    this.isFullyMerged = this.checkIsFullyMerged();
   }
 
-  loadCompanyModel(): Promise<any> {
-    return this.companyModelService.get(this.companyModelId).then((companyModel) => {
-      if (this.companyOpenPanels === null) {
-        this.companyOpenPanels = Object.values(companyModel.features).reduce((acc, feature) => {
-          acc.push(feature.id.toString());
-          acc.push(...feature.getAllSubfeatures().filter((f) => Object.values(f.subfeatures).length > 0).map((f) => f.id.toString()));
+  async loadExpertModel(): Promise<void> {
+    this.expertModel = await this.expertModelService.get(this.expertModelId);
+  }
+
+  async loadCompanyModel(): Promise<void> {
+    const companyModel = await this.companyModelService.get(
+      this.companyModelId
+    );
+    if (this.companyOpenPanels === null) {
+      this.companyOpenPanels = Object.values(companyModel.features).reduce(
+        (acc, feature) => {
+          acc.push(feature.fixId);
+          acc.push(
+            ...feature
+              .getAllSubfeatures()
+              .filter((f) => Object.values(f.subfeatures).length > 0)
+              .map((f) => f.fixId)
+          );
           return acc;
-        }, []);
-      }
-      this.companyModel = companyModel;
-      this.companyFeatureList = companyModel.getFeatureList();
-    });
+        },
+        []
+      );
+    }
+    this.companyModel = companyModel;
+    this.companyFeatureList = companyModel.getFeatureList();
   }
 
-  openDependenciesModalExpertModel(featureId: string) {
+  openDependenciesModalExpertModel(featureId: string): void {
     this.openDependenciesModal(this.expertModel, featureId);
   }
 
-  openDependenciesModalCompanyModel(featureId: string) {
+  openDependenciesModalCompanyModel(featureId: string): void {
     this.openDependenciesModal(this.companyModel, featureId);
   }
 
-  openDependenciesModal(featureModel: FeatureModel, featureId: string) {
+  openDependenciesModal(featureModel: FeatureModel, featureId: string): void {
     const feature = featureModel.getFeature(featureId);
     this.modalFeatureModel = featureModel;
     this.modalFeature = feature;
-    this.modalReference = this.modalService.open(this.dependencyModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.dependencyModal, {
+      size: 'lg',
+    });
   }
 
-  openTraceModal(featureId) {
+  openTraceModal(featureId): void {
     this.modalFeatureModel = this.companyModel;
     this.modalFeature = this.companyModel.getFeature(featureId);
-    this.modalTracedFeature = this.expertModel.getFeature(this.modalFeature.expertModelTrace[this.expertModelId]);
-    this.modalReference = this.modalService.open(this.traceModal, {size: 'lg'});
+    this.modalTracedFeature = this.expertModel.getFeature(
+      this.modalFeature.expertModelTrace[this.expertModelId]
+    );
+    this.modalReference = this.modalService.open(this.traceModal, {
+      size: 'lg',
+    });
   }
 
-  openExpertTraceModal(featureId) {
+  openExpertTraceModal(featureId): void {
     this.modalFeatureModel = this.expertModel;
     this.modalFeature = this.expertModel.getFeature(featureId);
     this.modalTracedFeature = this.companyModel.getFeature(
-      this.companyModel.expertModelTraces[this.expertModelId].expertFeatureIdMap[featureId]
+      this.companyModel.expertModelTraces[this.expertModelId]
+        .expertFeatureIdMap[featureId]
     );
-    this.modalReference = this.modalService.open(this.traceModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.traceModal, {
+      size: 'lg',
+    });
   }
 
-  openMergeModal(featureId: string) {
+  openMergeModal(featureId: string): void {
     const expertFeature = this.expertModel.getFeature(featureId);
-    const parentId = this.companyModel.expertModelTraces[this.expertModelId].expertFeatureIdMap[expertFeature.parent.id];
-    this.modalSubfeatureIds = this.companyModel.getFeature(parentId).getAllSubfeatures().map((feature) => feature.id);
+    const parentId =
+      this.companyModel.expertModelTraces[this.expertModelId]
+        .expertFeatureIdMap[expertFeature.parent.id];
+    this.modalSubfeatureIds = this.companyModel
+      .getFeature(parentId)
+      .getAllSubfeatures()
+      .map((feature) => feature.id);
     this.modalSubfeatureIds.push(parentId);
-    const companyModelFeatureParentId = this.companyModel
-      .expertModelTraces[this.expertModelId].expertFeatureIdMap[expertFeature.parent.id];
-    this.modalFeature = new Feature(expertFeature.id, new Feature(companyModelFeatureParentId, null, {}), expertFeature);
-    this.modalReference = this.modalService.open(this.mergeModal, {size: 'lg'});
+    const companyModelFeatureParentId =
+      this.companyModel.expertModelTraces[this.expertModelId]
+        .expertFeatureIdMap[expertFeature.parent.id];
+    this.modalFeature = new Feature(
+      expertFeature.id,
+      new Feature(companyModelFeatureParentId, null, {}),
+      expertFeature
+    );
+    this.modalReference = this.modalService.open(this.mergeModal, {
+      size: 'lg',
+    });
   }
 
-  openAddAllModal(featureId: string) {
-    this.modalFeature = featureId ? this.expertModel.getFeature(featureId) : null;
-    this.modalReference = this.modalService.open(this.addAllModal, {size: 'lg'});
+  openAddAllModal(featureId: string): void {
+    this.modalFeature = featureId
+      ? this.expertModel.getFeature(featureId)
+      : null;
+    this.modalReference = this.modalService.open(this.addAllModal, {
+      size: 'lg',
+    });
   }
 
-  openSelectModal(featureId: string) {
+  openSelectModal(featureId: string): void {
     this.modalFeature = this.expertModel.getFeature(featureId);
-    this.modalSubfeatureIds = this.companyModel.getFeature(
-      this.companyModel.expertModelTraces[this.expertModelId].expertFeatureIdMap[this.modalFeature.parent.id]
-    ).getAllSubfeatures().map((feature) => feature.id);
-    const selectedIds = Object.values(this.companyModel.expertModelTraces[this.expertModelId].expertFeatureIdMap);
-    this.modalSubfeatureIds = this.modalSubfeatureIds.filter((id) => !selectedIds.includes(id));
+    this.modalSubfeatureIds = this.companyModel
+      .getFeature(
+        this.companyModel.expertModelTraces[this.expertModelId]
+          .expertFeatureIdMap[this.modalFeature.parent.id]
+      )
+      .getAllSubfeatures()
+      .map((feature) => feature.id);
+    const selectedIds = Object.values(
+      this.companyModel.expertModelTraces[this.expertModelId].expertFeatureIdMap
+    );
+    this.modalSubfeatureIds = this.modalSubfeatureIds.filter(
+      (id) => !selectedIds.includes(id)
+    );
     this.modalSelectFeatureForm = this.fb.group({
       feature: null,
     });
-    this.modalReference = this.modalService.open(this.selectModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.selectModal, {
+      size: 'lg',
+    });
   }
 
-  openDeleteFeatureModal(featureId: string) {
+  openDeleteFeatureModal(featureId: string): void {
     this.modalFeature = this.companyModel.getFeature(featureId);
-    this.modalReference = this.modalService.open(this.deleteModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.deleteModal, {
+      size: 'lg',
+    });
   }
 
-  openUpdateFeatureModal(featureId: string) {
+  openUpdateFeatureModal(featureId: string): void {
     const feature = this.companyModel.getFeature(featureId);
     this.modalFeature = feature;
     this.modalSubfeatureIds = feature.getAllSubfeatures().map((f) => f.id);
     this.modalSubfeatureIds.push(feature.id);
-    this.modalReference = this.modalService.open(this.updateModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.updateModal, {
+      size: 'lg',
+    });
   }
 
   /**
    * Closes the current modal.
    */
-  closeModal() {
+  async closeModal(): Promise<void> {
     this.modalReference.close();
     this.modalFeature = null;
-    this.loadModels();
+    await this.loadModels();
   }
 
-  mergeFeature(featureForm: FormGroup) {
-    this.mergeService.addFeatureMerge(
+  async mergeFeature(featureForm: FormGroup): Promise<void> {
+    await this.mergeService.addFeatureMerge(
       this.companyModelId,
       featureForm.value,
       featureForm.get('subfeatureOf').value,
       this.expertModelId,
-      this.modalFeature.id,
-    ).then(() => {
-      this.closeModal();
-    }, error => {
-      console.log('MergeFeature: ' + error);
-    });
+      this.modalFeature.id
+    );
+    await this.closeModal();
   }
 
-  addAll(featureId: string) {
-    this.mergeService.addAllSubfeaturesMerge(
+  async addAll(featureId: string): Promise<void> {
+    await this.mergeService.addAllSubfeaturesMerge(
       this.companyModelId,
       this.expertModelId,
-      featureId,
-    ).then(
-      () => this.closeModal(),
-      error => console.log('AddAll: ' + error)
+      featureId
     );
+    await this.closeModal();
   }
 
-  mergeIntoSelected() {
-    this.mergeService.addTrace(
-      this.companyModelId, this.modalSelectFeatureForm.value.feature, this.expertModelId, this.modalFeature.id
-    ).then(() => {
-      this.closeModal();
-    });
+  async mergeIntoSelected(): Promise<void> {
+    await this.mergeService.addTrace(
+      this.companyModelId,
+      this.modalSelectFeatureForm.value.feature,
+      this.expertModelId,
+      this.modalFeature.id
+    );
+    await this.closeModal();
   }
 
-  deleteTrace() {
+  async deleteTrace(): Promise<void> {
     if (this.modalFeatureModel === this.companyModel) {
-      this.deleteCompanyTrace();
+      await this.deleteCompanyTrace();
     } else {
-      this.deleteExpertTrace();
+      await this.deleteExpertTrace();
     }
   }
 
-  deleteCompanyTrace() {
-    this.mergeService.deleteTrace(
-      this.companyModelId, this.modalFeature.id, this.expertModelId,
-    ).then(() => {
-      this.closeModal();
-    });
+  async deleteCompanyTrace(): Promise<void> {
+    await this.mergeService.deleteTrace(
+      this.companyModelId,
+      this.modalFeature.id,
+      this.expertModelId
+    );
+    await this.closeModal();
   }
 
-  deleteExpertTrace() {
-    this.mergeService.deleteTrace(
-      this.companyModelId, this.modalTracedFeature.id, this.expertModelId,
-    ).then(() => {
-      this.closeModal();
-    });
+  async deleteExpertTrace(): Promise<void> {
+    await this.mergeService.deleteTrace(
+      this.companyModelId,
+      this.modalTracedFeature.id,
+      this.expertModelId
+    );
+    await this.closeModal();
   }
 
-  deleteFeature(featureId) {
-    this.mergeService.deleteFeature(this.companyModelId, featureId).then(() => {
-      this.closeModal();
-    }, error => {
-      console.log('DeleteFeature: ' + error);
-    });
+  async deleteFeature(featureId): Promise<void> {
+    await this.mergeService.deleteFeature(this.companyModelId, featureId);
+    await this.closeModal();
   }
 
-  addDependency(relationshipType: RelationshipType, fromFeatureId: string, toFeatureId: string) {
-    this.mergeService.addRelationship(this.companyModelId, relationshipType, fromFeatureId, toFeatureId).then(() => {
-      this.closeModal();
-    }, error => {
-      console.log('AddDependency: ' + error);
-    });
+  async addDependency(
+    relationshipType: RelationshipType,
+    fromFeatureId: string,
+    toFeatureId: string
+  ): Promise<void> {
+    await this.mergeService.addRelationship(
+      this.companyModelId,
+      relationshipType,
+      fromFeatureId,
+      toFeatureId
+    );
+    await this.closeModal();
   }
 
-  deleteDependency(relationshipType: RelationshipType, fromId: string, toId: string) {
-    this.mergeService.removeRelationship(this.companyModelId, relationshipType, fromId, toId).then(() => {
-      this.loadModels();
-      this.companyModelService.get(this.companyModelId).then(
-        (featureModel) => this.modalFeature = featureModel.getFeature(this.modalFeature.id),
-        (error) => console.log('DeleteDependency: ' + error),
-      );
-    }, error => {
-      console.log('DeleteDependency: ' + error);
-    });
+  async deleteDependency(
+    relationshipType: RelationshipType,
+    fromId: string,
+    toId: string
+  ): Promise<void> {
+    await this.mergeService.removeRelationship(
+      this.companyModelId,
+      relationshipType,
+      fromId,
+      toId
+    );
+    await this.loadModels();
+    this.modalFeature = this.companyModel.getFeature(this.modalFeature.id);
   }
 
-  updateFeature(featureForm: FormGroup) {
-    this.mergeService.updateFeature(
+  async updateFeature(featureForm: FormGroup): Promise<void> {
+    await this.mergeService.updateFeature(
       this.companyModelId,
       this.modalFeature.id,
       featureForm.value,
       featureForm.get('subfeatureOf').value
-    ).then(() => {
-      this.closeModal();
-    }, error => {
-      console.log('UpdateFeature: ' + error);
-    });
+    );
+    await this.closeModal();
   }
 
   asKeys(map: { [id: string]: Feature }): string[] {
@@ -279,8 +351,12 @@ export class MergeModelViewComponent implements OnInit, OnDestroy {
   }
 
   private checkIsFullyMerged(): boolean {
-    return this.expertModel.getFeatureList().every(
-      (feature) => !!this.companyModel.expertModelTraces[this.expertModel._id].expertFeatureIdMap[feature.id]
-    );
+    return this.expertModel
+      .getFeatureList()
+      .every(
+        (feature) =>
+          !!this.companyModel.expertModelTraces[this.expertModel._id]
+            .expertFeatureIdMap[feature.id]
+      );
   }
 }

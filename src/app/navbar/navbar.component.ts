@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { InternalRoles, UserService } from '../user.service';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 class NavItem {
   name: string;
@@ -16,38 +17,77 @@ class RootNavItem extends NavItem {
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.css']
+  styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-
   navItems: RootNavItem[] = [
-    {name: 'Running Methods', route: ['runningprocess'], roles: [InternalRoles.BUSINESSDEVELOPER]},
     {
-      name: 'Method Modeler', submenu: [
-        {name: 'Methods', route: ['bmprocess'], roles: [InternalRoles.EXPERT]},
-        {name: 'Patterns', route: ['process'], roles: [InternalRoles.EXPERT]},
-        {name: 'Building Blocks', route: ['methods'], roles: [InternalRoles.EXPERT]},
-      ], roles: [InternalRoles.EXPERT],
+      name: 'Method Enactment',
+      route: ['runningprocess'],
+      roles: [InternalRoles.BUSINESSDEVELOPER],
     },
     {
-      name: 'Method Elements', submenu: [
-        {name: 'Artifacts', route: ['artifacts'], roles: [InternalRoles.EXPERT]},
-        {name: 'Situational Factors', route: ['situationalFactors'], roles: [InternalRoles.EXPERT]},
-        {name: 'Stakeholders', route: ['stakeholders'], roles: [InternalRoles.EXPERT]},
-        {name: 'Tools', route: ['tools'], roles: [InternalRoles.EXPERT]},
-        {name: 'Types', route: ['types'], roles: [InternalRoles.EXPERT]},
-      ], roles: [InternalRoles.EXPERT],
+      name: 'Artifacts',
+      route: ['concreteArtifacts'],
+      roles: [InternalRoles.BUSINESSDEVELOPER],
     },
-    {name: 'Domains', route: ['domains'], roles: [InternalRoles.EXPERT]},
     {
-      name: 'Canvas', submenu: [
-        {name: 'Expert Models', route: ['expertModels'], roles: [InternalRoles.EXPERT]},
-        {name: 'Company Models', route: ['companyModels'], roles: [InternalRoles.EXPERT]},
-        {name: 'Canvas Definitions', route: ['canvas', 'definitions'], roles: [InternalRoles.EXPERT]},
-      ], roles: [InternalRoles.EXPERT],
+      name: 'Method Composition',
+      route: ['bmprocess'],
+      roles: [InternalRoles.EXPERT],
     },
-    {name: 'Explanation', route: ['explanation'], roles: [InternalRoles.EXPERT, InternalRoles.BUSINESSDEVELOPER]},
-    {name: 'Options', route: ['options'], roles: [InternalRoles.EXPERT, InternalRoles.BUSINESSDEVELOPER]},
+    {
+      name: 'Method Repository',
+      submenu: [
+        {
+          name: 'Method Patterns',
+          route: ['process'],
+          roles: [InternalRoles.EXPERT],
+        },
+        {
+          name: 'Method Building Blocks',
+          route: ['methods'],
+          roles: [InternalRoles.EXPERT],
+        },
+        {
+          name: 'Method Elements',
+          route: ['methodElements'],
+          roles: [InternalRoles.EXPERT],
+        },
+      ],
+      roles: [InternalRoles.EXPERT],
+    },
+    {
+      name: 'Model Composition',
+      route: ['companyModels'],
+      roles: [InternalRoles.EXPERT],
+    },
+    {
+      name: 'Canvas Model Repository',
+      submenu: [
+        {
+          name: 'Canvas Building Blocks',
+          route: ['expertModels'],
+          roles: [InternalRoles.EXPERT],
+        },
+        {
+          name: 'Canvas Models',
+          route: ['canvas', 'definitions'],
+          roles: [InternalRoles.EXPERT],
+        },
+        {
+          name: 'Canvas Elements',
+          route: ['canvasElements'],
+          roles: [InternalRoles.EXPERT],
+        },
+      ],
+      roles: [InternalRoles.EXPERT],
+    },
+    {
+      name: 'Explanation',
+      route: ['explanation'],
+      roles: [InternalRoles.EXPERT, InternalRoles.BUSINESSDEVELOPER],
+    },
   ];
   navExpanded = false;
 
@@ -59,27 +99,31 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService,
-  ) {
+    private router: Router,
+    private userService: UserService
+  ) {}
+
+  ngOnInit(): void {
+    this.roleForm.setValue({ role: this.userService.activatedRole });
+    this.roleSubscription = this.roleForm
+      .get('role')
+      .valueChanges.subscribe((role) => {
+        this.userService.activatedRole = role;
+        void this.router.navigate(['/', 'start']);
+      });
   }
 
-  ngOnInit() {
-    this.roleForm.setValue({role: this.userService.activatedRole});
-    this.roleSubscription = this.roleForm.get('role').valueChanges.subscribe((role) => this.userService.activatedRole = role);
-  }
-
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.roleSubscription) {
       this.roleSubscription.unsubscribe();
     }
   }
 
-  get roles() {
+  get roles(): InternalRoles[] {
     return Object.values(InternalRoles);
   }
 
-  get currentRole() {
+  get currentRole(): InternalRoles {
     return this.userService.activatedRole;
   }
-
 }

@@ -6,9 +6,11 @@
     </button>
   </div>
   <div class="modal-body">
-    <app-process-patterns-selection-form [processPatterns]="modalProcessPatterns"
-                                         [contextSituationalFactors]="bmProcess.situationalFactors"
-                                         (selectProcessPattern)="addProcessPattern($event); c()"></app-process-patterns-selection-form>
+    <app-process-patterns-selection-form
+      [processPatterns]="modalProcessPatterns"
+      [contextSituationalFactors]="bmProcess.situationalFactors"
+      (selectProcessPattern)="addProcessPattern($event); c()"
+    ></app-process-patterns-selection-form>
   </div>
 </ng-template>
 
@@ -20,45 +22,73 @@
     </button>
   </div>
   <div class="modal-body">
-    <app-process-patterns-selection-form [processPatterns]="modalProcessPatterns"
-                                         [contextSituationalFactors]="bmProcess.situationalFactors"
-                                         (selectProcessPattern)="selectProcessPattern(modalElement, $event); c()"></app-process-patterns-selection-form>
+    <app-process-patterns-selection-form
+      [processPatterns]="modalProcessPatterns"
+      [contextSituationalFactors]="bmProcess.situationalFactors"
+      (selectProcessPattern)="selectProcessPattern(modalElement, $event); c()"
+    ></app-process-patterns-selection-form>
   </div>
 </ng-template>
 
 <ng-template #showTypesModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Show types of {{modalElement.businessObject.name}}</h4>
+    <h4 class="modal-title">
+      Show types of {{ modalElement.businessObject.name }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <div class="alert alert-info">
-      Types that are defined for this activity. Angle brackets ("<<", ">>") indicate lists.
+      Types that are defined for this activity.
     </div>
     <div class="alert alert-info" *ngIf="modalElement.businessObject.inherit">
       Types are inherited from parent element.
     </div>
     <ng-container *ngIf="!modalElement.businessObject.inherit">
       <h5>Needed</h5>
-      <ul class="list-group" *ngIf="modalElement.businessObject.get('neededType').length > 0">
-        <li class="list-group-item" *ngFor="let element of modalElement.businessObject.get('neededType')">
-          <span *ngIf="element.element">{{element.element.name}} (<<{{element.list}}>>)</span>
-          <span *ngIf="!element.element"><<{{element.list}}>></span>
+      <ul
+        class="list-group"
+        *ngIf="modalElement.businessObject.get('neededType').length > 0"
+      >
+        <li
+          class="list-group-item"
+          *ngFor="let element of modalElement.businessObject.get('neededType')"
+        >
+          <span *ngIf="element.element"
+            >{{ element.element.name }} ({{ $any(element.list) | list }})</span
+          >
+          <span *ngIf="!element.element">{{ $any(element.list) | list }}</span>
         </li>
       </ul>
-      <div class="alert alert-info" *ngIf="modalElement.businessObject.get('neededType').length === 0">
+      <div
+        class="alert alert-info"
+        *ngIf="modalElement.businessObject.get('neededType').length === 0"
+      >
         No needed types defined for this activity.
       </div>
       <h5 class="mt-3">Forbidden</h5>
-      <ul class="list-group" *ngIf="modalElement.businessObject.get('forbiddenType').length > 0">
-        <li class="list-group-item" *ngFor="let element of modalElement.businessObject.get('forbiddenType')">
-          <span *ngIf="element.element"><<{{element.list}}>> {{element.element.name}}</span>
-          <span *ngIf="!element.element"><<{{element.list}}>></span>
+      <ul
+        class="list-group"
+        *ngIf="modalElement.businessObject.get('forbiddenType').length > 0"
+      >
+        <li
+          class="list-group-item"
+          *ngFor="
+            let element of modalElement.businessObject.get('forbiddenType')
+          "
+        >
+          <span *ngIf="element.element"
+            >{{ $any(element.list) | list }} {{ element.element.name }}</span
+          >
+          <span *ngIf="!element.element">{{ $any(element.list) | list }}</span>
         </li>
       </ul>
-      <div class="alert alert-info" *ngIf="modalElement.businessObject.get('forbiddenType').length === 0">
+      <div
+        class="alert alert-info"
+        *ngIf="modalElement.businessObject.get('forbiddenType').length === 0"
+      >
         No forbidden types defined for this activity.
       </div>
     </ng-container>
@@ -67,16 +97,23 @@
 
 <ng-template #deleteProcessPatternModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Delete Method Pattern {{modalElement.businessObject.name}}</h4>
+    <h4 class="modal-title">
+      Delete Method Pattern {{ modalElement.businessObject.name }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <div class="alert alert-warning">Deleting the Method Pattern {{modalElement.businessObject.name}}.</div>
+    <div class="alert alert-warning">
+      Deleting the Method Pattern {{ modalElement.businessObject.name }}.
+    </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-danger btn-block" (click)="deleteProcessPattern(modalElement); d()">
+    <button
+      class="btn btn-danger btn-block"
+      (click)="deleteProcessPattern(modalElement); d()"
+    >
       Delete Method Pattern
     </button>
   </div>
@@ -84,73 +121,135 @@
 
 <ng-template #selectDevelopmentMethodModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Select Method Building Block for {{modalElement.businessObject.name}}</h4>
+    <h4 class="modal-title">
+      Select Method Building Block for {{ modalElement.businessObject.name }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-development-methods-selection-form [contextSituationalFactors]="bmProcess.situationalFactors"
-                                            [developmentMethods]="validDevelopmentMethods"
-                                            (selectDevelopmentMethod)="selectDevelopmentMethod(modalElement, $event); resetSelectDevelopmentMethodModal()"></app-development-methods-selection-form>
+    <app-development-methods-selection-form
+      [contextSituationalFactors]="bmProcess.situationalFactors"
+      [developmentMethods]="validDevelopmentMethods"
+      (selectDevelopmentMethod)="selectDevelopmentMethod(modalElement, $event)"
+    ></app-development-methods-selection-form>
   </div>
 </ng-template>
 
 <ng-template #methodInfoModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Overview of Activity {{modalElement.businessObject.name}}</h4>
+    <h4 class="modal-title">
+      Overview of Activity {{ modalElement.businessObject.name }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-method-info [bmProcess]="bmProcess" [contextDomains]="bmProcess.domains"
-                     [contextSituationalFactors]="bmProcess.situationalFactors"
-                     [developmentMethod]="modalDevelopmentMethod" [decision]="bmProcess.decisions[modalElement.id]"
-                     (updateDecisions)="updateDecisions($event)"></app-method-info>
+    <app-method-info
+      [bmProcess]="bmProcess"
+      [contextDomains]="bmProcess.domains"
+      [contextSituationalFactors]="bmProcess.situationalFactors"
+      [developmentMethod]="modalDevelopmentMethod"
+      [decision]="bmProcess.decisions[modalElement.id]"
+      (updateDecisions)="updateDecisions($event)"
+    ></app-method-info>
   </div>
 </ng-template>
 
 <ng-template #developmentMethodSummaryModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Summary of Activity {{modalElement.businessObject.name}}</h4>
+    <h4 class="modal-title">
+      Summary of Activity {{ modalElement.businessObject.name }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-development-method-summary [decision]="bmProcess.decisions[modalElement.id]"></app-development-method-summary>
+    <app-development-method-summary
+      [decision]="bmProcess.decisions[modalElement.id]"
+    ></app-development-method-summary>
   </div>
 </ng-template>
 
 <ng-template #patternInfoModal let-d="dismiss">
   <div class="modal-header">
     <h4 *ngIf="modalElement.businessObject.taskName" class="modal-title">
-      Overview of Activity {{modalElement.businessObject.taskName}}
+      Overview of Activity {{ modalElement.businessObject.taskName }}
     </h4>
     <h4 *ngIf="!modalElement.businessObject.taskName" class="modal-title">
-      Overview of Pattern {{modalProcessPattern.name}}
+      Overview of Pattern {{ modalProcessPattern.name }}
     </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-pattern-info [contextSituationalFactors]="bmProcess.situationalFactors"
-                      [processPattern]="modalProcessPattern"></app-pattern-info>
+    <app-pattern-info
+      [contextSituationalFactors]="bmProcess.situationalFactors"
+      [processPattern]="modalProcessPattern"
+    ></app-pattern-info>
   </div>
 </ng-template>
 
 <div #canvas class="border" style="height: 500px"></div>
 <div class="container">
+  <div class="p-3 bg-white rounded shadow-sm">
+    <div class="row">
+      <div class="col-4"><strong>Legend:</strong></div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="fas fa-list bpmn-legend-icon"></i> Show types
+      </div>
+      <div class="col-4">
+        <i class="fas fa-clipboard-check bpmn-legend-icon"></i> Show Method
+        Building Block summary
+      </div>
+      <div class="col-4">
+        <i class="fas fa-info-circle bpmn-legend-icon"></i> Show Method Pattern
+        details
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="fas fa-database bpmn-legend-icon"></i> Select Method Building
+        Block
+      </div>
+      <div class="col-4">
+        <i class="fas fa-clipboard-list bpmn-legend-icon"></i> Edit Method
+        Building Block details
+      </div>
+      <div class="col-4">
+        <i class="far fa-trash-alt bpmn-legend-icon"></i> Remove Method Building
+        Block from task / Delete Method Pattern
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="fas fa-sign-in-alt bpmn-legend-icon"></i> Insert Method
+        Pattern
+      </div>
+      <div class="col-4">
+        <i class="far fa-plus-square bpmn-legend-icon"></i> Add Method Pattern
+      </div>
+    </div>
+  </div>
+
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Controls</h6>
-    <button class="btn btn-primary" (click)="saveDiagram()">Save Diagram</button>
+    <button class="btn btn-primary" (click)="saveDiagram()">
+      Save Diagram
+    </button>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Warnings</h6>
-    <div *ngIf="isGeneratingWarnings" class="alert alert-info mb-0">Loading warnings</div>
+    <div *ngIf="isGeneratingWarnings" class="alert alert-info mb-0">
+      Loading warnings
+    </div>
     <ngb-accordion *ngIf="!isGeneratingWarnings">
       <ngb-panel title="Low value Warnings">
         <ng-template ngbPanelContent>
@@ -159,11 +258,15 @@
           </div>
           <ul *ngIf="lowWarnings.length > 0">
             <li *ngFor="let warning of lowWarnings">
-              {{warning.elementName}} <a [routerLink]="[]"
-                                         (click)="selectElement(warning.elementId)">{{warning.name}}</a>
+              {{ warning.elementName }}
+              <a [routerLink]="[]" (click)="selectElement(warning.elementId)">{{
+                warning.name
+              }}</a>
               has a too low value for the following factors
               <ul>
-                <li *ngFor="let factor of warning.situationalFactors">{{factor}}</li>
+                <li *ngFor="let factor of warning.situationalFactors">
+                  {{ factor }}
+                </li>
               </ul>
             </li>
           </ul>
@@ -171,16 +274,24 @@
       </ngb-panel>
       <ngb-panel title="Incorrect value Warnings">
         <ng-template ngbPanelContent>
-          <div *ngIf="incorrectWarnings.length === 0" class="alert alert-success mb-0">
-            There are no warnings about situational factors with an incorrect value
+          <div
+            *ngIf="incorrectWarnings.length === 0"
+            class="alert alert-success mb-0"
+          >
+            There are no warnings about situational factors with an incorrect
+            value
           </div>
           <ul *ngIf="incorrectWarnings.length > 0">
             <li *ngFor="let warning of incorrectWarnings">
-              {{warning.elementName}} <a [routerLink]="[]"
-                                         (click)="selectElement(warning.elementId)">{{warning.name}}</a>
+              {{ warning.elementName }}
+              <a [routerLink]="[]" (click)="selectElement(warning.elementId)">{{
+                warning.name
+              }}</a>
               has an incorrect value for the following factors
               <ul>
-                <li *ngFor="let factor of warning.situationalFactors">{{factor}}</li>
+                <li *ngFor="let factor of warning.situationalFactors">
+                  {{ factor }}
+                </li>
               </ul>
             </li>
           </ul>
@@ -188,16 +299,23 @@
       </ngb-panel>
       <ngb-panel title="Missing Artifacts">
         <ng-template ngbPanelContent>
-          <div *ngIf="missingArtifacts.length === 0" class="alert alert-success mb-0">
+          <div
+            *ngIf="missingArtifacts.length === 0"
+            class="alert alert-success mb-0"
+          >
             There are no warnings about missing artifacts
           </div>
           <ul *ngIf="missingArtifacts.length > 0">
             <li *ngFor="let warning of missingArtifacts">
-              {{warning.elementName}} <a [routerLink]="[]"
-                                         (click)="selectElement(warning.elementId)">{{warning.name}}</a>
+              {{ warning.elementName }}
+              <a [routerLink]="[]" (click)="selectElement(warning.elementId)">{{
+                warning.name
+              }}</a>
               is missing the following Artifacts
               <ul>
-                <li *ngFor="let artifact of warning.artifacts">{{artifact.name}}</li>
+                <li *ngFor="let artifact of warning.artifacts">
+                  {{ artifact.name }}
+                </li>
               </ul>
             </li>
           </ul>
@@ -205,13 +323,18 @@
       </ngb-panel>
       <ngb-panel title="Unreachable">
         <ng-template ngbPanelContent>
-          <div *ngIf="unreachableActivities.length === 0" class="alert alert-success mb-0">
+          <div
+            *ngIf="unreachableActivities.length === 0"
+            class="alert alert-success mb-0"
+          >
             There are no warnings about unreachable methods or activities
           </div>
           <ul *ngIf="unreachableActivities.length > 0">
             <li *ngFor="let warning of unreachableActivities">
-              {{warning.elementName}} <a [routerLink]="[]"
-                                         (click)="selectElement(warning.elementId)">{{warning.name}}</a>
+              {{ warning.elementName }}
+              <a [routerLink]="[]" (click)="selectElement(warning.elementId)">{{
+                warning.name
+              }}</a>
               can not be reached.
             </li>
           </ul>
@@ -220,4 +343,3 @@
     </ngb-accordion>
   </div>
 </div>
-

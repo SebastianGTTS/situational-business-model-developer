@@ -14,11 +14,9 @@ export enum ExecutionErrors {
   providedIn: DevelopmentProcessRegistryModule,
 })
 export class ProcessExecutionService {
-
   constructor(
-    private processExecutionModelerService: ProcessExecutionModelerService,
-  ) {
-  }
+    private processExecutionModelerService: ProcessExecutionModelerService
+  ) {}
 
   /**
    * Initialize a running process and add the first token
@@ -26,10 +24,15 @@ export class ProcessExecutionService {
    * @param runningProcess the running process
    */
   async initRunningProcess(runningProcess: RunningProcess): Promise<void> {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const startNode = this.processExecutionModelerService.getStartNode(modeler);
     this.processExecutionModelerService.updateTokens(modeler, startNode, 1);
-    await this.processExecutionModelerService.endModeling(runningProcess, modeler);
+    await this.processExecutionModelerService.endModeling(
+      runningProcess,
+      modeler
+    );
   }
 
   /**
@@ -40,17 +43,29 @@ export class ProcessExecutionService {
    * @param nodeId the id of the node
    * @param flowId the id of the flow to take if the node is a XOR node with multiple outgoing nodes
    */
-  async moveToNextStep(runningProcess: RunningProcess, nodeId: string, flowId: string = null): Promise<void> {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+  async moveToNextStep(
+    runningProcess: RunningProcess,
+    nodeId: string,
+    flowId: string = null
+  ): Promise<void> {
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const node = this.processExecutionModelerService.getNode(modeler, nodeId);
     if (node == null) {
       throw new Error(ExecutionErrors.NODE_NOT_FOUND);
     }
-    if (!this.processExecutionModelerService.isCommonNode(node) && runningProcess.isExecutable(nodeId)) {
+    if (
+      !this.processExecutionModelerService.isCommonNode(node) &&
+      runningProcess.isExecutable(nodeId)
+    ) {
       throw new Error(ExecutionErrors.INCORRECT_NODE);
     }
     this._moveToNextStep(modeler, node, flowId);
-    await this.processExecutionModelerService.endModeling(runningProcess, modeler);
+    await this.processExecutionModelerService.endModeling(
+      runningProcess,
+      modeler
+    );
   }
 
   /**
@@ -66,16 +81,27 @@ export class ProcessExecutionService {
       throw new Error(ExecutionErrors.NOT_ENOUGH_TOKENS);
     }
     let targetFlows = this.processExecutionModelerService.getTargetFlows(node);
-    if (this.processExecutionModelerService.isExclusiveGateway(node) && targetFlows.length > 1 &&
-      (flowId == null || !targetFlows.map((flow) => flow.id).includes(flowId))) {
+    if (
+      this.processExecutionModelerService.isExclusiveGateway(node) &&
+      targetFlows.length > 1 &&
+      (flowId == null || !targetFlows.map((flow) => flow.id).includes(flowId))
+    ) {
       throw new Error(ExecutionErrors.MULTIPLE_OPTIONS);
     }
-    if (this.processExecutionModelerService.isExclusiveGateway(node) && targetFlows.length > 1 && flowId != null) {
+    if (
+      this.processExecutionModelerService.isExclusiveGateway(node) &&
+      targetFlows.length > 1 &&
+      flowId != null
+    ) {
       targetFlows = [targetFlows.find((flow) => flow.id === flowId)];
     }
     this.processExecutionModelerService.setExecuted(modeler, node);
     this.followFlows(modeler, targetFlows);
-    this.processExecutionModelerService.updateTokens(modeler, node, -this.getMinimumNeededTokens(node));
+    this.processExecutionModelerService.updateTokens(
+      modeler,
+      node,
+      -this.getMinimumNeededTokens(node)
+    );
   }
 
   /**
@@ -84,20 +110,36 @@ export class ProcessExecutionService {
    * @param runningProcess the running process
    * @param nodeId the id of the node
    */
-  async moveToNextMethod(runningProcess: RunningProcess, nodeId: string): Promise<void> {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+  async moveToNextMethod(
+    runningProcess: RunningProcess,
+    nodeId: string
+  ): Promise<void> {
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const node = this.processExecutionModelerService.getNode(modeler, nodeId);
     if (node == null) {
       throw new Error(ExecutionErrors.NODE_NOT_FOUND);
     }
-    if (!this.processExecutionModelerService.isExecutable(node) || !runningProcess.isExecutable(nodeId)) {
+    if (
+      !this.processExecutionModelerService.isExecutable(node) ||
+      !runningProcess.isExecutable(nodeId)
+    ) {
       throw new Error(ExecutionErrors.INCORRECT_NODE);
     }
     this.processExecutionModelerService.setExecuted(modeler, node);
-    const targetFlows = this.processExecutionModelerService.getTargetFlows(node);
+    const targetFlows =
+      this.processExecutionModelerService.getTargetFlows(node);
     this.followFlows(modeler, targetFlows);
-    this.processExecutionModelerService.updateTokens(modeler, node, -this.getMinimumNeededTokens(node));
-    await this.processExecutionModelerService.endModeling(runningProcess, modeler);
+    this.processExecutionModelerService.updateTokens(
+      modeler,
+      node,
+      -this.getMinimumNeededTokens(node)
+    );
+    await this.processExecutionModelerService.endModeling(
+      runningProcess,
+      modeler
+    );
   }
 
   /**
@@ -106,10 +148,13 @@ export class ProcessExecutionService {
    * @param runningProcess the running process
    */
   async jumpToNextMethod(runningProcess: RunningProcess) {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const ignoredIds = new Set<string>();
     const filterCommonNodes = (node) =>
-      (this.processExecutionModelerService.isCommonNode(node) || !runningProcess.isExecutable(node.id)) &&
+      (this.processExecutionModelerService.isCommonNode(node) ||
+        !runningProcess.isExecutable(node.id)) &&
       !ignoredIds.has(node.id);
     for (
       let nodes = this._getExecutableNodes(modeler).filter(filterCommonNodes);
@@ -128,7 +173,10 @@ export class ProcessExecutionService {
         }
       }
     }
-    await this.processExecutionModelerService.endModeling(runningProcess, modeler);
+    await this.processExecutionModelerService.endModeling(
+      runningProcess,
+      modeler
+    );
   }
 
   /**
@@ -138,8 +186,12 @@ export class ProcessExecutionService {
    * @param targetFlows the target flows
    */
   private followFlows(modeler: any, targetFlows: any[]): void {
-    targetFlows.forEach((flow) => this.processExecutionModelerService.setUsed(modeler, flow));
-    const targets = targetFlows.map(this.processExecutionModelerService.getTargetNode);
+    targetFlows.forEach((flow) =>
+      this.processExecutionModelerService.setUsed(modeler, flow)
+    );
+    const targets = targetFlows.map(
+      this.processExecutionModelerService.getTargetNode
+    );
     targets.forEach((target) => {
       this.processExecutionModelerService.setExecuted(modeler, target, false);
       this.processExecutionModelerService.updateTokens(modeler, target, 1);
@@ -153,13 +205,21 @@ export class ProcessExecutionService {
    * @param nodeId the id of the node to execute
    * @return true if the node can be executed
    */
-  async canExecuteNode(runningProcess: RunningProcess, nodeId: string): Promise<boolean> {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+  async canExecuteNode(
+    runningProcess: RunningProcess,
+    nodeId: string
+  ): Promise<boolean> {
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const node = this.processExecutionModelerService.getNode(modeler, nodeId);
     if (node == null) {
       throw new Error(ExecutionErrors.NODE_NOT_FOUND);
     }
-    if (!this.processExecutionModelerService.isExecutable(node) || !runningProcess.isExecutable(nodeId)) {
+    if (
+      !this.processExecutionModelerService.isExecutable(node) ||
+      !runningProcess.isExecutable(nodeId)
+    ) {
       throw new Error(ExecutionErrors.INCORRECT_NODE);
     }
     if (!this.hasEnoughTokens(node)) {
@@ -176,7 +236,9 @@ export class ProcessExecutionService {
    * @return the nodes that have enough tokens to be executed
    */
   async getExecutableNodes(runningProcess: RunningProcess): Promise<any[]> {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const nodes = this._getExecutableNodes(modeler);
     this.processExecutionModelerService.abortModeling(modeler);
     return nodes;
@@ -188,8 +250,12 @@ export class ProcessExecutionService {
    * @param runningProcess the running process
    * @return the decision nodes
    */
-  async getExecutableDecisionNodes(runningProcess: RunningProcess): Promise<any[]> {
-    const modeler = await this.processExecutionModelerService.initModeling(runningProcess);
+  async getExecutableDecisionNodes(
+    runningProcess: RunningProcess
+  ): Promise<any[]> {
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
     const nodes = this.processExecutionModelerService.filterNodes(
       modeler,
       (node) =>
@@ -210,7 +276,9 @@ export class ProcessExecutionService {
   private _getExecutableNodes(modeler: any) {
     return this.processExecutionModelerService.filterNodes(
       modeler,
-      (node) => !this.processExecutionModelerService.isSubProcess(node) && this.hasEnoughTokens(node)
+      (node) =>
+        !this.processExecutionModelerService.isSubProcess(node) &&
+        this.hasEnoughTokens(node)
     );
   }
 
@@ -221,7 +289,10 @@ export class ProcessExecutionService {
    * @return number of tokens needed to execute the node
    */
   private getMinimumNeededTokens(node): number {
-    if (this.processExecutionModelerService.isParallelGateway(node) || this.processExecutionModelerService.isExecutable(node)) {
+    if (
+      this.processExecutionModelerService.isParallelGateway(node) ||
+      this.processExecutionModelerService.isExecutable(node)
+    ) {
       return this.processExecutionModelerService.getIncomingFlows(node).length;
     }
     return 1;
@@ -234,6 +305,9 @@ export class ProcessExecutionService {
    * @return true if the node has enough tokens to be executed
    */
   private hasEnoughTokens(node): boolean {
-    return this.getMinimumNeededTokens(node) <= this.processExecutionModelerService.getTokens(node);
+    return (
+      this.getMinimumNeededTokens(node) <=
+      this.processExecutionModelerService.getTokens(node)
+    );
   }
 }

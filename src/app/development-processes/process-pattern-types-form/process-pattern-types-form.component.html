@@ -1,16 +1,20 @@
 <form [formGroup]="typesForm" (ngSubmit)="submitForm()">
-
   <div class="alert alert-info">
     Inherit types from parent to create generic patterns.
   </div>
 
   <div class="form-group">
-    <div class="btn-group btn-group-toggle" ngbRadioGroup name="inherit" formControlName="inherit">
+    <div
+      class="btn-group btn-group-toggle"
+      ngbRadioGroup
+      name="inherit"
+      formControlName="inherit"
+    >
       <label ngbButtonLabel class="btn-primary">
-        <input ngbButton type="radio" [value]="true"> Inherit types
+        <input ngbButton type="radio" [value]="true" /> Inherit types
       </label>
       <label ngbButtonLabel class="btn-primary">
-        <input ngbButton type="radio" [value]="false"> Do not inherit types
+        <input ngbButton type="radio" [value]="false" /> Do not inherit types
       </label>
     </div>
   </div>
@@ -22,7 +26,8 @@
     [createFormGroupFactory]="createFormGroupFactory"
     [listNames]="listNames"
     [methodElements]="methodElements"
-    methodElementName="Needed Type"></app-method-elements-selection-form>
+    methodElementName="Needed Type"
+  ></app-method-elements-selection-form>
 
   <app-method-elements-selection-form
     *ngIf="!typesForm.value.inherit"
@@ -31,11 +36,16 @@
     [createFormGroupFactory]="createFormGroupFactory"
     [listNames]="listNames"
     [methodElements]="methodElements"
-    methodElementName="Forbidden Type"></app-method-elements-selection-form>
+    methodElementName="Forbidden Type"
+  ></app-method-elements-selection-form>
 
   <div class="form-group row">
     <div class="col-sm-12">
-      <button type="submit" class="btn btn-dark btn-block" [disabled]="!typesForm.valid">
+      <button
+        type="submit"
+        class="btn btn-dark btn-block"
+        [disabled]="!typesForm.valid"
+      >
         Update Types
       </button>
     </div>

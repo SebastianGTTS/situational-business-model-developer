@@ -10,10 +10,9 @@ import { InstanceService } from '../instance.service';
 @Component({
   selector: 'app-pattern',
   templateUrl: './pattern.component.html',
-  styleUrls: ['./pattern.component.css']
+  styleUrls: ['./pattern.component.css'],
 })
 export class PatternComponent implements OnInit {
-
   expertModel: ExpertModel;
   pattern: Instance;
 
@@ -24,16 +23,15 @@ export class PatternComponent implements OnInit {
     private instanceService: InstanceService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
       const expertModelId = paramMap.get('id');
       const patternId = +paramMap.get('patternId');
 
-      this.load(expertModelId, patternId);
+      void this.load(expertModelId, patternId);
     });
   }
 
@@ -45,18 +43,25 @@ export class PatternComponent implements OnInit {
 
   async updateExpertModel() {
     await this.expertModelService.save(this.expertModel);
-    this.load(this.expertModel._id, this.pattern.id);
+    await this.load(this.expertModel._id, this.pattern.id);
   }
 
   /**
    * Create adaptation of the pattern
    */
   async createAdaptation() {
-    const adaptationName = this.instanceService.getAdaptionName(this.pattern.name);
+    const adaptationName = this.instanceService.getAdaptionName(
+      this.pattern.name
+    );
     this.expertModel.adaptInstance(this.pattern.id, adaptationName);
-    const instance = this.expertModel.instances[this.expertModel.instances.length - 1];
+    const instance =
+      this.expertModel.instances[this.expertModel.instances.length - 1];
     await this.expertModelService.save(this.expertModel);
-    this.router.navigate(['expertModels', this.expertModel._id, 'patterns', instance.id]);
+    await this.router.navigate([
+      'expertModels',
+      this.expertModel._id,
+      'patterns',
+      instance.id,
+    ]);
   }
-
 }

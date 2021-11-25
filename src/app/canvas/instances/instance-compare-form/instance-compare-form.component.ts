@@ -1,5 +1,19 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { CompanyModel } from '../../../canvas-meta-model/company-model';
 import { ExpertModel } from '../../../canvas-meta-model/expert-model';
 import { ExpertModelService } from '../../../canvas-meta-model/expert-model.service';
@@ -10,15 +24,19 @@ import { FeatureModel } from '../../../canvas-meta-model/feature-model';
 @Component({
   selector: 'app-instance-compare-form',
   templateUrl: './instance-compare-form.component.html',
-  styleUrls: ['./instance-compare-form.component.css']
+  styleUrls: ['./instance-compare-form.component.css'],
 })
-export class InstanceCompareFormComponent implements OnInit, OnChanges, OnDestroy {
-
+export class InstanceCompareFormComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input() currentlyComparing = false;
   @Input() companyModel: CompanyModel;
   @Input() competitors: Instance[];
 
-  @Output() compare = new EventEmitter<{ instance: Instance, featureModelId: string }>();
+  @Output() compare = new EventEmitter<{
+    instance: Instance;
+    featureModelId: string;
+  }>();
   @Output() clearCompare = new EventEmitter<void>();
 
   expertModels: ExpertModel[];
@@ -26,26 +44,29 @@ export class InstanceCompareFormComponent implements OnInit, OnChanges, OnDestro
 
   selectOtherInstanceForm: FormGroup = this.fb.group({
     featureModel: [null, Validators.required],
-    instance: [null, Validators.required]
+    instance: [null, Validators.required],
   });
 
   private formSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
-    private expertModelService: ExpertModelService,
-  ) {
-  }
+    private expertModelService: ExpertModelService
+  ) {}
 
   ngOnInit() {
-    this.formSubscription = this.featureModelControl.valueChanges.subscribe((value) => {
-      this.currentExpertModel = this.expertModels.find((expertModel) => expertModel._id === value);
-    });
+    this.formSubscription = this.featureModelControl.valueChanges.subscribe(
+      (value) => {
+        this.currentExpertModel = this.expertModels.find(
+          (expertModel) => expertModel._id === value
+        );
+      }
+    );
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.companyModel) {
-      this.loadExpertModels().then();
+      void this.loadExpertModels();
     }
     if (changes.currentlyComparing) {
       if (changes.currentlyComparing.currentValue) {
@@ -63,7 +84,9 @@ export class InstanceCompareFormComponent implements OnInit, OnChanges, OnDestro
   }
 
   submit() {
-    const featureModel: FeatureModel = this.currentExpertModel ? this.currentExpertModel : this.companyModel;
+    const featureModel: FeatureModel = this.currentExpertModel
+      ? this.currentExpertModel
+      : this.companyModel;
     this.compare.emit({
       instance: featureModel.getInstance(this.instanceControl.value),
       featureModelId: featureModel._id,
@@ -74,9 +97,18 @@ export class InstanceCompareFormComponent implements OnInit, OnChanges, OnDestro
     const expertModels: ExpertModel[] = [];
     for (const expertModelId of this.companyModel.expertModelIds) {
       const expertModel = await this.expertModelService.get(expertModelId);
-      const featureIds = expertModel.getFeatureList().map((feature) => feature.id);
-      if (featureIds.every((id) => id in this.companyModel.expertModelTraces[expertModel._id].expertFeatureIdMap) &&
-        expertModel.getExamples().length > 0) {
+      const featureIds = expertModel
+        .getFeatureList()
+        .map((feature) => feature.id);
+      if (
+        featureIds.every(
+          (id) =>
+            id in
+            this.companyModel.expertModelTraces[expertModel._id]
+              .expertFeatureIdMap
+        ) &&
+        expertModel.getExamples().length > 0
+      ) {
         expertModels.push(expertModel);
       }
     }
@@ -90,5 +122,4 @@ export class InstanceCompareFormComponent implements OnInit, OnChanges, OnDestro
   get instanceControl(): FormControl {
     return this.selectOtherInstanceForm.get('instance') as FormControl;
   }
-
 }

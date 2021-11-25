@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { KanbanBoardMethodInfo } from '../kanban-board/kanban-board-method-info';
 import { RunningProcess } from '../../development-process-registry/running-process/running-process';
 import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
@@ -7,10 +14,9 @@ import { Decision } from '../../development-process-registry/bm-process/decision
 @Component({
   selector: 'app-running-process-kanban-board',
   templateUrl: './running-process-kanban-board.component.html',
-  styleUrls: ['./running-process-kanban-board.component.css']
+  styleUrls: ['./running-process-kanban-board.component.css'],
 })
 export class RunningProcessKanbanBoardComponent implements OnChanges {
-
   @Input() runningProcess: RunningProcess;
 
   @Output() addTodo = new EventEmitter<void>();
@@ -26,14 +32,11 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
   doing: KanbanBoardMethodInfo[] = [];
   done: KanbanBoardMethodInfo[] = [];
 
-  constructor(
-    private runningProcessService: RunningProcessService,
-  ) {
-  }
+  constructor(private runningProcessService: RunningProcessService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.runningProcess) {
-      this.updateBoard(changes.runningProcess.currentValue).then();
+      void this.updateBoard(changes.runningProcess.currentValue);
     }
   }
 
@@ -59,24 +62,31 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
     this.done = this.getDoneList(runningProcess);
   }
 
-  private async getTodoList(runningProcess: RunningProcess): Promise<KanbanBoardMethodInfo[]> {
+  private async getTodoList(
+    runningProcess: RunningProcess
+  ): Promise<KanbanBoardMethodInfo[]> {
     const todo: KanbanBoardMethodInfo[] = [];
     todo.push(...runningProcess.todoMethods);
-    todo.push(...(await this.runningProcessService.getExecutableMethods(runningProcess)).map((node) => {
-      return {
-        nodeId: node.id,
-        methodName: runningProcess.process.decisions[node.id].method.name,
-      };
-    }));
+    todo.push(
+      ...(
+        await this.runningProcessService.getExecutableMethods(runningProcess)
+      ).map((node) => {
+        return {
+          nodeId: node.id,
+          methodName: runningProcess.process.decisions[node.id].method.name,
+        };
+      })
+    );
     return todo;
   }
 
-  private getDoingList(runningProcess: RunningProcess): KanbanBoardMethodInfo[] {
+  private getDoingList(
+    runningProcess: RunningProcess
+  ): KanbanBoardMethodInfo[] {
     return runningProcess.runningMethods;
   }
 
   private getDoneList(runningProcess: RunningProcess): KanbanBoardMethodInfo[] {
     return runningProcess.executedMethods;
   }
-
 }

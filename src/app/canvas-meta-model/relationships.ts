@@ -1,14 +1,15 @@
-export enum RelationshipType {
-  REQUIRES = 'requires', EXCLUDES = 'excludes', SUPPORTS = 'supports', HURTS = 'hurts'
+import { DatabaseModelPart } from '../database/database-model-part';
+import { DatabaseEntry } from '../database/database-entry';
+
+export type RelationshipType = string;
+
+export interface RelationshipsEntry extends DatabaseEntry {
+  relationships: { [type: string]: string[] };
 }
 
-export class Relationships {
-
+export class Relationships implements DatabaseModelPart {
   // JSON Schema (stored)
-  requires: string[] = [];
-  excludes: string[] = [];
-  supports: string[] = [];
-  hurts: string[] = [];
+  relationships: { [type: string]: string[] } = {};
 
   constructor(relationships: Partial<Relationships>) {
     Object.assign(this, relationships);
@@ -20,22 +21,11 @@ export class Relationships {
    * @param relationshipType the relationship type
    * @param featureId the id of the feature
    */
-  addRelationship(relationshipType: RelationshipType, featureId: string) {
-    let list: string[];
-    switch (relationshipType) {
-      case RelationshipType.REQUIRES:
-        list = this.requires;
-        break;
-      case RelationshipType.EXCLUDES:
-        list = this.excludes;
-        break;
-      case RelationshipType.SUPPORTS:
-        list = this.supports;
-        break;
-      case RelationshipType.HURTS:
-        list = this.hurts;
-        break;
+  addRelationship(relationshipType: RelationshipType, featureId: string): void {
+    if (!(relationshipType in this.relationships)) {
+      this.relationships[relationshipType] = [];
     }
+    const list: string[] = this.relationships[relationshipType];
     if (list.includes(featureId)) {
       return;
     }
@@ -48,20 +38,19 @@ export class Relationships {
    * @param relationshipType the relationship type
    * @param featureId the id of the feature
    */
-  removeRelationship(relationshipType: RelationshipType, featureId: string) {
-    switch (relationshipType) {
-      case RelationshipType.REQUIRES:
-        this.requires = this.requires.filter((id) => id !== featureId);
-        break;
-      case RelationshipType.EXCLUDES:
-        this.excludes = this.excludes.filter((id) => id !== featureId);
-        break;
-      case RelationshipType.SUPPORTS:
-        this.supports = this.supports.filter((id) => id !== featureId);
-        break;
-      case RelationshipType.HURTS:
-        this.hurts = this.hurts.filter((id) => id !== featureId);
-        break;
+  removeRelationship(
+    relationshipType: RelationshipType,
+    featureId: string
+  ): void {
+    const list: string[] = this.relationships[relationshipType];
+    if (list == null) {
+      return;
+    }
+    this.relationships[relationshipType] = list.filter(
+      (id) => id !== featureId
+    );
+    if (this.relationships[relationshipType].length === 0) {
+      delete this.relationships[relationshipType];
     }
   }
 
@@ -70,11 +59,16 @@ export class Relationships {
    *
    * @param featureIds the feature ids
    */
-  removeRelationships(featureIds: string[]) {
-    this.requires = this.requires.filter((id) => !featureIds.includes(id));
-    this.excludes = this.excludes.filter((id) => !featureIds.includes(id));
-    this.supports = this.supports.filter((id) => !featureIds.includes(id));
-    this.hurts = this.hurts.filter((id) => !featureIds.includes(id));
+  removeRelationships(featureIds: string[]): void {
+    const relationshipTypes = Object.keys(this.relationships);
+    relationshipTypes.forEach((type) => {
+      this.relationships[type] = this.relationships[type].filter(
+        (id) => !featureIds.includes(id)
+      );
+      if (this.relationships[type].length === 0) {
+        delete this.relationships[type];
+      }
+    });
   }
 
   /**
@@ -83,7 +77,11 @@ export class Relationships {
    * @return true if it has no relationships
    */
   hasNoRelationships(): boolean {
-    return this.requires.length + this.excludes.length + this.supports.length + this.hurts.length === 0;
+    const relationshipLists = Object.values(this.relationships);
+    const relationshipCount = relationshipLists
+      .map((list) => list.length)
+      .reduce((acc, current) => acc + current, 0);
+    return relationshipCount === 0;
   }
 
   /**
@@ -92,23 +90,54 @@ export class Relationships {
    * @return the array with all feature ids
    */
   getAllReferencedFeatureIds(): string[] {
-    return [
-      ...this.requires,
-      ...this.excludes,
-      ...this.supports,
-      ...this.hurts
-    ];
+    const relationshipLists = Object.values(this.relationships);
+    return relationshipLists.reduce((acc, current) => acc.concat(current), []);
+  }
+
+  /**
+   * Get the relationships of a specific type
+   *
+   * @param relationshipType the type of the relationship
+   * @return the array with all feature ids
+   */
+  getRelationships(relationshipType: RelationshipType): string[] {
+    const list: string[] = this.relationships[relationshipType];
+    if (list == null) {
+      return [];
+    }
+    return list;
+  }
+
+  /**
+   * Checks whether the relationship of a specific type to a specific feature
+   * is included
+   *
+   * @param relationshipType the relationship type
+   * @param featureId the id of the feature
+   * @return true if the relationship exists
+   */
+  hasRelationship(
+    relationshipType: RelationshipType,
+    featureId: string
+  ): boolean {
+    const relationships = this.getRelationships(relationshipType);
+    return relationships.includes(featureId);
+  }
+
+  /**
+   * Get all used relationship types in this relationship class
+   *
+   * @return an array of relationship types
+   */
+  getRelationshipTypes(): RelationshipType[] {
+    return Object.keys(this.relationships);
   }
 
   // Export
 
-  toPouchDb(): any {
+  toDb(): RelationshipsEntry {
     return {
-      requires: this.requires,
-      excludes: this.excludes,
-      supports: this.supports,
-      hurts: this.hurts
+      relationships: this.relationships,
     };
   }
-
 }

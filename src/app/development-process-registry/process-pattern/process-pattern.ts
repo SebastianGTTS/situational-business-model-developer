@@ -1,10 +1,10 @@
-import { PouchdbModel } from '../../database/pouchdb-model';
+import { DatabaseModel } from '../../database/database-model';
 import { Author } from '../../model/author';
 import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
 import { Type } from '../method-elements/type/type';
+import { Selection } from '../development-method/selection';
 
-export class ProcessPattern extends PouchdbModel {
-
+export class ProcessPattern extends DatabaseModel {
   static readonly typeName = 'ProcessPattern';
 
   name: string;
@@ -13,8 +13,8 @@ export class ProcessPattern extends PouchdbModel {
 
   pattern: string;
 
-  types: { list: string, element: Type }[] = [];
-  situationalFactors: { list: string, element: SituationalFactor }[] = [];
+  types: Selection<Type>[] = [];
+  situationalFactors: Selection<SituationalFactor>[] = [];
 
   constructor(processPattern: Partial<ProcessPattern>) {
     super(ProcessPattern.typeName);
@@ -30,43 +30,25 @@ export class ProcessPattern extends PouchdbModel {
     Object.assign(this, processPattern);
     this.author = new Author(this.author);
     this.types = this.types.map(
-      (element) => {
-        return {
-          list: element.list,
-          element: element.element ? new Type(element.element) : null,
-        };
-      }
+      (selection) => new Selection(selection, (element) => new Type(element))
     );
     this.situationalFactors = this.situationalFactors.map(
-      (factor) => {
-        return {
-          list: factor.list,
-          element: factor.element ? new SituationalFactor(factor.element) : null,
-        };
-      }
+      (selection) =>
+        new Selection(selection, (element) => new SituationalFactor(element))
     );
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
       name: this.name,
       description: this.description,
-      author: this.author.toPouchDb(),
+      author: this.author.toDb(),
       pattern: this.pattern,
-      types: this.types.map((element) => {
-        return {
-          list: element.list,
-          element: element.element ? element.element.toPouchDb() : null,
-        };
-      }),
-      situationalFactors: this.situationalFactors.map((factor) => {
-        return {
-          list: factor.list,
-          element: factor.element ? factor.element.toPouchDb() : null,
-        };
-      }),
+      types: this.types.map((selection) => selection.toDb()),
+      situationalFactors: this.situationalFactors.map((selection) =>
+        selection.toDb()
+      ),
     };
   }
-
 }

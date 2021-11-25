@@ -4,34 +4,43 @@ import { Stakeholder } from '../method-elements/stakeholder/stakeholder';
 import { Tool } from '../method-elements/tool/tool';
 import { MethodElement } from '../method-elements/method-element';
 import { MultipleSelection } from '../development-method/multiple-selection';
+import { Equality } from '../../shared/equality';
+import { equalsList } from '../../shared/utils';
+import { DatabaseModelPart } from '../../database/database-model-part';
 
-export class GroupSummary<T extends MethodElement> {
-  elements: {
-    list: string,
-    elements: T[],
-    multiple: boolean,
-    multipleElements: boolean,
-  }[];
+export interface ElementSummary<T extends MethodElement> {
+  list: string;
+  elements: T[];
+  multiple: boolean;
+  multipleElements: boolean;
 }
 
-export class GroupSelection<T extends MethodElement> {
+export class GroupSummary<T extends MethodElement> {
+  elements: ElementSummary<T>[];
+}
+
+export class GroupSelection<T extends MethodElement>
+  implements Equality<GroupSelection<T>>, DatabaseModelPart
+{
   selectedGroup: number = null;
   elements: T[][] = null;
 
-  constructor(groupSelection: Partial<GroupSelection<T>>, createElement: (element: Partial<T>) => T) {
+  constructor(
+    groupSelection: Partial<GroupSelection<T>>,
+    createElement: (element: Partial<T>) => T
+  ) {
     this.update(groupSelection, createElement);
   }
 
-  update(groupSelection: Partial<GroupSelection<T>>, createElement: (element: Partial<T>) => T) {
+  update(
+    groupSelection: Partial<GroupSelection<T>>,
+    createElement: (element: Partial<T>) => T
+  ) {
     Object.assign(this, groupSelection);
     this.elements = this.elements
       ? this.elements.map((element) =>
-        element
-          ? element.map((e) =>
-            e ? createElement(e) : null
-          )
-          : null
-      )
+          element ? element.map((e) => (e ? createElement(e) : null)) : null
+        )
       : null;
   }
 
@@ -76,24 +85,45 @@ export class GroupSelection<T extends MethodElement> {
     return summary;
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
       selectedGroup: this.selectedGroup,
       elements: this.elements
         ? this.elements.map((element) =>
-          element
-            ? element.map((e) =>
-              e ? e.toPouchDb() : null
-            )
-            : null
-        )
+            element ? element.map((e) => (e ? e.toDb() : null)) : null
+          )
         : null,
     };
   }
+
+  /**
+   * Checks whether this group selection equals another
+   *
+   * @param other the other group selection
+   * @return whether they are equal
+   */
+  equals(other: GroupSelection<T>): boolean {
+    if (other == null || other.selectedGroup !== this.selectedGroup) {
+      return false;
+    }
+    if (other.elements === null && this.elements === null) {
+      return true;
+    }
+    if (other.elements === null || this.elements === null) {
+      return false;
+    }
+    for (let i = 0; i < this.elements.length; i++) {
+      const thisElementGroup = this.elements[i];
+      const otherElementGroup = other.elements[i];
+      if (!equalsList(thisElementGroup, otherElementGroup)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
-export class Decision {
-
+export class Decision implements DatabaseModelPart {
   method: DevelopmentMethod;
   inputArtifacts: GroupSelection<Artifact>;
   outputArtifacts: GroupSelection<Artifact>;
@@ -109,42 +139,54 @@ export class Decision {
   update(decision: Partial<Decision>) {
     Object.assign(this, decision);
     this.method = new DevelopmentMethod(this.method);
-    this.inputArtifacts = new GroupSelection<Artifact>(this.inputArtifacts, (artifact) => new Artifact(artifact));
-    this.outputArtifacts = new GroupSelection<Artifact>(this.outputArtifacts, (artifact) => new Artifact(artifact));
-    this.stakeholders = new GroupSelection<Stakeholder>(this.stakeholders, (stakeholder) => new Stakeholder(stakeholder));
+    this.inputArtifacts = new GroupSelection<Artifact>(
+      this.inputArtifacts,
+      (artifact) => new Artifact(artifact)
+    );
+    this.outputArtifacts = new GroupSelection<Artifact>(
+      this.outputArtifacts,
+      (artifact) => new Artifact(artifact)
+    );
+    this.stakeholders = new GroupSelection<Stakeholder>(
+      this.stakeholders,
+      (stakeholder) => new Stakeholder(stakeholder)
+    );
     this.tools = new GroupSelection<Tool>(this.tools, (tool) => new Tool(tool));
   }
 
   isComplete(): boolean {
-    return this.inputArtifacts.isComplete(this.method.inputArtifacts) &&
+    return (
+      this.inputArtifacts.isComplete(this.method.inputArtifacts) &&
       this.outputArtifacts.isComplete(this.method.outputArtifacts) &&
       this.stakeholders.isComplete(this.method.stakeholders) &&
-      this.tools.isComplete(this.method.tools);
+      this.tools.isComplete(this.method.tools)
+    );
   }
 
   getSummary(): {
-    inputArtifacts: GroupSummary<Artifact>,
-    outputArtifacts: GroupSummary<Artifact>,
-    stakeholders: GroupSummary<Stakeholder>,
-    tools: GroupSummary<Tool>
+    inputArtifacts: GroupSummary<Artifact>;
+    outputArtifacts: GroupSummary<Artifact>;
+    stakeholders: GroupSummary<Stakeholder>;
+    tools: GroupSummary<Tool>;
   } {
     return {
       inputArtifacts: this.inputArtifacts.getList(this.method.inputArtifacts),
-      outputArtifacts: this.outputArtifacts.getList(this.method.outputArtifacts),
+      outputArtifacts: this.outputArtifacts.getList(
+        this.method.outputArtifacts
+      ),
       stakeholders: this.stakeholders.getList(this.method.stakeholders),
       tools: this.tools.getList(this.method.tools),
     };
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
-      method: this.method.toPouchDb(),
-      inputArtifacts: this.inputArtifacts.toPouchDb(),
-      outputArtifacts: this.outputArtifacts.toPouchDb(),
-      stakeholders: this.stakeholders.toPouchDb(),
-      tools: this.tools.toPouchDb(),
+      method: this.method.toDb(),
+      inputArtifacts: this.inputArtifacts.toDb(),
+      outputArtifacts: this.outputArtifacts.toDb(),
+      stakeholders: this.stakeholders.toDb(),
+      tools: this.tools.toDb(),
       stepDecisions: this.stepDecisions,
     };
   }
-
 }

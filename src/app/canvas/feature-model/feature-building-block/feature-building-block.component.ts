@@ -4,7 +4,7 @@ import { Feature } from '../../../canvas-meta-model/feature';
 @Component({
   selector: 'app-feature-building-block',
   templateUrl: './feature-building-block.component.html',
-  styleUrls: ['./feature-building-block.component.css']
+  styleUrls: ['./feature-building-block.component.css'],
 })
 /**
  * Internal class to display single features of the feature canvas.

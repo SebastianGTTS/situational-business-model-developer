@@ -1,3 +1,11 @@
+<ng-template #deleteDomainModal let-d="dismiss" let-c="close">
+  <app-delete-modal (dismiss)="d()" (delete)="deleteDomain(modalDomain); c()">
+    <div modalTitle>Delete Domain {{ modalDomain.name }}</div>
+    You are deleting the domain {{ modalDomain.name }}. This can not be undone.
+    This action will not delete the domain from models that are using it.
+  </app-delete-modal>
+</ng-template>
+
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
     <a class="nav-link active" [routerLink]="[]">Domains</a>
@@ -5,33 +13,47 @@
 </div>
 
 <main role="main" class="container">
-
   <div class="my-3 alert alert-info" role="alert">
-    Create Domains to use them for knowledge elements
+    Create Domains to use them for canvas building blocks.
   </div>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2">Domains</h6>
-    <div *ngIf="!domains">Loading...</div>
-    <div *ngIf="domains && domains.length === 0">No domains defined.</div>
-    <div *ngIf="domains && domains.length > 0">
-      <ul class="list-group">
-        <li class="d-flex list-group-item justify-content-between align-items-baseline" *ngFor="let domain of domains">
-          <div>
-            <span>{{domain.name}}</span>
-          </div>
-          <div>
-            <a [routerLink]="getRouterLink(domain)" type="button" class="btn btn-dark btn-xs mr-1">
-              View
-            </a>
-            <button (click)="deleteDomain(domain)" type="button" class="btn btn-danger btn-xs">
-              Delete
-            </button>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
+  <app-list-wrapper
+    listTitle="Domains"
+    [loading]="loading"
+    [reloading]="reloading"
+    [noResults]="noResults"
+  >
+    <div noResults>No domains defined.</div>
+    <ul results class="list-group">
+      <li
+        class="
+          d-flex
+          list-group-item
+          justify-content-between
+          align-items-baseline
+        "
+        *ngFor="let domain of domains"
+      >
+        <div>{{ domain.name }}</div>
+        <div>
+          <a
+            [routerLink]="getRouterLink(domain)"
+            type="button"
+            class="btn btn-dark btn-xs mr-1"
+          >
+            View
+          </a>
+          <button
+            (click)="openDeleteDomainModal(domain)"
+            type="button"
+            class="btn btn-danger btn-xs"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </app-list-wrapper>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Add Domain</h6>
@@ -40,12 +62,21 @@
         <div class="form-group row">
           <label for="name" class="col-sm-4 col-form-label">Name</label>
           <div class="col-sm-8">
-            <input type="text" formControlName="name" class="form-control" id="name">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              id="name"
+            />
           </div>
         </div>
         <div class="form-group row">
           <div class="col-sm-12">
-            <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!domainForm.valid">
+            <button
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!domainForm.valid"
+            >
               Add
             </button>
           </div>
@@ -53,5 +84,4 @@
       </form>
     </div>
   </div>
-
 </main>

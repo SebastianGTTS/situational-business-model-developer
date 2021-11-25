@@ -1,90 +1,128 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { CompanyModel } from '../../../canvas-meta-model/company-model';
+import { Component, OnInit } from '@angular/core';
 import { Instance } from '../../../canvas-meta-model/instance';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
-import { RunningProcessService } from '../../../development-process-registry/running-process/running-process.service';
-import { ActivatedRoute } from '@angular/router';
 import { ProcessApiService } from '../process-api.service';
 import { CanvasResolveService } from '../../canvas-resolve.service';
 import { InstanceService } from '../../instances/instance.service';
+import { InstanceLoaderService } from '../instance-loader.service';
+import { CompanyModel } from '../../../canvas-meta-model/company-model';
+import { RunningProcess } from '../../../development-process-registry/running-process/running-process';
+import { RunningMethod } from '../../../development-process-registry/running-process/running-method';
+import { Comment } from '../../../development-process-registry/running-process/comment';
+import { RunningProcessService } from '../../../development-process-registry/running-process/running-process.service';
 
 @Component({
   selector: 'app-compare',
   templateUrl: './compare.component.html',
-  styleUrls: ['./compare.component.css']
+  styleUrls: ['./compare.component.css'],
+  providers: [InstanceLoaderService, ProcessApiService],
 })
-export class CompareComponent implements OnInit, OnDestroy {
-
-  companyModel: CompanyModel;
-  instance: Instance;
+export class CompareComponent implements OnInit {
   competitors: Instance[];
 
   expertModelId: string = null;
   compareInstance: Instance = null;
   percentages: { [id: string]: number } = null;
 
-  private routeSubscription: Subscription;
-
   constructor(
     private canvasResolveService: CanvasResolveService,
     private companyModelService: CompanyModelService,
+    private instanceLoaderService: InstanceLoaderService,
     private instanceService: InstanceService,
-    public processApiService: ProcessApiService,
-    private runningProcessService: RunningProcessService,
-    private route: ActivatedRoute,
-  ) {
-  }
+    private processApiService: ProcessApiService,
+    private runningProcessService: RunningProcessService
+  ) {}
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
-      this.loadInstance(paramMap.get('companyModelId'), +paramMap.get('instanceId')).then();
+  ngOnInit(): void {
+    this.instanceLoaderService.loaded.subscribe(() => {
+      this.competitors = this.companyModel.instances.filter(
+        (instance) => instance.id !== this.instance.id
+      );
+      if (this.compareInstance) {
+        this.compare(this.compareInstance, this.expertModelId);
+      }
     });
-    this.processApiService.init(this.route);
   }
 
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-    this.processApiService.destroy();
+  finish(): void {
+    this.canvasResolveService.resolveEditCanvas(
+      this.processApiService.stepInfo,
+      this.companyModel._id,
+      this.instance.id
+    );
   }
 
-  finish() {
-    this.canvasResolveService.resolveEditCanvas(this.processApiService.stepInfo, this.companyModel._id, this.instance.id);
-  }
-
-  compare(instance: Instance, modelId: string) {
+  compare(instance: Instance, modelId: string): void {
     if (modelId !== this.companyModel._id) {
       this.expertModelId = modelId;
     } else {
       this.expertModelId = null;
     }
-    this.compareInstance =
-      this.expertModelId ?
-        this.instanceService.convertExpertInstance(this.companyModel, this.expertModelId, instance) :
-        instance;
-    this.percentages = this.instanceService.compareInstances(this.companyModel, this.instance, this.compareInstance);
+    this.compareInstance = this.expertModelId
+      ? this.instanceService.convertExpertInstance(
+          this.companyModel,
+          this.expertModelId,
+          instance
+        )
+      : instance;
+    this.percentages = this.instanceService.compareInstances(
+      this.companyModel,
+      this.instance,
+      this.compareInstance
+    );
   }
 
-  clearCompare() {
+  clearCompare(): void {
     this.expertModelId = null;
     this.compareInstance = null;
     this.percentages = null;
   }
 
-  async updateCompanyModel() {
+  async addComment(comment: Comment): Promise<void> {
+    await this.runningProcessService.addComment(
+      this.runningProcess._id,
+      this.runningMethod.executionId,
+      comment
+    );
+  }
+
+  async updateComment(comment: Comment): Promise<void> {
+    await this.runningProcessService.updateComment(
+      this.runningProcess._id,
+      this.runningMethod.executionId,
+      comment
+    );
+  }
+
+  async removeComment(commentId: string): Promise<void> {
+    await this.runningProcessService.removeComment(
+      this.runningProcess._id,
+      this.runningMethod.executionId,
+      commentId
+    );
+  }
+
+  async updateCompanyModel(): Promise<void> {
     await this.companyModelService.save(this.companyModel);
-    await this.loadInstance(this.companyModel._id, this.instance.id);
   }
 
-  async loadInstance(companyModelId: string, instanceId: number) {
-    this.companyModel = await this.companyModelService.get(companyModelId);
-    this.instance = this.companyModel.getInstance(instanceId);
-    this.competitors = this.companyModel.instances.filter((instance) => instance.id !== this.instance.id);
-    if (this.compareInstance) {
-      this.compare(this.compareInstance, this.expertModelId);
-    }
+  get companyModel(): CompanyModel {
+    return this.instanceLoaderService.companyModel;
   }
 
+  get instance(): Instance {
+    return this.instanceLoaderService.instance;
+  }
+
+  private get runningProcess(): RunningProcess {
+    return this.processApiService.runningProcess;
+  }
+
+  get runningMethod(): RunningMethod {
+    return this.processApiService.runningMethod;
+  }
+
+  isCorrectStep(): boolean {
+    return this.processApiService.isCorrectStep();
+  }
 }

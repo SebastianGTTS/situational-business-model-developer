@@ -1,53 +1,87 @@
 <div class="my-3 p-3 bg-white rounded shadow-sm">
-  <h6 class="border-bottom border-gray pb-2">Explanation of the BMDL Modeler</h6>
-  <p>The BMDL Feature Modeler is a tool to describe Business Models through a combination of the Business Model
-    Canvas (BMC) and a Software Product Line (SPL). We call this concept Business Model Decision Line (BMDL), where
-    each feature describes a single business model decision. Features can be ordered in hierarchies and marked as
-    mandatory or optional for the business models. Moreover, there can be Or (at least one sub-feature is selected)
-    and Alternate (exactly one sub-feature is selected) relationships between a parent and a child feature. To
-    refine the business models, cross-tree constraints for requiring and excluding dependencies can be made.</p>
+  <h6 class="border-bottom border-gray pb-2">
+    Explanation of the Model Engine
+  </h6>
+  <p>
+    The Model Engine is a tool to describe Business Models through a combination
+    of the Business Model Canvas (BMC) and a Software Product Line (SPL). We
+    call this concept Business Model Decision Line (BMDL), where each feature
+    describes a single business model decision. Features can be ordered in
+    hierarchies and marked as mandatory or optional for the business models.
+    Moreover, there can be Or (at least one sub-feature is selected) and
+    Alternate (exactly one sub-feature is selected) relationships between a
+    parent and a child feature. To refine the business models, cross-tree
+    constraints for requiring and excluding dependencies can be made.
+  </p>
 
-  <p>The current state of the tool allows the creation, import and export of expert knowledge models.
-    The tool guides the user through the different steps to create a knowledge model and can show errors if a
-    knowledge model does not allow the creation of consistent derived business models due to too restrictive
-    constraints. After creating or importing expert knowledge models the user is able to merge these models into
-    company knowledge models.</p>
+  <p>
+    The current state of the tool allows the creation, import and export of
+    canvas building blocks. The tool guides the user through the different steps
+    to create a canvas building block and can show errors if a canvas building
+    block does not allow the creation of consistent derived business models due
+    to too restrictive constraints. After creating or importing canvas building
+    blocks the user is able to merge these blocks into composed models.
+  </p>
 
-  <p>Expert knowledge models support the creation of patterns and example business models. These patterns and
-    examples can be used in company models later to compare derived business models with them or
-    to give hints about possible patterns to the user.</p>
+  <p>
+    Canvas building blocks support the creation of patterns and example business
+    models. These patterns and examples can be used in composed models later to
+    compare derived business models with them or to give hints about possible
+    patterns to the user.
+  </p>
 
-  <p>New business model decisions of single business models are synchronized with the corresponding feature model to
-    ensure consistency. Moreover, the conformance of business models can be checked with the feature model and
-    occurring conformance errors are explained. Additionally the tool checks for strengths and weaknesses of the
-    business model and gives hints about patterns and possible supportive features. It is also possible to
-    compare the business model with other business models or to show used patterns.</p>
+  <p>
+    New business model decisions of single business models are synchronized with
+    the corresponding composed model to ensure consistency. Moreover, the
+    conformance of business models can be checked with the composed model and
+    occurring conformance errors are explained. Additionally the tool checks for
+    strengths and weaknesses of the business model and gives hints about
+    patterns and possible supportive features. It is also possible to compare
+    the business model with other business models or to show used patterns.
+  </p>
 </div>
 
 <div class="my-3 p-3 bg-white rounded shadow-sm">
   <h6 class="border-bottom border-gray pb-2">Execution Steps</h6>
 
-  <ngb-carousel interval="0" [showNavigationArrows]="false" [showNavigationIndicators]="false"
-                (slide)="updatePagination($event)">
+  <ngb-carousel
+    interval="0"
+    [showNavigationArrows]="false"
+    [showNavigationIndicators]="false"
+    (slide)="updatePagination($event)"
+  >
     <ng-template ngbSlide id="1">
       <figure class="figure">
-        <img src="assets/bmdl_expert.png" alt="Expert knowledge model page" class="carousel-image figure-img">
+        <img
+          src="assets/bmdl_expert.png"
+          alt="Canvas building block page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
-          1. Create the expert knowledge model by following the steps on the expert knowledge model page
+          1. Create the canvas building block by following the steps on the
+          canvas building block page
         </figcaption>
       </figure>
     </ng-template>
     <ng-template ngbSlide id="2">
       <figure class="figure">
-        <img src="assets/bmdl_company.png" alt="Company knowledge model page" class="carousel-image figure-img">
+        <img
+          src="assets/bmdl_company.png"
+          alt="Composed Model page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
-          2. Create the company knowledge model by merging expert models
+          2. Create the composed model by merging canvas building blocks
         </figcaption>
       </figure>
     </ng-template>
     <ng-template ngbSlide id="3">
       <figure class="figure">
-        <img src="assets/bmdl_business.png" alt="Business model page" class="carousel-image figure-img">
+        <img
+          src="assets/bmdl_business.png"
+          alt="Business model page"
+          class="carousel-image figure-img"
+        />
         <figcaption class="figure-caption">
           3. Derive Business Models when enacting a method
         </figcaption>
@@ -55,43 +89,58 @@
     </ng-template>
   </ngb-carousel>
 
-  <ngb-pagination aria-label="Controls for the above images" class="d-flex justify-content-center"
-                  [collectionSize]="3" [pageSize]="1" (pageChange)="updateCarousel($event)"></ngb-pagination>
+  <ngb-pagination
+    aria-label="Controls for the above images"
+    class="d-flex justify-content-center"
+    [collectionSize]="3"
+    [pageSize]="1"
+    (pageChange)="updateCarousel($event)"
+  ></ngb-pagination>
 
-  <p class="mt-2">
-    Information about the execution steps:
-  </p>
+  <p class="mt-2">Information about the execution steps:</p>
 
   <ol>
-    <li><strong>Create / Import Expert knowledge Model:</strong> In the first step, the user has to create or import
-      an expert knowledge model with expert knowledge. If creating such a model the conformance checking process can
-      be supported by defining mandatory and optional features, features that have at least one subfeature (OR),
-      features that have exactly one subfeature (XOR) and creating dependencies (requires, excludes) between the
-      features. To support the hints the tool can give users of the expert knowledge model it is possible to define
-      dependencies (supports, hurts) that are later shown as hints, strengths and weaknesses. To support pattern hints
-      it is possible to define patterns as instances of the expert knowledge model. To give users of the expert
-      knowledge model examples of possible business models, which they can later use to compare their derived business
-      models with, it is possible to define examples as instances of the expert knowledge model.
+    <li>
+      <strong>Create / Import Canvas Building Block:</strong> In the first step,
+      the user has to create or import a canvas building block with expert
+      knowledge. If creating such a model the conformance checking process can
+      be supported by defining mandatory and optional features, features that
+      have at least one subfeature (OR), features that have exactly one
+      subfeature (XOR) and creating dependencies (requires, excludes) between
+      the features. To support the hints the tool can give users of the canvas
+      building block, it is possible to define dependencies (supports, hurts)
+      that are later shown as hints, strengths and weaknesses. To support
+      pattern hints it is possible to define patterns as instances of the canvas
+      building block. To give users of the canvas building block examples of
+      possible business models, which they can later use to compare their
+      derived business models with, it is possible to define examples as
+      instances of the canvas building block.
     </li>
-    <li><strong>Create Company knowledge Model:</strong> In the second step, a method engineer can create a company
-      knowledge model. While creating it the developer selects expert knowledge models that should be merged into the
-      company knowledge model and later merge it manually into the company model. After that the method engineer can
-      edit
-      the company model and adapt it. In this step it is also possible to see conflicting requirements that lead to
-      the impossibility to create conform derived business models.
+    <li>
+      <strong>Create Composed Model:</strong> In the second step, a method
+      engineer can create a composed model. While creating it the developer
+      selects canvas building blocks that should be merged into the composed
+      model and later merge it manually into the composed model. After that the
+      method engineer can edit the composed model and adapt it. In this step it
+      is also possible to see conflicting requirements that lead to the
+      impossibility to create conform derived business models.
     </li>
-    <li><strong>Derive Business Models:</strong> In the third step, the business developer can derive different
-      business models from the feature model. Here, he can use the existing features from the feature model or add new
-      business model decisions. These new feature model decisions will be added to the feature model to save
-      consistency. Here it also possible to check the conformance between the company knowledge model and the business
-      model. Conformance errors will be explained to support the resolution. It is also possible to show
-      weaknesses (due to hurts cross-tree relation) and strengths (due to supports cross-tree relation), hints about
-      supportive features, hints about patterns and used patterns. Moreover, it is possible to compare with patterns
-      of expert knowledge models.
-      It is also possible to compare the business model
-      with other business models of the same company knowledge model or with examples of the merged expert knowledge
-      models (if merged completely).
-      The corresponding views are automatically accessed, when the business developer enacts a method.
+    <li>
+      <strong>Derive Business Models:</strong> In the third step, the business
+      developer can derive different business models from the composed model.
+      Here, he can use the existing features from the composed model or add new
+      business model decisions. These new feature decisions will be added to the
+      composed model to save consistency. Here it also possible to check the
+      conformance between the composed model and the business model. Conformance
+      errors will be explained to support the resolution. It is also possible to
+      show weaknesses (due to hurts cross-tree relation) and strengths (due to
+      supports cross-tree relation), hints about supportive features, hints
+      about patterns and used patterns. Moreover, it is possible to compare with
+      patterns of canvas building blocks. It is also possible to compare the
+      business model with other business models of the same composed model or
+      with examples of the merged canvas building blocks (if merged completely).
+      The corresponding views are automatically accessed, when the business
+      developer enacts a method.
     </li>
   </ol>
 </div>

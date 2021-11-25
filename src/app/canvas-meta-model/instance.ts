@@ -1,9 +1,11 @@
+import { DatabaseModelPart } from '../database/database-model-part';
+
 export enum InstanceType {
-  PATTERN = 'pattern', EXAMPLE = 'example'
+  PATTERN = 'pattern',
+  EXAMPLE = 'example',
 }
 
-export class Instance {
-
+export class Instance implements DatabaseModelPart {
   // JSON Schema (stored)
   name: string;
   type: InstanceType;
@@ -34,7 +36,12 @@ export class Instance {
    */
   addFeature(featureId: string) {
     if (this.usedFeatures.includes(featureId)) {
-      throw new Error('Feature with id ' + featureId + ' is already used in instance ' + this.name);
+      throw new Error(
+        'Feature with id ' +
+          featureId +
+          ' is already used in instance ' +
+          this.name
+      );
     }
     this.usedFeatures.push(featureId);
   }
@@ -46,7 +53,9 @@ export class Instance {
    */
   removeFeature(featureId: string) {
     if (!this.usedFeatures.includes(featureId)) {
-      throw new Error('Feature with id ' + featureId + ' is not used in instance ' + this.name);
+      throw new Error(
+        'Feature with id ' + featureId + ' is not used in instance ' + this.name
+      );
     }
     this.usedFeatures = this.usedFeatures.filter((id) => id !== featureId);
   }
@@ -57,18 +66,20 @@ export class Instance {
    * @param featureIds the feature ids of the features to remove
    */
   removeFeatures(featureIds: string[]) {
-    this.usedFeatures = this.usedFeatures.filter((id) => !featureIds.includes(id));
+    this.usedFeatures = this.usedFeatures.filter(
+      (id) => !featureIds.includes(id)
+    );
   }
 
   // Export
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
       id: this.id,
       name: this.name,
       type: this.type,
       description: this.description,
-      usedFeatures: this.usedFeatures
+      usedFeatures: this.usedFeatures,
     };
   }
 
@@ -77,8 +88,7 @@ export class Instance {
       name: this.name,
       type: this.type,
       description: this.description,
-      usedFeatures: this.usedFeatures
+      usedFeatures: this.usedFeatures,
     };
   }
-
 }

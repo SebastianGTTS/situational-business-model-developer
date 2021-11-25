@@ -1,27 +1,15 @@
 import { Injectable } from '@angular/core';
-import { PouchdbService } from '../../database/pouchdb.service';
 import { ProcessPattern } from './process-pattern';
-import PouchDB from 'pouchdb-browser';
 import { Type } from '../method-elements/type/type';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
+import { DefaultElementService } from '../../database/default-element.service';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
-export class ProcessPatternService {
-
-  constructor(
-    private pouchdbService: PouchdbService,
-  ) {
-  }
-
-  /**
-   * Get the list of the process patterns.
-   */
-  getProcessPatternList() {
-    return this.pouchdbService.find<ProcessPattern>(ProcessPattern.typeName, {
-      selector: {},
-    });
+export class ProcessPatternService extends DefaultElementService<ProcessPattern> {
+  protected get typeName(): string {
+    return ProcessPattern.typeName;
   }
 
   /**
@@ -30,25 +18,15 @@ export class ProcessPatternService {
    * @param needed needed types
    * @param forbidden forbidden types
    */
-  getValidProcessPatterns(
-    needed: { list: string, element: { _id: string, name: string } }[],
-    forbidden: { list: string, element: { _id: string, name: string } }[],
-  ) {
-    return this.pouchdbService.find<ProcessPattern>(ProcessPattern.typeName, {
-      selector: {},
-    }).then((patterns) => {
-      patterns.docs = patterns.docs.filter((pattern) => Type.validTypes(pattern.types, needed, forbidden));
-      return patterns;
-    });
-  }
-
-  /**
-   * Add new process pattern.
-   *
-   * @param name name of the process pattern
-   */
-  addProcessPattern(name: string) {
-    return this.pouchdbService.post(new ProcessPattern({name}));
+  async getValidProcessPatterns(
+    needed: { list: string; element: { _id: string; name: string } }[],
+    forbidden: { list: string; element: { _id: string; name: string } }[]
+  ): Promise<ProcessPattern[]> {
+    return (
+      await this.pouchdbService.find<ProcessPattern>(ProcessPattern.typeName, {
+        selector: {},
+      })
+    ).filter((pattern) => Type.validTypes(pattern.types, needed, forbidden));
   }
 
   /**
@@ -57,20 +35,10 @@ export class ProcessPatternService {
    * @param id id of the process pattern
    * @param processPattern the new values of the object (values will be copied)
    */
-  updateProcessPattern(id: string, processPattern: Partial<ProcessPattern>) {
-    return this.getProcessPattern(id).then((pattern) => {
-      pattern.update(processPattern);
-      return this.saveProcessPattern(pattern);
-    });
-  }
-
-  /**
-   * Get the process pattern.
-   *
-   * @param id id of the process pattern
-   */
-  getProcessPattern(id: string): Promise<ProcessPattern> {
-    return this.pouchdbService.get<ProcessPattern>(id).then((e) => new ProcessPattern(e));
+  async update(id: string, processPattern: Partial<ProcessPattern>) {
+    const dbProcessPattern = await this.get(id);
+    dbProcessPattern.update(processPattern);
+    return this.save(dbProcessPattern);
   }
 
   /**
@@ -78,29 +46,19 @@ export class ProcessPatternService {
    *
    * @param ids the ids to query
    */
-  getProcessPatterns(ids: string[]): Promise<ProcessPattern[]> {
-    return this.pouchdbService.find<ProcessPattern>(ProcessPattern.typeName, {
-      selector: {
-        _id: {
-          $in: ids,
-        }
-      },
-    }).then((res) => res.docs.map((doc) => new ProcessPattern(doc)));
+  async getProcessPatterns(ids: string[]): Promise<ProcessPattern[]> {
+    return (
+      await this.pouchdbService.find<ProcessPattern>(ProcessPattern.typeName, {
+        selector: {
+          _id: {
+            $in: ids,
+          },
+        },
+      })
+    ).map((pattern) => new ProcessPattern(pattern));
   }
 
-  /**
-   * Remove the process pattern.
-   *
-   * @param id id of the process pattern
-   */
-  deleteProcessPattern(id: string) {
-    return this.pouchdbService.get(id).then(result => {
-      return this.pouchdbService.remove(result);
-    });
+  protected createElement(element: Partial<ProcessPattern>): ProcessPattern {
+    return new ProcessPattern(element);
   }
-
-  private saveProcessPattern(processPattern: ProcessPattern): Promise<PouchDB.Core.Response> {
-    return this.pouchdbService.put(processPattern);
-  }
-
 }

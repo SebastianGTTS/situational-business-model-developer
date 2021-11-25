@@ -7,13 +7,11 @@ import { DevelopmentProcessRegistryModule } from '../../development-process-regi
   providedIn: DevelopmentProcessRegistryModule,
 })
 export class TypeService extends MethodElementService<Type> {
-
-  protected createMethodElement(element: Partial<Type>): Type {
+  protected createElement(element: Partial<Type>): Type {
     return new Type(element);
   }
 
-  protected getTypeName(): string {
+  protected get typeName(): string {
     return Type.typeName;
   }
-
 }

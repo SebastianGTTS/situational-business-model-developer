@@ -1,17 +1,27 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MethodElement } from '../../development-process-registry/method-elements/method-element';
-import { merge, Observable, Subject } from 'rxjs';
+import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { getTypeaheadInputPipe } from '../../shared/utils';
-import { map } from 'rxjs/operators';
+import { debounceTime, map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-method-element-form',
   templateUrl: './method-element-form.component.html',
-  styleUrls: ['./method-element-form.component.css']
+  styleUrls: ['./method-element-form.component.css'],
 })
-export class MethodElementFormComponent implements OnChanges, OnDestroy {
-
+export class MethodElementFormComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   @Input() methodElement: MethodElement = null;
   @Input() listNames: string[] = [];
 
@@ -22,26 +32,65 @@ export class MethodElementFormComponent implements OnChanges, OnDestroy {
     list: ['', Validators.required],
     description: [''],
   });
+  changed = false;
 
   openListInput = new Subject<string>();
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
+  private changeSubscription: Subscription;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit() {
+    this.changeSubscription = this.methodElementForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap(
+          (value) =>
+            (this.changed =
+              this.methodElement !== null &&
+              !this.equals(this.methodElement, value))
+        )
+      )
+      .subscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.methodElement) {
-      this.loadForm(changes.methodElement.currentValue);
+      const oldMethodElement: MethodElement =
+        changes.methodElement.previousValue;
+      const newMethodElement: MethodElement =
+        changes.methodElement.currentValue;
+      if (!this.equals(newMethodElement, oldMethodElement)) {
+        this.loadForm(newMethodElement);
+      }
     }
   }
 
   ngOnDestroy() {
+    if (this.changeSubscription) {
+      this.changeSubscription.unsubscribe();
+    }
     this.openListInput.complete();
   }
 
   private loadForm(methodElement: MethodElement) {
     this.methodElementForm.patchValue(methodElement);
+  }
+
+  private equals(
+    methodElementA: MethodElement,
+    methodElementB: MethodElement
+  ): boolean {
+    if (methodElementA == null && methodElementB == null) {
+      return true;
+    }
+    if (methodElementA == null || methodElementB == null) {
+      return false;
+    }
+    return (
+      methodElementA.list === methodElementB.list &&
+      methodElementA.description === methodElementB.description
+    );
   }
 
   submitForm() {
@@ -53,8 +102,13 @@ export class MethodElementFormComponent implements OnChanges, OnDestroy {
 
   searchLists = (input: Observable<string>) => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
-      map((term) => this.listNames.filter((listItem) => listItem.toLowerCase().includes(term.toLowerCase())).slice(0, 10)),
+      map((term) =>
+        this.listNames
+          .filter((listItem) =>
+            listItem.toLowerCase().includes(term.toLowerCase())
+          )
+          .slice(0, 10)
+      )
     );
-  }
-
+  };
 }

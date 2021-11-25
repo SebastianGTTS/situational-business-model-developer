@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { MethodElement } from '../../development-process-registry/method-elements/method-element';
 import { FormBuilder, FormControl, FormGroupDirective } from '@angular/forms';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
@@ -8,10 +15,9 @@ import { getTypeaheadInputPipe } from '../../shared/utils';
 @Component({
   selector: 'app-method-element-selection-form',
   templateUrl: './method-element-selection-form.component.html',
-  styleUrls: ['./method-element-selection-form.component.css']
+  styleUrls: ['./method-element-selection-form.component.css'],
 })
 export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
-
   @Input() methodElementName: string;
   @Input() multipleAllowed = false;
 
@@ -29,36 +35,45 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private formGroupDirective: FormGroupDirective,
-  ) {
-  }
+    private formGroupDirective: FormGroupDirective
+  ) {}
 
   ngOnInit() {
-    this.listChangeSubscription = this.listControl.valueChanges.pipe(
-      filter((value) => this.elementControl.value && this.elementControl.value.list !== value),
-      tap(() => this.elementControl.setValue(null)),
-    ).subscribe();
-    this.elementChangeSubscription = this.elementControl.valueChanges.pipe(
-      filter((value) => value && this.listControl.value !== value.list),
-      tap((value) => this.listControl.setValue(value.list)),
-    ).subscribe();
+    this.listChangeSubscription = this.listControl.valueChanges
+      .pipe(
+        filter(
+          (value) =>
+            this.elementControl.value &&
+            this.elementControl.value.list !== value
+        ),
+        tap(() => this.elementControl.setValue(null))
+      )
+      .subscribe();
+    this.elementChangeSubscription = this.elementControl.valueChanges
+      .pipe(
+        filter((value) => value && this.listControl.value !== value.list),
+        tap((value) => this.listControl.setValue(value.list))
+      )
+      .subscribe();
     if (this.multipleAllowed) {
-      this.multipleChangeSubscription = this.multipleControl.valueChanges.pipe(
-        tap((value) => {
-          if (value) {
-            this.elementControl.disable();
-            this.multipleElementsControl.disable();
-          } else {
-            this.elementControl.enable();
-            this.multipleElementsControl.enable();
-          }
-        }),
-        filter((value) => value),
-        tap(() => {
-          this.elementControl.setValue(null);
-          this.multipleElementsControl.setValue(false);
-        }),
-      ).subscribe();
+      this.multipleChangeSubscription = this.multipleControl.valueChanges
+        .pipe(
+          tap((value) => {
+            if (value) {
+              this.elementControl.disable();
+              this.multipleElementsControl.disable();
+            } else {
+              this.elementControl.enable();
+              this.multipleElementsControl.enable();
+            }
+          }),
+          filter((value) => value),
+          tap(() => {
+            this.elementControl.setValue(null);
+            this.multipleElementsControl.setValue(false);
+          })
+        )
+        .subscribe();
     }
   }
 
@@ -78,20 +93,31 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
 
   searchLists = (input: Observable<string>) => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
-      map((term) => this.listNames.filter((listItem) => listItem.toLowerCase().includes(term.toLowerCase())).slice(0, 10)),
+      map((term) =>
+        this.listNames
+          .filter((listItem) =>
+            listItem.toLowerCase().includes(term.toLowerCase())
+          )
+          .slice(0, 10)
+      )
     );
-  }
+  };
 
   searchElements = (input: Observable<string>) => {
     return merge(getTypeaheadInputPipe(input), this.openElementInput).pipe(
-      map(
-        (term) => this.methodElements.filter((methodElement) =>
-          (!this.listControl.value || methodElement.list.toLowerCase() === this.listControl.value.toLowerCase()) &&
-          methodElement.name.toLowerCase().includes(term.toLowerCase())
-        ).slice(0, 7)
-      ),
+      map((term) =>
+        this.methodElements
+          .filter(
+            (methodElement) =>
+              (!this.listControl.value ||
+                methodElement.list.toLowerCase() ===
+                  this.listControl.value.toLowerCase()) &&
+              methodElement.name.toLowerCase().includes(term.toLowerCase())
+          )
+          .slice(0, 7)
+      )
     );
-  }
+  };
 
   formatter(x: { name: string }) {
     return x.name;
@@ -116,5 +142,4 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
   get formGroup() {
     return this.formGroupDirective.control;
   }
-
 }

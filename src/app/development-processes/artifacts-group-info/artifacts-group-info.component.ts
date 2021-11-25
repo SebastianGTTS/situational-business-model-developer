@@ -8,10 +8,9 @@ import { MultipleSelection } from '../../development-process-registry/developmen
 @Component({
   selector: 'app-artifacts-group-info',
   templateUrl: './artifacts-group-info.component.html',
-  styleUrls: ['./artifacts-group-info.component.css']
+  styleUrls: ['./artifacts-group-info.component.css'],
 })
 export class ArtifactsGroupInfoComponent implements OnInit {
-
   @Input() groups: MultipleSelection<Artifact>[][];
   @Input() selection: GroupSelection<Artifact>;
 
@@ -19,17 +18,13 @@ export class ArtifactsGroupInfoComponent implements OnInit {
 
   methodElements: Artifact[] = [];
 
-  constructor(
-    private artifactService: ArtifactService,
-  ) {
-  }
+  constructor(private artifactService: ArtifactService) {}
 
   ngOnInit() {
-    this.loadMethodElements();
+    void this.loadMethodElements();
   }
 
-  private loadMethodElements() {
-    this.artifactService.getAll().then((artifacts) => this.methodElements = artifacts.docs);
+  private async loadMethodElements(): Promise<void> {
+    this.methodElements = await this.artifactService.getList();
   }
-
 }

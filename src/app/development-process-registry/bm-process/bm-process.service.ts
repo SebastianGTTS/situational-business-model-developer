@@ -1,36 +1,25 @@
 import { Injectable } from '@angular/core';
 import { PouchdbService } from '../../database/pouchdb.service';
-import PouchDB from 'pouchdb-browser';
 import { BmProcess } from './bm-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
+import { ModuleService } from '../module-api/module.service';
+import { Decision } from './decision';
+import { DefaultElementService } from '../../database/default-element.service';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
-export class BmProcessService {
+export class BmProcessService extends DefaultElementService<BmProcess> {
+  protected get typeName(): string {
+    return BmProcess.typeName;
+  }
 
   constructor(
-    private pouchdbService: PouchdbService,
+    private moduleService: ModuleService,
+    pouchdbService: PouchdbService
   ) {
-  }
-
-  /**
-   * Get the list of the bm processes.
-   */
-  getBmProcessList() {
-    return this.pouchdbService.find<BmProcess>(BmProcess.typeName, {
-      selector: {},
-    });
-  }
-
-  /**
-   * Add new bm process.
-   *
-   * @param name name of the bm process
-   */
-  addBmProcess(name: string) {
-    return this.pouchdbService.post(new BmProcess({name}));
+    super(pouchdbService);
   }
 
   /**
@@ -39,31 +28,10 @@ export class BmProcessService {
    * @param id id of the bm process
    * @param bmProcess the new values of the object (values will be copied)
    */
-  updateBmProcess(id: string, bmProcess: Partial<BmProcess>) {
-    return this.getBmProcess(id).then((process) => {
-      process.update(bmProcess);
-      return this.saveBmProcess(process);
-    });
-  }
-
-  /**
-   * Get the bm process.
-   *
-   * @param id id of the bm process
-   */
-  getBmProcess(id: string): Promise<BmProcess> {
-    return this.pouchdbService.get<BmProcess>(id).then((e) => new BmProcess(e));
-  }
-
-  /**
-   * Remove the bm process.
-   *
-   * @param id id of the bm process
-   */
-  deleteBmProcess(id: string) {
-    return this.pouchdbService.get(id).then(result => {
-      return this.pouchdbService.remove(result);
-    });
+  async update(id: string, bmProcess: Partial<BmProcess>) {
+    const dbProcess = await this.get(id);
+    dbProcess.update(bmProcess);
+    return this.save(dbProcess);
   }
 
   /**
@@ -75,18 +43,50 @@ export class BmProcessService {
    */
   distanceToContext(process: BmProcess, provided: SituationalFactor[]): number {
     const map = SituationalFactor.createMap(provided);
-    const {missing, incorrect, low} = process.checkMatchByFactor(map);
+    const { missing, incorrect, low } = process.checkMatchByFactor(map);
     let distance = incorrect.length;
     low.forEach((factor) => {
       const internalDistance =
-        factor.factor.values.indexOf(factor.value) - factor.factor.values.indexOf(map[factor.factor.list][factor.factor.name]);
+        factor.factor.values.indexOf(factor.value) -
+        factor.factor.values.indexOf(
+          map[factor.factor.list][factor.factor.name]
+        );
       distance += internalDistance / factor.factor.values.length;
     });
-    const correct = process.situationalFactors.length - missing.length - incorrect.length - low.length;
+    const correct =
+      process.situationalFactors.length -
+      missing.length -
+      incorrect.length -
+      low.length;
     return distance - correct;
   }
 
-  private saveBmProcess(bmProcess: BmProcess): Promise<PouchDB.Core.Response> {
-    return this.pouchdbService.put(bmProcess);
+  /**
+   * Check whether the step decisions of a step of a decision are all correctly filled in.
+   *
+   * @param decision the decision
+   * @return whether the step decisions are all correctly filled in
+   */
+  checkDecisionStepArtifacts(decision: Decision): boolean {
+    for (let i = 0; i < decision.method.executionSteps.length; i++) {
+      const step = decision.method.executionSteps[i];
+      const method = this.moduleService.getModuleMethod(
+        step.module,
+        step.method
+      );
+      if (method.createDecisionConfigurationForm != null) {
+        const form = method.createDecisionConfigurationForm(
+          decision.stepDecisions[i]
+        );
+        if (!form.valid) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  protected createElement(element: Partial<BmProcess>): BmProcess {
+    return new BmProcess(element);
   }
 }

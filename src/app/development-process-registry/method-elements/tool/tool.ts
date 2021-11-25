@@ -1,7 +1,8 @@
-import { MethodElement } from '../method-element';
+import { MethodElement, MethodElementEntry } from '../method-element';
+
+export interface ToolEntry extends MethodElementEntry {}
 
 export class Tool extends MethodElement {
-
   static readonly typeName = 'Tool';
 
   constructor(tool: Partial<Tool>) {
@@ -14,14 +15,13 @@ export class Tool extends MethodElement {
    *
    * @param tool the new values of this tool (values will be copied to the current object)
    */
-  update(tool: Partial<Tool>) {
+  update(tool: Partial<Tool>): void {
     Object.assign(this, tool);
   }
 
-  toPouchDb(): any {
+  toDb(): ToolEntry {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
     };
   }
-
 }

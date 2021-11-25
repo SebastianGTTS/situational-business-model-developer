@@ -1,13 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[appConfigurationFormPlaceholder]'
+  selector: '[appConfigurationFormPlaceholder]',
 })
 export class ConfigurationFormPlaceholderDirective {
-
-  constructor(
-    public viewContainerRef: ViewContainerRef
-  ) {
-  }
-
+  constructor(public viewContainerRef: ViewContainerRef) {}
 }

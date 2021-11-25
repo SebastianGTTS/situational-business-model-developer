@@ -1,20 +1,27 @@
 <div class="form-row">
   <div class="form-group col">
-    <label for="domainSelection{{index}}">Domain</label>
+    <label for="domainSelection{{ index }}">Domain</label>
     <div class="input-group">
       <input
         type="text"
         [formControl]="formControl"
         class="form-control"
-        id="domainSelection{{index}}"
+        id="domainSelection{{ index }}"
         [ngbTypeahead]="searchDomains"
         [editable]="false"
         [resultFormatter]="formatter"
         [inputFormatter]="formatter"
         (click)="openDomainInput.next($any($event.target).value)"
-        (focus)="openDomainInput.next($any($event.target).value)">
+        (focus)="openDomainInput.next($any($event.target).value)"
+      />
       <div class="input-group-append">
-        <button (click)="remove.emit()" class="btn btn-secondary align-self-baseline" type="button">Remove</button>
+        <button
+          (click)="remove.emit()"
+          class="btn btn-secondary align-self-baseline"
+          type="button"
+        >
+          Remove
+        </button>
       </div>
     </div>
   </div>

@@ -1,9 +1,10 @@
 import { ArtifactData } from './artifact-data';
+import { DatabaseModelPart } from '../../database/database-model-part';
 
-export class ArtifactVersion {
-
+export class ArtifactVersion implements DatabaseModelPart {
   time: number;
-  createdBy: 'manual' | string;
+  createdBy: 'manual' | 'imported' | string;
+  importName: string;
   executedBy: string;
   data: ArtifactData;
 
@@ -15,13 +16,13 @@ export class ArtifactVersion {
     }
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
       time: this.time,
       createdBy: this.createdBy,
+      importName: this.importName,
       executedBy: this.executedBy,
-      data: this.data.toPouchDb(),
+      data: this.data.toDb(),
     };
   }
-
 }

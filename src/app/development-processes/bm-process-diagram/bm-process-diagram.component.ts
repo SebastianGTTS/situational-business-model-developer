@@ -9,7 +9,7 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { BmProcess } from '../../development-process-registry/bm-process/bm-process';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
@@ -23,14 +23,21 @@ import { DiagramComponentInterface } from '../shared/diagram-component-interface
 import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
 import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 import { BmProcessService } from '../../development-process-registry/bm-process/bm-process.service';
+import { DevelopmentMethodIncompleteModalComponent } from '../development-method-incomplete-modal/development-method-incomplete-modal.component';
 
 @Component({
   selector: 'app-bm-process-diagram',
   templateUrl: './bm-process-diagram.component.html',
-  styleUrls: ['./bm-process-diagram.component.css']
+  styleUrls: ['./bm-process-diagram.component.css'],
 })
-export class BmProcessDiagramComponent implements DiagramComponentInterface, OnInit, OnChanges, AfterContentInit, OnDestroy {
-
+export class BmProcessDiagramComponent
+  implements
+    DiagramComponentInterface,
+    OnInit,
+    OnChanges,
+    AfterContentInit,
+    OnDestroy
+{
   @Input() bmProcess: BmProcess;
 
   @Output() saveBmProcess = new EventEmitter<Partial<BmProcess>>();
@@ -39,13 +46,32 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
 
   validDevelopmentMethods: DevelopmentMethod[] = null;
 
-  lowWarnings: { elementName: string, name: string, elementId: string, situationalFactors: string[] }[] = [];
-  incorrectWarnings: { elementName: string, name: string, elementId: string, situationalFactors: string[] }[] = [];
+  lowWarnings: {
+    elementName: string;
+    name: string;
+    elementId: string;
+    situationalFactors: string[];
+  }[] = [];
+  incorrectWarnings: {
+    elementName: string;
+    name: string;
+    elementId: string;
+    situationalFactors: string[];
+  }[] = [];
   isGeneratingWarnings = false;
   private wantsToGenerateWarnings = false;
 
-  missingArtifacts: { elementId: string, elementName: string, name: string, artifacts: Artifact[] }[] = [];
-  unreachableActivities: { elementId: string, elementName: string, name: string }[] = [];
+  missingArtifacts: {
+    elementId: string;
+    elementName: string;
+    name: string;
+    artifacts: Artifact[];
+  }[] = [];
+  unreachableActivities: {
+    elementId: string;
+    elementName: string;
+    name: string;
+  }[] = [];
 
   modalElement;
   modalDevelopmentMethod: DevelopmentMethod;
@@ -53,45 +79,70 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
   modalProcessPatterns: ProcessPattern[];
   private modalReference: NgbModalRef;
 
-  @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLDivElement>;
-  @ViewChild('addProcessPatternModal', {static: true}) addProcessPatternModal: any;
-  @ViewChild('deleteProcessPatternModal', {static: true}) deleteProcessPatternModal: any;
-  @ViewChild('methodInfoModal', {static: true}) methodInfoModal: any;
-  @ViewChild('patternInfoModal', {static: true}) patternInfoModal: any;
-  @ViewChild('selectDevelopmentMethodModal', {static: true}) selectDevelopmentMethodModal: any;
-  @ViewChild('selectProcessPatternModal', {static: true}) selectProcessPatternModal: any;
-  @ViewChild('showTypesModal', {static: true}) showTypesModal: any;
-  @ViewChild('developmentMethodSummaryModal', {static: true}) developmentMethodSummaryModal: any;
+  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLDivElement>;
+  @ViewChild('addProcessPatternModal', { static: true })
+  addProcessPatternModal: any;
+  @ViewChild('deleteProcessPatternModal', { static: true })
+  deleteProcessPatternModal: any;
+  @ViewChild('methodInfoModal', { static: true }) methodInfoModal: any;
+  @ViewChild('patternInfoModal', { static: true }) patternInfoModal: any;
+  @ViewChild('selectDevelopmentMethodModal', { static: true })
+  selectDevelopmentMethodModal: any;
+  @ViewChild('selectProcessPatternModal', { static: true })
+  selectProcessPatternModal: any;
+  @ViewChild('showTypesModal', { static: true }) showTypesModal: any;
+  @ViewChild('developmentMethodSummaryModal', { static: true })
+  developmentMethodSummaryModal: any;
 
   constructor(
     private bmProcessService: BmProcessService,
     private bpmnService: BpmnService,
     private developmentMethodService: DevelopmentMethodService,
     private modalService: NgbModal,
-    private processPatternService: ProcessPatternService,
-  ) {
-  }
+    private processPatternService: ProcessPatternService
+  ) {}
 
   ngOnInit() {
     this.modeler = this.bpmnService.getBmProcessModeler();
     const eventBus = this.modeler.get('eventBus');
-    eventBus.on('bmp.deletePattern', (event, subProcessElement) => this.openDeleteProcessPatternModal(subProcessElement));
-    eventBus.on('bmp.processPatterns', (event, businessObject) => this.openAddProcessPatternModal(businessObject));
-    eventBus.on('bmp.removeMethod', (event, methodElement) => this.removeMethodFromTask(methodElement));
-    eventBus.on('bmp.selectMethod', (event, taskElement) => this.openSelectDevelopmentMethodModal(taskElement));
-    eventBus.on('bmp.selectPattern', (event, callActivityElement) => this.openSelectProcessPatternModal(callActivityElement));
-    eventBus.on('bmp.showTypes', (event, taskElement) => this.openShowTypesModal(taskElement));
-    eventBus.on('bmp.showMethod', (event, methodElement) => this.openMethodInfoModal(methodElement));
-    eventBus.on('bmp.showPattern', (event, processPatternElement) => this.openProcessPatternInfoModal(processPatternElement));
-    eventBus.on('bmp.summary', (event, methodElement) => this.openDevelopmentMethodSummary(methodElement));
+    eventBus.on('bmp.deletePattern', (event, subProcessElement) =>
+      this.openDeleteProcessPatternModal(subProcessElement)
+    );
+    eventBus.on('bmp.processPatterns', (event, businessObject) =>
+      this.openAddProcessPatternModal(businessObject)
+    );
+    eventBus.on('bmp.removeMethod', (event, methodElement) =>
+      this.removeMethodFromTask(methodElement)
+    );
+    eventBus.on('bmp.selectMethod', (event, taskElement) =>
+      this.openSelectDevelopmentMethodModal(taskElement)
+    );
+    eventBus.on('bmp.selectPattern', (event, callActivityElement) =>
+      this.openSelectProcessPatternModal(callActivityElement)
+    );
+    eventBus.on('bmp.showTypes', (event, taskElement) =>
+      this.openShowTypesModal(taskElement)
+    );
+    eventBus.on('bmp.showMethod', (event, methodElement) =>
+      this.openMethodInfoModal(methodElement)
+    );
+    eventBus.on('bmp.showPattern', (event, processPatternElement) =>
+      this.openProcessPatternInfoModal(processPatternElement)
+    );
+    eventBus.on('bmp.summary', (event, methodElement) =>
+      this.openDevelopmentMethodSummary(methodElement)
+    );
     if (this.bmProcess) {
-      this.loadBmProcess(this.bmProcess, true);
+      void this.loadBmProcess(this.bmProcess, true);
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.bmProcess && this.modeler) {
-      this.loadBmProcess(changes.bmProcess.currentValue, changes.bmProcess.firstChange);
+      void this.loadBmProcess(
+        changes.bmProcess.currentValue,
+        changes.bmProcess.firstChange
+      );
     }
   }
 
@@ -103,63 +154,66 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
     this.modeler.destroy();
   }
 
-  private loadBmProcess(bmProcess: BmProcess, firstLoad: boolean) {
+  private async loadBmProcess(
+    bmProcess: BmProcess,
+    firstLoad: boolean
+  ): Promise<void> {
     if (bmProcess.processDiagram) {
       this.modeler.get('taskRenderer').process = bmProcess;
-      this.modeler.importXML(bmProcess.processDiagram).then(() => {
-        if (firstLoad) {
-          this.bpmnService.resizeView(this.modeler);
-        }
-        this.checkWarnings();
-        this.checkArtifacts();
-      }).catch(
-        error => console.log('LoadBmProcess: ' + error)
-      );
+      this.modeler.get('taskRenderer').bmProcessService = this.bmProcessService;
+      await this.modeler.importXML(bmProcess.processDiagram);
+      if (firstLoad) {
+        this.bpmnService.resizeView(this.modeler);
+      }
+      this.checkWarnings();
+      this.checkArtifacts();
     } else {
       this.modeler.createDiagram();
     }
   }
 
-  openAddProcessPatternModal(startingElement) {
+  async openAddProcessPatternModal(startingElement): Promise<void> {
     this.modalProcessPatterns = null;
     this.modalElement = startingElement;
-    this.processPatternService.getValidProcessPatterns(
-      [{list: 'initialisation', element: null}], [],
-    ).then(list => {
-      const processPatterns: ProcessPattern[] = list.docs;
-      this.modalProcessPatterns = this.sortByDistance(processPatterns);
-    }).catch(
-      error => console.log('OpenAddProcessPatternModal: ' + error)
-    );
-    this.modalReference = this.modalService.open(this.addProcessPatternModal, {size: 'lg'});
+    const processPatterns: ProcessPattern[] =
+      await this.processPatternService.getValidProcessPatterns(
+        [{ list: 'initialisation', element: null }],
+        []
+      );
+    this.modalProcessPatterns = this.sortByDistance(processPatterns);
+    this.modalReference = this.modalService.open(this.addProcessPatternModal, {
+      size: 'lg',
+    });
   }
 
-  addProcessPattern(processPattern: ProcessPattern) {
-    this.processPatternService.getProcessPattern(processPattern._id).then((pattern) => {
-      this.bpmnService.appendBpmn(this.modeler, pattern, this.modalElement).then(() => {
-        this.modeler.get('selection').deselect(this.modalElement);
-        this.saveDiagram();
-      }).catch(
-        error => console.log('AddProcessPattern (inner): ' + error)
-      );
-    }).catch(
-      error => console.log('AddProcessPattern: ' + error)
-    );
+  async addProcessPattern(processPattern: ProcessPattern) {
+    const pattern = await this.processPatternService.get(processPattern._id);
+    await this.bpmnService.appendBpmn(this.modeler, pattern, this.modalElement);
+    this.modeler.get('selection').deselect(this.modalElement);
+    await this.saveDiagram();
   }
 
   openShowTypesModal(taskElement) {
     this.modalElement = taskElement;
-    this.modalReference = this.modalService.open(this.showTypesModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(this.showTypesModal, {
+      size: 'lg',
+    });
   }
 
   openDeleteProcessPatternModal(subProcessElement) {
     this.modalElement = subProcessElement;
-    this.modalReference = this.modalService.open(this.deleteProcessPatternModal, {size: 'lg'});
+    this.modalReference = this.modalService.open(
+      this.deleteProcessPatternModal,
+      { size: 'lg' }
+    );
   }
 
-  deleteProcessPattern(subProcessElement) {
+  async deleteProcessPattern(subProcessElement) {
     const removeDecision = (event, element) => {
-      if (element.element.businessObject && element.element.businessObject.method) {
+      if (
+        element.element.businessObject &&
+        element.element.businessObject.method
+      ) {
         this.bmProcess.removeDecision(element.element.id);
       }
     };
@@ -167,24 +221,31 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
     eventBus.on('shape.remove', removeDecision);
     this.bpmnService.removeProcessPattern(this.modeler, subProcessElement);
     eventBus.off('shape.remove', removeDecision);
-    this.saveDiagram(this.bmProcess.decisions);
+    await this.saveDiagram(this.bmProcess.decisions);
   }
 
-  openSelectDevelopmentMethodModal(taskElement) {
+  async openSelectDevelopmentMethodModal(taskElement) {
     this.modalElement = taskElement;
-    const types = this.bpmnService.getTypesOfActivity(this.modeler, taskElement.id);
-    this.developmentMethodService.getValidDevelopmentMethods(
-      types.neededType, types.forbiddenType,
-    ).then((developmentMethods) => {
-      const methods: DevelopmentMethod[] = developmentMethods.docs;
-      this.validDevelopmentMethods = this.sortByDistance(methods);
-    });
-    this.modalReference = this.modalService.open(this.selectDevelopmentMethodModal, {
-      size: 'lg', beforeDismiss: () => {
-        this.validDevelopmentMethods = null;
-        return true;
+    const types = this.bpmnService.getTypesOfActivity(
+      this.modeler,
+      taskElement.id
+    );
+    const methods: DevelopmentMethod[] =
+      await this.developmentMethodService.getValidDevelopmentMethods(
+        types.neededType,
+        types.forbiddenType
+      );
+    this.validDevelopmentMethods = this.sortByDistance(methods);
+    this.modalReference = this.modalService.open(
+      this.selectDevelopmentMethodModal,
+      {
+        size: 'lg',
+        beforeDismiss: () => {
+          this.validDevelopmentMethods = null;
+          return true;
+        },
       }
-    });
+    );
   }
 
   resetSelectDevelopmentMethodModal() {
@@ -192,69 +253,103 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
     this.modalReference.close();
   }
 
-  selectDevelopmentMethod(taskElement, developmentMethod: DevelopmentMethod) {
-    this.developmentMethodService.getDevelopmentMethod(developmentMethod._id).then((method) => {
-      this.bmProcess.addDecision(taskElement.id, method);
-      this.bpmnService.selectDevelopmentMethodForProcessTask(this.modeler, taskElement, method);
-      this.saveDiagram(this.bmProcess.decisions);
-    });
+  async selectDevelopmentMethod(
+    taskElement,
+    developmentMethod: DevelopmentMethod
+  ): Promise<void> {
+    const method = await this.developmentMethodService.get(
+      developmentMethod._id
+    );
+    if (!this.developmentMethodService.isCorrectlyDefined(method)) {
+      const modal = this.modalService.open(
+        DevelopmentMethodIncompleteModalComponent
+      );
+      const component: DevelopmentMethodIncompleteModalComponent =
+        modal.componentInstance;
+      component.developmentMethod = method;
+      return;
+    }
+    this.resetSelectDevelopmentMethodModal();
+    this.bmProcess.addDecision(taskElement.id, method);
+    this.bpmnService.selectDevelopmentMethodForProcessTask(
+      this.modeler,
+      taskElement,
+      method
+    );
+    await this.saveDiagram(this.bmProcess.decisions);
   }
 
   openMethodInfoModal(methodElement) {
     this.modalElement = methodElement;
-    this.modalDevelopmentMethod = this.bmProcess.decisions[methodElement.id].method;
-    this.modalReference = this.modalService.open(this.methodInfoModal, {size: 'lg'});
+    this.modalDevelopmentMethod =
+      this.bmProcess.decisions[methodElement.id].method;
+    this.modalReference = this.modalService.open(this.methodInfoModal, {
+      size: 'lg',
+    });
   }
 
   private openDevelopmentMethodSummary(methodElement) {
     this.modalElement = methodElement;
-    this.modalReference = this.modalService.open(this.developmentMethodSummaryModal, {size: 'lg'});
-  }
-
-  openProcessPatternInfoModal(processPatternElement) {
-    this.modalElement = processPatternElement;
-    this.processPatternService.getProcessPattern(processPatternElement.businessObject.get('processPatternId')).then(
-      (pattern) => {
-        this.modalProcessPattern = pattern;
-        this.modalReference = this.modalService.open(this.patternInfoModal, {size: 'lg'});
-      }
+    this.modalReference = this.modalService.open(
+      this.developmentMethodSummaryModal,
+      { size: 'lg' }
     );
   }
 
-  openSelectProcessPatternModal(callActivityElement) {
+  async openProcessPatternInfoModal(processPatternElement) {
+    this.modalElement = processPatternElement;
+    this.modalProcessPattern = await this.processPatternService.get(
+      processPatternElement.businessObject.get('processPatternId')
+    );
+    this.modalReference = this.modalService.open(this.patternInfoModal, {
+      size: 'lg',
+    });
+  }
+
+  async openSelectProcessPatternModal(callActivityElement) {
     this.modalProcessPatterns = null;
     this.modalElement = callActivityElement;
-    const types = this.bpmnService.getTypesOfActivity(this.modeler, callActivityElement.id);
-    this.processPatternService.getValidProcessPatterns(
-      [...types.neededType, {list: 'generic', element: null}], types.forbiddenType,
-    ).then(list => {
-      const processPatterns: ProcessPattern[] = list.docs;
-      this.modalProcessPatterns = this.sortByDistance(processPatterns);
-    }).catch(
-      error => console.log('OpenSelectProcessPatternModal: ' + error)
+    const types = this.bpmnService.getTypesOfActivity(
+      this.modeler,
+      callActivityElement.id
     );
-    this.modalReference = this.modalService.open(this.selectProcessPatternModal, {size: 'lg'});
-  }
-
-  selectProcessPattern(callActivityElement, processPattern: ProcessPattern) {
-    this.processPatternService.getProcessPattern(processPattern._id).then((pattern) => {
-      this.bpmnService.insertProcessPatternIntoCallActivity(this.modeler, callActivityElement, pattern).then(() => {
-        if (callActivityElement.businessObject.method) {
-          this.bmProcess.removeDecision(callActivityElement.id);
-          this.saveDiagram(this.bmProcess.decisions);
-        } else {
-          this.saveDiagram();
-        }
-      }).catch(
-        error => console.log('SelectProcessPattern (inner): ' + error)
+    const processPatterns: ProcessPattern[] =
+      await this.processPatternService.getValidProcessPatterns(
+        [...types.neededType, { list: 'generic', element: null }],
+        types.forbiddenType
       );
-    }).catch((error) => console.log('SelectProcessPattern: ' + error));
+    this.modalProcessPatterns = this.sortByDistance(processPatterns);
+    this.modalReference = this.modalService.open(
+      this.selectProcessPatternModal,
+      { size: 'lg' }
+    );
   }
 
-  removeMethodFromTask(methodElement) {
-    this.bpmnService.removeDevelopmentMethodFromProcessTask(this.modeler, methodElement);
+  async selectProcessPattern(
+    callActivityElement,
+    processPattern: ProcessPattern
+  ) {
+    const pattern = await this.processPatternService.get(processPattern._id);
+    await this.bpmnService.insertProcessPatternIntoCallActivity(
+      this.modeler,
+      callActivityElement,
+      pattern
+    );
+    if (callActivityElement.businessObject.method) {
+      this.bmProcess.removeDecision(callActivityElement.id);
+      await this.saveDiagram(this.bmProcess.decisions);
+    } else {
+      await this.saveDiagram();
+    }
+  }
+
+  async removeMethodFromTask(methodElement) {
+    this.bpmnService.removeDevelopmentMethodFromProcessTask(
+      this.modeler,
+      methodElement
+    );
     this.bmProcess.removeDecision(methodElement.id);
-    this.saveDiagram(this.bmProcess.decisions);
+    await this.saveDiagram(this.bmProcess.decisions);
   }
 
   checkWarnings() {
@@ -264,12 +359,27 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
     }
     this.isGeneratingWarnings = true;
 
-    const lowWarnings: { elementName: string, name: string, elementId: string, situationalFactors: string[] }[] = [];
-    const incorrectWarnings: { elementName: string, name: string, elementId: string, situationalFactors: string[] }[] = [];
+    const lowWarnings: {
+      elementName: string;
+      name: string;
+      elementId: string;
+      situationalFactors: string[];
+    }[] = [];
+    const incorrectWarnings: {
+      elementName: string;
+      name: string;
+      elementId: string;
+      situationalFactors: string[];
+    }[] = [];
 
-    const generateWarnings = (id: string, elementName: 'Method' | 'Pattern', name: string, factors: SituationalFactor[]) => {
+    const generateWarnings = (
+      id: string,
+      elementName: 'Method' | 'Pattern',
+      name: string,
+      factors: SituationalFactor[]
+    ) => {
       const factorMap = SituationalFactor.createMap(factors);
-      const {low, incorrect} = this.bmProcess.checkMatch(factorMap);
+      const { low, incorrect } = this.bmProcess.checkMatch(factorMap);
       if (low.length > 0) {
         lowWarnings.push({
           elementName,
@@ -288,54 +398,72 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
       }
     };
 
-    const generateMethodWarnings =
-      (element: any) => {
-        const method = this.bmProcess.decisions[element.id].method;
-        generateWarnings(element.id, 'Method', method.name, method.situationalFactors.map((factor) => factor.element));
-      };
+    const generateMethodWarnings = (element: any) => {
+      const method = this.bmProcess.decisions[element.id].method;
+      generateWarnings(
+        element.id,
+        'Method',
+        method.name,
+        method.situationalFactors.map((factor) => factor.element)
+      );
+    };
 
-    const generatePatternWarnings =
-      (element: any, pattern: ProcessPattern) => {
-        generateWarnings(element.id, 'Pattern', pattern.name, pattern.situationalFactors.map((factor) => factor.element));
-      };
+    const generatePatternWarnings = (element: any, pattern: ProcessPattern) => {
+      generateWarnings(
+        element.id,
+        'Pattern',
+        pattern.name,
+        pattern.situationalFactors.map((factor) => factor.element)
+      );
+    };
 
     const activities = this.bpmnService.getActivitiesWithMethod(this.modeler);
     activities.forEach((activity) => generateMethodWarnings(activity));
 
     const patternElements = this.bpmnService.getPatterns(this.modeler);
-    this.processPatternService.getProcessPatterns(
-      patternElements.map((element) => element.businessObject.get('processPatternId'))
-    ).then((dbPatterns) => {
-      const dbPatternsMap: { [id: string]: ProcessPattern } = {};
-      dbPatterns.forEach((dbPattern) => dbPatternsMap[dbPattern._id] = dbPattern);
-      patternElements.forEach(
-        (patternElement) => generatePatternWarnings(patternElement, dbPatternsMap[patternElement.businessObject.get('processPatternId')])
-      );
-      if (!this.wantsToGenerateWarnings) {
-        this.lowWarnings = lowWarnings;
-        this.incorrectWarnings = incorrectWarnings;
-      }
-    }).finally(() => {
-      this.isGeneratingWarnings = false;
-      if (this.wantsToGenerateWarnings) {
-        this.wantsToGenerateWarnings = false;
-        this.checkWarnings();
-      }
-    });
+    this.processPatternService
+      .getProcessPatterns(
+        patternElements.map((element) =>
+          element.businessObject.get('processPatternId')
+        )
+      )
+      .then((dbPatterns) => {
+        const dbPatternsMap: { [id: string]: ProcessPattern } = {};
+        dbPatterns.forEach(
+          (dbPattern) => (dbPatternsMap[dbPattern._id] = dbPattern)
+        );
+        patternElements.forEach((patternElement) =>
+          generatePatternWarnings(
+            patternElement,
+            dbPatternsMap[patternElement.businessObject.get('processPatternId')]
+          )
+        );
+        if (!this.wantsToGenerateWarnings) {
+          this.lowWarnings = lowWarnings;
+          this.incorrectWarnings = incorrectWarnings;
+        }
+      })
+      .finally(() => {
+        this.isGeneratingWarnings = false;
+        if (this.wantsToGenerateWarnings) {
+          this.wantsToGenerateWarnings = false;
+          this.checkWarnings();
+        }
+      });
   }
 
   selectElement(id: string) {
     this.bpmnService.focusElement(this.modeler, id);
-    this.canvas.nativeElement.scrollIntoView({behavior: 'smooth'});
+    this.canvas.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 
-  updateDecisions(value: any) {
+  async updateDecisions(value: any) {
     this.bmProcess.decisions[this.modalElement.id].update(value);
-    this.saveDiagram(this.bmProcess.decisions);
+    await this.saveDiagram(this.bmProcess.decisions);
   }
 
   saveDiagram(decisions = null): Promise<void> {
-    return this.modeler.saveXML().then(result => {
+    return this.modeler.saveXML().then((result) => {
       if (decisions !== null) {
         this.saveBmProcess.emit({
           decisions,
@@ -350,22 +478,36 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
   }
 
   diagramChanged(): Promise<boolean> {
-    return this.modeler.saveXML().then((result) => result.xml !== this.bmProcess.processDiagram);
+    return this.modeler
+      .saveXML()
+      .then((result) => result.xml !== this.bmProcess.processDiagram);
   }
 
-  sortByDistance<T extends { _id: string, situationalFactors: { list: string, element: SituationalFactor }[] }[]>(elements: T): T {
+  sortByDistance<
+    T extends {
+      _id: string;
+      situationalFactors: { list: string; element: SituationalFactor }[];
+    }[]
+  >(elements: T): T {
     const distanceMap: { [id: string]: number } = {};
-    elements.forEach((element) =>
-      distanceMap[element._id] = this.bmProcessService.distanceToContext(
-        this.bmProcess,
-        element.situationalFactors.map((factor) => factor.element)
-      )
+    elements.forEach(
+      (element) =>
+        (distanceMap[element._id] = this.bmProcessService.distanceToContext(
+          this.bmProcess,
+          element.situationalFactors.map((factor) => factor.element)
+        ))
     );
-    return elements.sort((elementA, elementB) => distanceMap[elementA._id] - distanceMap[elementB._id]);
+    return elements.sort(
+      (elementA, elementB) =>
+        distanceMap[elementA._id] - distanceMap[elementB._id]
+    );
   }
 
   checkArtifacts() {
-    const missingMap = this.bpmnService.checkArtifacts(this.modeler, this.bmProcess.decisions);
+    const missingMap = this.bpmnService.checkArtifacts(
+      this.modeler,
+      this.bmProcess.decisions
+    );
     const decisions = this.bmProcess.decisions;
     const elementRegistry = this.modeler.get('elementRegistry');
     const missing = Object.entries(missingMap).map(([key, value]) => {
@@ -390,6 +532,8 @@ export class BmProcessDiagramComponent implements DiagramComponentInterface, OnI
       };
     });
     this.missingArtifacts = missing.filter((element) => element.artifacts);
-    this.unreachableActivities = missing.filter((element) => !element.artifacts);
+    this.unreachableActivities = missing.filter(
+      (element) => !element.artifacts
+    );
   }
 }

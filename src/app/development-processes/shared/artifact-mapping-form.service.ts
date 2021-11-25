@@ -10,17 +10,15 @@ export interface MappingFormValue {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ArtifactMappingFormService {
-
-  constructor(
-    private fb: FormBuilder,
-  ) {
-  }
+  constructor(private fb: FormBuilder) {}
 
   createMappingsForm(mappings: ArtifactMapping[]): FormArray {
-    return this.fb.array(mappings.map((mapping) => this.createMappingForm(mapping)));
+    return this.fb.array(
+      mappings.map((mapping) => this.createMappingForm(mapping))
+    );
   }
 
   createMappingForm(mapping: ArtifactMapping = null): FormGroup {
@@ -45,13 +43,19 @@ export class ArtifactMappingFormService {
     }
   }
 
-  convertMappingForm(mappingForm: FormGroup) {
+  convertMappingForm(mappingForm: FormGroup): void {
     if (mappingForm.get('output').value) {
       mappingForm.removeControl('step');
-      mappingForm.addControl('group', this.fb.control(null, Validators.required));
+      mappingForm.addControl(
+        'group',
+        this.fb.control(null, Validators.required)
+      );
     } else {
       mappingForm.removeControl('group');
-      mappingForm.addControl('step', this.fb.control(null, Validators.required));
+      mappingForm.addControl(
+        'step',
+        this.fb.control(null, Validators.required)
+      );
     }
   }
 
@@ -74,5 +78,4 @@ export class ArtifactMappingFormService {
       });
     }
   }
-
 }

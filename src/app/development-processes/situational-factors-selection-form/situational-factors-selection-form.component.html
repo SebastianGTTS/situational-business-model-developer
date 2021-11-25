@@ -1,9 +1,15 @@
-<ng-template #situationalFactorSelectionForm let-remove="remove" let-formGroup="formGroup" let-index="index">
+<ng-template
+  #situationalFactorSelectionForm
+  let-remove="remove"
+  let-formGroup="formGroup"
+  let-index="index"
+>
   <app-situational-factor-selection-form
     [formGroup]="formGroup"
     [methodElements]="methodElements"
     [listNames]="listNames"
-    (remove)="remove(index)"></app-situational-factor-selection-form>
+    (remove)="remove(index)"
+  ></app-situational-factor-selection-form>
 </ng-template>
 
 <form [formGroup]="situationalFactorsForm" (ngSubmit)="submitForm()">
@@ -14,11 +20,18 @@
     [listNames]="listNames"
     [methodElementFormTemplate]="situationalFactorSelectionForm"
     [methodElements]="methodElements"
-    methodElementName="Situational Factor"></app-method-elements-selection-form>
+    methodElementName="Situational Factor"
+  ></app-method-elements-selection-form>
   <div class="form-group row">
     <div class="col-sm-12">
-      <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!situationalFactorsForm.valid">
-        <ng-container>Update</ng-container>
+      <button
+        type="submit"
+        class="btn btn-sm btn-block"
+        [class.btn-dark]="!changed"
+        [class.btn-primary]="changed"
+        [disabled]="!situationalFactorsForm.valid"
+      >
+        Update<span *ngIf="changed"> (unsaved changes)</span>
       </button>
     </div>
   </div>

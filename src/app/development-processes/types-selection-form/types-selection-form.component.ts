@@ -1,39 +1,68 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Type } from '../../development-process-registry/method-elements/type/type';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
+import { Subscription } from 'rxjs';
+import { debounceTime, tap } from 'rxjs/operators';
+import { equalsList } from '../../shared/utils';
+import { Selection } from '../../development-process-registry/development-method/selection';
 
 @Component({
   selector: 'app-types-selection-form',
   templateUrl: './types-selection-form.component.html',
-  styleUrls: ['./types-selection-form.component.css']
+  styleUrls: ['./types-selection-form.component.css'],
 })
-export class TypesSelectionFormComponent implements OnInit, OnChanges {
-
-  @Input() types: { list: string, element: Type }[];
+export class TypesSelectionFormComponent
+  implements OnInit, OnChanges, OnDestroy
+{
+  @Input() types: Selection<Type>[];
 
   @Output() submitTypesForm = new EventEmitter<FormArray>();
 
   typesForm: FormGroup = this.fb.group({
     types: this.fb.array([]),
   });
+  changed = false;
 
   methodElements: Type[] = [];
   listNames: string[] = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private typeService: TypeService,
-  ) {
-  }
+  private changeSubscription: Subscription;
+
+  constructor(private fb: FormBuilder, private typeService: TypeService) {}
 
   ngOnInit() {
-    this.loadTypes();
+    void this.loadTypes();
+    this.changeSubscription = this.typesForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        tap((value) => (this.changed = !equalsList(this.types, value.types)))
+      )
+      .subscribe();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.types) {
-      this.loadForm(changes.types.currentValue);
+      const oldTypes: Selection<Type>[] = changes.types.previousValue;
+      const newTypes: Selection<Type>[] = changes.types.currentValue;
+      if (!equalsList(oldTypes, newTypes)) {
+        this.loadForm(changes.types.currentValue);
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.changeSubscription) {
+      this.changeSubscription.unsubscribe();
     }
   }
 
@@ -41,24 +70,26 @@ export class TypesSelectionFormComponent implements OnInit, OnChanges {
     this.submitTypesForm.emit(this.typesForm.get('types') as FormArray);
   }
 
-  private loadForm(types: { list: string, element: Type }[]) {
-    const formGroups = types.map((type) => this.fb.group({
-      list: [type.list, Validators.required],
-      element: type.element,
-    }));
+  private loadForm(types: Selection<Type>[]) {
+    const formGroups = types.map((type) =>
+      this.fb.group({
+        list: [type.list, Validators.required],
+        element: type.element,
+      })
+    );
     this.typesForm.setControl('types', this.fb.array(formGroups));
   }
 
-  private loadTypes() {
-    this.typeService.getAll().then((types) => {
-      this.methodElements = types.docs;
-      this.listNames = [...new Set(this.methodElements.map((element) => element.list))];
-    });
+  private async loadTypes(): Promise<void> {
+    this.methodElements = await this.typeService.getList();
+    this.listNames = [
+      ...new Set(this.methodElements.map((element) => element.list)),
+    ];
   }
 
-  createFormGroupFactory = () => this.fb.group({
-    list: ['', Validators.required],
-    element: null,
-  })
-
+  createFormGroupFactory = () =>
+    this.fb.group({
+      list: ['', Validators.required],
+      element: null,
+    });
 }

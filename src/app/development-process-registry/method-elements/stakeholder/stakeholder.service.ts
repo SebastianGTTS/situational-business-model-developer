@@ -4,16 +4,14 @@ import { Stakeholder } from './stakeholder';
 import { DevelopmentProcessRegistryModule } from '../../development-process-registry.module';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
 export class StakeholderService extends MethodElementService<Stakeholder> {
-
-  protected createMethodElement(element: Partial<Stakeholder>): Stakeholder {
+  protected createElement(element: Partial<Stakeholder>): Stakeholder {
     return new Stakeholder(element);
   }
 
-  protected getTypeName(): string {
+  protected get typeName(): string {
     return Stakeholder.typeName;
   }
-
 }

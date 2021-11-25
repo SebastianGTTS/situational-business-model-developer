@@ -1,23 +1,14 @@
-<form [formGroup]="searchForm" class="form-inline">
-  <label class="sr-only" for="search">Search</label>
-  <input formControlName="search" type="text" class="form-control mb-2 mr-sm-2" id="search" placeholder="Search">
-</form>
-<h5>Method Patterns</h5>
-<div *ngIf="!processPatterns" class="alert alert-info">
-  Loading...
-</div>
-<div *ngIf="processPatterns && processPatterns.length === 0" class="alert alert-info">
-  No fitting Method Pattern
-</div>
-<div
-  *ngIf="processPatterns && processPatterns.length > 0 && filteredProcessPatterns && filteredProcessPatterns.length === 0">
-  No fitting Method Pattern for search {{searchForm.value.search}}.
-</div>
-<ul *ngIf="filteredProcessPatterns && filteredProcessPatterns.length > 0" class="list-group shadow-sm">
-  <li *ngFor="let processPattern of filteredProcessPatterns" class="list-group-item">
-    <app-process-pattern-selection-form
-      [contextSituationalFactors]="contextSituationalFactors"
-      [processPattern]="processPattern"
-      (selectProcessPattern)="selectProcessPattern.emit($event)"></app-process-pattern-selection-form>
-  </li>
-</ul>
+<ng-template #ref let-item>
+  <app-process-pattern-selection-form
+    [contextSituationalFactors]="contextSituationalFactors"
+    [processPattern]="item"
+    (selectProcessPattern)="selectProcessPattern.emit($event)"
+  ></app-process-pattern-selection-form>
+</ng-template>
+
+<app-search
+  heading="Method Patterns"
+  itemName="Method Pattern"
+  [content]="ref"
+  [items]="processPatterns"
+></app-search>

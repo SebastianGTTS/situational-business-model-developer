@@ -1,17 +1,24 @@
-import { MethodElement } from '../method-element';
+import { MethodElement, MethodElementEntry } from '../method-element';
+
+export interface TypeEntry extends MethodElementEntry {}
 
 export class Type extends MethodElement {
-
   static readonly typeName = 'Type';
 
   static validTypes(
-    types: { list: string, element: Type }[],
-    needed: { list: string, element: { _id: string, name: string } }[],
-    forbidden: { list: string, element: { _id: string, name: string } }[],
+    types: { list: string; element: Type }[],
+    needed: { list: string; element: { _id: string; name: string } }[],
+    forbidden: { list: string; element: { _id: string; name: string } }[]
   ): boolean {
-    const hasType = (type: { list: string, element: { _id: string, name: string } }) => {
+    const hasType = (type: {
+      list: string;
+      element: { _id: string; name: string };
+    }): boolean => {
       if (type.element) {
-        const ids = types.map((t) => t.element).filter((t) => t).map((t) => t._id);
+        const ids = types
+          .map((t) => t.element)
+          .filter((t) => t)
+          .map((t) => t._id);
         return ids.includes(type.element._id);
       } else {
         const listNames = types.map((t) => t.list).filter((l) => l);
@@ -33,14 +40,13 @@ export class Type extends MethodElement {
    *
    * @param type the new values of this type (values will be copied to the current object)
    */
-  update(type: Partial<Type>) {
+  update(type: Partial<Type>): void {
     Object.assign(this, type);
   }
 
-  toPouchDb(): any {
+  toDb(): TypeEntry {
     return {
-      ...super.toPouchDb(),
+      ...super.toDb(),
     };
   }
-
 }

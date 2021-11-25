@@ -1,52 +1,95 @@
+<ng-template #deleteDevelopmentMethodModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    (dismiss)="d()"
+    (delete)="deleteDevelopmentMethod(modalDevelopmentMethod._id); c()"
+  >
+    <div modalTitle>
+      Delete Method Building Block {{ modalDevelopmentMethod.name }}
+    </div>
+    You are deleting the method building block
+    {{ modalDevelopmentMethod.name }}. This can not be undone. This action will
+    not delete the method building block from business model development methods
+    that are using it.
+  </app-delete-modal>
+</ng-template>
+
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
     <a class="nav-link active" [routerLink]="[]">Method Building Blocks</a>
-    <a *ngFor="let developmentMethod of developmentMethodsList" class="nav-link"
-       [routerLink]="['methodview', developmentMethod._id]">{{developmentMethod.name}}</a>
+    <a
+      *ngFor="let developmentMethod of developmentMethodsList"
+      class="nav-link"
+      [routerLink]="['methodview', developmentMethod._id]"
+      >{{ developmentMethod.name }}</a
+    >
   </nav>
 </div>
 
 <main role="main" class="container">
-
   <div class="my-3 alert alert-info" role="alert">
-    Create Method Building Blocks to use them for the Business Model Development Methods
+    Create Method Building Blocks to use them for the Business Model Development
+    Methods
   </div>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2">Method Building Blocks</h6>
-    <div *ngIf="!developmentMethodsList">Loading...</div>
-    <div *ngIf="developmentMethodsList && developmentMethodsList.length === 0">No Method Building Blocks defined.</div>
-    <ul class="list-group" *ngIf="developmentMethodsList && developmentMethodsList.length > 0">
-      <li class="d-flex list-group-item justify-content-between align-items-baseline"
-          *ngFor="let developmentMethod of developmentMethodsList">
-        <div>
-          <span>{{developmentMethod.name}}</span>
-          <app-author-info [author]="developmentMethod.author"></app-author-info>
-        </div>
-        <div>
-          <a [routerLink]="['methodview', developmentMethod._id]" type="button"
-             class="btn btn-dark btn-xs mr-1">View</a>
-          <button (click)="deleteDevelopmentMethod(developmentMethod._id)" type="button" class="btn btn-danger btn-xs">
-            Delete
-          </button>
-        </div>
+  <app-list-wrapper
+    listTitle="Method Building Blocks"
+    [reloading]="reloading"
+    [loading]="loading"
+    [noResults]="noResults"
+  >
+    <div noResults>No Method Building Blocks defined.</div>
+    <ul results class="list-group">
+      <li
+        class="list-group-item"
+        *ngFor="let developmentMethod of developmentMethodsList"
+      >
+        <app-results-list-item
+          [viewLink]="['methodview', developmentMethod._id]"
+          (delete)="openDeleteDevelopmentMethodModal(developmentMethod)"
+        >
+          <ng-container itemTitle>
+            {{ developmentMethod.name }}
+          </ng-container>
+          <ng-container itemDescription>
+            {{ developmentMethod.description }}
+          </ng-container>
+          <app-author-info
+            [author]="developmentMethod.author"
+          ></app-author-info>
+        </app-results-list-item>
       </li>
     </ul>
-  </div>
+  </app-list-wrapper>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Add Method Building Block</h6>
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Add Method Building Block
+    </h6>
     <div class="text-muted pt-3">
-      <form [formGroup]="developmentMethodForm" (ngSubmit)="addDevelopmentMethod(developmentMethodForm)">
+      <form
+        [formGroup]="developmentMethodForm"
+        (ngSubmit)="addDevelopmentMethod(developmentMethodForm)"
+      >
         <div class="form-group row">
-          <label for="name" class="col-sm-4 col-form-label">Method Building Block Name</label>
+          <label for="name" class="col-sm-4 col-form-label"
+            >Method Building Block Name</label
+          >
           <div class="col-sm-8">
-            <input type="text" formControlName="name" class="form-control" id="name">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              id="name"
+            />
           </div>
         </div>
         <div class="form-group row">
           <div class="col-sm-12">
-            <button type="submit" class="btn btn-sm btn-dark btn-block" [disabled]="!developmentMethodForm.valid">
+            <button
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!developmentMethodForm.valid"
+            >
               Add Method Building Block
             </button>
           </div>
@@ -54,5 +97,4 @@
       </form>
     </div>
   </div>
-
 </main>

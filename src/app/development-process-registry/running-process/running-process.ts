@@ -1,16 +1,15 @@
 import { BmProcess } from '../bm-process/bm-process';
-import { PouchdbModel } from '../../database/pouchdb-model';
+import { DatabaseModel } from '../../database/database-model';
 import { RunningArtifact } from './running-artifact';
 import { RunningMethod } from './running-method';
 import { Step } from './step';
 import { RunningMethodInfo } from './running-method-info';
 import { v4 as uuidv4 } from 'uuid';
 import { Artifact } from '../method-elements/artifact/artifact';
-import { ArtifactData } from './artifact-data';
 import { ArtifactVersion } from './artifact-version';
+import { OutputArtifactMapping } from './output-artifact-mapping';
 
-export class RunningProcess extends PouchdbModel {
-
+export class RunningProcess extends DatabaseModel {
   static readonly typeName = 'RunningProcess';
 
   name: string;
@@ -26,9 +25,15 @@ export class RunningProcess extends PouchdbModel {
     super(RunningProcess.typeName);
     Object.assign(this, runningProcess);
     this.process = new BmProcess(this.process);
-    this.todoMethods = this.todoMethods.map((method) => new RunningMethod(method));
-    this.runningMethods = this.runningMethods.map((method) => new RunningMethod(method));
-    this.artifacts = this.artifacts.map((element) => new RunningArtifact(element));
+    this.todoMethods = this.todoMethods.map(
+      (method) => new RunningMethod(method)
+    );
+    this.runningMethods = this.runningMethods.map(
+      (method) => new RunningMethod(method)
+    );
+    this.artifacts = this.artifacts.map(
+      (element) => new RunningArtifact(element)
+    );
   }
 
   /**
@@ -50,7 +55,9 @@ export class RunningProcess extends PouchdbModel {
    * @return the todomethod
    */
   getTodoMethod(executionId: string): RunningMethod {
-    return this.todoMethods.find((method) => method.executionId === executionId);
+    return this.todoMethods.find(
+      (method) => method.executionId === executionId
+    );
   }
 
   /**
@@ -59,7 +66,9 @@ export class RunningProcess extends PouchdbModel {
    * @param executionId the id of the method
    */
   removeTodoMethod(executionId: string) {
-    this.todoMethods = this.todoMethods.filter((method) => method.executionId !== executionId);
+    this.todoMethods = this.todoMethods.filter(
+      (method) => method.executionId !== executionId
+    );
   }
 
   /**
@@ -84,7 +93,9 @@ export class RunningProcess extends PouchdbModel {
     const method = new RunningMethod({
       nodeId,
       decision: this.process.decisions[nodeId],
-      steps: this.process.decisions[nodeId].method.executionSteps.map(() => new Step({})),
+      steps: this.process.decisions[nodeId].method.executionSteps.map(
+        () => new Step({})
+      ),
     });
     this.addRunningMethod(method);
     return method;
@@ -97,7 +108,9 @@ export class RunningProcess extends PouchdbModel {
    * @return the running method
    */
   getRunningMethod(executionId: string): RunningMethod {
-    return this.runningMethods.find((method) => method.executionId === executionId);
+    return this.runningMethods.find(
+      (method) => method.executionId === executionId
+    );
   }
 
   /**
@@ -116,7 +129,9 @@ export class RunningProcess extends PouchdbModel {
    * @param executionId the id of the method
    */
   removeRunningMethod(executionId: string): void {
-    this.runningMethods = this.runningMethods.filter((method) => method.executionId !== executionId);
+    this.runningMethods = this.runningMethods.filter(
+      (method) => method.executionId !== executionId
+    );
   }
 
   /**
@@ -135,7 +150,9 @@ export class RunningProcess extends PouchdbModel {
    * @return the executed method
    */
   getExecutedMethod(executionId: string): RunningMethodInfo {
-    return this.executedMethods.find((method) => method.executionId === executionId);
+    return this.executedMethods.find(
+      (method) => method.executionId === executionId
+    );
   }
 
   /**
@@ -155,11 +172,17 @@ export class RunningProcess extends PouchdbModel {
    * @return the method
    */
   getMethod(executionId: string): RunningMethodInfo {
-    let result: RunningMethodInfo = this.todoMethods.find((method) => method.executionId === executionId);
+    let result: RunningMethodInfo = this.todoMethods.find(
+      (method) => method.executionId === executionId
+    );
     if (result == null) {
-      result = this.runningMethods.find((method) => method.executionId === executionId);
+      result = this.runningMethods.find(
+        (method) => method.executionId === executionId
+      );
       if (result == null) {
-        result = this.executedMethods.find((method) => method.executionId === executionId);
+        result = this.executedMethods.find(
+          (method) => method.executionId === executionId
+        );
       }
     }
     return result;
@@ -175,14 +198,14 @@ export class RunningProcess extends PouchdbModel {
   addOutputArtifacts(
     executionId: string,
     outputArtifacts: Artifact[],
-    outputArtifactsMapping: { isDefinition: boolean, artifact: number, artifactName: string, data: ArtifactData }[]
-  ) {
+    outputArtifactsMapping: OutputArtifactMapping[]
+  ): void {
     const method = this.getRunningMethod(executionId);
     outputArtifactsMapping.forEach((output, index) => {
       const version: Partial<ArtifactVersion> = {
         createdBy: method.nodeId ? method.nodeId : 'manual',
         executedBy: method.executionId,
-        data: output.data
+        data: output.data,
       };
       if (output.isDefinition) {
         const artifact = new RunningArtifact({
@@ -197,16 +220,37 @@ export class RunningProcess extends PouchdbModel {
     });
   }
 
-  toPouchDb(): any {
-    return {
-      ...super.toPouchDb(),
-      name: this.name,
-      process: this.process.toPouchDb(),
-      todoMethods: this.todoMethods.map((method) => method.toPouchDb()),
-      runningMethods: this.runningMethods.map((method) => method.toPouchDb()),
-      executedMethods: this.executedMethods,
-      artifacts: this.artifacts.map((element) => element.toPouchDb()),
-    };
+  /**
+   * Import an artifact into this process
+   *
+   * @param artifact the artifact to import
+   */
+  importArtifact(artifact: RunningArtifact): void {
+    this.artifacts.push(artifact);
   }
 
+  /**
+   * Change a running artifact's identifier
+   *
+   * @param artifact the running artifact to change
+   * @param identifier the new identifier
+   */
+  renameArtifact(artifact: RunningArtifact, identifier: string): void {
+    if (this.artifacts.indexOf(artifact) === -1) {
+      throw new Error('Artifact is not from this running process');
+    }
+    artifact.identifier = identifier;
+  }
+
+  toDb(): any {
+    return {
+      ...super.toDb(),
+      name: this.name,
+      process: this.process.toDb(),
+      todoMethods: this.todoMethods.map((method) => method.toDb()),
+      runningMethods: this.runningMethods.map((method) => method.toDb()),
+      executedMethods: this.executedMethods,
+      artifacts: this.artifacts.map((element) => element.toDb()),
+    };
+  }
 }

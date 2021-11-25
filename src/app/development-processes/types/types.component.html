@@ -1,3 +1,12 @@
+<ng-template #deleteTypeModal let-d="dismiss" let-c="close">
+  <app-delete-modal (dismiss)="d()" (delete)="delete(modalType._id); c()">
+    <div modalTitle>Delete Type {{ modalType.name }}</div>
+    You are deleting the type {{ modalType.name }}. This can not be undone. This
+    action will not delete the type from method building blocks that are using
+    it.
+  </app-delete-modal>
+</ng-template>
+
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline">
     <a class="nav-link active" [routerLink]="[]">Types</a>
@@ -5,23 +14,23 @@
 </div>
 
 <main role="main" class="container">
-
   <div class="my-3 alert alert-info" role="alert">
     Create Types to use them for the definition of Method Fragments
   </div>
 
-  <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2">Types</h6>
-    <app-method-element-list [elementLists]="elementLists"
-                             (deleteElement)="delete($event._id)"></app-method-element-list>
-  </div>
+  <app-method-element-list
+    listTitle="Types"
+    [elementLists]="elementLists"
+    (deleteElement)="openDeleteTypeModal($event)"
+  ></app-method-element-list>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Add Type</h6>
     <div class="text-muted pt-3">
-      <app-method-element-form [listNames]="listNames"
-                               (submitMethodElementForm)="add($event)"></app-method-element-form>
+      <app-method-element-form
+        [listNames]="listNames"
+        (submitMethodElementForm)="add($event)"
+      ></app-method-element-form>
     </div>
   </div>
-
 </main>

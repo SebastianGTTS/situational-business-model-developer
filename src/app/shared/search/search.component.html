@@ -1,0 +1,33 @@
+<form [formGroup]="searchForm" class="form-inline">
+  <label class="sr-only" for="search">Search</label>
+  <input
+    formControlName="search"
+    type="text"
+    class="form-control mb-2 mr-sm-2"
+    id="search"
+    placeholder="Search"
+  />
+</form>
+<h5>{{ heading }}</h5>
+<div *ngIf="!items" class="alert alert-info">Loading...</div>
+<div *ngIf="items && items.length === 0" class="alert alert-info">
+  No fitting {{ itemName }}
+</div>
+<div
+  *ngIf="
+    items && items.length > 0 && filteredResults && filteredResults.length === 0
+  "
+>
+  No fitting {{ itemName }} for search {{ searchForm.value.search }}.
+</div>
+<ul
+  *ngIf="filteredResults && filteredResults.length > 0"
+  class="list-group shadow-sm"
+>
+  <li *ngFor="let item of filteredResults" class="list-group-item">
+    <ng-container
+      [ngTemplateOutlet]="content"
+      [ngTemplateOutletContext]="{ $implicit: item }"
+    ></ng-container>
+  </li>
+</ul>

@@ -7,9 +7,10 @@ import { ArtifactMapping } from '../development-method/artifact-mapping';
 import { Artifact } from '../method-elements/artifact/artifact';
 import { StepInputArtifact } from './step-input-artifact';
 import { Comment } from './comment';
+import { DatabaseModelPart } from '../../database/database-model-part';
+import { OutputArtifactMapping } from './output-artifact-mapping';
 
-export class RunningMethod implements RunningMethodInfo {
-
+export class RunningMethod implements RunningMethodInfo, DatabaseModelPart {
   nodeId?: string = null;
   executionId: string;
   comments: Comment[] = [];
@@ -19,13 +20,21 @@ export class RunningMethod implements RunningMethodInfo {
   steps: Step[] = [];
 
   inputArtifacts: StepInputArtifact[] = null;
+  outputArtifacts?: OutputArtifactMapping[];
 
   constructor(runningMethod: Partial<RunningMethod>) {
     Object.assign(this, runningMethod);
 
     this.comments = this.comments.map((comment) => new Comment(comment));
     this.decision = new Decision(this.decision);
-    this.inputArtifacts = this.inputArtifacts ? this.inputArtifacts.map((artifact) => new StepInputArtifact(artifact)) : null;
+    this.inputArtifacts = this.inputArtifacts
+      ? this.inputArtifacts.map((artifact) => new StepInputArtifact(artifact))
+      : null;
+    this.outputArtifacts = this.outputArtifacts
+      ? this.outputArtifacts.map(
+          (outputArtifact) => new OutputArtifactMapping(outputArtifact)
+        )
+      : undefined;
     this.steps = this.steps.map((step) => new Step(step));
   }
 
@@ -92,9 +101,9 @@ export class RunningMethod implements RunningMethodInfo {
   getProcessOutputArtifacts(): Artifact[] {
     const currentDecision = this.decision;
     const artifacts: Artifact[] = [];
-    currentDecision.outputArtifacts.getList(currentDecision.method.outputArtifacts).elements.forEach(
-      (element) => artifacts.push(...element.elements)
-    );
+    currentDecision.outputArtifacts
+      .getList(currentDecision.method.outputArtifacts)
+      .elements.forEach((element) => artifacts.push(...element.elements));
     return artifacts;
   }
 
@@ -124,7 +133,10 @@ export class RunningMethod implements RunningMethodInfo {
    * @return the list of artifacts
    */
   getStepArtifacts(step: number, size: number): StepArtifact[] {
-    return this.iterateMappings(size, (mapping => mapping.output === false && mapping.step === step));
+    return this.iterateMappings(
+      size,
+      (mapping) => mapping.output === false && mapping.step === step
+    );
   }
 
   /**
@@ -139,7 +151,7 @@ export class RunningMethod implements RunningMethodInfo {
     }
     return this.iterateMappings(
       this.decision.method.outputArtifacts[group].length,
-      (mapping) => mapping.output === true && mapping.group === group,
+      (mapping) => mapping.output === true && mapping.group === group
     );
   }
 
@@ -150,7 +162,10 @@ export class RunningMethod implements RunningMethodInfo {
    * @param filter the function to select the artifacts based on their mapping
    * @return the artifacts list
    */
-  private iterateMappings(artifactLength: number, filter: (mapping: ArtifactMapping) => boolean): StepArtifact[] {
+  private iterateMappings(
+    artifactLength: number,
+    filter: (mapping: ArtifactMapping) => boolean
+  ): StepArtifact[] {
     const artifacts = [];
     artifacts.length = artifactLength;
     this.iterateInputMappings(artifacts, filter);
@@ -164,7 +179,10 @@ export class RunningMethod implements RunningMethodInfo {
    * @param artifacts the artifacts list, will be changed
    * @param filter the filter function to select input artifacts based on their mapping
    */
-  private iterateInputMappings(artifacts: StepArtifact[], filter: (mapping: ArtifactMapping) => boolean): void {
+  private iterateInputMappings(
+    artifacts: StepArtifact[],
+    filter: (mapping: ArtifactMapping) => boolean
+  ): void {
     const method = this.decision.method;
     const inputGroup = this.decision.inputArtifacts.selectedGroup;
     if (inputGroup != null) {
@@ -186,7 +204,10 @@ export class RunningMethod implements RunningMethodInfo {
    * @param artifacts the artifacts list, will be changed
    * @param filter the filter function to select step artifacts based on their mapping
    */
-  private iterateExecutionStepMappings(artifacts: StepArtifact[], filter: (mapping: ArtifactMapping) => boolean): void {
+  private iterateExecutionStepMappings(
+    artifacts: StepArtifact[],
+    filter: (mapping: ArtifactMapping) => boolean
+  ): void {
     const method = this.decision.method;
     for (let i = 0; i < method.executionSteps.length; i++) {
       const executionStep = method.executionSteps[i];
@@ -199,6 +220,34 @@ export class RunningMethod implements RunningMethodInfo {
         }
       }
     }
+  }
+
+  /**
+   * Update the output artifacts together with their data and mapping.
+   */
+  updateOutputArtifacts(outputArtifacts: OutputArtifactMapping[]): void {
+    this.outputArtifacts = outputArtifacts;
+  }
+
+  /**
+   * Checks whether the output artifacts are defined or whether there are no output artifacts.
+   *
+   * @return true if the output artifacts are defined or if there are no output artifacts
+   */
+  hasOutputArtifactsCorrectlyDefined(): boolean {
+    const outputArtifacts = this.decision.outputArtifacts.getList(
+      this.decision.method.outputArtifacts
+    ).elements;
+    if (outputArtifacts.length === 0) {
+      return true;
+    }
+    if (this.outputArtifacts != null) {
+      return (
+        this.outputArtifacts.length ===
+        outputArtifacts.reduce((acc, summay) => acc + summay.elements.length, 0)
+      );
+    }
+    return false;
   }
 
   /**
@@ -215,7 +264,7 @@ export class RunningMethod implements RunningMethodInfo {
    *
    * @param commentId the id of the comment
    */
-  getComment(commentId: string) {
+  getComment(commentId: string): Comment {
     return this.comments.find((comment) => comment.id === commentId);
   }
 
@@ -246,16 +295,20 @@ export class RunningMethod implements RunningMethodInfo {
     return this.decision.method.executionSteps[this.currentStepNumber];
   }
 
-  toPouchDb(): any {
+  toDb(): any {
     return {
       nodeId: this.nodeId,
       executionId: this.executionId,
-      comments: this.comments.map((comment) => comment.toPouchDb()),
-      decision: this.decision.toPouchDb(),
+      comments: this.comments.map((comment) => comment.toDb()),
+      decision: this.decision.toDb(),
       currentStepNumber: this.currentStepNumber,
-      inputArtifacts: this.inputArtifacts ? this.inputArtifacts.map((artifact) => artifact.toPouchDb()) : null,
-      steps: this.steps.map((step) => step.toPouchDb()),
+      inputArtifacts: this.inputArtifacts
+        ? this.inputArtifacts.map((artifact) => artifact.toDb())
+        : null,
+      outputArtifacts: this.outputArtifacts
+        ? this.outputArtifacts.map((outputArtifact) => outputArtifact.toDb())
+        : undefined,
+      steps: this.steps.map((step) => step.toDb()),
     };
   }
-
 }

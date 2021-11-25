@@ -13,5 +13,11 @@ function removeSideEffects(moduleName) {
   }
 }
 
-const modules = ['bpmn-js', 'bpmn-moddle', 'diagram-js', 'moddle', 'moddle-xml'];
+const modules = [
+  'bpmn-js',
+  'bpmn-moddle',
+  'diagram-js',
+  'moddle',
+  'moddle-xml',
+];
 modules.forEach((moduleName) => removeSideEffects(moduleName));

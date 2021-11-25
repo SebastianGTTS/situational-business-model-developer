@@ -1,118 +1,114 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ExpertModel } from '../../../canvas-meta-model/expert-model';
+import { Component } from '@angular/core';
 import { ExpertModelService } from '../../../canvas-meta-model/expert-model.service';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ImportExportService } from '../../feature-model/import-export.service';
 import { Instance, InstanceType } from '../../../canvas-meta-model/instance';
 import { FormGroup } from '@angular/forms';
 import { Domain } from '../../../development-process-registry/knowledge/domain';
+import { ExpertModelLoaderService } from '../expert-model-loader.service';
 
 @Component({
   selector: 'app-expert-model',
   templateUrl: './expert-model.component.html',
-  styleUrls: ['./expert-model.component.css']
+  styleUrls: ['./expert-model.component.css'],
+  providers: [ExpertModelLoaderService],
 })
-export class ExpertModelComponent implements OnInit, OnDestroy {
-
-  expertModel: ExpertModel;
-
-  private routeSubscription: Subscription;
-
+export class ExpertModelComponent {
   constructor(
+    private expertModelLoaderService: ExpertModelLoaderService,
     private expertModelService: ExpertModelService,
-    private importExportService: ImportExportService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {
+    private importExportService: ImportExportService
+  ) {}
+
+  async exportModel() {
+    await this.importExportService.exportExpertModel(this.expertModel._id);
   }
 
-  ngOnInit() {
-    this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
-      this.loadExpertModel(paramMap.get('id'));
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-  }
-
-  exportModel() {
-    this.importExportService.exportExpertModel(this.expertModel._id);
-  }
-
-  update(description: any) {
-    this.expertModel.update(description);
-    this.updateExpertModel();
+  async update(description: any) {
+    await this.expertModelService.update(this.expertModel._id, description);
   }
 
   async updateDomains(domains: Domain[]) {
-    this.expertModel.updateDomains(domains);
-    await this.updateExpertModel();
+    await this.expertModelService.updateDomains(this.expertModel._id, domains);
   }
 
-  updateFeatureModelAuthor(authorInfo: any) {
-    this.expertModel.updateAuthor(authorInfo);
-    this.updateExpertModel();
+  async updateFeatureModelAuthor(authorInfo: any) {
+    await this.expertModelService.updateAuthor(
+      this.expertModel._id,
+      authorInfo
+    );
   }
 
   /**
    * Add a new instance.
    */
-  addInstance(instanceForm: FormGroup, type = InstanceType.EXAMPLE) {
-    this.expertModel.addInstance({name: instanceForm.value.name, type});
-    this.updateExpertModel();
+  async addInstance(instanceForm: FormGroup, type = InstanceType.EXAMPLE) {
+    await this.expertModelService.addInstance(this.expertModel._id, {
+      name: instanceForm.value.name,
+      type,
+    });
   }
 
   /**
    * Navigate to a single business model.
    *
-   * @param businessModelId id of the business model
+   * @param instance the pattern instance
+   * @return the navigation link
    */
-  viewExample(businessModelId: number): void {
-    this.router.navigate(['expertModels', this.expertModel._id, 'examples', businessModelId]);
-  }
+  viewExample = (instance: Instance): string[] => {
+    return [
+      '/',
+      'expertModels',
+      this.expertModel._id,
+      'examples',
+      instance.id.toString(),
+    ];
+  };
 
   /**
    * Navigate to a component to view the pattern
    *
-   * @param patternId the id of the pattern
+   * @param instance the pattern instance
+   * @return the navigation link
    */
-  viewPattern(patternId: number) {
-    this.router.navigate(['expertModels', this.expertModel._id, 'patterns', patternId]);
-  }
+  viewPattern = (instance: Instance): string[] => {
+    return [
+      '/',
+      'expertModels',
+      this.expertModel._id,
+      'patterns',
+      instance.id.toString(),
+    ];
+  };
 
   /**
    * Delete an instance by id.
    *
    * @param instanceId id of the instance
    */
-  deleteInstance(instanceId: number): void {
-    this.expertModel.removeInstance(instanceId);
-    this.updateExpertModel();
-  }
-
-  async updateExpertModel() {
-    await this.expertModelService.save(this.expertModel);
-    this.loadExpertModel(this.expertModel._id);
-  }
-
-  async loadExpertModel(expertModelId: string) {
-    this.expertModel = await this.expertModelService.get(expertModelId);
+  async deleteInstance(instanceId: number) {
+    await this.expertModelService.removeInstance(
+      this.expertModel._id,
+      instanceId
+    );
   }
 
   getExampleInstances(): Instance[] {
-    return this.expertModel.instances.filter((instance) => instance.type === InstanceType.EXAMPLE);
+    return this.expertModel.instances.filter(
+      (instance) => instance.type === InstanceType.EXAMPLE
+    );
   }
 
   getPatternInstances(): Instance[] {
-    return this.expertModel.instances.filter((instance) => instance.type === InstanceType.PATTERN);
+    return this.expertModel.instances.filter(
+      (instance) => instance.type === InstanceType.PATTERN
+    );
   }
 
   getPatternInstanceType() {
     return InstanceType.PATTERN;
   }
 
+  get expertModel() {
+    return this.expertModelLoaderService.expertModel;
+  }
 }

@@ -1,5 +1,17 @@
-export class ArtifactMapping {
+import { Equality } from '../../shared/equality';
+import { DatabaseModelPart } from '../../database/database-model-part';
+import { DatabaseEntry } from '../../database/database-entry';
 
+export interface ArtifactMappingEntry extends DatabaseEntry {
+  output: boolean;
+  step?: number;
+  group?: number;
+  artifact: number;
+}
+
+export class ArtifactMapping
+  implements Equality<ArtifactMapping>, DatabaseModelPart
+{
   output: boolean;
   step?: number;
   group?: number;
@@ -9,8 +21,9 @@ export class ArtifactMapping {
     Object.assign(this, artifactMapping);
   }
 
-  toPouchDb(): any {
-    const pouchDb: any = {
+  toDb(): ArtifactMappingEntry {
+    const pouchDb: ArtifactMappingEntry = {
+      artifact: this.artifact,
       output: this.output,
     };
     if (!this.output) {
@@ -18,8 +31,17 @@ export class ArtifactMapping {
     } else {
       pouchDb.group = this.group;
     }
-    pouchDb.artifact = this.artifact;
     return pouchDb;
   }
 
+  equals(other: ArtifactMapping): boolean {
+    if (other == null || this.output !== other.output) {
+      return false;
+    }
+    if (this.output) {
+      return this.group === other.group && this.artifact === other.artifact;
+    } else {
+      return this.step === other.step && this.artifact === other.artifact;
+    }
+  }
 }

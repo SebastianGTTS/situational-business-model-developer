@@ -5,12 +5,7 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { append, attr, remove, select } from 'tiny-svg';
 
 export default class RunningProcessViewRenderer extends BaseRenderer {
-
-  static $inject = [
-    'eventBus',
-    'bpmnRenderer',
-    'textRenderer',
-  ];
+  static $inject = ['eventBus', 'bpmnRenderer', 'textRenderer'];
 
   private static readonly HIGH_PRIORITY = 1500;
 
@@ -29,30 +24,36 @@ export default class RunningProcessViewRenderer extends BaseRenderer {
   }
 
   drawShape(parentNode: SVGGElement, element) {
-    const shape: SVGRectElement = this.bpmnRenderer.drawShape(parentNode, element);
+    const shape: SVGRectElement = this.bpmnRenderer.drawShape(
+      parentNode,
+      element
+    );
     const method = element.businessObject.get('method');
     if (method) {
       remove(select(parentNode, 'text'));
       const methodName = this.textRenderer.createText(method.name, {
         box: element,
         align: 'center-middle',
-        padding: 5
+        padding: 5,
       });
       append(parentNode, methodName);
-      attr(shape, {rx: 0, ry: 0});
+      attr(shape, { rx: 0, ry: 0 });
     }
     if (element.businessObject.get('tokens') > 0) {
-      attr(shape, {stroke: 'red'});
+      attr(shape, { stroke: 'red' });
     } else if (element.businessObject.get('executed')) {
-      attr(shape, {stroke: 'green'});
+      attr(shape, { stroke: 'green' });
     }
     return shape;
   }
 
   drawConnection(parentNode: SVGGElement, element) {
-    const connection: SVGPathElement = this.bpmnRenderer.drawConnection(parentNode, element);
+    const connection: SVGPathElement = this.bpmnRenderer.drawConnection(
+      parentNode,
+      element
+    );
     if (element.businessObject.get('used')) {
-      attr(connection, {stroke: 'green'});
+      attr(connection, { stroke: 'green' });
     }
     return connection;
   }
@@ -60,5 +61,4 @@ export default class RunningProcessViewRenderer extends BaseRenderer {
   getShapePath(shape) {
     return this.bpmnRenderer.getShapePath(shape);
   }
-
 }

@@ -13,7 +13,8 @@
         [resultFormatter]="formatter"
         [inputFormatter]="formatter"
         (click)="openModuleInput.next($any($event.target).value)"
-        (focus)="openModuleInput.next($any($event.target).value)">
+        (focus)="openModuleInput.next($any($event.target).value)"
+      />
     </div>
     <div class="form-group col">
       <label for="methodInput">Method</label>
@@ -28,25 +29,61 @@
         [resultFormatter]="formatter"
         [inputFormatter]="formatter"
         (click)="openMethodInput.next($any($event.target).value)"
-        (focus)="openMethodInput.next($any($event.target).value)">
+        (focus)="openMethodInput.next($any($event.target).value)"
+      />
     </div>
   </div>
-  <h5 *ngIf="selectedMethod != null && selectedMethod.configurationFormComponent != null">Predefined Values</h5>
+  <h5
+    *ngIf="
+      selectedMethod != null &&
+      selectedMethod.configurationFormComponent != null
+    "
+  >
+    Predefined Values
+  </h5>
   <ng-template appConfigurationFormPlaceholder></ng-template>
   <ng-container *ngIf="selectedMethod && selectedMethod.input.length > 0">
     <h5>Input Artifacts</h5>
-    <ul>
-      <li *ngFor="let input of selectedMethod.input">{{input.name}}</li>
+    <ul class="list-group mb-3">
+      <li
+        class="list-group-item"
+        *ngFor="let input of selectedMethod.input; let index = index"
+      >
+        <b [class.text-danger]="artifactInputs[index].length === 0">{{
+          input.name
+        }}</b>
+        <div *ngIf="artifactInputs[index].length === 0">
+          No input for this artifact defined
+        </div>
+        <div *ngIf="artifactInputs[index].length > 0">
+          Input from:
+          <ul>
+            <li *ngFor="let from of artifactInputs[index]">
+              {{ from.isStep ? 'Step' : 'Input Group' }} #{{
+                from.index + 1
+              }}
+              Artifact #{{ from.artifact + 1 }}
+            </li>
+          </ul>
+        </div>
+      </li>
     </ul>
   </ng-container>
   <ng-container *ngIf="selectedMethod && selectedMethod.output.length > 0">
     <h5>Output Artifacts</h5>
     <ul formArrayName="outputMappings" class="list-group mb-3">
-      <li *ngFor="let output of selectedMethod.output; let index = index" class="list-group-item">
-        <b>{{output.name}}</b>
-        <app-development-method-artifact-mappings [developmentMethod]="developmentMethod"
-                                                  formArrayName="{{index}}"
-                                                  [metaModel]="output"></app-development-method-artifact-mappings>
+      <li
+        *ngFor="let output of selectedMethod.output; let index = index"
+        class="list-group-item"
+      >
+        <b>{{ output.name }}</b>
+        <app-development-method-artifact-mappings
+          [executionStepsFormValue]="executionStepsFormValue"
+          [developmentMethod]="developmentMethod"
+          formArrayName="{{ index }}"
+          [metaModel]="output"
+          [stepNumber]="stepNumber"
+        ></app-development-method-artifact-mappings>
       </li>
     </ul>
   </ng-container>

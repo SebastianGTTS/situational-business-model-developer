@@ -1,56 +1,65 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BmProcess } from '../../development-process-registry/bm-process/bm-process';
 import { BmProcessService } from '../../development-process-registry/bm-process/bm-process.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
 
 @Component({
   selector: 'app-bm-processes',
   templateUrl: './bm-processes.component.html',
-  styleUrls: ['./bm-processes.component.css']
+  styleUrls: ['./bm-processes.component.css'],
+  providers: [
+    ListService,
+    { provide: ELEMENT_SERVICE, useExisting: BmProcessService },
+  ],
 })
-export class BmProcessesComponent implements OnInit {
-
-  bmProcessesList: BmProcess[];
-
+export class BmProcessesComponent {
   bmProcessForm = this.fb.group({
     name: this.fb.control('', Validators.required),
   });
 
+  modalBmProcess: BmProcess;
+  private modalReference: NgbModalRef;
+
+  @ViewChild('deleteBmProcessModal', { static: true })
+  deleteBmProcessModal: any;
+
   constructor(
-    private bmProcessService: BmProcessService,
     private fb: FormBuilder,
-  ) {
+    private listService: ListService<BmProcess>,
+    private modalService: NgbModal
+  ) {}
+
+  openDeleteBmProcessModal(bmProcess: BmProcess) {
+    this.modalBmProcess = bmProcess;
+    this.modalReference = this.modalService.open(this.deleteBmProcessModal, {
+      size: 'lg',
+    });
   }
 
-  ngOnInit() {
-    this.loadBmProcesss();
+  async deleteBmProcess(id: string) {
+    await this.listService.delete(id);
   }
 
-  loadBmProcesss() {
-    this.bmProcessService.getBmProcessList().then(
-      list => this.bmProcessesList = list.docs
-    ).catch(
-      error => console.log('LoadBmProcesss: ' + error)
-    );
+  async addBmProcess(bmProcessForm: FormGroup) {
+    await this.listService.add({ name: bmProcessForm.value.name });
+    this.bmProcessForm.reset();
   }
 
-  deleteBmProcess(id: string) {
-    this.bmProcessService.deleteBmProcess(id).then(
-      () => this.loadBmProcesss()
-    ).catch(
-      error => console.log('DeleteBmProcess: ' + error)
-    );
+  get bmProcessesList(): BmProcess[] {
+    return this.listService.elements;
   }
 
-  addBmProcess(bmProcessForm: FormGroup) {
-    this.bmProcessService.addBmProcess(bmProcessForm.value.name).then(
-      () => {
-        this.bmProcessForm.reset();
-        this.loadBmProcesss();
-      }
-    ).catch(
-      error => console.log('AddBmProcess: ' + error)
-    );
+  get noResults(): boolean {
+    return this.listService.noResults;
   }
 
+  get loading(): boolean {
+    return this.listService.loading;
+  }
+
+  get reloading(): boolean {
+    return this.listService.reloading;
+  }
 }

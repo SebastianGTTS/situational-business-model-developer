@@ -4,16 +4,14 @@ import { Tool } from './tool';
 import { DevelopmentProcessRegistryModule } from '../../development-process-registry.module';
 
 @Injectable({
-  providedIn: DevelopmentProcessRegistryModule
+  providedIn: DevelopmentProcessRegistryModule,
 })
 export class ToolService extends MethodElementService<Tool> {
-
-  protected createMethodElement(element: Partial<Tool>): Tool {
+  protected createElement(element: Partial<Tool>): Tool {
     return new Tool(element);
   }
 
-  protected getTypeName(): string {
+  protected get typeName(): string {
     return Tool.typeName;
   }
-
 }

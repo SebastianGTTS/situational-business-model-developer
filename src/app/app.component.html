@@ -1,3 +1,40 @@
-<app-navbar></app-navbar>
+<app-navbar *ngIf="showNavbar"></app-navbar>
 
-<router-outlet></router-outlet>
+<div id="wrapper" class="min-vh-100 d-flex flex-column align-content-center">
+  <div class="flex-1">
+    <router-outlet></router-outlet>
+  </div>
+
+  <footer
+    *ngIf="showNavbar"
+    class="
+      text-muted
+      container
+      text-center
+      mb-3
+      d-flex
+      align-items-baseline
+      justify-content-center
+    "
+  >
+    <button
+      *ngIf="!isLocalDatabase()"
+      type="button"
+      class="btn btn-link"
+      (click)="logout()"
+    >
+      Logout
+    </button>
+    <div *ngIf="!isLocalDatabase()">&ndash;</div>
+    <a
+      class="btn btn-link"
+      routerLinkActive="active"
+      [routerLink]="['/', 'options']"
+      >Options</a
+    >
+    <div>&ndash;</div>
+    <div class="btn btn-link" routerLinkActive="active" [routerLink]="['/']">
+      SBMD v{{ VERSION }}
+    </div>
+  </footer>
+</div>

@@ -1,23 +1,45 @@
-<div *ngIf="!elementLists">Loading...</div>
-<div *ngIf="elementLists && elementLists.length === 0">No elements defined.</div>
-<div *ngIf="elementLists && elementLists.length > 0">
-  <div *ngFor="let list of elementLists" class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2">{{list.listName}}</h6>
+<app-list-wrapper
+  [listTitle]="listTitle"
+  [loading]="elementLists == null"
+  [noResults]="elementLists && elementLists.length === 0"
+>
+  <div noResults>No elements defined.</div>
+  <div
+    results
+    *ngFor="let list of elementLists"
+    class="my-3 p-3 bg-white rounded shadow-sm"
+  >
+    <h6 class="border-bottom border-gray pb-2">{{ list.listName }}</h6>
     <ul class="list-group">
-      <li class="d-flex list-group-item justify-content-between align-items-baseline"
-          *ngFor="let element of list.elements">
+      <li
+        class="
+          d-flex
+          list-group-item
+          justify-content-between
+          align-items-baseline
+        "
+        *ngFor="let element of list.elements"
+      >
         <div>
-          <span>{{element.name}}</span>
+          <span>{{ element.name }}</span>
         </div>
         <div>
-          <a [routerLink]="getRouterLink(element)" type="button" class="btn btn-dark btn-xs mr-1">
+          <a
+            [routerLink]="getRouterLink(element)"
+            type="button"
+            class="btn btn-dark btn-xs mr-1"
+          >
             View
           </a>
-          <button (click)="deleteElement.emit(element)" type="button" class="btn btn-danger btn-xs">
+          <button
+            (click)="deleteElement.emit(element)"
+            type="button"
+            class="btn btn-danger btn-xs"
+          >
             Delete
           </button>
         </div>
       </li>
     </ul>
   </div>
-</div>
+</app-list-wrapper>
