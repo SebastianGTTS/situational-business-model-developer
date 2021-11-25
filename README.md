@@ -46,7 +46,7 @@ and [bpmn-js](https://bpmn.io/toolkit/bpmn-js/) to run directly in the webbrowse
 ## Further Information
 
 - **Live Demonstration:** http://sebastiangtts.github.io/situational-business-model-developer/
-- **Research Paper:** Currently under review
+- **Research Paper:** Situation- and Domain-Specific Composition and Enactment of Business Model Development Methods [(Access Paper)](https://link.springer.com/chapter/10.1007/978-3-030-91452-3_7)
 
 ## License
 
