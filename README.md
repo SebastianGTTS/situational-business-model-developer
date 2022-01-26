@@ -46,7 +46,11 @@ and [bpmn-js](https://bpmn.io/toolkit/bpmn-js/) to run directly in the webbrowse
 ## Further Information
 
 - **Live Demonstration:** http://sebastiangtts.github.io/situational-business-model-developer/
-- **Research Paper:** Situation- and Domain-Specific Composition and Enactment of Business Model Development Methods [(Access Paper)](https://link.springer.com/chapter/10.1007/978-3-030-91452-3_7)
+- **Underlying Research Papers:** 
+  - Extending Business Model Development Tools with Consolidated Expert Knowledge [Access Preprint](https://www.researchgate.net/publication/352905879_Extending_Business_Model_Development_Tools_with_Consolidated_Expert_Knowledge)
+  - Situation-Specific Business Model Development Methods for Mobile App Developers [Access Preprint](https://www.researchgate.net/publication/352476162_Situation-Specific_Business_Model_Development_Methods_for_Mobile_App_Developers)
+  - Situation- and Domain-Specific Composition and Enactment of Business Model Development Methods [(Access Preprint)](https://www.researchgate.net/publication/355368661_Situation-and_Domain-specific_Composition_and_Enactment_of_Business_Model_Development_Methods)
+  - Situational Business Model Developer: A Tool-support for Situation-specific Business Model Development [Access Preprint](https://www.researchgate.net/publication/356860356_Situational_Business_Model_Developer_A_Tool-support_for_Situation-specific_Business_Model_Development)
 
 ## License
 
