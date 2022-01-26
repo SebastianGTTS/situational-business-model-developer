@@ -30,7 +30,7 @@ export class CanvasDefinitionRowFormService {
 
   createCanvasDefinitionCellForm(
     canvasDefinitionCell: CanvasDefinitionCell = null
-  ) {
+  ): FormGroup {
     const form = this.fb.group({
       isSpacer: [false, Validators.required],
       name: ['', Validators.required],
@@ -51,7 +51,7 @@ export class CanvasDefinitionRowFormService {
   convertCanvasDefinitionCellForm(
     canvasDefinitionCellForm: FormGroup,
     spacer: boolean
-  ) {
+  ): void {
     if (spacer) {
       canvasDefinitionCellForm.removeControl('name');
       canvasDefinitionCellForm.removeControl('id');
@@ -68,13 +68,13 @@ export class CanvasDefinitionRowFormService {
     formValue: CanvasDefinitionCellFormValue
   ): CanvasDefinitionCell {
     if (formValue.isSpacer) {
-      return new CanvasDefinitionCell({
+      return new CanvasDefinitionCell(undefined, {
         isSpacer: formValue.isSpacer,
         rowspan: formValue.rowspan,
         colspan: formValue.colspan,
       });
     } else {
-      return new CanvasDefinitionCell({
+      return new CanvasDefinitionCell(undefined, {
         isSpacer: formValue.isSpacer,
         name: formValue.name,
         rowspan: formValue.rowspan,

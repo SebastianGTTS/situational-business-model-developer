@@ -1,28 +1,30 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { asapScheduler, Observable, Subject, Subscription } from 'rxjs';
+import {
+  asapScheduler,
+  Observable,
+  ReplaySubject,
+  Subject,
+  Subscription,
+} from 'rxjs';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { subscribeOn, tap } from 'rxjs/operators';
 
 @Injectable()
 export abstract class ElementLoaderService implements OnDestroy {
-  private _loadedObservable: Observable<void> = null;
-  private _loaded: Subject<void> = null;
+  private readonly _loadedObservable: Observable<void>;
+  private readonly _loaded: Subject<void>;
   get loaded(): Observable<void> {
     return this._loadedObservable;
   }
 
-  private routeSubscription: Subscription = null;
-  private _changesFeed: Subscription = null;
+  private readonly routeSubscription: Subscription;
+  private _changesFeed?: Subscription;
   protected set changesFeed(changesFeed: Subscription) {
     this._changesFeed = changesFeed;
   }
 
   protected constructor(private route: ActivatedRoute) {
-    this.init();
-  }
-
-  private init(): void {
-    this._loaded = new Subject<void>();
+    this._loaded = new ReplaySubject<void>(1);
     this._loadedObservable = this._loaded.asObservable();
     this.routeSubscription = this.route.paramMap
       .pipe(
@@ -37,7 +39,7 @@ export abstract class ElementLoaderService implements OnDestroy {
    *
    * @param paramMap the param map
    */
-  protected abstract initParams(paramMap: ParamMap);
+  protected abstract initParams(paramMap: ParamMap): void;
 
   ngOnDestroy(): void {
     this.checkUnsubscribeChangesFeed();
@@ -48,7 +50,7 @@ export abstract class ElementLoaderService implements OnDestroy {
   private checkUnsubscribeChangesFeed(): void {
     if (this._changesFeed) {
       this._changesFeed.unsubscribe();
-      this._changesFeed = null;
+      this._changesFeed = undefined;
     }
   }
 

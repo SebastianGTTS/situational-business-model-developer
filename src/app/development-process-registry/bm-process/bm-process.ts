@@ -1,11 +1,34 @@
 import { DatabaseModel } from '../../database/database-model';
-import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
+import {
+  SituationalFactor,
+  SituationalFactorEntry,
+} from '../method-elements/situational-factor/situational-factor';
 import { DevelopmentMethod } from '../development-method/development-method';
-import { Decision, GroupSelection } from './decision';
-import { Stakeholder } from '../method-elements/stakeholder/stakeholder';
-import { Artifact } from '../method-elements/artifact/artifact';
-import { Domain } from '../knowledge/domain';
-import { Selection } from '../development-method/selection';
+import { Decision, DecisionEntry, DecisionInit } from './decision';
+import { Domain, DomainEntry, DomainInit } from '../knowledge/domain';
+import { Selection, SelectionEntry } from '../development-method/selection';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../../database/database-entry';
+
+export interface BmProcessInit extends DatabaseRootInit {
+  initial?: boolean;
+  name: string;
+  processDiagram?: string;
+  domains?: DomainInit[];
+  situationalFactors?: Selection<SituationalFactor>[];
+  decisions?: { [elementId: string]: Decision };
+}
+
+export interface BmProcessEntry extends DatabaseRootEntry {
+  initial: boolean;
+  name: string;
+  processDiagram: string;
+  domains: DomainEntry[];
+  situationalFactors: SelectionEntry<SituationalFactorEntry>[];
+  decisions: { [elementId: string]: DecisionEntry };
+}
 
 export class BmProcess extends DatabaseModel {
   static readonly typeName = 'BmProcess';
@@ -21,28 +44,54 @@ export class BmProcess extends DatabaseModel {
 
   decisions: { [elementId: string]: Decision } = {};
 
-  constructor(bmProcess: Partial<BmProcess>) {
-    super(BmProcess.typeName);
-    this.update(bmProcess);
-  }
-
-  /**
-   * Update this bm process with new values
-   *
-   * @param bmProcess the new values of this bm process (values will be copied to the current object)
-   */
-  update(bmProcess: Partial<BmProcess>) {
-    Object.assign(this, bmProcess);
-    this.domains = this.domains.map((domain) => new Domain(domain));
-    this.situationalFactors = this.situationalFactors.map(
-      (selection) =>
-        new Selection(selection, (element) => new SituationalFactor(element))
-    );
-    const decisions: { [elementId: string]: Decision } = {};
-    Object.entries(this.decisions).forEach(([id, decision]) => {
-      decisions[id] = new Decision(decision);
-    });
-    this.decisions = decisions;
+  constructor(
+    entry: BmProcessEntry | undefined,
+    init: BmProcessInit | undefined
+  ) {
+    super(entry, init, BmProcess.typeName);
+    const element = entry ?? init;
+    this.initial = element.initial ?? this.initial;
+    this.name = element.name;
+    this.processDiagram = element.processDiagram;
+    if (entry != null) {
+      this.domains =
+        entry.domains?.map((domain) => new Domain(domain, undefined)) ??
+        this.domains;
+      this.situationalFactors =
+        entry.situationalFactors?.map(
+          (selection) =>
+            new Selection<SituationalFactor>(
+              selection,
+              undefined,
+              SituationalFactor
+            )
+        ) ?? this.situationalFactors;
+      if (entry.decisions) {
+        Object.entries(entry.decisions).forEach(
+          ([elementId, decision]) =>
+            (this.decisions[elementId] = new Decision(decision, undefined))
+        );
+      }
+    } else if (init != null) {
+      this.domains =
+        init.domains?.map((domain) => new Domain(undefined, domain)) ??
+        this.domains;
+      this.situationalFactors =
+        init.situationalFactors?.map(
+          (selection) =>
+            new Selection<SituationalFactor>(
+              undefined,
+              selection,
+              SituationalFactor
+            )
+        ) ?? this.situationalFactors;
+      if (init.decisions) {
+        Object.entries(init.decisions).forEach(
+          ([elementId, decision]) =>
+            (this.decisions[elementId] = new Decision(undefined, decision))
+        );
+      }
+    }
   }
 
   checkMatchByFactor(factorMap: {
@@ -105,23 +154,44 @@ export class BmProcess extends DatabaseModel {
     };
   }
 
-  addDecision(id: string, method: DevelopmentMethod) {
-    this.decisions[id] = new Decision({
-      method,
-      stakeholders: new GroupSelection<Stakeholder>({}, null),
-      inputArtifacts: new GroupSelection<Artifact>({}, null),
-      outputArtifacts: new GroupSelection<Artifact>({}, null),
-      tools: null,
+  addDecision(id: string, method: DevelopmentMethod): void {
+    this.decisions[id] = new Decision(undefined, {
+      method: method,
+      stakeholders: {},
+      inputArtifacts: {},
+      outputArtifacts: {},
+      tools: {},
       stepDecisions: method.executionSteps.map(() => null),
     });
   }
 
-  removeDecision(id: string) {
+  removeDecision(id: string): void {
     delete this.decisions[id];
   }
 
-  toDb(): any {
-    const decisions: { [elementId: string]: Decision } = {};
+  /**
+   * Finish the initialization process of a bm process, i.e.,
+   * the context selection is finished.
+   */
+  finishInitialization(): void {
+    this.initial = false;
+  }
+
+  /**
+   * Update the decisions of this bm process.
+   *
+   * @param decisions the new decisions
+   */
+  updateDecisions(decisions: { [elementId: string]: DecisionInit }): void {
+    this.decisions = {};
+    Object.entries(decisions).forEach(
+      ([elementId, decision]) =>
+        (this.decisions[elementId] = new Decision(undefined, decision))
+    );
+  }
+
+  toDb(): BmProcessEntry {
+    const decisions: { [elementId: string]: DecisionEntry } = {};
     Object.entries(this.decisions).forEach(([id, decision]) => {
       decisions[id] = decision.toDb();
     });

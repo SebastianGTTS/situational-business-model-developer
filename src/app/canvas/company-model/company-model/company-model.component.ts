@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
-import { ExpertModel } from '../../../canvas-meta-model/expert-model';
+import { ExpertModelEntry } from '../../../canvas-meta-model/expert-model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MergeService } from '../../merge/merge.service';
 import { CompanyModelLoaderService } from '../company-model-loader.service';
@@ -14,11 +14,11 @@ import { CompanyModel } from '../../../canvas-meta-model/company-model';
   providers: [CompanyModelLoaderService],
 })
 export class CompanyModelComponent implements OnInit {
-  selectedExpertModelList: ExpertModel[];
+  selectedExpertModelList: ExpertModelEntry[];
   selectedExpertModelForm = this.fb.group({
     expertModelId: [null, Validators.required],
   });
-  unselectedExpertModelList: ExpertModel[];
+  unselectedExpertModelList: ExpertModelEntry[];
 
   constructor(
     private companyModelLoaderService: CompanyModelLoaderService,
@@ -29,24 +29,24 @@ export class CompanyModelComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.companyModelLoaderService.loaded.subscribe(() =>
       this.loadExpertModels(this.companyModel._id)
     );
   }
 
-  async update(description: any) {
+  async update(description: any): Promise<void> {
     await this.companyModelService.update(this.companyModel._id, description);
   }
 
-  async updateAuthor(authorInfo: any) {
+  async updateAuthor(authorInfo: any): Promise<void> {
     await this.companyModelService.updateAuthor(
       this.companyModel._id,
       authorInfo
     );
   }
 
-  async selectExpertModel() {
+  async selectExpertModel(): Promise<void> {
     await this.mergeService.selectExpertModel(
       this.companyModel._id,
       this.selectedExpertModelForm.value.expertModelId
@@ -54,7 +54,7 @@ export class CompanyModelComponent implements OnInit {
     this.selectedExpertModelForm.reset();
   }
 
-  async unselectExpertModel(expertModelId: string) {
+  async unselectExpertModel(expertModelId: string): Promise<void> {
     await this.mergeService.unselectExpertModel(
       this.companyModel._id,
       expertModelId

@@ -55,7 +55,7 @@ export class ArtifactDataService {
     }
     const reference: ArtifactDataReference = artifact.data;
     const api = this.metaModelService.getMetaModelApi(reference.type);
-    return new ArtifactData({
+    return new ArtifactData(undefined, {
       ...artifact,
       data: await api.copy(reference),
     });

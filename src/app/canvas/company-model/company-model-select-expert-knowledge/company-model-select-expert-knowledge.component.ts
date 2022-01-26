@@ -7,7 +7,7 @@ import { BmProcess } from '../../../development-process-registry/bm-process/bm-p
 import { BmProcessService } from '../../../development-process-registry/bm-process/bm-process.service';
 import { MergeService } from '../../merge/merge.service';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ExpertModel } from '../../../canvas-meta-model/expert-model';
+import { ExpertModelEntry } from '../../../canvas-meta-model/expert-model';
 
 @Component({
   selector: 'app-company-model-select-expert-knowledge',
@@ -23,8 +23,8 @@ export class CompanyModelSelectExpertKnowledgeComponent
   selectedExpertModelForm = this.fb.group({
     expertModelId: [null, Validators.required],
   });
-  selectedExpertModelList: ExpertModel[];
-  unselectedExpertModelList: ExpertModel[];
+  selectedExpertModelList: ExpertModelEntry[];
+  unselectedExpertModelList: ExpertModelEntry[];
 
   private querySubscription: Subscription;
   private routeSubscription: Subscription;

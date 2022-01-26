@@ -8,7 +8,10 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { Type } from '../../development-process-registry/method-elements/type/type';
+import {
+  Type,
+  TypeEntry,
+} from '../../development-process-registry/method-elements/type/type';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
 import { Subscription } from 'rxjs';
@@ -25,6 +28,11 @@ export class TypesSelectionFormComponent
   implements OnInit, OnChanges, OnDestroy
 {
   @Input() types: Selection<Type>[];
+  /**
+   * Whether the internal types 'initialisation' and 'generic' should be
+   * displayed in auto complete.
+   */
+  @Input() internalTypes: boolean = false;
 
   @Output() submitTypesForm = new EventEmitter<FormArray>();
 
@@ -33,14 +41,14 @@ export class TypesSelectionFormComponent
   });
   changed = false;
 
-  methodElements: Type[] = [];
+  methodElements: TypeEntry[] = [];
   listNames: string[] = [];
 
   private changeSubscription: Subscription;
 
   constructor(private fb: FormBuilder, private typeService: TypeService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadTypes();
     this.changeSubscription = this.typesForm.valueChanges
       .pipe(
@@ -50,7 +58,7 @@ export class TypesSelectionFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.types) {
       const oldTypes: Selection<Type>[] = changes.types.previousValue;
       const newTypes: Selection<Type>[] = changes.types.currentValue;
@@ -60,17 +68,17 @@ export class TypesSelectionFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitTypesForm.emit(this.typesForm.get('types') as FormArray);
   }
 
-  private loadForm(types: Selection<Type>[]) {
+  private loadForm(types: Selection<Type>[]): void {
     const formGroups = types.map((type) =>
       this.fb.group({
         list: [type.list, Validators.required],
@@ -85,9 +93,12 @@ export class TypesSelectionFormComponent
     this.listNames = [
       ...new Set(this.methodElements.map((element) => element.list)),
     ];
+    if (this.internalTypes) {
+      this.listNames.push('initialisation', 'generic');
+    }
   }
 
-  createFormGroupFactory = () =>
+  createFormGroupFactory = (): FormGroup =>
     this.fb.group({
       list: ['', Validators.required],
       element: null,

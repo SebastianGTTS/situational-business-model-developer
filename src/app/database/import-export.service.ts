@@ -57,7 +57,7 @@ export class ImportExportService {
   private convertContentToDocs(content: unknown): any[] {
     if (
       typeof content === 'object' &&
-      'identifier' in content &&
+      'identifier' in content! &&
       'docs' in content
     ) {
       const importContent = content as ImportExportContent;
@@ -84,7 +84,7 @@ export class ImportExportService {
         (event: ProgressEvent<FileReader>) => {
           let json = null;
           try {
-            json = JSON.parse(event.target.result as string);
+            json = JSON.parse(event.target!.result as string);
           } catch (error) {
             reject(error);
             return;

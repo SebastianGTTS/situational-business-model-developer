@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ProcessApiService } from '../process-api.service';
+import { ProcessApiService } from '../../../development-process-registry/module-api/process-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { Instance } from '../../../canvas-meta-model/instance';

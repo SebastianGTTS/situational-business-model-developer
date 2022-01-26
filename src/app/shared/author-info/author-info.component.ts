@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Author } from '../../model/author';
+import { Author, AuthorEntry } from '../../model/author';
 
 @Component({
   selector: 'app-author-info',
@@ -7,5 +7,5 @@ import { Author } from '../../model/author';
   styleUrls: ['./author-info.component.css'],
 })
 export class AuthorInfoComponent {
-  @Input() author: Author;
+  @Input() author: Author | AuthorEntry;
 }

@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ExpertModelService } from '../../canvas-meta-model/expert-model.service';
 import { CompanyModelService } from '../../canvas-meta-model/company-model.service';
-import { Feature } from '../../canvas-meta-model/feature';
+import { Feature, FeatureInit } from '../../canvas-meta-model/feature';
 import { RelationshipType } from '../../canvas-meta-model/relationships';
-import { ExpertModel } from '../../canvas-meta-model/expert-model';
-import { CanvasDefinition } from '../../canvas-meta-model/canvas-definition';
+import { ExpertModelEntry } from '../../canvas-meta-model/expert-model';
+import {
+  CanvasDefinition,
+  CanvasDefinitionEntry,
+} from '../../canvas-meta-model/canvas-definition';
 
 @Injectable({
   providedIn: 'root',
@@ -15,21 +18,27 @@ export class MergeService {
     private expertModelService: ExpertModelService
   ) {}
 
-  async selectExpertModel(companyModelId: string, expertModelId: string) {
+  async selectExpertModel(
+    companyModelId: string,
+    expertModelId: string
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(companyModelId);
     companyModel.addExpertModel(expertModelId);
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
-  async unselectExpertModel(companyModelId: string, expertModelId: string) {
+  async unselectExpertModel(
+    companyModelId: string,
+    expertModelId: string
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(companyModelId);
     companyModel.removeExpertModel(expertModelId);
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async getSelectedExpertModels(
     companyModelId: string
-  ): Promise<ExpertModel[]> {
+  ): Promise<ExpertModelEntry[]> {
     const companyModel = await this.companyModelService.get(companyModelId);
     return this.expertModelService.getList({
       _id: { $in: Object.keys(companyModel.expertModelTraces) },
@@ -38,10 +47,10 @@ export class MergeService {
 
   async getUnselectedExpertModels(
     companyModelId: string
-  ): Promise<ExpertModel[]> {
+  ): Promise<ExpertModelEntry[]> {
     const companyModel = await this.companyModelService.get(companyModelId);
     const getRootFeatureIds = (
-      canvasDefinition: CanvasDefinition
+      canvasDefinition: CanvasDefinition | CanvasDefinitionEntry
     ): string[] => {
       const rootFeatureIds: string[] = [];
       canvasDefinition.rows.forEach((row) =>
@@ -60,7 +69,7 @@ export class MergeService {
           _id: { $in: Object.keys(companyModel.expertModelTraces) },
         },
       })
-    ).filter((expertModel: ExpertModel) => {
+    ).filter((expertModel: ExpertModelEntry) => {
       const ids = getRootFeatureIds(expertModel.$definition);
       return (
         ids.length === definitionIds.length &&
@@ -71,11 +80,11 @@ export class MergeService {
 
   async addFeatureMerge(
     featureModelId: string,
-    feature: Partial<Feature>,
+    feature: FeatureInit,
     subfeatureOf: string,
     expertModelId: string,
     expertModelFeatureId: string
-  ) {
+  ): Promise<void> {
     const expertModel = await this.expertModelService.get(expertModelId);
     const companyModel = await this.companyModelService.get(featureModelId);
     const newFeature = companyModel.addFeature(feature, subfeatureOf);
@@ -84,14 +93,14 @@ export class MergeService {
       expertModelFeatureId,
       newFeature.id
     );
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async addAllSubfeaturesMerge(
     featureModelId: string,
     expertModelId: string,
     expertModelFeatureId: string
-  ) {
+  ): Promise<void> {
     const expertModel = await this.expertModelService.get(expertModelId);
     const companyModel = await this.companyModelService.get(featureModelId);
     let subfeatures: Feature[];
@@ -126,7 +135,7 @@ export class MergeService {
           newFeature.id
         );
       });
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async addTrace(
@@ -134,7 +143,7 @@ export class MergeService {
     featureId: string,
     expertModelId: string,
     expertModelFeatureId: string
-  ) {
+  ): Promise<void> {
     const expertModel = await this.expertModelService.get(expertModelId);
     const companyModel = await this.companyModelService.get(featureModelId);
     companyModel.addExpertModelTrace(
@@ -142,17 +151,17 @@ export class MergeService {
       expertModelFeatureId,
       featureId
     );
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async deleteTrace(
     featureModelId: string,
     featureId: string,
     expertModelId: string
-  ) {
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(featureModelId);
     companyModel.removeTrace(featureId, expertModelId);
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async updateFeature(
@@ -160,16 +169,19 @@ export class MergeService {
     featureId: string,
     feature: Partial<Feature>,
     subfeatureOf: string
-  ) {
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(featureModelId);
     companyModel.updateFeature(featureId, subfeatureOf, feature);
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
-  async deleteFeature(featureModelId: string, featureId: string) {
+  async deleteFeature(
+    featureModelId: string,
+    featureId: string
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(featureModelId);
     companyModel.removeFeature(featureId);
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async addRelationship(
@@ -177,10 +189,10 @@ export class MergeService {
     relationshipType: RelationshipType,
     fromFeatureId: string,
     toFeatureId: string
-  ) {
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(featureModelId);
     companyModel.addRelationship(relationshipType, fromFeatureId, toFeatureId);
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 
   async removeRelationship(
@@ -188,13 +200,13 @@ export class MergeService {
     relationshipType: RelationshipType,
     fromFeatureId: string,
     toFeatureId: string
-  ) {
+  ): Promise<void> {
     const companyModel = await this.companyModelService.get(featureModelId);
     companyModel.removeRelationship(
       relationshipType,
       fromFeatureId,
       toFeatureId
     );
-    return this.companyModelService.save(companyModel);
+    await this.companyModelService.save(companyModel);
   }
 }

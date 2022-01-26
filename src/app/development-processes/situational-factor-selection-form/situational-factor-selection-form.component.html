@@ -30,6 +30,7 @@
         [editable]="false"
         [resultFormatter]="formatter"
         [inputFormatter]="formatter"
+        (selectItem)="selectFactor($event)"
         (click)="openElementInput.next($any($event.target).value)"
         (focus)="openElementInput.next($any($event.target).value)"
       />

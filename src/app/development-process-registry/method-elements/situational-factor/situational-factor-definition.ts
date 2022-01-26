@@ -1,21 +1,36 @@
-import { MethodElement, MethodElementEntry } from '../method-element';
+import {
+  MethodElement,
+  MethodElementEntry,
+  MethodElementInit,
+} from '../method-element';
+
+export interface SituationalFactorDefinitionInit extends MethodElementInit {
+  values?: string[];
+  ordered?: boolean;
+}
 
 export interface SituationalFactorDefinitionEntry extends MethodElementEntry {
   values: string[];
   ordered: boolean;
 }
 
-export class SituationalFactorDefinition extends MethodElement {
+export class SituationalFactorDefinition
+  extends MethodElement
+  implements SituationalFactorDefinitionInit
+{
   static readonly typeName = 'SituationalFactorDefinition';
 
   values: string[] = [];
   ordered = false;
 
   constructor(
-    situationalFactorDefinition: Partial<SituationalFactorDefinition>
+    entry: SituationalFactorDefinitionEntry | undefined,
+    init: SituationalFactorDefinitionInit | undefined
   ) {
-    super(SituationalFactorDefinition.typeName);
-    this.update(situationalFactorDefinition);
+    super(entry, init, SituationalFactorDefinition.typeName);
+    const element = entry ?? init;
+    this.values = element.values ?? this.values;
+    this.ordered = element.ordered ?? this.ordered;
   }
 
   toDb(): SituationalFactorDefinitionEntry {

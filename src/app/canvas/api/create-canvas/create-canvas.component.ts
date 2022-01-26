@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FeatureModelInstanceFormService } from '../../form-services/feature-model-instance-form.service';
-import { Instance } from '../../../canvas-meta-model/instance';
+import { InstanceInit } from '../../../canvas-meta-model/instance';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { CanvasResolveService } from '../../canvas-resolve.service';
-import { ProcessApiService } from '../process-api.service';
+import { ProcessApiService } from '../../../development-process-registry/module-api/process-api.service';
 import { RunningMethod } from '../../../development-process-registry/running-process/running-method';
 import { CompanyModel } from '../../../canvas-meta-model/company-model';
 
@@ -37,8 +37,9 @@ export class CreateCanvasComponent implements OnInit {
           this.runningMethod.currentStepNumber
         ].companyModelId
       );
-      const instance: Partial<Instance> =
-        this.featureModelInstanceFormService.get(this.form.value);
+      const instance: InstanceInit = this.featureModelInstanceFormService.get(
+        this.form.value
+      );
       const instanceId = companyModel.addInstance(instance).id;
       companyModel.resetDatabaseState();
       companyModel.createdByMethod = true;

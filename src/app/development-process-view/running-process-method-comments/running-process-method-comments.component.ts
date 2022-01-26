@@ -30,7 +30,7 @@ export class RunningProcessMethodCommentsComponent {
   constructor(private modalService: NgbModal) {}
 
   _addComment(formGroup: FormGroup): void {
-    this.addComment.emit(new Comment(formGroup.getRawValue()));
+    this.addComment.emit(new Comment(undefined, formGroup.getRawValue()));
     formGroup.reset();
   }
 

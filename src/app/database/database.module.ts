@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { environment } from '../../environments/environment';
 import { LocalAuthService } from './local-auth.service';
 import { LoginGuard } from './login.guard';
+import { Observable } from 'rxjs';
 
 @NgModule({
   providers: [
@@ -21,7 +22,9 @@ import { LoginGuard } from './login.guard';
     },
     {
       provide: APP_INITIALIZER,
-      useFactory: (authService: AuthService) => () => authService.init(),
+      useFactory:
+        (authService: AuthService) => (): Observable<void> | Promise<void> =>
+          authService.init(),
       deps: [AuthService],
       multi: true,
     },

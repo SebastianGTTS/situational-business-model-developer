@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Stakeholder } from '../../development-process-registry/method-elements/stakeholder/stakeholder';
+import {
+  Stakeholder,
+  StakeholderEntry,
+} from '../../development-process-registry/method-elements/stakeholder/stakeholder';
 import { StakeholderService } from '../../development-process-registry/method-elements/stakeholder/stakeholder.service';
 import { FormGroup } from '@angular/forms';
 import { GroupSelection } from '../../development-process-registry/bm-process/decision';
@@ -16,11 +19,11 @@ export class StakeholdersGroupInfoComponent implements OnInit {
 
   @Output() submitGroupsForm = new EventEmitter<FormGroup>();
 
-  methodElements: Stakeholder[] = [];
+  methodElements: StakeholderEntry[] = [];
 
   constructor(private stakeholderService: StakeholderService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadMethodElements();
   }
 

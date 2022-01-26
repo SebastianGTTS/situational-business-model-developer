@@ -1,0 +1,16 @@
+<div class="btn-group mb-1" role="group" aria-label="Zoom">
+  <button type="button" class="btn btn-light" (click)="zoom(-1)">
+    <i class="fas fa-minus fa-fw whiteboard-icon"></i
+    ><span class="sr-only">Zoom out</span>
+  </button>
+  <button type="button" class="btn btn-light" (click)="zoom(1)">
+    <i class="fas fa-plus fa-fw whiteboard-icon"></i
+    ><span class="sr-only">Zoom in</span>
+  </button>
+  <button type="button" class="ml-3 btn btn-light" (click)="zoomReset()">
+    <b>Reset zoom</b>
+  </button>
+</div>
+<div class="border" #canvasWrapper>
+  <canvas #canvasElement></canvas>
+</div>

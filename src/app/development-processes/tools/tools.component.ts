@@ -4,7 +4,10 @@ import { ToolService } from '../../development-process-registry/method-elements/
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { Module } from '../../development-process-registry/module-api/module';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { Tool } from '../../development-process-registry/method-elements/tool/tool';
+import {
+  Tool,
+  ToolEntry,
+} from '../../development-process-registry/method-elements/tool/tool';
 
 @Component({
   selector: 'app-tools',
@@ -12,7 +15,7 @@ import { Tool } from '../../development-process-registry/method-elements/tool/to
   styleUrls: ['./tools.component.css'],
 })
 export class ToolsComponent implements OnInit {
-  elementLists: { listName: string; elements: Tool[] }[] = null;
+  elementLists: { listName: string; elements: ToolEntry[] }[] = null;
   listNames: string[] = [];
 
   moduleLists: { listName: string; elements: Module[] }[] = null;
@@ -20,7 +23,7 @@ export class ToolsComponent implements OnInit {
   modalTool: Tool;
   private modalReference: NgbModalRef;
 
-  @ViewChild('deleteToolModal', { static: true }) deleteToolModal: any;
+  @ViewChild('deleteToolModal', { static: true }) deleteToolModal: unknown;
 
   constructor(
     private modalService: NgbModal,
@@ -28,12 +31,12 @@ export class ToolsComponent implements OnInit {
     private toolService: ToolService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.load();
     this.moduleLists = this.moduleService.getLists();
   }
 
-  private load() {
+  private load(): void {
     this.toolService
       .getLists()
       .then((lists) => {
@@ -43,21 +46,21 @@ export class ToolsComponent implements OnInit {
       .catch((error) => console.log('Load: ' + error));
   }
 
-  openDeleteToolModal(tool: Tool) {
+  openDeleteToolModal(tool: Tool): void {
     this.modalTool = tool;
     this.modalReference = this.modalService.open(this.deleteToolModal, {
       size: 'lg',
     });
   }
 
-  delete(id: string) {
+  delete(id: string): void {
     this.toolService
       .delete(id)
       .then(() => this.load())
       .catch((error) => console.log('Delete: ' + error));
   }
 
-  add(form: FormGroup) {
+  add(form: FormGroup): void {
     this.toolService
       .add(form.value)
       .then(() => this.load())

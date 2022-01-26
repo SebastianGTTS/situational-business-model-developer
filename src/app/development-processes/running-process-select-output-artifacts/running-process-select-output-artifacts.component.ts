@@ -117,10 +117,6 @@ export class RunningProcessSelectOutputArtifactsComponent
     this.updateOutputArtifacts.emit(this.formArray);
   }
 
-  nextStep(): void {
-    this.updateOutputArtifacts.emit(this.fb.array([]));
-  }
-
   get formArray(): FormArray {
     return this.form.get('outputArtifacts') as FormArray;
   }

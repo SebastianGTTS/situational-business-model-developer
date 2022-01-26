@@ -1,13 +1,21 @@
-import { MethodElement, MethodElementEntry } from '../method-element';
+import {
+  MethodElement,
+  MethodElementEntry,
+  MethodElementInit,
+} from '../method-element';
+
+export interface StakeholderInit extends MethodElementInit {}
 
 export interface StakeholderEntry extends MethodElementEntry {}
 
-export class Stakeholder extends MethodElement {
+export class Stakeholder extends MethodElement implements StakeholderInit {
   static readonly typeName = 'Stakeholder';
 
-  constructor(stakeholder: Partial<Stakeholder>) {
-    super(Stakeholder.typeName);
-    this.update(stakeholder);
+  constructor(
+    entry: StakeholderEntry | undefined,
+    init: StakeholderInit | undefined
+  ) {
+    super(entry, init, Stakeholder.typeName);
   }
 
   /**

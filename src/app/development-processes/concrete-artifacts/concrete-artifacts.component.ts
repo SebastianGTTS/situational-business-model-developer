@@ -1,5 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { RunningArtifact } from '../../development-process-registry/running-process/running-artifact';
+import {
+  RunningArtifact,
+  RunningArtifactEntry,
+  RunningArtifactInit,
+} from '../../development-process-registry/running-process/running-artifact';
 import { ConcreteArtifactService } from '../../development-process-registry/running-process/concrete-artifact.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
@@ -14,33 +18,33 @@ import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
   ],
 })
 export class ConcreteArtifactsComponent {
-  modalArtifact: RunningArtifact;
+  modalArtifact: RunningArtifactEntry;
   private modalReference: NgbModalRef;
 
   @ViewChild('deleteArtifactModal', { static: true })
-  deleteArtifactModal: any;
+  deleteArtifactModal: unknown;
 
   constructor(
-    private listService: ListService<RunningArtifact>,
+    private listService: ListService<RunningArtifact, RunningArtifactInit>,
     private modalService: NgbModal
   ) {}
 
-  openDeleteArtifactModal(artifact: RunningArtifact) {
+  openDeleteArtifactModal(artifact: RunningArtifactEntry): void {
     this.modalArtifact = artifact;
     this.modalReference = this.modalService.open(this.deleteArtifactModal, {
       size: 'lg',
     });
   }
 
-  async deleteArtifact(artifact: RunningArtifact) {
+  async deleteArtifact(artifact: RunningArtifactEntry): Promise<void> {
     await this.listService.delete(artifact._id);
   }
 
-  getRouterLink(artifact: RunningArtifact): string[] {
+  getRouterLink(artifact: RunningArtifactEntry): string[] {
     return ['detail', artifact._id];
   }
 
-  get artifacts(): RunningArtifact[] {
+  get artifacts(): RunningArtifactEntry[] {
     return this.listService.elements;
   }
 

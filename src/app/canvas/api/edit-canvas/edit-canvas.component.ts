@@ -3,7 +3,7 @@ import { CompanyModelService } from '../../../canvas-meta-model/company-model.se
 import { CanvasResolveService } from '../../canvas-resolve.service';
 import { ConformanceReport } from '../../../canvas-meta-model/conformance-report';
 import { CanvasModelConsistencyService } from '../../../canvas-meta-model/canvas-model-consistency.service';
-import { ProcessApiService } from '../process-api.service';
+import { ProcessApiService } from '../../../development-process-registry/module-api/process-api.service';
 import { InstanceLoaderService } from '../instance-loader.service';
 import { RunningMethod } from '../../../development-process-registry/running-process/running-method';
 import { Instance } from '../../../canvas-meta-model/instance';

@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Instance } from '../../canvas-meta-model/instance';
+import {
+  Instance,
+  InstanceInit,
+  InstanceType,
+} from '../../canvas-meta-model/instance';
 
 export interface InstanceFormValue {
   name: string;
@@ -24,10 +28,11 @@ export class FeatureModelInstanceFormService {
     return form;
   }
 
-  get(formValue: InstanceFormValue): Partial<Instance> {
+  get(formValue: InstanceFormValue): InstanceInit {
     return {
       name: formValue.name,
       description: formValue.description,
+      type: InstanceType.EXAMPLE,
     };
   }
 }

@@ -9,7 +9,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Stakeholder } from '../../development-process-registry/method-elements/stakeholder/stakeholder';
+import {
+  Stakeholder,
+  StakeholderEntry,
+} from '../../development-process-registry/method-elements/stakeholder/stakeholder';
 import { StakeholderService } from '../../development-process-registry/method-elements/stakeholder/stakeholder.service';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
 import { Subscription } from 'rxjs';
@@ -33,7 +36,7 @@ export class StakeholdersSelectionFormComponent
   });
   changed = false;
 
-  methodElements: Stakeholder[] = [];
+  methodElements: StakeholderEntry[] = [];
   listNames: string[] = [];
 
   private changeSubscription: Subscription;
@@ -43,7 +46,7 @@ export class StakeholdersSelectionFormComponent
     private stakeholderService: StakeholderService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadStakeholders();
     this.changeSubscription = this.stakeholdersForm.valueChanges
       .pipe(
@@ -59,7 +62,7 @@ export class StakeholdersSelectionFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.stakeholders) {
       const oldStakeholderGroups: MultipleSelection<Stakeholder>[][] =
         changes.stakeholders.previousValue;
@@ -71,27 +74,27 @@ export class StakeholdersSelectionFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  add() {
+  add(): void {
     this.formArray.push(this.fb.array([]));
   }
 
-  remove(index: number) {
+  remove(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitStakeholdersForm.emit(
       this.stakeholdersForm.get('stakeholders') as FormArray
     );
   }
 
-  private loadForm(stakeholders: MultipleSelection<Stakeholder>[][]) {
+  private loadForm(stakeholders: MultipleSelection<Stakeholder>[][]): void {
     const formArrays = stakeholders.map((group) =>
       this.fb.array(
         group.map((element) =>
@@ -121,7 +124,7 @@ export class StakeholdersSelectionFormComponent
     return this.stakeholdersForm.get('stakeholders') as FormArray;
   }
 
-  createFormGroupFactory = () =>
+  createFormGroupFactory = (): FormGroup =>
     this.fb.group({
       list: ['', Validators.required],
       element: null,

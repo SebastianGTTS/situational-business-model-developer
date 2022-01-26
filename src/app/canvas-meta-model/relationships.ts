@@ -1,18 +1,26 @@
 import { DatabaseModelPart } from '../database/database-model-part';
-import { DatabaseEntry } from '../database/database-entry';
+import { DatabaseEntry, DatabaseInit } from '../database/database-entry';
 
 export type RelationshipType = string;
+
+export interface RelationshipsInit extends DatabaseInit {
+  relationships?: { [type: string]: string[] };
+}
 
 export interface RelationshipsEntry extends DatabaseEntry {
   relationships: { [type: string]: string[] };
 }
 
-export class Relationships implements DatabaseModelPart {
+export class Relationships implements RelationshipsInit, DatabaseModelPart {
   // JSON Schema (stored)
   relationships: { [type: string]: string[] } = {};
 
-  constructor(relationships: Partial<Relationships>) {
-    Object.assign(this, relationships);
+  constructor(
+    entry: RelationshipsEntry | undefined,
+    init: RelationshipsInit | undefined
+  ) {
+    const element = entry ?? init;
+    this.relationships = element.relationships ?? this.relationships;
   }
 
   /**

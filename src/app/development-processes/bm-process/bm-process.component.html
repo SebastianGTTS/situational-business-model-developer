@@ -38,7 +38,7 @@
   <app-bm-process-diagram
     *ngIf="!bmProcess.initial"
     [bmProcess]="bmProcess"
-    (saveBmProcess)="updateBmProcess($event)"
+    (saveBmProcess)="saveBmProcess($event.processDiagram, $event.decisions)"
   ></app-bm-process-diagram>
 
   <div class="container">
@@ -57,7 +57,7 @@
         <div class="text-muted">
           <app-domains-selection-form
             [domains]="bmProcess.domains"
-            (submitDomainsForm)="updateBmProcess({ domains: $event.value })"
+            (submitDomainsForm)="updateDomains($event.value)"
           ></app-domains-selection-form>
         </div>
       </div>
@@ -72,7 +72,7 @@
           <app-situational-factors-selection-form
             [situationalFactors]="bmProcess.situationalFactors"
             (submitSituationalFactorsForm)="
-              updateBmProcess({ situationalFactors: $event.value })
+              updateSituationalFactors($event.value)
             "
           ></app-situational-factors-selection-form>
         </div>

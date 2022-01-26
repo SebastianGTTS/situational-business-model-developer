@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
+import {
+  Artifact,
+  ArtifactEntry,
+} from '../../development-process-registry/method-elements/artifact/artifact';
 import { ArtifactService } from '../../development-process-registry/method-elements/artifact/artifact.service';
 import { FormGroup } from '@angular/forms';
 import { GroupSelection } from '../../development-process-registry/bm-process/decision';
@@ -16,11 +19,11 @@ export class ArtifactsGroupInfoComponent implements OnInit {
 
   @Output() submitGroupsForm = new EventEmitter<FormGroup>();
 
-  methodElements: Artifact[] = [];
+  methodElements: ArtifactEntry[] = [];
 
   constructor(private artifactService: ArtifactService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadMethodElements();
   }
 

@@ -1,11 +1,16 @@
 import { RunningProcess } from './running-process';
 
 describe('RunningProcess', () => {
-  let runningProcess: RunningProcess;
-
-  beforeEach(() => {
-    runningProcess = new RunningProcess({name: 'Test RunningProcess'});
+  it('should create', () => {
+    const runningProcess = new RunningProcess(undefined, {
+      name: 'Test Running Process',
+      process: {
+        name: 'Test Process',
+      },
+    });
+    expect(runningProcess).toBeTruthy();
+    expect(runningProcess.name).toBe('Test Running Process');
+    expect(runningProcess.process).toBeTruthy();
+    expect(runningProcess.process.name).toBe('Test Process');
   });
-
-  it('should be created', () => expect(runningProcess).toBeTruthy());
 });

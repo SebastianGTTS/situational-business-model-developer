@@ -39,7 +39,7 @@ import {
 export class DevelopmentMethodSelectExecutionStepComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  @Input() executionStepsFormValue?: ExecutionStepsFormValue[];
+  @Input() executionStepsFormValue?: ExecutionStepsFormValue;
   @Input() developmentMethod: DevelopmentMethod;
   @Input() stepNumber: number;
 
@@ -86,6 +86,12 @@ export class DevelopmentMethodSelectExecutionStepComponent
       .pipe(
         tap(() => this.outputArtifactsControl.clear()),
         tap(() => this.clearConfiguration()),
+        tap(() =>
+          this.executionStepsFormService.executionStepMethodChange(
+            this.formGroup.parent as FormArray,
+            this.stepNumber
+          )
+        ),
         filter((method) => method),
         tap(() =>
           this.selectedMethod.output.forEach(() =>

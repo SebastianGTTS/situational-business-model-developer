@@ -1,11 +1,35 @@
 import { DatabaseModelPart } from '../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../database/database-entry';
 
 export enum InstanceType {
   PATTERN = 'pattern',
   EXAMPLE = 'example',
 }
 
-export class Instance implements DatabaseModelPart {
+export interface InstanceInit extends DatabaseInit {
+  name: string;
+  type: InstanceType;
+  description?: string;
+  usedFeatures?: string[];
+  id?: number;
+}
+
+export interface InstanceEntry extends DatabaseEntry {
+  name: string;
+  type: InstanceType;
+  description: string;
+  usedFeatures: string[];
+  id: number;
+}
+
+interface InstanceJsonSchema {
+  name: string;
+  type: InstanceType;
+  description: string;
+  usedFeatures: string[];
+}
+
+export class Instance implements InstanceInit, DatabaseModelPart {
   // JSON Schema (stored)
   name: string;
   type: InstanceType;
@@ -15,9 +39,16 @@ export class Instance implements DatabaseModelPart {
   // stored
   id: number;
 
-  constructor(id: number, instance: Partial<Instance>) {
-    this.id = id;
-    Object.assign(this, instance);
+  constructor(
+    entry: InstanceEntry | undefined,
+    init: InstanceInit | undefined
+  ) {
+    const element = entry ?? init;
+    this.id = element.id;
+    this.name = element.name;
+    this.type = element.type;
+    this.description = element.description;
+    this.usedFeatures = element.usedFeatures ?? this.usedFeatures;
   }
 
   /**
@@ -25,7 +56,7 @@ export class Instance implements DatabaseModelPart {
    *
    * @param instance the new values of this instance (values will be copied to the current object)
    */
-  update(instance: Partial<Instance>) {
+  update(instance: Partial<Instance>): void {
     Object.assign(this, instance);
   }
 
@@ -34,7 +65,7 @@ export class Instance implements DatabaseModelPart {
    *
    * @param featureId the feature id of the feature to add
    */
-  addFeature(featureId: string) {
+  addFeature(featureId: string): void {
     if (this.usedFeatures.includes(featureId)) {
       throw new Error(
         'Feature with id ' +
@@ -51,7 +82,7 @@ export class Instance implements DatabaseModelPart {
    *
    * @param featureId the feature id of the feature to remove
    */
-  removeFeature(featureId: string) {
+  removeFeature(featureId: string): void {
     if (!this.usedFeatures.includes(featureId)) {
       throw new Error(
         'Feature with id ' + featureId + ' is not used in instance ' + this.name
@@ -65,7 +96,7 @@ export class Instance implements DatabaseModelPart {
    *
    * @param featureIds the feature ids of the features to remove
    */
-  removeFeatures(featureIds: string[]) {
+  removeFeatures(featureIds: string[]): void {
     this.usedFeatures = this.usedFeatures.filter(
       (id) => !featureIds.includes(id)
     );
@@ -73,7 +104,7 @@ export class Instance implements DatabaseModelPart {
 
   // Export
 
-  toDb(): any {
+  toDb(): InstanceEntry {
     return {
       id: this.id,
       name: this.name,
@@ -83,7 +114,7 @@ export class Instance implements DatabaseModelPart {
     };
   }
 
-  toJSON() {
+  toJSON(): InstanceJsonSchema {
     return {
       name: this.name,
       type: this.type,

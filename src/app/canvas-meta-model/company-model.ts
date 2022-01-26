@@ -1,27 +1,52 @@
-import { FeatureModel } from './feature-model';
-import { Trace } from './trace';
+import {
+  FeatureModel,
+  FeatureModelEntry,
+  FeatureModelInit,
+} from './feature-model';
+import { Trace, TraceEntry, TraceInit } from './trace';
 import { RelationshipType } from './relationships';
 import { Feature } from './feature';
 import { ExpertModel } from './expert-model';
 
-export class CompanyModel extends FeatureModel {
+export interface CompanyModelInit extends FeatureModelInit {
+  expertModelTraces?: { [expertModelId: string]: TraceInit };
+  createdByMethod?: boolean;
+}
+
+export interface CompanyModelEntry extends FeatureModelEntry {
+  expertModelTraces: { [expertModelId: string]: TraceEntry };
+  createdByMethod: boolean;
+}
+
+export class CompanyModel extends FeatureModel implements CompanyModelInit {
   static readonly typeName = 'CompanyModel';
 
   // stored
-  expertModelTraces: { [expertModelId: string]: Trace };
-  createdByMethod: boolean;
+  expertModelTraces: { [expertModelId: string]: Trace } = {};
+  createdByMethod: boolean = false;
 
-  constructor(companyModel: Partial<CompanyModel>) {
-    super(companyModel, CompanyModel.typeName);
-    Object.entries(this.expertModelTraces).forEach(
-      ([id, trace]) => (this.expertModelTraces[id] = new Trace(trace))
-    );
-  }
-
-  protected init(): void {
-    super.init();
-    this.expertModelTraces = {};
-    this.createdByMethod = false;
+  constructor(
+    entry: CompanyModelEntry | undefined,
+    init: CompanyModelInit | undefined
+  ) {
+    super(entry, init, CompanyModel.typeName);
+    if (entry != null) {
+      if (entry.expertModelTraces != null) {
+        Object.entries(entry.expertModelTraces).forEach(
+          ([id, trace]) =>
+            (this.expertModelTraces[id] = new Trace(trace, undefined))
+        );
+      }
+    } else if (init != null) {
+      if (init.expertModelTraces != null) {
+        Object.entries(init.expertModelTraces).forEach(
+          ([id, trace]) =>
+            (this.expertModelTraces[id] = new Trace(undefined, trace))
+        );
+      }
+    }
+    this.createdByMethod =
+      (entry ?? init).createdByMethod ?? this.createdByMethod;
   }
 
   protected cleanReferences(
@@ -48,7 +73,7 @@ export class CompanyModel extends FeatureModel {
    * @param expertModelId the expert model id
    */
   addExpertModel(expertModelId: string): void {
-    this.expertModelTraces[expertModelId] = new Trace({});
+    this.expertModelTraces[expertModelId] = new Trace(undefined, {});
     for (const feature of Object.values(this.features)) {
       this.expertModelTraces[expertModelId].addTrace(feature.id, feature.id);
       feature.addTrace(expertModelId, feature.id);
@@ -173,7 +198,7 @@ export class CompanyModel extends FeatureModel {
     return Object.keys(this.expertModelTraces);
   }
 
-  toDb(): any {
+  toDb(): CompanyModelEntry {
     const expertModelTraces = {};
     Object.entries(this.expertModelTraces).forEach(
       ([id, trace]) => (expertModelTraces[id] = trace.toDb())

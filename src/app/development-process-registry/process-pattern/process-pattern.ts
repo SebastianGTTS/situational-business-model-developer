@@ -1,10 +1,47 @@
 import { DatabaseModel } from '../../database/database-model';
-import { Author } from '../../model/author';
-import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
-import { Type } from '../method-elements/type/type';
-import { Selection } from '../development-method/selection';
+import { Author, AuthorEntry, AuthorInit } from '../../model/author';
+import {
+  SituationalFactor,
+  SituationalFactorEntry,
+  SituationalFactorInit,
+} from '../method-elements/situational-factor/situational-factor';
+import { Type, TypeEntry, TypeInit } from '../method-elements/type/type';
+import {
+  Selection,
+  SelectionEntry,
+  SelectionInit,
+} from '../development-method/selection';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../../database/database-entry';
 
-export class ProcessPattern extends DatabaseModel {
+export interface ProcessPatternInit extends DatabaseRootInit {
+  name: string;
+  description?: string;
+  author?: AuthorInit;
+
+  pattern?: string;
+
+  types?: SelectionInit<TypeInit>[];
+  situationalFactors?: SelectionInit<SituationalFactorInit>[];
+}
+
+export interface ProcessPatternEntry extends DatabaseRootEntry {
+  name: string;
+  description: string;
+  author: AuthorEntry;
+
+  pattern: string;
+
+  types: SelectionEntry<TypeEntry>[];
+  situationalFactors: SelectionEntry<SituationalFactorEntry>[];
+}
+
+export class ProcessPattern
+  extends DatabaseModel
+  implements ProcessPatternInit
+{
   static readonly typeName = 'ProcessPattern';
 
   name: string;
@@ -16,9 +53,47 @@ export class ProcessPattern extends DatabaseModel {
   types: Selection<Type>[] = [];
   situationalFactors: Selection<SituationalFactor>[] = [];
 
-  constructor(processPattern: Partial<ProcessPattern>) {
-    super(ProcessPattern.typeName);
-    this.update(processPattern);
+  constructor(
+    entry: ProcessPatternEntry | undefined,
+    init: ProcessPatternInit | undefined
+  ) {
+    super(entry, init, ProcessPattern.typeName);
+    const element = entry ?? init;
+    this.name = element.name;
+    this.description = element.description;
+    this.pattern = element.pattern;
+
+    if (entry != null) {
+      this.author = new Author(entry.author, undefined);
+      this.types =
+        entry.types?.map(
+          (selection) => new Selection<Type>(selection, undefined, Type)
+        ) ?? this.types;
+      this.situationalFactors =
+        entry.situationalFactors?.map(
+          (selection) =>
+            new Selection<SituationalFactor>(
+              selection,
+              undefined,
+              SituationalFactor
+            )
+        ) ?? this.situationalFactors;
+    } else {
+      this.author = new Author(undefined, init.author ?? {});
+      this.types =
+        init.types?.map(
+          (selection) => new Selection<Type>(undefined, selection, Type)
+        ) ?? this.types;
+      this.situationalFactors =
+        init.situationalFactors?.map(
+          (selection) =>
+            new Selection<SituationalFactor>(
+              undefined,
+              selection,
+              SituationalFactor
+            )
+        ) ?? this.situationalFactors;
+    }
   }
 
   /**
@@ -26,19 +101,18 @@ export class ProcessPattern extends DatabaseModel {
    *
    * @param processPattern the new values of this process pattern (values will be copied to the current object)
    */
-  update(processPattern: Partial<ProcessPattern>) {
+  update(processPattern: Partial<ProcessPattern>): void {
     Object.assign(this, processPattern);
-    this.author = new Author(this.author);
+    this.author = new Author(undefined, this.author);
     this.types = this.types.map(
-      (selection) => new Selection(selection, (element) => new Type(element))
+      (selection) => new Selection(undefined, selection, Type)
     );
     this.situationalFactors = this.situationalFactors.map(
-      (selection) =>
-        new Selection(selection, (element) => new SituationalFactor(element))
+      (selection) => new Selection(undefined, selection, SituationalFactor)
     );
   }
 
-  toDb(): any {
+  toDb(): ProcessPatternEntry {
     return {
       ...super.toDb(),
       name: this.name,

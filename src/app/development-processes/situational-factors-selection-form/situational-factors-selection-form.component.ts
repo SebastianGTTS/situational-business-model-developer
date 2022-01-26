@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
-import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import { SituationalFactorDefinitionEntry } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
 import { SituationalFactorService } from '../../development-process-registry/method-elements/situational-factor/situational-factor.service';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -34,7 +34,7 @@ export class SituationalFactorsSelectionFormComponent
   });
   changed = false;
 
-  methodElements: SituationalFactorDefinition[] = [];
+  methodElements: SituationalFactorDefinitionEntry[] = [];
   listNames: string[] = [];
 
   private changeSubscription: Subscription;
@@ -44,7 +44,7 @@ export class SituationalFactorsSelectionFormComponent
     private situationalFactorService: SituationalFactorService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadFactors();
     this.changeSubscription = this.situationalFactorsForm.valueChanges
       .pipe(
@@ -60,7 +60,7 @@ export class SituationalFactorsSelectionFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.situationalFactors) {
       const oldFactors: Selection<SituationalFactor>[] =
         changes.situationalFactors.previousValue;
@@ -72,19 +72,19 @@ export class SituationalFactorsSelectionFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitSituationalFactorsForm.emit(
       this.situationalFactorsForm.get('situationalFactors') as FormArray
     );
   }
 
-  private loadForm(situationalFactors: Selection<SituationalFactor>[]) {
+  private loadForm(situationalFactors: Selection<SituationalFactor>[]): void {
     const formGroups = situationalFactors.map((factor) =>
       this.fb.group({
         list: [factor.list, Validators.required],
@@ -107,7 +107,7 @@ export class SituationalFactorsSelectionFormComponent
     ];
   }
 
-  createFormGroupFactory = () =>
+  createFormGroupFactory = (): FormGroup =>
     this.fb.group({
       list: ['', Validators.required],
       element: this.fb.group({

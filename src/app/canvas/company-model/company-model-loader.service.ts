@@ -17,7 +17,7 @@ export class CompanyModelLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const companyModelId = paramMap.get('id');
     this.changesFeed = this.companyModelService
       .getChangesFeed(companyModelId)
@@ -25,7 +25,7 @@ export class CompanyModelLoaderService extends ElementLoaderService {
     void this.loadCompanyModel(companyModelId);
   }
 
-  private async loadCompanyModel(companyModelId: string) {
+  private async loadCompanyModel(companyModelId: string): Promise<void> {
     this.companyModel = await this.companyModelService.get(companyModelId);
     this.elementLoaded();
   }

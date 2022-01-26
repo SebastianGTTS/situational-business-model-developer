@@ -1,28 +1,44 @@
 import { DatabaseModelPart } from '../../database/database-model-part';
 import { v4 as uuidv4 } from 'uuid';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
 
-export class Comment implements DatabaseModelPart {
+export interface CommentInit extends DatabaseInit {
+  id?: string;
+  time?: number;
+  userName: string;
+  title: string;
+  comment: string;
+}
+
+export interface CommentEntry extends DatabaseEntry {
+  id: string;
+  time: number;
+  userName: string;
+  title: string;
+  comment: string;
+}
+
+export class Comment implements CommentInit, DatabaseModelPart {
   id: string;
   time: number;
   userName: string;
   title: string;
   comment: string;
 
-  constructor(comment: Partial<Comment>) {
-    Object.assign(this, comment);
-    if (this.id == null) {
-      this.id = uuidv4();
-    }
-    if (this.time == null) {
-      this.time = Date.now();
-    }
+  constructor(entry: CommentEntry | undefined, init: CommentInit | undefined) {
+    const element = entry ?? init;
+    this.id = element.id ?? uuidv4();
+    this.time = element.time ?? Date.now();
+    this.userName = element.userName;
+    this.title = element.title;
+    this.comment = element.comment;
   }
 
-  update(comment: Partial<Comment>) {
+  update(comment: Partial<Comment>): void {
     Object.assign(this, comment);
   }
 
-  toDb(): any {
+  toDb(): CommentEntry {
     return {
       id: this.id,
       time: this.time,

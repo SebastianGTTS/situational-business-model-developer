@@ -1,10 +1,16 @@
 import {
   SituationalFactorDefinition,
   SituationalFactorDefinitionEntry,
+  SituationalFactorDefinitionInit,
 } from './situational-factor-definition';
 import { Equality } from '../../../shared/equality';
 import { DatabaseModelPart } from '../../../database/database-model-part';
-import { DatabaseEntry } from '../../../database/database-entry';
+import { DatabaseEntry, DatabaseInit } from '../../../database/database-entry';
+
+export interface SituationalFactorInit extends DatabaseInit {
+  factor: SituationalFactorDefinitionInit;
+  value: string;
+}
 
 export interface SituationalFactorEntry extends DatabaseEntry {
   factor: SituationalFactorDefinitionEntry;
@@ -12,7 +18,10 @@ export interface SituationalFactorEntry extends DatabaseEntry {
 }
 
 export class SituationalFactor
-  implements Equality<SituationalFactor>, DatabaseModelPart
+  implements
+    SituationalFactorInit,
+    Equality<SituationalFactor>,
+    DatabaseModelPart
 {
   factor: SituationalFactorDefinition;
   value: string;
@@ -23,7 +32,9 @@ export class SituationalFactor
    * @param situationalFactors the situational factors
    * @returns the situational factors map factor list to name to factor value
    */
-  static createMap(situationalFactors: SituationalFactor[]): {
+  static createMap(
+    situationalFactors: (SituationalFactor | SituationalFactorEntry)[]
+  ): {
     [listName: string]: { [factorName: string]: string };
   } {
     const map = {};
@@ -36,9 +47,19 @@ export class SituationalFactor
     return map;
   }
 
-  constructor(situationalFactor: Partial<SituationalFactor>) {
-    Object.assign(this, situationalFactor);
-    this.factor = new SituationalFactorDefinition(this.factor);
+  constructor(
+    entry: SituationalFactorEntry | undefined,
+    init: SituationalFactorInit | undefined
+  ) {
+    if (entry != null) {
+      this.factor = new SituationalFactorDefinition(entry.factor, undefined);
+      this.value = entry.value;
+    } else if (init != null) {
+      this.factor = new SituationalFactorDefinition(undefined, init.factor);
+      this.value = init.value;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   toDb(): SituationalFactorEntry {

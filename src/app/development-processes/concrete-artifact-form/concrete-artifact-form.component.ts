@@ -34,7 +34,7 @@ export class ConcreteArtifactFormComponent
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changeSubscription = this.artifactForm.valueChanges
       .pipe(
         debounceTime(300),
@@ -46,7 +46,7 @@ export class ConcreteArtifactFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.artifact) {
       const newArtifact = changes.artifact.currentValue;
       const oldArtifact = changes.artifact.previousValue;
@@ -56,17 +56,17 @@ export class ConcreteArtifactFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitArtifactForm.emit(this.artifactForm);
   }
 
-  private loadForm(artifact: RunningArtifact) {
+  private loadForm(artifact: RunningArtifact): void {
     if (artifact) {
       this.artifactForm.setValue({ identifier: artifact.identifier });
     } else {
@@ -77,7 +77,7 @@ export class ConcreteArtifactFormComponent
   private equalArtifacts(
     artifactA: RunningArtifact,
     artifactB: RunningArtifact
-  ) {
+  ): boolean {
     if (artifactA == null && artifactB == null) {
       return true;
     }

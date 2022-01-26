@@ -1,13 +1,18 @@
-import { MethodElement, MethodElementEntry } from '../method-element';
+import {
+  MethodElement,
+  MethodElementEntry,
+  MethodElementInit,
+} from '../method-element';
+
+export interface ToolInit extends MethodElementInit {}
 
 export interface ToolEntry extends MethodElementEntry {}
 
 export class Tool extends MethodElement {
   static readonly typeName = 'Tool';
 
-  constructor(tool: Partial<Tool>) {
-    super(Tool.typeName);
-    this.update(tool);
+  constructor(entry: ToolEntry | undefined, init: ToolInit | undefined) {
+    super(entry, init, Tool.typeName);
   }
 
   /**

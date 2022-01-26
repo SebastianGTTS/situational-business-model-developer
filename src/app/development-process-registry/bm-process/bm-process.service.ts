@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
 import { PouchdbService } from '../../database/pouchdb.service';
-import { BmProcess } from './bm-process';
+import { BmProcess, BmProcessInit } from './bm-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
-import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
+import {
+  SituationalFactor,
+  SituationalFactorEntry,
+  SituationalFactorInit,
+} from '../method-elements/situational-factor/situational-factor';
 import { ModuleService } from '../module-api/module.service';
 import { Decision } from './decision';
 import { DefaultElementService } from '../../database/default-element.service';
+import { DbId } from '../../database/database-entry';
+import { Domain } from '../knowledge/domain';
+import { Selection, SelectionInit } from '../development-method/selection';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
-export class BmProcessService extends DefaultElementService<BmProcess> {
-  protected get typeName(): string {
-    return BmProcess.typeName;
-  }
+export class BmProcessService extends DefaultElementService<
+  BmProcess,
+  BmProcessInit
+> {
+  protected readonly typeName = BmProcess.typeName;
+
+  protected readonly elementConstructor = BmProcess;
 
   constructor(
     private moduleService: ModuleService,
@@ -23,15 +33,63 @@ export class BmProcessService extends DefaultElementService<BmProcess> {
   }
 
   /**
-   * Update the bm process.
+   * Finish the initialization process of a bm process, i.e.,
+   * the context selection is finished.
    *
-   * @param id id of the bm process
-   * @param bmProcess the new values of the object (values will be copied)
+   * @param id the id of the bm process
    */
-  async update(id: string, bmProcess: Partial<BmProcess>) {
+  async finishInitialization(id: DbId): Promise<void> {
     const dbProcess = await this.get(id);
-    dbProcess.update(bmProcess);
-    return this.save(dbProcess);
+    dbProcess.finishInitialization();
+    await this.save(dbProcess);
+  }
+
+  /**
+   * Update the domains of the bm process
+   *
+   * @param id the id of the bm process to update
+   * @param domains the domains to set for the bm process
+   */
+  async updateDomains(id: DbId, domains: Domain[]): Promise<void> {
+    const dbProcess = await this.get(id);
+    dbProcess.domains = domains;
+    await this.save(dbProcess);
+  }
+
+  async updateSituationalFactors(
+    id: DbId,
+    situationalFactors: SelectionInit<SituationalFactorInit>[]
+  ): Promise<void> {
+    const dbProcess = await this.get(id);
+    dbProcess.situationalFactors = situationalFactors.map(
+      (selection) =>
+        new Selection<SituationalFactor>(
+          undefined,
+          selection,
+          SituationalFactor
+        )
+    );
+    await this.save(dbProcess);
+  }
+
+  /**
+   * Save the bm process diagram, maybe together with new decisions.
+   *
+   * @param id the id of the bm process
+   * @param processDiagram the process diagram
+   * @param decisions the decisions
+   */
+  async saveBmProcessDiagram(
+    id: DbId,
+    processDiagram: string,
+    decisions?: { [elementId: string]: Decision }
+  ): Promise<void> {
+    const dbProcess = await this.get(id);
+    dbProcess.processDiagram = processDiagram;
+    if (decisions != null) {
+      dbProcess.updateDecisions(decisions);
+    }
+    await this.save(dbProcess);
   }
 
   /**
@@ -41,7 +99,10 @@ export class BmProcessService extends DefaultElementService<BmProcess> {
    * @param provided the provided situational factors
    * @return the distance
    */
-  distanceToContext(process: BmProcess, provided: SituationalFactor[]): number {
+  distanceToContext(
+    process: BmProcess,
+    provided: (SituationalFactor | SituationalFactorEntry)[]
+  ): number {
     const map = SituationalFactor.createMap(provided);
     const { missing, incorrect, low } = process.checkMatchByFactor(map);
     let distance = incorrect.length;
@@ -84,9 +145,5 @@ export class BmProcessService extends DefaultElementService<BmProcess> {
       }
     }
     return true;
-  }
-
-  protected createElement(element: Partial<BmProcess>): BmProcess {
-    return new BmProcess(element);
   }
 }

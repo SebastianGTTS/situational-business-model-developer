@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ArtifactService } from '../../development-process-registry/method-elements/artifact/artifact.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
+import {
+  Artifact,
+  ArtifactEntry,
+} from '../../development-process-registry/method-elements/artifact/artifact';
 
 @Component({
   selector: 'app-artifacts',
@@ -10,51 +13,43 @@ import { Artifact } from '../../development-process-registry/method-elements/art
   styleUrls: ['./artifacts.component.css'],
 })
 export class ArtifactsComponent implements OnInit {
-  elementLists: { listName: string; elements: Artifact[] }[] = null;
+  elementLists: { listName: string; elements: ArtifactEntry[] }[] = null;
   listNames: string[] = [];
 
   modalArtifact: Artifact;
   private modalReference: NgbModalRef;
 
-  @ViewChild('deleteArtifactModal', { static: true }) deleteArtifactModal: any;
+  @ViewChild('deleteArtifactModal', { static: true })
+  deleteArtifactModal: unknown;
 
   constructor(
     private artifactService: ArtifactService,
     private modalService: NgbModal
   ) {}
 
-  ngOnInit() {
-    this.load();
+  ngOnInit(): void {
+    void this.load();
   }
 
-  private load() {
-    this.artifactService
-      .getLists()
-      .then((lists) => {
-        this.elementLists = lists;
-        this.listNames = this.elementLists.map((list) => list.listName);
-      })
-      .catch((error) => console.log('Load: ' + error));
+  private async load(): Promise<void> {
+    this.elementLists = await this.artifactService.getLists();
+    this.listNames = this.elementLists.map((list) => list.listName);
   }
 
-  openDeleteArtifactModal(artifact: Artifact) {
+  openDeleteArtifactModal(artifact: Artifact): void {
     this.modalArtifact = artifact;
     this.modalReference = this.modalService.open(this.deleteArtifactModal, {
       size: 'lg',
     });
   }
 
-  delete(id: string) {
-    this.artifactService
-      .delete(id)
-      .then(() => this.load())
-      .catch((error) => console.log('Delete: ' + error));
+  async delete(id: string): Promise<void> {
+    await this.artifactService.delete(id);
+    await this.load();
   }
 
-  add(form: FormGroup) {
-    this.artifactService
-      .add(form.value)
-      .then(() => this.load())
-      .catch((error) => console.log('Add: ' + error));
+  async add(form: FormGroup): Promise<void> {
+    await this.artifactService.add(form.value);
+    await this.load();
   }
 }

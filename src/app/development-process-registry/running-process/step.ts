@@ -1,25 +1,54 @@
-import { StepArtifact } from './step-artifact';
+import {
+  StepArtifact,
+  StepArtifactEntry,
+  StepArtifactInit,
+} from './step-artifact';
 import { DatabaseModelPart } from '../../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
 
-export class Step implements DatabaseModelPart {
+export interface StepInit extends DatabaseInit {
+  inputArtifacts?: StepArtifactInit[];
+  outputArtifacts?: StepArtifactInit[];
+}
+
+export interface StepEntry extends DatabaseEntry {
+  inputArtifacts: StepArtifactEntry[];
+  outputArtifacts: StepArtifactEntry[];
+}
+
+export class Step implements StepInit, DatabaseModelPart {
   inputArtifacts: StepArtifact[] = null;
   outputArtifacts: StepArtifact[] = null;
 
-  constructor(step: Partial<Step>) {
-    Object.assign(this, step);
-    this.inputArtifacts = this.inputArtifacts
-      ? this.inputArtifacts.map((artifact) => new StepArtifact(artifact))
-      : null;
-    this.outputArtifacts = this.outputArtifacts
-      ? this.outputArtifacts.map((artifact) => new StepArtifact(artifact))
-      : null;
+  constructor(entry: StepEntry | undefined, init: StepInit | undefined) {
+    if (entry != null) {
+      this.inputArtifacts =
+        entry.inputArtifacts?.map(
+          (artifact) => new StepArtifact(artifact, undefined)
+        ) ?? this.inputArtifacts;
+      this.outputArtifacts =
+        entry.outputArtifacts?.map(
+          (artifact) => new StepArtifact(artifact, undefined)
+        ) ?? this.outputArtifacts;
+    } else if (init != null) {
+      this.inputArtifacts =
+        init.inputArtifacts?.map(
+          (artifact) => new StepArtifact(undefined, artifact)
+        ) ?? this.inputArtifacts;
+      this.outputArtifacts =
+        init.outputArtifacts?.map(
+          (artifact) => new StepArtifact(undefined, artifact)
+        ) ?? this.outputArtifacts;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
-  finish(output: StepArtifact[]) {
+  finish(output: StepArtifact[]): void {
     this.outputArtifacts = output;
   }
 
-  toDb(): any {
+  toDb(): StepEntry {
     return {
       inputArtifacts: this.inputArtifacts
         ? this.inputArtifacts.map((artifact) => artifact.toDb())

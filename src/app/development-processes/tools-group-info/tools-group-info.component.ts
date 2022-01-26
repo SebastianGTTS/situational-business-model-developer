@@ -2,7 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
 import { GroupSelection } from '../../development-process-registry/bm-process/decision';
 import { FormGroup } from '@angular/forms';
-import { Tool } from '../../development-process-registry/method-elements/tool/tool';
+import {
+  Tool,
+  ToolEntry,
+} from '../../development-process-registry/method-elements/tool/tool';
 import { ToolService } from '../../development-process-registry/method-elements/tool/tool.service';
 
 @Component({
@@ -16,11 +19,11 @@ export class ToolsGroupInfoComponent implements OnInit {
 
   @Output() submitGroupsForm = new EventEmitter<FormGroup>();
 
-  methodElements: Tool[] = [];
+  methodElements: ToolEntry[] = [];
 
   constructor(private toolService: ToolService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadMethodElements();
   }
 

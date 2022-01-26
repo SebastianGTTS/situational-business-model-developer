@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { Type } from '../../development-process-registry/method-elements/type/type';
+import {
+  Type,
+  TypeEntry,
+} from '../../development-process-registry/method-elements/type/type';
 
 @Component({
   selector: 'app-types',
@@ -10,20 +13,20 @@ import { Type } from '../../development-process-registry/method-elements/type/ty
   styleUrls: ['./types.component.css'],
 })
 export class TypesComponent implements OnInit {
-  elementLists: { listName: string; elements: Type[] }[] = null;
+  elementLists: { listName: string; elements: TypeEntry[] }[] = null;
   listNames: string[] = [];
 
   modalType: Type;
   private modalReference: NgbModalRef;
 
-  @ViewChild('deleteTypeModal', { static: true }) deleteTypeModal: any;
+  @ViewChild('deleteTypeModal', { static: true }) deleteTypeModal: unknown;
 
   constructor(
     private modalService: NgbModal,
     private typeService: TypeService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.load();
   }
 
@@ -32,7 +35,7 @@ export class TypesComponent implements OnInit {
     this.listNames = this.elementLists.map((list) => list.listName);
   }
 
-  openDeleteTypeModal(type: Type) {
+  openDeleteTypeModal(type: Type): void {
     this.modalType = type;
     this.modalReference = this.modalService.open(this.deleteTypeModal, {
       size: 'lg',

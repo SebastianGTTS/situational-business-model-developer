@@ -15,7 +15,7 @@ export class BmProcessLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const bmProcessId = paramMap.get('id');
     this.changesFeed = this.bmProcessService
       .getChangesFeed(bmProcessId)
@@ -23,7 +23,7 @@ export class BmProcessLoaderService extends ElementLoaderService {
     void this.loadBmProcess(bmProcessId);
   }
 
-  private async loadBmProcess(bmProcessId: string) {
+  private async loadBmProcess(bmProcessId: string): Promise<void> {
     this.bmProcess = await this.bmProcessService.get(bmProcessId);
     this.elementLoaded();
   }

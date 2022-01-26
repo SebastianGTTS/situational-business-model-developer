@@ -1,23 +1,51 @@
 import { Equality } from '../../shared/equality';
-import { DatabaseModelPart } from '../../database/database-model-part';
-import { DatabaseEntry } from '../../database/database-entry';
+import {
+  DatabaseConstructor,
+  DatabaseModelPart,
+  EntryType,
+  InitType,
+} from '../../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
+
+export interface SelectionInit<T extends DatabaseInit> extends DatabaseInit {
+  list: string;
+  element?: T;
+}
 
 export interface SelectionEntry<T extends DatabaseEntry> extends DatabaseEntry {
   list: string;
-  element: T;
+  element?: T;
 }
 
+/**
+ * Represents a selection of a situational factor or type.
+ */
 export class Selection<T extends DatabaseModelPart & Equality<T>>
-  implements Equality<Selection<T>>, DatabaseModelPart
+  implements SelectionInit<T>, Equality<Selection<T>>, DatabaseModelPart
 {
   list: string;
-  element: T;
+  element?: T;
 
   constructor(
-    selection: Selection<T>,
-    createElement: (element: Partial<T>) => T
+    entry: SelectionEntry<EntryType<T>> | undefined,
+    init: SelectionInit<InitType<T>> | undefined,
+    databaseConstructor: DatabaseConstructor<T>
   ) {
-    this.update(selection, createElement);
+    if (entry != null) {
+      this.list = entry.list;
+      this.element =
+        entry.element != null
+          ? new databaseConstructor(entry.element, undefined)
+          : undefined;
+    } else if (init != null) {
+      this.list = init.list;
+      this.element =
+        init.element != null
+          ? new databaseConstructor(undefined, init.element)
+          : undefined;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   update(
@@ -28,12 +56,10 @@ export class Selection<T extends DatabaseModelPart & Equality<T>>
     this.element = this.element ? createElement(this.element) : null;
   }
 
-  toDb(): SelectionEntry<ReturnType<T['toDb']>> {
+  toDb(): SelectionEntry<EntryType<T>> {
     return {
       list: this.list,
-      element: this.element
-        ? (this.element.toDb() as ReturnType<T['toDb']>)
-        : null,
+      element: this.element ? (this.element.toDb() as EntryType<T>) : null,
     };
   }
 

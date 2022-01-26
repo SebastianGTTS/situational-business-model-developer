@@ -1,14 +1,30 @@
 import { DatabaseModel } from '../../database/database-model';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../../database/database-entry';
 
-export class Domain extends DatabaseModel {
+export interface DomainInit extends DatabaseRootInit {
+  name: string;
+  description?: string;
+}
+
+export interface DomainEntry extends DatabaseRootEntry {
+  name: string;
+  description?: string;
+}
+
+export class Domain extends DatabaseModel implements DomainInit {
   static readonly typeName = 'Domain';
 
   name: string;
-  description: string;
+  description?: string;
 
-  constructor(domain: Partial<Domain>) {
-    super(Domain.typeName);
-    Object.assign(this, domain);
+  constructor(entry: DomainEntry | undefined, init: DomainInit | undefined) {
+    super(entry, init, Domain.typeName);
+    const element = entry ?? init;
+    this.name = element.name;
+    this.description = element.description;
   }
 
   /**
@@ -16,11 +32,12 @@ export class Domain extends DatabaseModel {
    *
    * @param domain the new values of this domain (values will be copied to the current object)
    */
-  update(domain: Partial<Domain>) {
-    Object.assign(this, domain);
+  update(domain: Partial<Domain>): void {
+    this.name = domain.name ?? this.name;
+    this.description = domain.description ?? this.description;
   }
 
-  toDb(): any {
+  toDb(): DomainEntry {
     return {
       ...super.toDb(),
       name: this.name,

@@ -7,10 +7,19 @@ import {
   Output,
 } from '@angular/core';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { FormBuilder, FormControl, FormGroupDirective } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+} from '@angular/forms';
 import { filter, map, tap } from 'rxjs/operators';
-import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import {
+  SituationalFactorDefinition,
+  SituationalFactorDefinitionEntry,
+} from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
 import { getTypeaheadInputPipe } from '../../shared/utils';
+import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-situational-factor-selection-form',
@@ -20,7 +29,7 @@ import { getTypeaheadInputPipe } from '../../shared/utils';
 export class SituationalFactorSelectionFormComponent
   implements OnInit, OnDestroy
 {
-  @Input() methodElements: SituationalFactorDefinition[];
+  @Input() methodElements: SituationalFactorDefinitionEntry[];
   @Input() listNames: string[];
 
   @Output() remove = new EventEmitter<void>();
@@ -36,7 +45,7 @@ export class SituationalFactorSelectionFormComponent
     private formGroupDirective: FormGroupDirective
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.listChangeSubscription = this.listControl.valueChanges
       .pipe(
         filter(
@@ -60,7 +69,7 @@ export class SituationalFactorSelectionFormComponent
       .subscribe();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.listChangeSubscription) {
       this.listChangeSubscription.unsubscribe();
     }
@@ -71,7 +80,7 @@ export class SituationalFactorSelectionFormComponent
     this.openElementInput.complete();
   }
 
-  searchLists = (input: Observable<string>) => {
+  searchLists = (input: Observable<string>): Observable<string[]> => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
       map((term) =>
         this.listNames
@@ -83,7 +92,9 @@ export class SituationalFactorSelectionFormComponent
     );
   };
 
-  searchElements = (input: Observable<string>) => {
+  searchElements = (
+    input: Observable<string>
+  ): Observable<SituationalFactorDefinitionEntry[]> => {
     return merge(getTypeaheadInputPipe(input), this.openElementInput).pipe(
       map((term) =>
         this.methodElements
@@ -99,34 +110,47 @@ export class SituationalFactorSelectionFormComponent
     );
   };
 
-  get values() {
-    if (!this.factorControl.value) {
-      return [];
-    }
-    return this.factorControl.value.values;
+  selectFactor(
+    event: NgbTypeaheadSelectItemEvent<SituationalFactorDefinitionEntry>
+  ): void {
+    event.preventDefault();
+    this.factorControl.setValue(
+      new SituationalFactorDefinition(event.item, undefined)
+    );
   }
 
-  formatter(x: { name: string }) {
+  get values(): string[] {
+    if (this.factorValue == null) {
+      return [];
+    }
+    return this.factorValue.values;
+  }
+
+  formatter(x: { name: string }): string {
     return x.name;
   }
 
-  get listControl() {
-    return this.formGroup.get('list');
+  get listControl(): FormControl {
+    return this.formGroup.get('list') as FormControl;
   }
 
-  get elementControl() {
+  get elementControl(): FormControl {
     return this.formGroup.get('element') as FormControl;
   }
 
-  get factorControl() {
+  get factorControl(): FormControl {
     return this.elementControl.get('factor') as FormControl;
   }
 
-  get valueControl() {
+  get factorValue(): SituationalFactorDefinition | undefined {
+    return this.factorControl.value;
+  }
+
+  get valueControl(): FormControl {
     return this.elementControl.get('value') as FormControl;
   }
 
-  get formGroup() {
+  get formGroup(): FormGroup {
     return this.formGroupDirective.control;
   }
 }

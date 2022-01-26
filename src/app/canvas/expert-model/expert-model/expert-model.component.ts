@@ -5,6 +5,7 @@ import { Instance, InstanceType } from '../../../canvas-meta-model/instance';
 import { FormGroup } from '@angular/forms';
 import { Domain } from '../../../development-process-registry/knowledge/domain';
 import { ExpertModelLoaderService } from '../expert-model-loader.service';
+import { ExpertModel } from '../../../canvas-meta-model/expert-model';
 
 @Component({
   selector: 'app-expert-model',
@@ -19,19 +20,19 @@ export class ExpertModelComponent {
     private importExportService: ImportExportService
   ) {}
 
-  async exportModel() {
+  async exportModel(): Promise<void> {
     await this.importExportService.exportExpertModel(this.expertModel._id);
   }
 
-  async update(description: any) {
+  async update(description: any): Promise<void> {
     await this.expertModelService.update(this.expertModel._id, description);
   }
 
-  async updateDomains(domains: Domain[]) {
+  async updateDomains(domains: Domain[]): Promise<void> {
     await this.expertModelService.updateDomains(this.expertModel._id, domains);
   }
 
-  async updateFeatureModelAuthor(authorInfo: any) {
+  async updateFeatureModelAuthor(authorInfo: any): Promise<void> {
     await this.expertModelService.updateAuthor(
       this.expertModel._id,
       authorInfo
@@ -41,7 +42,10 @@ export class ExpertModelComponent {
   /**
    * Add a new instance.
    */
-  async addInstance(instanceForm: FormGroup, type = InstanceType.EXAMPLE) {
+  async addInstance(
+    instanceForm: FormGroup,
+    type = InstanceType.EXAMPLE
+  ): Promise<void> {
     await this.expertModelService.addInstance(this.expertModel._id, {
       name: instanceForm.value.name,
       type,
@@ -85,7 +89,7 @@ export class ExpertModelComponent {
    *
    * @param instanceId id of the instance
    */
-  async deleteInstance(instanceId: number) {
+  async deleteInstance(instanceId: number): Promise<void> {
     await this.expertModelService.removeInstance(
       this.expertModel._id,
       instanceId
@@ -104,11 +108,11 @@ export class ExpertModelComponent {
     );
   }
 
-  getPatternInstanceType() {
+  getPatternInstanceType(): InstanceType {
     return InstanceType.PATTERN;
   }
 
-  get expertModel() {
+  get expertModel(): ExpertModel {
     return this.expertModelLoaderService.expertModel;
   }
 }

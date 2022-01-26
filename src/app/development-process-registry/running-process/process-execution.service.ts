@@ -76,7 +76,11 @@ export class ProcessExecutionService {
    * @param node the node
    * @param flowId the id of the flow to take if the node is a XOR node with multiple outgoing nodes
    */
-  private _moveToNextStep(modeler: any, node: any, flowId: string = null) {
+  private _moveToNextStep(
+    modeler: any,
+    node: any,
+    flowId: string = null
+  ): void {
     if (!this.hasEnoughTokens(node)) {
       throw new Error(ExecutionErrors.NOT_ENOUGH_TOKENS);
     }
@@ -147,15 +151,16 @@ export class ProcessExecutionService {
    *
    * @param runningProcess the running process
    */
-  async jumpToNextMethod(runningProcess: RunningProcess) {
+  async jumpToNextMethod(runningProcess: RunningProcess): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
       runningProcess
     );
     const ignoredIds = new Set<string>();
-    const filterCommonNodes = (node) =>
+    const filterCommonNodes = (node): boolean =>
+      !ignoredIds.has(node.id) &&
       (this.processExecutionModelerService.isCommonNode(node) ||
-        !runningProcess.isExecutable(node.id)) &&
-      !ignoredIds.has(node.id);
+        (!runningProcess.isExecutable(node.id) &&
+          this.processExecutionModelerService.isExecutable(node)));
     for (
       let nodes = this._getExecutableNodes(modeler).filter(filterCommonNodes);
       nodes.length > 0;
@@ -273,7 +278,7 @@ export class ProcessExecutionService {
    * @param modeler the modeler
    * @return the nodes that have enough tokens to be executed
    */
-  private _getExecutableNodes(modeler: any) {
+  private _getExecutableNodes(modeler: any): any[] {
     return this.processExecutionModelerService.filterNodes(
       modeler,
       (node) =>

@@ -6,8 +6,13 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { MethodElement } from '../../development-process-registry/method-elements/method-element';
-import { FormBuilder, FormControl, FormGroupDirective } from '@angular/forms';
+import { MethodElementEntry } from '../../development-process-registry/method-elements/method-element';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormGroupDirective,
+} from '@angular/forms';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 import { getTypeaheadInputPipe } from '../../shared/utils';
@@ -21,7 +26,7 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
   @Input() methodElementName: string;
   @Input() multipleAllowed = false;
 
-  @Input() methodElements: MethodElement[] = [];
+  @Input() methodElements: MethodElementEntry[] = [];
   @Input() listNames: string[] = [];
 
   @Output() remove = new EventEmitter<void>();
@@ -38,7 +43,7 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
     private formGroupDirective: FormGroupDirective
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.listChangeSubscription = this.listControl.valueChanges
       .pipe(
         filter(
@@ -77,7 +82,7 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.listChangeSubscription) {
       this.listChangeSubscription.unsubscribe();
     }
@@ -91,7 +96,7 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
     this.openElementInput.complete();
   }
 
-  searchLists = (input: Observable<string>) => {
+  searchLists = (input: Observable<string>): Observable<string[]> => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
       map((term) =>
         this.listNames
@@ -103,7 +108,9 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
     );
   };
 
-  searchElements = (input: Observable<string>) => {
+  searchElements = (
+    input: Observable<string>
+  ): Observable<MethodElementEntry[]> => {
     return merge(getTypeaheadInputPipe(input), this.openElementInput).pipe(
       map((term) =>
         this.methodElements
@@ -119,27 +126,27 @@ export class MethodElementSelectionFormComponent implements OnInit, OnDestroy {
     );
   };
 
-  formatter(x: { name: string }) {
+  formatter(x: { name: string }): string {
     return x.name;
   }
 
-  get listControl() {
-    return this.formGroup.get('list');
+  get listControl(): FormControl {
+    return this.formGroup.get('list') as FormControl;
   }
 
-  get multipleControl() {
-    return this.formGroup.get('multiple');
+  get multipleControl(): FormControl {
+    return this.formGroup.get('multiple') as FormControl;
   }
 
-  get elementControl() {
+  get elementControl(): FormControl {
     return this.formGroup.get('element') as FormControl;
   }
 
-  get multipleElementsControl() {
+  get multipleElementsControl(): FormControl {
     return this.formGroup.get('multipleElements') as FormControl;
   }
 
-  get formGroup() {
+  get formGroup(): FormGroup {
     return this.formGroupDirective.control;
   }
 }

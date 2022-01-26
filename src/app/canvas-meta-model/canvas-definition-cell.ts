@@ -1,6 +1,14 @@
 import { DatabaseModelPart } from '../database/database-model-part';
 import { Equality } from '../shared/equality';
-import { DatabaseEntry } from '../database/database-entry';
+import { DatabaseEntry, DatabaseInit } from '../database/database-entry';
+
+export interface CanvasDefinitionCellInit extends DatabaseInit {
+  isSpacer: boolean;
+  id?: string;
+  name?: string;
+  rowspan: number;
+  colspan: number;
+}
 
 export interface CanvasDefinitionCellEntry extends DatabaseEntry {
   isSpacer: boolean;
@@ -11,7 +19,10 @@ export interface CanvasDefinitionCellEntry extends DatabaseEntry {
 }
 
 export class CanvasDefinitionCell
-  implements DatabaseModelPart, Equality<CanvasDefinitionCell>
+  implements
+    CanvasDefinitionCellInit,
+    DatabaseModelPart,
+    Equality<CanvasDefinitionCell>
 {
   isSpacer: boolean;
   id?: string;
@@ -19,8 +30,16 @@ export class CanvasDefinitionCell
   rowspan: number;
   colspan: number;
 
-  constructor(canvasDefinitionCell: Partial<CanvasDefinitionCell>) {
-    Object.assign(this, canvasDefinitionCell);
+  constructor(
+    entry: CanvasDefinitionCellEntry | undefined,
+    init: CanvasDefinitionCellInit | undefined
+  ) {
+    const element = entry ?? init;
+    this.isSpacer = element.isSpacer;
+    this.id = element.id;
+    this.name = element.name;
+    this.rowspan = element.rowspan;
+    this.colspan = element.colspan;
   }
 
   toDb(): CanvasDefinitionCellEntry {

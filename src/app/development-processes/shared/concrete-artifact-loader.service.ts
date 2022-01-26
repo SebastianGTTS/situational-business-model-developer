@@ -15,7 +15,7 @@ export class ConcreteArtifactLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const artifactId = paramMap.get('id');
     this.changesFeed = this.concreteArtifactService
       .getChangesFeed(artifactId)
@@ -23,7 +23,7 @@ export class ConcreteArtifactLoaderService extends ElementLoaderService {
     void this.loadArtifact(artifactId);
   }
 
-  private async loadArtifact(artifactId: string) {
+  private async loadArtifact(artifactId: string): Promise<void> {
     this.artifact = await this.concreteArtifactService.get(artifactId);
     this.elementLoaded();
   }

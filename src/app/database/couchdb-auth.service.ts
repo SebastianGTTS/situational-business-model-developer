@@ -19,24 +19,24 @@ export enum AuthErrors {
 
 @Injectable()
 export class CouchdbAuthService implements AuthService {
-  redirectTo: string;
+  redirectTo: string | undefined;
 
   private loggedIn = false;
 
-  private _username: string = undefined;
+  private _username?: string = undefined;
   get username(): string | undefined {
     return this._username;
   }
 
-  private _group: string = undefined;
+  private _group?: string = undefined;
   get group(): string | undefined {
     return this._group;
   }
 
   private readonly upUrl = new URL('/database/_up', location.origin).href;
   private readonly url = new URL('/database/_session', location.origin).href;
-  private userUrl: string = null;
-  private databaseUrl: string = null;
+  private userUrl?: string = undefined;
+  private databaseUrl?: string = undefined;
 
   constructor(
     private http: HttpClient,
@@ -44,7 +44,7 @@ export class CouchdbAuthService implements AuthService {
     private router: Router
   ) {}
 
-  init(): Observable<any> {
+  init(): Observable<void> {
     return this.http
       .get(this.url, {
         headers: {
@@ -56,7 +56,8 @@ export class CouchdbAuthService implements AuthService {
           this.initUser(response.userCtx.name, response.userCtx.roles)
         ),
         this.checkAndLogin(),
-        catchError(() => of())
+        catchError(() => of()),
+        mapTo(undefined)
       );
   }
 
@@ -66,7 +67,7 @@ export class CouchdbAuthService implements AuthService {
    * @param username the username
    * @param password the password
    */
-  login(username: string, password: string): Observable<any> {
+  login(username: string, password: string): Observable<void> {
     return this.http
       .post(this.url, {
         username,
@@ -75,14 +76,15 @@ export class CouchdbAuthService implements AuthService {
       .pipe(
         tap((response: any) => this.initUser(response.name, response.roles)),
         this.checkAndLogin(),
-        tap(() => this.redirect())
+        tap(() => this.redirect()),
+        mapTo(undefined)
       );
   }
 
   /**
    * Logout the current user
    */
-  logout(): Observable<any> {
+  logout(): Observable<void> {
     return defer(() => from(this.pouchdbService.closeDb())).pipe(
       tap(() => this.clearUser()),
       switchMap(() =>
@@ -92,7 +94,8 @@ export class CouchdbAuthService implements AuthService {
           },
         })
       ),
-      switchMap(() => from(this.router.navigate(['/', 'login'])))
+      switchMap(() => from(this.router.navigate(['/', 'login']))),
+      mapTo(undefined)
     );
   }
 
@@ -101,12 +104,13 @@ export class CouchdbAuthService implements AuthService {
    *
    * @param newPassword the new password of the user
    */
-  changePassword(newPassword: string): Observable<any> {
+  changePassword(newPassword: string): Observable<void> {
     if (this.userUrl == null) {
       throw new Error(AuthErrors.NOT_AUTHENTICATED);
     }
+    const userUrl = this.userUrl;
     return this.http
-      .get(this.userUrl, {
+      .get(userUrl, {
         headers: {
           'X-CouchDB-WWW-Authenticate': 'Cookie',
         },
@@ -121,7 +125,7 @@ export class CouchdbAuthService implements AuthService {
             type: user.type,
             password: newPassword,
           };
-          return this.http.put(this.userUrl, newUser, {
+          return this.http.put(userUrl, newUser, {
             headers: {
               'X-CouchDB-WWW-Authenticate': 'Cookie',
             },
@@ -134,7 +138,8 @@ export class CouchdbAuthService implements AuthService {
           return this.router.navigate(['/', 'login'], {
             queryParams: { passwordChanged: true },
           });
-        })
+        }),
+        mapTo(undefined)
       );
   }
 
@@ -166,9 +171,10 @@ export class CouchdbAuthService implements AuthService {
   }
 
   /**
-   * Checks whether the user is able to login
+   * Checks whether the user is able to log in.
+   * Assumes that the group and databaseUrl are set.
    *
-   * @return whether the user is able to login
+   * @return whether the user is able to log in
    */
   private checkAndLogin(): UnaryFunction<
     Observable<unknown>,
@@ -193,7 +199,7 @@ export class CouchdbAuthService implements AuthService {
       }),
       tap(() => {
         this.pouchdbService.init(
-          this.group,
+          this.group!,
           () => this.sessionExpired(),
           () => this.dbError()
         );
@@ -234,10 +240,10 @@ export class CouchdbAuthService implements AuthService {
    * Clear all user related fields
    */
   private clearUser(): void {
-    this._group = null;
-    this._username = null;
-    this.userUrl = null;
-    this.databaseUrl = null;
+    this._group = undefined;
+    this._username = undefined;
+    this.userUrl = undefined;
+    this.databaseUrl = undefined;
     this.loggedIn = false;
   }
 
@@ -247,7 +253,7 @@ export class CouchdbAuthService implements AuthService {
    * @param roles the roles array
    * @return the group the user belongs to
    */
-  private getGroup(roles: string[]): string {
+  private getGroup(roles: string[]): string | undefined {
     return roles.find((role) => /^group[0-9]+$/.test(role));
   }
 
@@ -257,7 +263,7 @@ export class CouchdbAuthService implements AuthService {
    * @return whether the database is available
    */
   private checkDatabaseAvailable(): Observable<boolean> {
-    return this.http.head(this.databaseUrl).pipe(
+    return this.http.head(this.databaseUrl!).pipe(
       mapTo(true),
       catchError((error: HttpErrorResponse) => {
         if (error.status === HttpStatusCode.NotFound) {

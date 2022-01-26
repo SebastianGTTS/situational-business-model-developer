@@ -17,12 +17,12 @@ export class RunningMethodLoaderService extends RunningProcessLoaderService {
     this.loaded.subscribe(() => this.loadRunningMethod());
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     this.executionId = paramMap.get('executionId');
     super.initParams(paramMap);
   }
 
-  private loadRunningMethod() {
+  private loadRunningMethod(): void {
     this.runningMethod = this.runningProcess.getRunningMethod(this.executionId);
     if (this.runningMethod == null) {
       this.runningMethod = null;

@@ -39,7 +39,7 @@ export class CanvasResolveService {
     companyModelId: string,
     instanceId: number
   ): ArtifactData {
-    return new ArtifactData({
+    return new ArtifactData(undefined, {
       data: new InstanceArtifactData({
         id: companyModelId,
         instanceId,

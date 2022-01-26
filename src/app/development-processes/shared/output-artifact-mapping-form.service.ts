@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
-import {
-  ArtifactData,
-  ArtifactDataType,
-} from '../../development-process-registry/running-process/artifact-data';
+import { ArtifactDataType } from '../../development-process-registry/running-process/artifact-data';
 import { OutputArtifactMapping } from '../../development-process-registry/running-process/output-artifact-mapping';
 
 export interface OutputArtifactMappingFormValue {
@@ -45,14 +42,14 @@ export class OutputArtifactMappingFormService {
     outputArtifact?: OutputArtifactMapping
   ): FormGroup {
     if (outputArtifact == null) {
-      outputArtifact = new OutputArtifactMapping({
+      outputArtifact = new OutputArtifactMapping(undefined, {
         isDefinition: false,
         artifact: null,
         artifactName: null,
-        data: new ArtifactData({
+        data: {
           type: ArtifactDataType.STRING,
           data: '',
-        }),
+        },
       });
     }
     return this.fb.group(
@@ -94,14 +91,14 @@ export class OutputArtifactMappingFormService {
 
   get(formValue: OutputArtifactMappingFormValue[]): OutputArtifactMapping[] {
     return formValue.map((item) => {
-      return new OutputArtifactMapping({
+      return new OutputArtifactMapping(undefined, {
         isDefinition: item.isDefinition,
         artifact: item.artifact,
         artifactName: item.artifactName,
-        data: new ArtifactData({
+        data: {
           data: item.data,
           type: ArtifactDataType.STRING,
-        }),
+        },
       });
     });
   }

@@ -1,8 +1,17 @@
 import { Component, ViewChild } from '@angular/core';
-import { CanvasDefinition } from '../../../canvas-meta-model/canvas-definition';
+import {
+  CanvasDefinition,
+  CanvasDefinitionEntry,
+  CanvasDefinitionInit,
+} from '../../../canvas-meta-model/canvas-definition';
 import { CanvasDefinitionService } from '../../../canvas-meta-model/canvas-definition.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ELEMENT_SERVICE, ListService } from '../../../shared/list.service';
 
 @Component({
@@ -19,24 +28,26 @@ export class CanvasDefinitionsComponent {
     name: ['', Validators.required],
   });
 
-  modalCanvas: CanvasDefinition;
+  modalCanvas: CanvasDefinitionEntry;
   private modalReference: NgbModalRef;
 
   @ViewChild('deleteCanvasDefinitionModal', { static: true })
-  deleteCanvasDefinitionModal: any;
+  deleteCanvasDefinitionModal: unknown;
 
   constructor(
     private fb: FormBuilder,
-    private listService: ListService<CanvasDefinition>,
+    private listService: ListService<CanvasDefinition, CanvasDefinitionInit>,
     private modalService: NgbModal
   ) {}
 
-  async addCanvasDefinition() {
+  async addCanvasDefinition(): Promise<void> {
     await this.listService.add({ name: this.nameControl.value });
     this.addCanvasDefinitionForm.reset();
   }
 
-  openDeleteCanvasDefinitionModal(canvasDefinition: CanvasDefinition) {
+  openDeleteCanvasDefinitionModal(
+    canvasDefinition: CanvasDefinitionEntry
+  ): void {
     this.modalCanvas = canvasDefinition;
     this.modalReference = this.modalService.open(
       this.deleteCanvasDefinitionModal,
@@ -44,15 +55,15 @@ export class CanvasDefinitionsComponent {
     );
   }
 
-  async deleteCanvasDefinition(canvasDefinitionId: string) {
+  async deleteCanvasDefinition(canvasDefinitionId: string): Promise<void> {
     await this.listService.delete(canvasDefinitionId);
   }
 
-  get nameControl() {
-    return this.addCanvasDefinitionForm.get('name');
+  get nameControl(): FormControl {
+    return this.addCanvasDefinitionForm.get('name') as FormControl;
   }
 
-  get canvasDefinitions(): CanvasDefinition[] {
+  get canvasDefinitions(): CanvasDefinitionEntry[] {
     return this.listService.elements;
   }
 

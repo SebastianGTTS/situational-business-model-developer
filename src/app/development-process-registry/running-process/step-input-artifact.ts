@@ -1,17 +1,44 @@
-import { StepArtifact } from './step-artifact';
+import {
+  StepArtifact,
+  StepArtifactEntry,
+  StepArtifactInit,
+} from './step-artifact';
 
-export class StepInputArtifact extends StepArtifact {
+export interface StepInputArtifactInit extends StepArtifactInit {
+  versionInfo: {
+    number: number;
+    time: number;
+    createdBy: string;
+  };
+}
+
+export interface StepInputArtifactEntry extends StepArtifactEntry {
+  versionInfo: {
+    number: number;
+    time: number;
+    createdBy: string;
+  };
+}
+
+export class StepInputArtifact
+  extends StepArtifact
+  implements StepInputArtifactInit
+{
   versionInfo: {
     number: number;
     time: number;
     createdBy: string;
   };
 
-  constructor(stepInputArtifact: Partial<StepInputArtifact>) {
-    super(stepInputArtifact);
+  constructor(
+    entry: StepInputArtifactEntry | undefined,
+    init: StepInputArtifactInit | undefined
+  ) {
+    super(entry, init);
+    this.versionInfo = (entry ?? init).versionInfo;
   }
 
-  toDb() {
+  toDb(): StepInputArtifactEntry {
     return {
       ...super.toDb(),
       versionInfo: this.versionInfo,

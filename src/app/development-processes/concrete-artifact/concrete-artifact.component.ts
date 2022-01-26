@@ -10,6 +10,7 @@ import {
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { MetaModelService } from '../../development-process-registry/meta-model.service';
 import { Router } from '@angular/router';
+import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 
 @Component({
   selector: 'app-concrete-artifact',
@@ -22,7 +23,7 @@ export class ConcreteArtifactComponent {
   private modalReference: NgbModalRef;
 
   @ViewChild('showArtifactVersionModal', { static: true })
-  showArtifactVersionModal: any;
+  showArtifactVersionModal: unknown;
 
   constructor(
     private concreteArtifactLoaderService: ConcreteArtifactLoaderService,
@@ -32,11 +33,14 @@ export class ConcreteArtifactComponent {
     private router: Router
   ) {}
 
-  async update(value: Partial<RunningArtifact>) {
-    await this.concreteArtifactService.update(this.artifact._id, value);
+  async updateIdentifier(identifier: string): Promise<void> {
+    await this.concreteArtifactService.updateIdentifier(
+      this.artifact._id,
+      identifier
+    );
   }
 
-  openShowArtifactVersionModal(version: ArtifactVersion) {
+  openShowArtifactVersionModal(version: ArtifactVersion): void {
     this.modalVersion = version;
     this.modalReference = this.modalService.open(
       this.showArtifactVersionModal,
@@ -44,7 +48,7 @@ export class ConcreteArtifactComponent {
     );
   }
 
-  viewArtifactReference(reference: ArtifactDataReference) {
+  viewArtifactReference(reference: ArtifactDataReference): void {
     this.modalReference.close();
     this.metaModelService
       .getMetaModelApi(reference.type)
@@ -55,7 +59,7 @@ export class ConcreteArtifactComponent {
       });
   }
 
-  get artifact() {
+  get artifact(): RunningArtifact {
     return this.concreteArtifactLoaderService.artifact;
   }
 

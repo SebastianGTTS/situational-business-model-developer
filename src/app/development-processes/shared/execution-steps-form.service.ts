@@ -6,14 +6,16 @@ import { ModuleService } from '../../development-process-registry/module-api/mod
 import { ArtifactMapping } from '../../development-process-registry/development-method/artifact-mapping';
 import {
   ArtifactMappingFormService,
-  MappingFormValue,
+  MappingsFormValue,
 } from './artifact-mapping-form.service';
 import { ModuleMethod } from '../../development-process-registry/module-api/module-method';
 
-export interface ExecutionStepsFormValue {
+export type ExecutionStepsFormValue = ExecutionStepFormValue[];
+
+export interface ExecutionStepFormValue {
   module: Module;
   method: ModuleMethod;
-  outputMappings: MappingFormValue[][];
+  outputMappings: MappingsFormValue[];
   predefinedInput: any;
 }
 
@@ -81,10 +83,50 @@ export class ExecutionStepsFormService {
     return undefined;
   }
 
-  getExecutionSteps(form: ExecutionStepsFormValue[]): ExecutionStep[] {
+  /**
+   * Add an execution step to the form.
+   *
+   * @param executionStepForm the execution step form
+   */
+  addExecutionStep(executionStepForm: FormArray): void {
+    executionStepForm.push(this.createExecutionStepForm());
+  }
+
+  /**
+   * Called if the method of an execution step has changed.
+   *
+   * @param executionStepForm the execution step form
+   * @param step the index of the step to remove
+   */
+  executionStepMethodChange(executionStepForm: FormArray, step: number): void {
+    executionStepForm.controls.forEach((control) => {
+      const outputMappings = control.get('outputMappings') as FormArray;
+      outputMappings.controls.forEach((control: FormArray) => {
+        this.artifactMappingService.resetMappingTo(control, step);
+      });
+    });
+  }
+
+  /**
+   * Remove an execution step from the form and remove all mappings to it.
+   *
+   * @param executionStepForm the execution step form
+   * @param step the index of the step to remove
+   */
+  removeExecutionStep(executionStepForm: FormArray, step: number): void {
+    executionStepForm.controls.forEach((control) => {
+      const outputMappings = control.get('outputMappings') as FormArray;
+      outputMappings.controls.forEach((control: FormArray) => {
+        this.artifactMappingService.removeMappingTo(control, step);
+      });
+    });
+    executionStepForm.removeAt(step);
+  }
+
+  getExecutionSteps(form: ExecutionStepsFormValue): ExecutionStep[] {
     return form.map(
       (step) =>
-        new ExecutionStep({
+        new ExecutionStep(undefined, {
           module: step.module ? step.module.name : null,
           method: step.method ? step.method.name : null,
           outputMappings: step.outputMappings.map((output) =>

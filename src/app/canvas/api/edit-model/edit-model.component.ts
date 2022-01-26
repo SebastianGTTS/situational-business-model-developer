@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ProcessApiService } from '../process-api.service';
+import { ProcessApiService } from '../../../development-process-registry/module-api/process-api.service';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { CanvasResolveService } from '../../canvas-resolve.service';
 import { InstanceLoaderService } from '../instance-loader.service';

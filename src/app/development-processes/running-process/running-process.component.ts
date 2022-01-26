@@ -6,16 +6,14 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { RunningArtifact } from '../../development-process-registry/running-process/running-artifact';
 import { ArtifactVersion } from '../../development-process-registry/running-process/artifact-version';
 import { OutputArtifactMappingFormService } from '../shared/output-artifact-mapping-form.service';
+import { Decision } from '../../development-process-registry/bm-process/decision';
 import {
-  Decision,
-  GroupSelection,
-} from '../../development-process-registry/bm-process/decision';
-import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
+  DevelopmentMethod,
+  DevelopmentMethodEntry,
+} from '../../development-process-registry/development-method/development-method';
 import { DevelopmentMethodService } from '../../development-process-registry/development-method/development-method.service';
-import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
+import { SituationalFactorEntry } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
 import { BmProcessService } from '../../development-process-registry/bm-process/bm-process.service';
-import { Stakeholder } from '../../development-process-registry/method-elements/stakeholder/stakeholder';
-import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 import { ExecutionErrors } from '../../development-process-registry/running-process/process-execution.service';
 import {
   ArtifactDataReference,
@@ -41,7 +39,7 @@ export class RunningProcessComponent implements OnInit {
   modalDecision: Decision;
   modalArtifact: RunningArtifact;
   modalArtifactVersion: ArtifactVersion;
-  modalDevelopmentMethods: DevelopmentMethod[] = null;
+  modalDevelopmentMethods: DevelopmentMethodEntry[] = null;
   modalDevelopmentMethod: DevelopmentMethod;
   modalRunningMethodInfo: RunningMethodInfo;
 
@@ -124,8 +122,8 @@ export class RunningProcessComponent implements OnInit {
     );
   }
 
-  async configureMethod(method: DevelopmentMethod): Promise<void> {
-    const developmentMethod = new DevelopmentMethod(method);
+  async configureMethod(method: DevelopmentMethodEntry): Promise<void> {
+    const developmentMethod = new DevelopmentMethod(method, undefined);
     if (!this.developmentMethodService.isCorrectlyDefined(developmentMethod)) {
       const modal = this.modalService.open(
         DevelopmentMethodIncompleteModalComponent
@@ -139,12 +137,12 @@ export class RunningProcessComponent implements OnInit {
     this.modalReference.close();
     await this.modalReference.result;
     this.modalDevelopmentMethod = developmentMethod;
-    this.modalDecision = new Decision({
+    this.modalDecision = new Decision(undefined, {
       method: this.modalDevelopmentMethod,
-      stakeholders: new GroupSelection<Stakeholder>({}, null),
-      inputArtifacts: new GroupSelection<Artifact>({}, null),
-      outputArtifacts: new GroupSelection<Artifact>({}, null),
-      tools: null,
+      stakeholders: {},
+      inputArtifacts: {},
+      outputArtifacts: {},
+      tools: {},
       stepDecisions: this.modalDevelopmentMethod.executionSteps.map(() => null),
     });
     this.modalReference = this.modalService.open(
@@ -200,7 +198,7 @@ export class RunningProcessComponent implements OnInit {
   sortByDistance<
     T extends {
       _id: string;
-      situationalFactors: { list: string; element: SituationalFactor }[];
+      situationalFactors: { list: string; element?: SituationalFactorEntry }[];
     }[]
   >(elements: T): T {
     const distanceMap: { [id: string]: number } = {};

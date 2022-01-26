@@ -19,7 +19,7 @@ export class RunningProcessLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const runningProcessId = paramMap.get('id');
     this.changesFeed = this.runningProcessService
       .getChangesFeed(runningProcessId)
@@ -27,7 +27,7 @@ export class RunningProcessLoaderService extends ElementLoaderService {
     void this.loadRunningProcess(runningProcessId);
   }
 
-  private async loadRunningProcess(runningProcessId: string) {
+  private async loadRunningProcess(runningProcessId: string): Promise<void> {
     try {
       this.runningProcess = await this.runningProcessService.get(
         runningProcessId

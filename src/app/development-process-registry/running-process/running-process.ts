@@ -1,15 +1,61 @@
-import { BmProcess } from '../bm-process/bm-process';
+import {
+  BmProcess,
+  BmProcessEntry,
+  BmProcessInit,
+} from '../bm-process/bm-process';
 import { DatabaseModel } from '../../database/database-model';
-import { RunningArtifact } from './running-artifact';
-import { RunningMethod } from './running-method';
+import {
+  RunningArtifact,
+  RunningArtifactEntry,
+  RunningArtifactInit,
+} from './running-artifact';
+import {
+  RunningMethod,
+  RunningMethodEntry,
+  RunningMethodInit,
+} from './running-method';
 import { Step } from './step';
-import { RunningMethodInfo } from './running-method-info';
+import {
+  RunningMethodInfo,
+  RunningMethodInfoEntry,
+  RunningMethodInfoInit,
+} from './running-method-info';
 import { v4 as uuidv4 } from 'uuid';
 import { Artifact } from '../method-elements/artifact/artifact';
-import { ArtifactVersion } from './artifact-version';
+import { ArtifactVersionInit } from './artifact-version';
 import { OutputArtifactMapping } from './output-artifact-mapping';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../../database/database-entry';
+import { Comment } from './comment';
 
-export class RunningProcess extends DatabaseModel {
+export interface RunningProcessInit extends DatabaseRootInit {
+  name: string;
+  process: BmProcessInit;
+
+  todoMethods?: RunningMethodInit[];
+  runningMethods?: RunningMethodInit[];
+  executedMethods?: RunningMethodInfoInit[];
+
+  artifacts?: RunningArtifactInit[];
+}
+
+export interface RunningProcessEntry extends DatabaseRootEntry {
+  name: string;
+  process: BmProcessEntry;
+
+  todoMethods: RunningMethodEntry[];
+  runningMethods: RunningMethodEntry[];
+  executedMethods: RunningMethodInfoEntry[];
+
+  artifacts: RunningArtifactEntry[];
+}
+
+export class RunningProcess
+  extends DatabaseModel
+  implements RunningProcessInit
+{
   static readonly typeName = 'RunningProcess';
 
   name: string;
@@ -21,19 +67,62 @@ export class RunningProcess extends DatabaseModel {
 
   artifacts: RunningArtifact[] = [];
 
-  constructor(runningProcess: Partial<RunningProcess>) {
-    super(RunningProcess.typeName);
-    Object.assign(this, runningProcess);
-    this.process = new BmProcess(this.process);
-    this.todoMethods = this.todoMethods.map(
-      (method) => new RunningMethod(method)
-    );
-    this.runningMethods = this.runningMethods.map(
-      (method) => new RunningMethod(method)
-    );
-    this.artifacts = this.artifacts.map(
-      (element) => new RunningArtifact(element)
-    );
+  constructor(entry: RunningProcessEntry, init: RunningProcessInit) {
+    super(entry, init, RunningProcess.typeName);
+    this.name = (entry ?? init).name;
+    if (entry != null) {
+      this.process = new BmProcess(entry.process, undefined);
+      this.todoMethods =
+        entry.todoMethods?.map(
+          (method) => new RunningMethod(method, undefined)
+        ) ?? this.todoMethods;
+      this.runningMethods =
+        entry.runningMethods?.map(
+          (method) => new RunningMethod(method, undefined)
+        ) ?? this.runningMethods;
+      this.executedMethods =
+        entry.executedMethods.map((info) => {
+          return {
+            nodeId: info.nodeId,
+            executionId: info.executionId,
+            methodName: info.methodName,
+            comments:
+              info.comments?.map(
+                (comment) => new Comment(comment, undefined)
+              ) ?? [],
+          };
+        }) ?? this.executedMethods;
+      this.artifacts =
+        entry.artifacts?.map(
+          (element) => new RunningArtifact(element, undefined)
+        ) ?? this.artifacts;
+    } else {
+      this.process = new BmProcess(undefined, init.process);
+      this.todoMethods =
+        init.todoMethods?.map(
+          (method) => new RunningMethod(undefined, method)
+        ) ?? this.todoMethods;
+      this.runningMethods =
+        init.runningMethods?.map(
+          (method) => new RunningMethod(undefined, method)
+        ) ?? this.runningMethods;
+      this.executedMethods =
+        init.executedMethods?.map((info) => {
+          return {
+            nodeId: info.nodeId,
+            executionId: info.executionId,
+            methodName: info.methodName,
+            comments:
+              info.comments?.map(
+                (comment) => new Comment(undefined, comment)
+              ) ?? [],
+          };
+        }) ?? this.executedMethods;
+      this.artifacts =
+        init.artifacts?.map(
+          (element) => new RunningArtifact(undefined, element)
+        ) ?? this.artifacts;
+    }
   }
 
   /**
@@ -54,7 +143,7 @@ export class RunningProcess extends DatabaseModel {
    * @param executionId the id of the todomethod
    * @return the todomethod
    */
-  getTodoMethod(executionId: string): RunningMethod {
+  getTodoMethod(executionId: string): RunningMethod | undefined {
     return this.todoMethods.find(
       (method) => method.executionId === executionId
     );
@@ -65,7 +154,7 @@ export class RunningProcess extends DatabaseModel {
    *
    * @param executionId the id of the method
    */
-  removeTodoMethod(executionId: string) {
+  removeTodoMethod(executionId: string): void {
     this.todoMethods = this.todoMethods.filter(
       (method) => method.executionId !== executionId
     );
@@ -77,9 +166,6 @@ export class RunningProcess extends DatabaseModel {
    * @param runningMethod the running method
    */
   addRunningMethod(runningMethod: RunningMethod): void {
-    if (runningMethod.executionId == null) {
-      runningMethod.executionId = uuidv4();
-    }
     this.runningMethods.push(runningMethod);
   }
 
@@ -90,11 +176,11 @@ export class RunningProcess extends DatabaseModel {
    * @return the added running method
    */
   addRunningMethodOfProcess(nodeId: string): RunningMethod {
-    const method = new RunningMethod({
+    const method = new RunningMethod(undefined, {
       nodeId,
       decision: this.process.decisions[nodeId],
       steps: this.process.decisions[nodeId].method.executionSteps.map(
-        () => new Step({})
+        () => new Step(undefined, {})
       ),
     });
     this.addRunningMethod(method);
@@ -107,7 +193,7 @@ export class RunningProcess extends DatabaseModel {
    * @param executionId the id of the running method
    * @return the running method
    */
-  getRunningMethod(executionId: string): RunningMethod {
+  getRunningMethod(executionId: string): RunningMethod | undefined {
     return this.runningMethods.find(
       (method) => method.executionId === executionId
     );
@@ -119,7 +205,7 @@ export class RunningProcess extends DatabaseModel {
    * @param nodeId the id of the node
    * @return the running method
    */
-  getRunningMethodByNode(nodeId: string): RunningMethod {
+  getRunningMethodByNode(nodeId: string): RunningMethod | undefined {
     return this.runningMethods.find((method) => method.nodeId === nodeId);
   }
 
@@ -149,7 +235,7 @@ export class RunningProcess extends DatabaseModel {
    * @param executionId the id of the executed method
    * @return the executed method
    */
-  getExecutedMethod(executionId: string): RunningMethodInfo {
+  getExecutedMethod(executionId: string): RunningMethodInfo | undefined {
     return this.executedMethods.find(
       (method) => method.executionId === executionId
     );
@@ -171,8 +257,8 @@ export class RunningProcess extends DatabaseModel {
    * @param executionId the id of the method
    * @return the method
    */
-  getMethod(executionId: string): RunningMethodInfo {
-    let result: RunningMethodInfo = this.todoMethods.find(
+  getMethod(executionId: string): RunningMethodInfo | undefined {
+    let result: RunningMethodInfo | undefined = this.todoMethods.find(
       (method) => method.executionId === executionId
     );
     if (result == null) {
@@ -202,13 +288,13 @@ export class RunningProcess extends DatabaseModel {
   ): void {
     const method = this.getRunningMethod(executionId);
     outputArtifactsMapping.forEach((output, index) => {
-      const version: Partial<ArtifactVersion> = {
+      const version: ArtifactVersionInit = {
         createdBy: method.nodeId ? method.nodeId : 'manual',
         executedBy: method.executionId,
         data: output.data,
       };
       if (output.isDefinition) {
-        const artifact = new RunningArtifact({
+        const artifact = new RunningArtifact(undefined, {
           identifier: output.artifactName,
           artifact: outputArtifacts[index],
         });
@@ -242,14 +328,21 @@ export class RunningProcess extends DatabaseModel {
     artifact.identifier = identifier;
   }
 
-  toDb(): any {
+  toDb(): RunningProcessEntry {
     return {
       ...super.toDb(),
       name: this.name,
       process: this.process.toDb(),
       todoMethods: this.todoMethods.map((method) => method.toDb()),
       runningMethods: this.runningMethods.map((method) => method.toDb()),
-      executedMethods: this.executedMethods,
+      executedMethods: this.executedMethods.map((executedMethod) => {
+        return {
+          nodeId: executedMethod.nodeId,
+          executionId: executedMethod.executionId,
+          methodName: executedMethod.methodName,
+          comments: executedMethod.comments.map((comment) => comment.toDb()),
+        };
+      }),
       artifacts: this.artifacts.map((element) => element.toDb()),
     };
   }

@@ -1,12 +1,28 @@
-import { DevelopmentMethod } from '../development-method/development-method';
-import { Artifact } from '../method-elements/artifact/artifact';
-import { Stakeholder } from '../method-elements/stakeholder/stakeholder';
-import { Tool } from '../method-elements/tool/tool';
-import { MethodElement } from '../method-elements/method-element';
+import {
+  DevelopmentMethod,
+  DevelopmentMethodEntry,
+} from '../development-method/development-method';
+import { Artifact, ArtifactEntry } from '../method-elements/artifact/artifact';
+import {
+  Stakeholder,
+  StakeholderEntry,
+} from '../method-elements/stakeholder/stakeholder';
+import { Tool, ToolEntry } from '../method-elements/tool/tool';
+import {
+  MethodElement,
+  MethodElementEntry,
+  MethodElementInit,
+} from '../method-elements/method-element';
 import { MultipleSelection } from '../development-method/multiple-selection';
 import { Equality } from '../../shared/equality';
 import { equalsList } from '../../shared/utils';
-import { DatabaseModelPart } from '../../database/database-model-part';
+import {
+  DatabaseConstructor,
+  DatabaseModelPart,
+  EntryType,
+  InitType,
+} from '../../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
 
 export interface ElementSummary<T extends MethodElement> {
   list: string;
@@ -19,23 +35,58 @@ export class GroupSummary<T extends MethodElement> {
   elements: ElementSummary<T>[];
 }
 
+export interface GroupSelectionInit<T extends MethodElementInit>
+  extends DatabaseInit {
+  selectedGroup?: number;
+  elements?: T[][];
+}
+
+export interface GroupSelectionEntry<T extends MethodElementEntry>
+  extends DatabaseEntry {
+  selectedGroup: number;
+  elements: T[][];
+}
+
 export class GroupSelection<T extends MethodElement>
-  implements Equality<GroupSelection<T>>, DatabaseModelPart
+  implements
+    GroupSelectionInit<T>,
+    Equality<GroupSelection<T>>,
+    DatabaseModelPart
 {
   selectedGroup: number = null;
   elements: T[][] = null;
 
   constructor(
-    groupSelection: Partial<GroupSelection<T>>,
-    createElement: (element: Partial<T>) => T
+    entry: GroupSelectionEntry<EntryType<T>>,
+    init: GroupSelectionInit<InitType<T> & MethodElementInit>,
+    databaseConstructor: DatabaseConstructor<T>
   ) {
-    this.update(groupSelection, createElement);
+    this.selectedGroup = (entry ?? init).selectedGroup ?? this.selectedGroup;
+    if (entry != null) {
+      this.elements =
+        entry.elements?.map(
+          (element) =>
+            element?.map((e) =>
+              e ? new databaseConstructor(e, undefined) : undefined
+            ) ?? undefined
+        ) ?? this.elements;
+    } else if (init != null) {
+      this.elements =
+        init.elements?.map(
+          (element) =>
+            element?.map((e) =>
+              e ? new databaseConstructor(undefined, e) : undefined
+            ) ?? undefined
+        ) ?? this.elements;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   update(
     groupSelection: Partial<GroupSelection<T>>,
     createElement: (element: Partial<T>) => T
-  ) {
+  ): void {
     Object.assign(this, groupSelection);
     this.elements = this.elements
       ? this.elements.map((element) =>
@@ -85,12 +136,16 @@ export class GroupSelection<T extends MethodElement>
     return summary;
   }
 
-  toDb(): any {
+  toDb(): GroupSelectionEntry<ReturnType<T['toDb']>> {
     return {
       selectedGroup: this.selectedGroup,
       elements: this.elements
         ? this.elements.map((element) =>
-            element ? element.map((e) => (e ? e.toDb() : null)) : null
+            element
+              ? element.map((e) =>
+                  e ? (e.toDb() as ReturnType<T['toDb']>) : null
+                )
+              : null
           )
         : null,
     };
@@ -123,6 +178,25 @@ export class GroupSelection<T extends MethodElement>
   }
 }
 
+export interface DecisionInit extends DatabaseInit {
+  method: DevelopmentMethod;
+  inputArtifacts: GroupSelectionInit<Artifact>;
+  outputArtifacts: GroupSelectionInit<Artifact>;
+  stakeholders: GroupSelectionInit<Stakeholder>;
+  tools: GroupSelectionInit<Tool>;
+
+  stepDecisions: any[];
+}
+
+export interface DecisionEntry extends DatabaseEntry {
+  method: DevelopmentMethodEntry;
+  inputArtifacts: GroupSelectionEntry<ArtifactEntry>;
+  outputArtifacts: GroupSelectionEntry<ArtifactEntry>;
+  stakeholders: GroupSelectionEntry<StakeholderEntry>;
+  tools: GroupSelectionEntry<ToolEntry>;
+  stepDecisions: any[];
+}
+
 export class Decision implements DatabaseModelPart {
   method: DevelopmentMethod;
   inputArtifacts: GroupSelection<Artifact>;
@@ -132,26 +206,68 @@ export class Decision implements DatabaseModelPart {
 
   stepDecisions: any[];
 
-  constructor(decision: Partial<Decision>) {
-    this.update(decision);
+  constructor(entry: DecisionEntry, init: DecisionInit) {
+    if (entry != null) {
+      this.method = new DevelopmentMethod(entry.method, undefined);
+      this.inputArtifacts = new GroupSelection<Artifact>(
+        entry.inputArtifacts,
+        undefined,
+        Artifact
+      );
+      this.outputArtifacts = new GroupSelection<Artifact>(
+        entry.outputArtifacts,
+        undefined,
+        Artifact
+      );
+      this.stakeholders = new GroupSelection<Stakeholder>(
+        entry.stakeholders,
+        undefined,
+        Stakeholder
+      );
+      this.tools = new GroupSelection<Tool>(entry.tools, undefined, Tool);
+    } else if (init != null) {
+      this.method = new DevelopmentMethod(undefined, init.method);
+      this.inputArtifacts = new GroupSelection<Artifact>(
+        undefined,
+        init.inputArtifacts,
+        Artifact
+      );
+      this.outputArtifacts = new GroupSelection<Artifact>(
+        undefined,
+        init.outputArtifacts,
+        Artifact
+      );
+      this.stakeholders = new GroupSelection<Stakeholder>(
+        undefined,
+        init.stakeholders,
+        Stakeholder
+      );
+      this.tools = new GroupSelection<Tool>(undefined, init.tools, Tool);
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
+    this.stepDecisions = (entry ?? init).stepDecisions;
   }
 
-  update(decision: Partial<Decision>) {
+  update(decision: Partial<Decision>): void {
     Object.assign(this, decision);
-    this.method = new DevelopmentMethod(this.method);
+    this.method = new DevelopmentMethod(undefined, this.method);
     this.inputArtifacts = new GroupSelection<Artifact>(
+      undefined,
       this.inputArtifacts,
-      (artifact) => new Artifact(artifact)
+      Artifact
     );
     this.outputArtifacts = new GroupSelection<Artifact>(
+      undefined,
       this.outputArtifacts,
-      (artifact) => new Artifact(artifact)
+      Artifact
     );
     this.stakeholders = new GroupSelection<Stakeholder>(
+      undefined,
       this.stakeholders,
-      (stakeholder) => new Stakeholder(stakeholder)
+      Stakeholder
     );
-    this.tools = new GroupSelection<Tool>(this.tools, (tool) => new Tool(tool));
+    this.tools = new GroupSelection<Tool>(undefined, this.tools, Tool);
   }
 
   isComplete(): boolean {
@@ -179,7 +295,7 @@ export class Decision implements DatabaseModelPart {
     };
   }
 
-  toDb(): any {
+  toDb(): DecisionEntry {
     return {
       method: this.method.toDb(),
       inputArtifacts: this.inputArtifacts.toDb(),

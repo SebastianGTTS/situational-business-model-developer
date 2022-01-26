@@ -179,9 +179,15 @@ export class MergeModelViewComponent implements OnInit, OnDestroy {
       this.companyModel.expertModelTraces[this.expertModelId]
         .expertFeatureIdMap[expertFeature.parent.id];
     this.modalFeature = new Feature(
+      undefined,
+      expertFeature,
       expertFeature.id,
-      new Feature(companyModelFeatureParentId, null, {}),
-      expertFeature
+      new Feature(
+        undefined,
+        { name: '' },
+        companyModelFeatureParentId,
+        undefined
+      )
     );
     this.modalReference = this.modalService.open(this.mergeModal, {
       size: 'lg',

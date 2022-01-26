@@ -1,4 +1,5 @@
 import { DatabaseModelPart } from '../../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
 
 export enum ArtifactDataType {
   CUSTOM,
@@ -11,15 +12,30 @@ export interface ArtifactDataReference {
   type: string;
 }
 
-export class ArtifactData implements DatabaseModelPart {
+export interface ArtifactDataInit extends DatabaseInit {
+  type?: ArtifactDataType;
+  data?: any;
+}
+
+export interface ArtifactDataEntry extends DatabaseEntry {
+  type: ArtifactDataType;
+  data: any;
+}
+
+export class ArtifactData implements ArtifactDataInit, DatabaseModelPart {
   type: ArtifactDataType = ArtifactDataType.STRING;
   data: any;
 
-  constructor(artifactData: Partial<ArtifactData>) {
-    Object.assign(this, artifactData);
+  constructor(
+    entry: ArtifactDataEntry | undefined,
+    init: ArtifactDataInit | undefined
+  ) {
+    const element = entry ?? init;
+    this.type = element.type ?? this.type;
+    this.data = element.data;
   }
 
-  toDb(): any {
+  toDb(): ArtifactDataEntry {
     return {
       type: this.type,
       data: this.data,

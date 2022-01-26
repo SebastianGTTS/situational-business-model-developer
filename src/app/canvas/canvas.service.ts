@@ -27,7 +27,7 @@ export class CanvasService {
     private moduleService: ModuleService
   ) {}
 
-  init() {
+  init(): void {
     const module = new Module();
     module.list = 'Canvas Tools';
     module.name = 'Canvas Module';
@@ -43,9 +43,14 @@ export class CanvasService {
     model: ArtifactDataReference,
     router: Router,
     reference: Reference
-  ) {
+  ): Promise<void> {
     const modelReference: InstanceArtifactData = model as InstanceArtifactData;
-    let queryParams: any;
+    let queryParams: {
+      runningProcessId?: string;
+      executionId?: string;
+      artifactId?: string;
+      versionId?: number;
+    };
     switch (reference.referenceType) {
       case 'Process':
         queryParams = {
@@ -79,13 +84,13 @@ export class CanvasService {
     );
   }
 
-  private addMethods(module: Module) {
+  private addMethods(module: Module): void {
     const self = this;
     module.addMethod({
       name: 'createCanvas',
       description: 'Creates a canvas',
       input: [],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
       configurationFormComponent: SelectCanvasDefinitionConfigurationComponent,
       createConfigurationForm(predefinedInput: any): FormGroup {
         return self.fb.group({
@@ -122,44 +127,44 @@ export class CanvasService {
     module.addMethod({
       name: 'editCanvas',
       description: 'Edit a canvas',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
     module.addMethod({
       name: 'refineCanvas',
       description: 'Refine canvas through hints and patterns',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
     module.addMethod({
       name: 'compareCompetitors',
       description: 'Compare competitors with the business model canvas',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
     module.addMethod({
       name: 'createCompetitors',
       description: 'Add competitors to the model',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
     module.addMethod({
       name: 'manageCompetitors',
       description: 'Edit and remove competitors of the model',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
     module.addMethod({
       name: 'viewCanvas',
       description: 'View the canvas',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
     module.addMethod({
       name: 'editModel',
       description: 'Edit the company model',
-      input: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
-      output: [{ name: 'Canvas', metaModelType: CompanyModel.typeName }],
+      input: [{ name: 'Canvas', type: CompanyModel.typeName }],
+      output: [{ name: 'Canvas', type: CompanyModel.typeName }],
     });
   }
 }

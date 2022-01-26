@@ -1,46 +1,103 @@
 import { DatabaseModel } from '../database/database-model';
-import { Author } from '../model/author';
-import { Feature } from './feature';
-import { Instance } from './instance';
+import { Author, AuthorEntry, AuthorInit } from '../model/author';
+import { Feature, FeatureEntry, FeatureInit } from './feature';
+import { Instance, InstanceEntry, InstanceInit } from './instance';
 import { RelationshipType } from './relationships';
 import { getId } from '../model/utils';
-import { CanvasDefinition } from './canvas-definition';
+import {
+  CanvasDefinition,
+  CanvasDefinitionEntry,
+  CanvasDefinitionInit,
+} from './canvas-definition';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../database/database-entry';
 
-export class FeatureModel extends DatabaseModel {
-  // JSON Schema (stored)
+export interface FeatureModelInit extends DatabaseRootInit {
+  name: string;
+  $definition: CanvasDefinitionInit;
+
+  description?: string;
+  copyright?: string;
+  author?: AuthorInit;
+  features?: { [id: string]: FeatureInit };
+  instances?: InstanceInit[];
+}
+
+export interface FeatureModelEntry extends DatabaseRootEntry {
+  name: string;
+  description: string;
+  copyright: string;
+  author: AuthorEntry;
+  features: { [id: string]: FeatureEntry };
+  instances: InstanceEntry[];
+
+  nextInstanceId: number;
+
+  $definition: CanvasDefinitionEntry;
+}
+
+export interface FeatureModelJsonSchema {
+  $definition: CanvasDefinition;
   name: string;
   description: string;
   copyright: string;
   author: Author;
   features: { [id: string]: Feature };
   instances: Instance[];
+}
+
+export class FeatureModel extends DatabaseModel implements FeatureModelInit {
+  // JSON Schema (stored)
+  name: string;
+  description: string;
+  copyright: string;
+  author: Author;
+  features: { [id: string]: Feature } = {};
+  instances: Instance[] = [];
 
   nextInstanceId: number;
 
   $definition: CanvasDefinition;
 
-  constructor(featureModel: Partial<FeatureModel>, type: string) {
-    super(type);
-    this.init();
-    this.nextInstanceId = featureModel.instances
-      ? featureModel.instances.length
-      : 0;
-    Object.assign(this, featureModel);
-    this.author = new Author(this.author);
-    Object.entries(this.features).forEach(
-      ([id, feature]) => (this.features[id] = new Feature(id, null, feature))
-    );
-    this.instances = this.instances.map(
-      (instance, index) => new Instance(index, instance)
-    );
-    this.$definition = this.$definition
-      ? new CanvasDefinition(this.$definition)
-      : null;
-  }
+  constructor(
+    entry: FeatureModelEntry | undefined,
+    init: FeatureModelInit | undefined,
+    type: string
+  ) {
+    super(entry, init, type);
+    const element = entry ?? init;
+    this.nextInstanceId = element.instances ? element.instances.length : 0;
+    this.name = element.name;
+    this.description = element.description;
+    this.copyright = element.copyright;
 
-  protected init(): void {
-    this.features = {};
-    this.instances = [];
+    if (entry != null) {
+      this.author = new Author(entry.author, undefined);
+      if (entry.features != null) {
+        Object.entries(entry.features).forEach(
+          ([id, feature]) =>
+            (this.features[id] = new Feature(feature, undefined, id, null))
+        );
+      }
+      this.instances =
+        entry.instances?.map((instance) => new Instance(instance, undefined)) ??
+        this.instances;
+      this.$definition = new CanvasDefinition(entry.$definition, undefined);
+    } else if (init != null) {
+      this.author = new Author(undefined, init.author ?? {});
+      if (init.features != null) {
+        Object.entries(init.features).forEach(
+          ([id, feature]) =>
+            (this.features[id] = new Feature(undefined, feature, id, null))
+        );
+      }
+      this.instances =
+        init.instances?.map((instance) => new Instance(undefined, instance)) ??
+        this.instances;
+      this.$definition = new CanvasDefinition(undefined, init.$definition);
+    }
   }
 
   set definition(definition: CanvasDefinition) {
@@ -49,7 +106,12 @@ export class FeatureModel extends DatabaseModel {
     this.instances = [];
     this.$definition.rootFeatures.forEach(
       (feature) =>
-        (this.features[feature.id] = new Feature(feature.id, null, feature))
+        (this.features[feature.id] = new Feature(
+          undefined,
+          feature,
+          feature.id,
+          null
+        ))
     );
   }
 
@@ -85,7 +147,7 @@ export class FeatureModel extends DatabaseModel {
    * @param featureId the feature id of the parent model
    * @return the added feature
    */
-  addFeature(feature: Partial<Feature>, featureId: string): Feature {
+  addFeature(feature: FeatureInit, featureId: string): Feature {
     const parent = this.getFeature(featureId);
     if (!feature.id) {
       feature.id = this.getFeatureId(feature.name);
@@ -267,8 +329,11 @@ export class FeatureModel extends DatabaseModel {
    * @param instance the instance to add to this feature model (values will be copied to a new object)
    * @return the new instance
    */
-  addInstance(instance: Partial<Instance>): Instance {
-    const addedInstance = new Instance(this.nextInstanceId++, instance);
+  addInstance(instance: InstanceInit): Instance {
+    const addedInstance = new Instance(undefined, {
+      ...instance,
+      id: this.nextInstanceId++,
+    });
     if (
       !this.definition.rootFeatures.every((rootFeature) =>
         addedInstance.usedFeatures.includes(rootFeature.id)
@@ -353,7 +418,7 @@ export class FeatureModel extends DatabaseModel {
 
   // Export
 
-  toDb(): any {
+  toDb(): FeatureModelEntry {
     const features = {};
     Object.entries(this.features).forEach(
       ([id, feature]) => (features[id] = feature.toDb())
@@ -371,7 +436,7 @@ export class FeatureModel extends DatabaseModel {
     };
   }
 
-  toJSON() {
+  toJSON(): FeatureModelJsonSchema {
     return {
       $definition: this.$definition,
       name: this.name,

@@ -3,6 +3,11 @@ import { BmProcessService } from '../../development-process-registry/bm-process/
 import { DiagramComponentInterface } from '../shared/diagram-component-interface';
 import { BmProcessDiagramComponent } from '../bm-process-diagram/bm-process-diagram.component';
 import { BmProcessLoaderService } from '../shared/bm-process-loader.service';
+import { BmProcess } from '../../development-process-registry/bm-process/bm-process';
+import { Domain } from '../../development-process-registry/knowledge/domain';
+import { SelectionInit } from '../../development-process-registry/development-method/selection';
+import { SituationalFactorInit } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
+import { Decision } from '../../development-process-registry/bm-process/decision';
 
 @Component({
   selector: 'app-bm-process',
@@ -21,7 +26,7 @@ export class BmProcessComponent implements OnInit, DiagramComponentInterface {
     private bmProcessService: BmProcessService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.bmProcessLoaderService.loaded.subscribe(() => {
       if (this.previousInitial === true && this.bmProcess.initial === false) {
         document.body.scrollIntoView({ behavior: 'smooth' });
@@ -30,12 +35,32 @@ export class BmProcessComponent implements OnInit, DiagramComponentInterface {
     });
   }
 
-  async finishInitialization() {
-    await this.updateBmProcess({ initial: false });
+  async finishInitialization(): Promise<void> {
+    await this.bmProcessService.finishInitialization(this.bmProcess._id);
   }
 
-  async updateBmProcess(value: any) {
-    await this.bmProcessService.update(this.bmProcess._id, value);
+  async updateDomains(domains: Domain[]): Promise<void> {
+    await this.bmProcessService.updateDomains(this.bmProcess._id, domains);
+  }
+
+  async updateSituationalFactors(
+    situationalFactors: SelectionInit<SituationalFactorInit>[]
+  ): Promise<void> {
+    await this.bmProcessService.updateSituationalFactors(
+      this.bmProcess._id,
+      situationalFactors
+    );
+  }
+
+  async saveBmProcess(
+    processDiagram: string,
+    decisions?: { [elementId: string]: Decision }
+  ): Promise<void> {
+    await this.bmProcessService.saveBmProcessDiagram(
+      this.bmProcess._id,
+      processDiagram,
+      decisions
+    );
   }
 
   async diagramChanged(): Promise<boolean> {
@@ -49,7 +74,7 @@ export class BmProcessComponent implements OnInit, DiagramComponentInterface {
     return this.diagramComponent.saveDiagram();
   }
 
-  get bmProcess() {
+  get bmProcess(): BmProcess {
     return this.bmProcessLoaderService.bmProcess;
   }
 }

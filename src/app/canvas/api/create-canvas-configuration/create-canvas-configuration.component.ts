@@ -1,10 +1,13 @@
 import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { CompanyModel } from '../../../canvas-meta-model/company-model';
+import { CompanyModelEntry } from '../../../canvas-meta-model/company-model';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { DecisionConfigurationFormComponent } from '../../../development-process-registry/module-api/decision-configuration-form-component';
 import { Domain } from '../../../development-process-registry/knowledge/domain';
-import { FeatureModelFormService } from '../../form-services/feature-model-form.service';
+import {
+  FeatureModelFormService,
+  FeatureModelFormValue,
+} from '../../form-services/feature-model-form.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CanvasDefinitionService } from '../../../canvas-meta-model/canvas-definition.service';
 import { BmProcess } from '../../../development-process-registry/bm-process/bm-process';
@@ -27,11 +30,11 @@ export class CreateCanvasConfigurationComponent
 
   createForm: FormGroup;
 
-  companyModels: CompanyModel[];
+  companyModels: CompanyModelEntry[];
 
   private modalReference: NgbModalRef;
 
-  @ViewChild('createModal', { static: true }) createModal: any;
+  @ViewChild('createModal', { static: true }) createModal: unknown;
 
   constructor(
     private canvasDefinitionService: CanvasDefinitionService,
@@ -42,31 +45,31 @@ export class CreateCanvasConfigurationComponent
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadCompanyModels();
     this.createForm = this.fb.group({
       featureModel: this.featureModelFormService.createForm(),
     });
   }
 
-  openCreateCompanyModelModal() {
+  openCreateCompanyModelModal(): void {
     this.modalReference = this.modalService.open(this.createModal, {
       size: 'lg',
     });
   }
 
-  async createCompanyModel() {
-    const model: Partial<CompanyModel> = this.featureModelFormService.get(
+  async createCompanyModel(): Promise<void> {
+    const model: FeatureModelFormValue = this.featureModelFormService.get(
       this.createForm.get('featureModel').value
     );
     const canvasDefinition = await this.canvasDefinitionService.get(
       this.predefinedInput.definitionId
     );
     const companyModel = this.companyModelService.createFeatureModel(
-      model,
+      { ...model, $definition: canvasDefinition },
       canvasDefinition
     );
-    await this.companyModelService.add(companyModel.toDb());
+    await this.companyModelService.add(companyModel);
     this.forceUpdate.emit({
       companyModelId: companyModel._id,
       automaticCreation: true,
@@ -79,7 +82,7 @@ export class CreateCanvasConfigurationComponent
     });
   }
 
-  async navigateSelectExpertKnowledge() {
+  async navigateSelectExpertKnowledge(): Promise<void> {
     this.modalService.dismissAll();
     await this.router.navigate(
       ['companyModels', this.stepDecision.companyModelId, 'select'],
@@ -97,7 +100,7 @@ export class CreateCanvasConfigurationComponent
     );
   }
 
-  get companyModelIdControl() {
+  get companyModelIdControl(): FormControl {
     return this.formGroup.get('companyModelId') as FormControl;
   }
 }

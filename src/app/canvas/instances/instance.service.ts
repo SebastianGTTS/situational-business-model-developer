@@ -91,7 +91,7 @@ export class InstanceService {
     expertModelId: string,
     expertInstance: Instance
   ): Instance {
-    const instance = new Instance(expertInstance.id, expertInstance);
+    const instance = new Instance(undefined, expertInstance);
     instance.usedFeatures = instance.usedFeatures.map(
       (expertFeatureId) =>
         companyModel.expertModelTraces[expertModelId].expertFeatureIdMap[

@@ -1,6 +1,9 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="processPattern">
-    <a class="nav-link active" [routerLink]="[]">{{ processPattern.name }}</a>
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'process']"> Method Patterns </a>
+    <a *ngIf="processPattern" class="nav-link active" [routerLink]="[]">
+      {{ processPattern.name }}
+    </a>
   </nav>
 </div>
 
@@ -33,9 +36,20 @@
 
   <div class="container">
     <div class="my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom border-gray pb-2 mb-0">Method Pattern</h6>
+      <div class="text-muted pt-3">
+        <app-process-pattern-form
+          [processPattern]="processPattern"
+          (submitProcessPatternForm)="updateProcessPatternValue($event.value)"
+        ></app-process-pattern-form>
+      </div>
+    </div>
+
+    <div class="my-3 p-3 bg-white rounded shadow-sm">
       <h6 class="border-bottom border-gray pb-2 mb-0">Types</h6>
       <div class="text-muted pt-3">
         <app-types-selection-form
+          [internalTypes]="true"
           [types]="processPattern.types"
           (submitTypesForm)="updateProcessPatternValue({ types: $event.value })"
         ></app-types-selection-form>

@@ -34,17 +34,17 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
 
   constructor(private runningProcessService: RunningProcessService) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.runningProcess) {
       void this.updateBoard(changes.runningProcess.currentValue);
     }
   }
 
-  _showNodeInfo(nodeId: string) {
+  _showNodeInfo(nodeId: string): void {
     this.showInfo.emit(this.runningProcess.process.decisions[nodeId]);
   }
 
-  _showExecutionInfo(executionId: string) {
+  _showExecutionInfo(executionId: string): void {
     const todoMethod = this.runningProcess.getTodoMethod(executionId);
     const runningMethod = this.runningProcess.getRunningMethod(executionId);
     let decision;
@@ -56,7 +56,7 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
     this.showInfo.emit(decision);
   }
 
-  private async updateBoard(runningProcess: RunningProcess) {
+  private async updateBoard(runningProcess: RunningProcess): Promise<void> {
     this.todo = await this.getTodoList(runningProcess);
     this.doing = this.getDoingList(runningProcess);
     this.done = this.getDoneList(runningProcess);
@@ -87,6 +87,6 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
   }
 
   private getDoneList(runningProcess: RunningProcess): KanbanBoardMethodInfo[] {
-    return runningProcess.executedMethods;
+    return runningProcess.executedMethods.slice().reverse();
   }
 }

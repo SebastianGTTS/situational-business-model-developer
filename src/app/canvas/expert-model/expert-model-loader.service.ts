@@ -15,7 +15,7 @@ export class ExpertModelLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const expertModelId = paramMap.get('id');
     this.changesFeed = this.expertModelService
       .getChangesFeed(expertModelId)
@@ -23,7 +23,7 @@ export class ExpertModelLoaderService extends ElementLoaderService {
     void this.loadExpertModel(expertModelId);
   }
 
-  private async loadExpertModel(bmProcessId: string) {
+  private async loadExpertModel(bmProcessId: string): Promise<void> {
     this.expertModel = await this.expertModelService.get(bmProcessId);
     this.elementLoaded();
   }

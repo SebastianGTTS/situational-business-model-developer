@@ -2,25 +2,42 @@ import { Injectable } from '@angular/core';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { PouchdbService } from '../../database/pouchdb.service';
 import { Observable } from 'rxjs';
-import { RunningArtifact } from './running-artifact';
+import {
+  RunningArtifact,
+  RunningArtifactEntry,
+  RunningArtifactInit,
+} from './running-artifact';
 import { ArtifactDataType } from './artifact-data';
 import { ArtifactVersion } from './artifact-version';
 import { ArtifactDataService } from './artifact-data.service';
 import { ElementService } from '../../database/element.service';
+import { DatabaseRevision, DbId } from '../../database/database-entry';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
 export class ConcreteArtifactService
-  implements ElementService<RunningArtifact>
+  implements ElementService<RunningArtifact, RunningArtifactInit>
 {
   constructor(
     private artifactDataService: ArtifactDataService,
     private pouchdbService: PouchdbService
   ) {}
 
-  async add(artifact: Partial<RunningArtifact>): Promise<void> {
-    await this.pouchdbService.post(new RunningArtifact(artifact));
+  async add(artifact: RunningArtifactInit): Promise<void> {
+    await this.pouchdbService.post(new RunningArtifact(undefined, artifact));
+  }
+
+  /**
+   * Update the artifact identifier
+   *
+   * @param id the id of the artifact
+   * @param identifier the identifier of the artifact
+   */
+  async updateIdentifier(id: DbId, identifier: string): Promise<void> {
+    const artifact = await this.get(id);
+    artifact.identifier = identifier;
+    await this.save(artifact);
   }
 
   /**
@@ -48,16 +65,20 @@ export class ConcreteArtifactService
     return artifact;
   }
 
-  async getList(): Promise<RunningArtifact[]> {
-    return this.pouchdbService.find<RunningArtifact>(RunningArtifact.typeName, {
-      selector: {},
-    });
+  async getList(): Promise<RunningArtifactEntry[]> {
+    return this.pouchdbService.find<RunningArtifactEntry>(
+      RunningArtifact.typeName,
+      {
+        selector: {},
+      }
+    );
   }
 
-  async get(id: string): Promise<RunningArtifact> {
+  async get(id: string): Promise<RunningArtifact & DatabaseRevision> {
     return new RunningArtifact(
-      await this.pouchdbService.get<RunningArtifact>(id)
-    );
+      await this.pouchdbService.get<RunningArtifactEntry>(id),
+      undefined
+    ) as RunningArtifact & DatabaseRevision;
   }
 
   /**
@@ -80,15 +101,6 @@ export class ConcreteArtifactService
     await this.pouchdbService.remove(result);
   }
 
-  async update(
-    id: string,
-    runningArtifact: Partial<RunningArtifact>
-  ): Promise<void> {
-    const artifact = await this.get(id);
-    artifact.update(runningArtifact);
-    await this.save(artifact);
-  }
-
   async save(runningArtifact: RunningArtifact): Promise<void> {
     await this.pouchdbService.put(runningArtifact);
   }
@@ -101,14 +113,12 @@ export class ConcreteArtifactService
    * @return the copy
    */
   async copy(runningArtifact: RunningArtifact): Promise<RunningArtifact> {
-    const artifact = new RunningArtifact({
-      ...runningArtifact.toDb(),
-    });
+    const artifact = new RunningArtifact(undefined, runningArtifact);
     artifact.resetDatabaseState();
     artifact.versions = await Promise.all(
       artifact.versions.map(async (version) => {
         if (version.data.type === ArtifactDataType.REFERENCE) {
-          return new ArtifactVersion({
+          return new ArtifactVersion(undefined, {
             ...version,
             data: await this.artifactDataService.copy(version.data),
           });

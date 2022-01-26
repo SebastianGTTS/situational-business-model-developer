@@ -2,12 +2,13 @@ import { Type } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ConfigurationFormComponent } from './configuration-form-component';
 import { DecisionConfigurationFormComponent } from './decision-configuration-form-component';
+import { MetaModelIdentifier } from '../meta-model-definition';
 
 export interface ModuleMethod {
   name: string;
   description: string;
-  input: { name: string; metaModelType: any }[];
-  output: { name: string; metaModelType: any }[];
+  input: Readonly<MetaModelIdentifier>[];
+  output: Readonly<MetaModelIdentifier>[];
 
   configurationFormComponent?: Type<ConfigurationFormComponent>;
   decisionConfigurationFormComponent?: Type<DecisionConfigurationFormComponent>;

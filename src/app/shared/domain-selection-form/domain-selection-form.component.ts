@@ -1,9 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Domain } from '../../development-process-registry/knowledge/domain';
+import {
+  Domain,
+  DomainEntry,
+} from '../../development-process-registry/knowledge/domain';
 import { merge, Observable, Subject } from 'rxjs';
 import { getTypeaheadInputPipe } from '../utils';
 import { map } from 'rxjs/operators';
 import { ControlContainer, FormControl } from '@angular/forms';
+import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-domain-selection-form',
@@ -11,7 +15,7 @@ import { ControlContainer, FormControl } from '@angular/forms';
   styleUrls: ['./domain-selection-form.component.css'],
 })
 export class DomainSelectionFormComponent {
-  @Input() domainDefinitions: Domain[] = [];
+  @Input() domainDefinitions: DomainEntry[] = [];
   @Input() index: number;
 
   @Output() remove = new EventEmitter<void>();
@@ -20,7 +24,7 @@ export class DomainSelectionFormComponent {
 
   constructor(private controlContainer: ControlContainer) {}
 
-  searchDomains = (input: Observable<string>) => {
+  searchDomains = (input: Observable<string>): Observable<DomainEntry[]> => {
     return merge(getTypeaheadInputPipe(input), this.openDomainInput).pipe(
       map((term) =>
         this.domainDefinitions
@@ -32,11 +36,16 @@ export class DomainSelectionFormComponent {
     );
   };
 
-  formatter(x: { name: string }) {
+  formatter(x: { name: string }): string {
     return x.name;
   }
 
-  get formControl() {
+  selectItem(event: NgbTypeaheadSelectItemEvent<DomainEntry>): void {
+    event.preventDefault();
+    this.formControl.setValue(new Domain(event.item, undefined));
+  }
+
+  get formControl(): FormControl {
     return this.controlContainer.control as FormControl;
   }
 }

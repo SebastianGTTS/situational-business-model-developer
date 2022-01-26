@@ -1,10 +1,11 @@
 import {
   Relationships,
   RelationshipsEntry,
+  RelationshipsInit,
   RelationshipType,
 } from './relationships';
 import { DatabaseModelPart } from '../database/database-model-part';
-import { DatabaseEntry } from '../database/database-entry';
+import { DatabaseEntry, DatabaseInit } from '../database/database-entry';
 
 export enum FeatureType {
   OPTIONAL = 'optional',
@@ -14,6 +15,17 @@ export enum FeatureType {
 export enum SubfeatureConnectionsType {
   OR = 'or',
   XOR = 'xor',
+}
+
+export interface FeatureInit extends DatabaseInit {
+  id?: string;
+  name: string;
+  description?: string;
+  type?: FeatureType;
+  subfeatures?: { [id: string]: FeatureInit };
+  subfeatureConnections?: SubfeatureConnectionsType;
+  relationships?: RelationshipsInit;
+  expertModelTrace?: { [expertModel: string]: string };
 }
 
 export interface FeatureEntry extends DatabaseEntry {
@@ -35,7 +47,7 @@ interface FeatureJsonSchema {
   relationships: Relationships;
 }
 
-export class Feature implements DatabaseModelPart {
+export class Feature implements FeatureInit, DatabaseModelPart {
   // JSON Schema (stored)
   name: string;
   description: string;
@@ -69,16 +81,55 @@ export class Feature implements DatabaseModelPart {
     return '_' + this.id.replace(/[&/]/, '');
   }
 
-  constructor(id: string, parent: Feature, feature: Partial<Feature>) {
-    Object.assign(this, feature);
+  constructor(
+    entry: FeatureEntry | undefined,
+    init: FeatureInit | undefined,
+    id: string,
+    parent: Feature
+  ) {
+    const element = entry ?? init;
     this.id = id;
     this.parent = parent;
     this.level = this.parent ? this.parent.level + 1 : 1;
-    Object.entries(this.subfeatures).forEach(
-      ([subId, innerFeature]) =>
-        (this.subfeatures[subId] = new Feature(subId, this, innerFeature))
-    );
-    this.relationships = new Relationships(this.relationships);
+    this.name = element.name;
+    this.description = element.description;
+    this.type = element.type ?? this.type;
+    this.expertModelTrace = element.expertModelTrace ?? this.expertModelTrace;
+    this.subfeatureConnections =
+      element.subfeatureConnections ?? this.subfeatureConnections;
+
+    if (entry != null) {
+      this.relationships = new Relationships(entry.relationships, undefined);
+      if (entry.subfeatures != null) {
+        Object.entries(entry.subfeatures).forEach(
+          ([subId, innerFeature]) =>
+            (this.subfeatures[subId] = new Feature(
+              innerFeature,
+              undefined,
+              subId,
+              this
+            ))
+        );
+      }
+    } else if (init != null) {
+      this.relationships = new Relationships(
+        undefined,
+        init.relationships ?? {}
+      );
+      if (init.subfeatures != null) {
+        Object.entries(init.subfeatures).forEach(
+          ([subId, innerFeature]) =>
+            (this.subfeatures[subId] = new Feature(
+              undefined,
+              innerFeature,
+              subId,
+              this
+            ))
+        );
+      }
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   /**
@@ -96,9 +147,9 @@ export class Feature implements DatabaseModelPart {
    * @param feature the feature to add to the feature (values will be copied to a new object)
    * @return the added feature
    */
-  addSubfeature(feature: Partial<Feature>): Feature {
+  addSubfeature(feature: FeatureInit): Feature {
     const id = feature.id;
-    this.subfeatures[id] = new Feature(id, this, feature);
+    this.subfeatures[id] = new Feature(undefined, feature, id, this);
     return this.subfeatures[id];
   }
 

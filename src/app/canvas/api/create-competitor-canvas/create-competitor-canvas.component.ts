@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ProcessApiService } from '../process-api.service';
+import { ProcessApiService } from '../../../development-process-registry/module-api/process-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Instance } from '../../../canvas-meta-model/instance';
+import { InstanceInit } from '../../../canvas-meta-model/instance';
 import { CompanyModelService } from '../../../canvas-meta-model/company-model.service';
 import { FeatureModelInstanceFormService } from '../../form-services/feature-model-instance-form.service';
 import { Subscription } from 'rxjs';
@@ -34,33 +34,34 @@ export class CreateCompetitorCanvasComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
       this.instanceId = +paramMap.get('instanceId');
       void this.loadCompanyModel(paramMap.get('companyModelId'));
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
   }
 
-  addCompetitor() {
+  addCompetitor(): void {
     this.formArray.push(this.featureModelInstanceFormService.createForm());
   }
 
-  removeCompetitor(index: number) {
+  removeCompetitor(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  async submit() {
+  async submit(): Promise<void> {
     if (this.processApiService.stepInfo) {
       const companyModel = this.companyModel;
       for (const control of this.formArray.controls) {
-        const instance: Partial<Instance> =
-          this.featureModelInstanceFormService.get(control.value);
+        const instance: InstanceInit = this.featureModelInstanceFormService.get(
+          control.value
+        );
         companyModel.addInstance(instance);
       }
       await this.companyModelService.save(companyModel);
@@ -76,7 +77,7 @@ export class CreateCompetitorCanvasComponent implements OnInit, OnDestroy {
     return this.form.get('competitors') as FormArray;
   }
 
-  private async loadCompanyModel(companyModelId: string) {
+  private async loadCompanyModel(companyModelId: string): Promise<void> {
     this.companyModel = await this.companyModelService.get(companyModelId);
   }
 }

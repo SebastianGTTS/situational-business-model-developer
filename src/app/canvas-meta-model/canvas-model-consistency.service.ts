@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FeatureModel } from './feature-model';
 import { Feature, FeatureType, SubfeatureConnectionsType } from './feature';
-import { Instance } from './instance';
+import { Instance, InstanceType } from './instance';
 import { ConformanceReport, PatternHint } from './conformance-report';
 
 @Injectable({
@@ -95,7 +95,10 @@ export class CanvasModelConsistencyService {
     possibleInstance: Instance;
   } {
     const featureMap = featureModel.getFeatureMap();
-    const testInstance = new Instance(-1, {});
+    const testInstance = new Instance(undefined, {
+      name: 'Possible Instance',
+      type: InstanceType.EXAMPLE,
+    });
     testInstance.usedFeatures = [];
 
     const instances = this.addFeaturesToPossibleInstances(
@@ -190,7 +193,7 @@ export class CanvasModelConsistencyService {
             newInstances.push(inst);
           } else {
             Object.values(feature.subfeatures).forEach((subfeature) => {
-              const tmpInstance = new Instance(-1, inst);
+              const tmpInstance = new Instance(undefined, inst);
               tmpInstance.usedFeatures = [...tmpInstance.usedFeatures];
               newInstances.push(
                 ...this.addFeatureToPossibleInstance(

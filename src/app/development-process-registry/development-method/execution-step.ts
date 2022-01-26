@@ -1,8 +1,19 @@
-import { ArtifactMapping, ArtifactMappingEntry } from './artifact-mapping';
+import {
+  ArtifactMapping,
+  ArtifactMappingEntry,
+  ArtifactMappingInit,
+} from './artifact-mapping';
 import { Equality } from '../../shared/equality';
 import { equalsListOfLists } from '../../shared/utils';
 import { DatabaseModelPart } from '../../database/database-model-part';
-import { DatabaseEntry } from '../../database/database-entry';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
+
+export interface ExecutionStepInit extends DatabaseInit {
+  module?: string;
+  method?: string;
+  predefinedInput?: any;
+  outputMappings?: ArtifactMappingInit[][];
+}
 
 export interface ExecutionStepEntry extends DatabaseEntry {
   module: string;
@@ -12,18 +23,34 @@ export interface ExecutionStepEntry extends DatabaseEntry {
 }
 
 export class ExecutionStep
-  implements Equality<ExecutionStep>, DatabaseModelPart
+  implements ExecutionStepInit, Equality<ExecutionStep>, DatabaseModelPart
 {
   module: string;
   method: string;
   predefinedInput: any;
   outputMappings: ArtifactMapping[][] = [];
 
-  constructor(executionStep: Partial<ExecutionStep>) {
-    Object.assign(this, executionStep);
-    this.outputMappings = this.outputMappings.map((mappings) =>
-      mappings.map((mapping) => new ArtifactMapping(mapping))
-    );
+  constructor(
+    entry: ExecutionStepEntry | undefined,
+    init: ExecutionStepInit | undefined
+  ) {
+    const element = entry ?? init;
+    this.module = element.module;
+    this.method = element.method;
+    this.predefinedInput = element.predefinedInput;
+    if (entry != null) {
+      this.outputMappings =
+        entry.outputMappings?.map((mappings) =>
+          mappings.map((mapping) => new ArtifactMapping(mapping, undefined))
+        ) ?? this.outputMappings;
+    } else if (init != null) {
+      this.outputMappings =
+        init.outputMappings?.map((mappings) =>
+          mappings.map((mapping) => new ArtifactMapping(undefined, mapping))
+        ) ?? this.outputMappings;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   toDb(): ExecutionStepEntry {

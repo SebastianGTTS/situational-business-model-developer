@@ -15,6 +15,7 @@ import { ArtifactMappingFormService } from '../shared/artifact-mapping-form.serv
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
 import { ExecutionStepsFormValue } from '../shared/execution-steps-form.service';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
+import { MetaModelIdentifier } from '../../development-process-registry/meta-model-definition';
 
 @Component({
   selector: 'app-development-method-artifact-mapping',
@@ -24,14 +25,14 @@ import { ModuleService } from '../../development-process-registry/module-api/mod
 export class DevelopmentMethodArtifactMappingComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  @Input() executionStepsFormValue?: ExecutionStepsFormValue[];
+  @Input() executionStepsFormValue?: ExecutionStepsFormValue;
   @Input() developmentMethod: DevelopmentMethod;
-  @Input() metaModel: { name: string; metaModelType: any };
+  @Input() metaModel: MetaModelIdentifier;
   @Input() stepNumber: number = null;
 
   @Output() remove = new EventEmitter<void>();
 
-  artifacts: { name: string; metaModelType: any }[];
+  artifacts: MetaModelIdentifier[] = [];
 
   private outputChangeSubscription: Subscription;
   private stepChangeSubscription: Subscription;
@@ -75,6 +76,9 @@ export class DevelopmentMethodArtifactMappingComponent
     if (this.stepChangeSubscription) {
       this.stepChangeSubscription.unsubscribe();
     }
+    if (this.groupChangeSubscription) {
+      this.groupChangeSubscription.unsubscribe();
+    }
   }
 
   updateSubscriptions(): void {
@@ -98,7 +102,16 @@ export class DevelopmentMethodArtifactMappingComponent
         this.updateStepArtifacts(this.stepControl.value);
       }
       this.stepChangeSubscription = this.stepControl.valueChanges
-        .pipe(tap((stepNumber) => this.updateStepArtifacts(stepNumber)))
+        .pipe(
+          tap((stepNumber) => {
+            if (stepNumber == null) {
+              this.artifacts = [];
+            } else {
+              this.artifactControl.reset();
+              this.updateStepArtifacts(stepNumber);
+            }
+          })
+        )
         .subscribe();
     }
   }
@@ -109,12 +122,12 @@ export class DevelopmentMethodArtifactMappingComponent
       if (!artifact.element || !artifact.element.metaModel) {
         return {
           name: 'Placeholer',
-          metaModelType: null,
+          type: null,
         };
       }
       return {
         name: artifact.element.name,
-        metaModelType: artifact.element.metaModel.type,
+        type: artifact.element.metaModel.type,
       };
     });
   }
@@ -124,6 +137,8 @@ export class DevelopmentMethodArtifactMappingComponent
       const method = this.executionStepsFormValue[stepNumber].method;
       if (method != null) {
         this.artifacts = method.input;
+      } else {
+        this.artifacts = [];
       }
     } else {
       const step = this.developmentMethod.executionSteps[stepNumber];
@@ -150,10 +165,11 @@ export class DevelopmentMethodArtifactMappingComponent
     return this.formGroup.get('group') as FormControl;
   }
 
-  artifactConformsToMetaModel(artifact: {
-    name: string;
-    metaModelType: any;
-  }): boolean {
-    return artifact.metaModelType === this.metaModel.metaModelType;
+  get artifactControl(): FormControl {
+    return this.formGroup.get('artifact') as FormControl;
+  }
+
+  artifactConformsToMetaModel(artifact: MetaModelIdentifier): boolean {
+    return artifact.type === this.metaModel.type;
   }
 }

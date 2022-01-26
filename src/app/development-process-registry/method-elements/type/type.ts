@@ -1,4 +1,10 @@
-import { MethodElement, MethodElementEntry } from '../method-element';
+import {
+  MethodElement,
+  MethodElementEntry,
+  MethodElementInit,
+} from '../method-element';
+
+export interface TypeInit extends MethodElementInit {}
 
 export interface TypeEntry extends MethodElementEntry {}
 
@@ -6,9 +12,9 @@ export class Type extends MethodElement {
   static readonly typeName = 'Type';
 
   static validTypes(
-    types: { list: string; element: Type }[],
-    needed: { list: string; element: { _id: string; name: string } }[],
-    forbidden: { list: string; element: { _id: string; name: string } }[]
+    types: { list: string; element?: Type | TypeEntry }[],
+    needed: { list: string; element?: { _id: string; name: string } }[],
+    forbidden: { list: string; element?: { _id: string; name: string } }[]
   ): boolean {
     const hasType = (type: {
       list: string;
@@ -30,9 +36,8 @@ export class Type extends MethodElement {
     return hasNeeded && !hasForbidden;
   }
 
-  constructor(type: Partial<Type>) {
-    super(Type.typeName);
-    this.update(type);
+  constructor(entry: TypeEntry | undefined, init: TypeInit | undefined) {
+    super(entry, init, Type.typeName);
   }
 
   /**

@@ -2,7 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SituationalFactorService } from '../../development-process-registry/method-elements/situational-factor/situational-factor.service';
-import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import {
+  SituationalFactorDefinition,
+  SituationalFactorDefinitionInit,
+} from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
 import { MethodElementLoaderService } from '../shared/method-element-loader.service';
 import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
 
@@ -24,11 +27,14 @@ export class SituationalFactorComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private situationalFactorLoaderService: MethodElementLoaderService<SituationalFactorDefinition>,
+    private situationalFactorLoaderService: MethodElementLoaderService<
+      SituationalFactorDefinition,
+      SituationalFactorDefinitionInit
+    >,
     private situationalFactorService: SituationalFactorService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.situationalFactorLoaderService.loaded.subscribe(() => {
       this.orderedForm.patchValue(this.situationalFactor, { emitEvent: false });
     });
@@ -37,28 +43,28 @@ export class SituationalFactorComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.orderedSubscription) {
       this.orderedSubscription.unsubscribe();
     }
   }
 
-  async updateSituationalFactor(form: FormGroup) {
+  async updateSituationalFactor(form: FormGroup): Promise<void> {
     await this.updateSituationalFactorValue(form.value);
   }
 
-  async updateSituationalFactorValue(value: any) {
+  async updateSituationalFactorValue(value: any): Promise<void> {
     await this.situationalFactorService.update(
       this.situationalFactor._id,
       value
     );
   }
 
-  get situationalFactor() {
+  get situationalFactor(): SituationalFactorDefinition {
     return this.situationalFactorLoaderService.methodElement;
   }
 
-  get listNames() {
+  get listNames(): string[] {
     return this.situationalFactorLoaderService.listNames;
   }
 }

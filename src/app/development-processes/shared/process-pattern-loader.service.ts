@@ -15,7 +15,7 @@ export class ProcessPatternLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const processPatternId = paramMap.get('id');
     this.changesFeed = this.processPatternService
       .getChangesFeed(processPatternId)
@@ -23,7 +23,7 @@ export class ProcessPatternLoaderService extends ElementLoaderService {
     void this.loadProcessPattern(processPatternId);
   }
 
-  private async loadProcessPattern(processPatternId: string) {
+  private async loadProcessPattern(processPatternId: string): Promise<void> {
     this.processPattern = await this.processPatternService.get(
       processPatternId
     );

@@ -1,0 +1,34 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="runningProcess">
+    <a
+      class="nav-link"
+      [routerLink]="[
+        '/',
+        'runningprocess',
+        'runningprocessview',
+        runningProcess._id
+      ]"
+    >
+      {{ runningProcess.process.name }} &ndash;
+      {{ runningProcess.name }}
+    </a>
+    <a
+      *ngIf="runningMethod != null"
+      class="nav-link"
+      [routerLink]="[
+        '/',
+        'runningprocess',
+        'runningprocessview',
+        runningProcess._id,
+        'method',
+        runningMethod.executionId
+      ]"
+    >
+      {{ runningMethod.methodName }}
+    </a>
+    <ng-content></ng-content>
+    <a class="nav-link active" [routerLink]="[]" [queryParams]="queryParams">
+      {{ apiName ?? 'Step' }}
+    </a>
+  </nav>
+</div>

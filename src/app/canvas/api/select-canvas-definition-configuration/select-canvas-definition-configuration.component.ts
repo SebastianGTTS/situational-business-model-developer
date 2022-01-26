@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ConfigurationFormComponent } from '../../../development-process-registry/module-api/configuration-form-component';
-import { CanvasDefinition } from '../../../canvas-meta-model/canvas-definition';
+import { CanvasDefinitionEntry } from '../../../canvas-meta-model/canvas-definition';
 import { CanvasDefinitionService } from '../../../canvas-meta-model/canvas-definition.service';
 
 @Component({
@@ -14,11 +14,11 @@ export class SelectCanvasDefinitionConfigurationComponent
 {
   formGroup: FormGroup;
 
-  canvasDefinitions: CanvasDefinition[] = null;
+  canvasDefinitions: CanvasDefinitionEntry[] = null;
 
   constructor(private canvasDefinitionService: CanvasDefinitionService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadCanvasDefinitions();
   }
 
@@ -26,7 +26,7 @@ export class SelectCanvasDefinitionConfigurationComponent
     this.canvasDefinitions = await this.canvasDefinitionService.getList();
   }
 
-  get definitionControl() {
-    return this.formGroup.get('definitionId');
+  get definitionControl(): FormControl {
+    return this.formGroup.get('definitionId') as FormControl;
   }
 }

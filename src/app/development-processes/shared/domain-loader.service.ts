@@ -12,7 +12,7 @@ export class DomainLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const domainId = paramMap.get('id');
     this.changesFeed = this.domainService
       .getChangesFeed(domainId)
@@ -20,7 +20,7 @@ export class DomainLoaderService extends ElementLoaderService {
     void this.loadDomain(domainId);
   }
 
-  private async loadDomain(domainId: string) {
+  private async loadDomain(domainId: string): Promise<void> {
     this.domain = await this.domainService.get(domainId);
     this.elementLoaded();
   }

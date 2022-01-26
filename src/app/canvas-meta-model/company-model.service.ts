@@ -1,21 +1,28 @@
 import { Injectable } from '@angular/core';
-import { CompanyModel } from './company-model';
+import {
+  CompanyModel,
+  CompanyModelEntry,
+  CompanyModelInit,
+} from './company-model';
 import { FeatureModelService } from './feature-model.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CompanyModelService extends FeatureModelService<CompanyModel> {
-  protected get typeName(): string {
-    return CompanyModel.typeName;
-  }
+export class CompanyModelService extends FeatureModelService<
+  CompanyModel,
+  CompanyModelInit
+> {
+  protected readonly typeName = CompanyModel.typeName;
 
-  async getAll(): Promise<CompanyModel[]> {
+  protected readonly elementConstructor = CompanyModel;
+
+  async getAll(): Promise<CompanyModelEntry[]> {
     return super.getList();
   }
 
-  async getList(definitionId: string = null): Promise<CompanyModel[]> {
-    let results = await this.pouchdbService.find<CompanyModel>(
+  async getList(definitionId: string = null): Promise<CompanyModelEntry[]> {
+    let results = await this.pouchdbService.find<CompanyModelEntry>(
       CompanyModel.typeName,
       {
         selector: {
@@ -33,9 +40,5 @@ export class CompanyModelService extends FeatureModelService<CompanyModel> {
 
   async save(companyModel: CompanyModel): Promise<void> {
     await this.pouchdbService.put(companyModel);
-  }
-
-  protected createElement(element: Partial<CompanyModel>): CompanyModel {
-    return new CompanyModel(element);
   }
 }

@@ -42,7 +42,7 @@ export class FeatureModelFormComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changeSubscription = this.featureModelForm.valueChanges
       .pipe(
         debounceTime(300),
@@ -59,7 +59,7 @@ export class FeatureModelFormComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.featureModel) {
       const oldFeatureModel: FeatureModel = changes.featureModel.previousValue;
       const newFeatureModel: FeatureModel = changes.featureModel.currentValue;
@@ -69,13 +69,13 @@ export class FeatureModelFormComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitFeatureModelForm.emit(this.featureModelForm);
     this.loadForm();
   }
@@ -83,7 +83,7 @@ export class FeatureModelFormComponent implements OnInit, OnChanges, OnDestroy {
   private equals(
     featureModelA: FeatureModelFormValues,
     featureModelB: FeatureModelFormValues
-  ) {
+  ): boolean {
     if (featureModelA == null && featureModelB == null) {
       return true;
     }
@@ -106,10 +106,11 @@ export class FeatureModelFormComponent implements OnInit, OnChanges, OnDestroy {
     return featureModelA.version === featureModelB.version;
   }
 
-  private loadForm(featureModel: FeatureModel = null) {
-    if (featureModel === null) {
-      featureModel = new FeatureModel({}, null);
+  private loadForm(featureModel: FeatureModel = undefined): void {
+    if (featureModel == null) {
+      this.featureModelForm.reset();
+    } else {
+      this.featureModelForm.patchValue(featureModel);
     }
-    this.featureModelForm.patchValue(featureModel);
   }
 }

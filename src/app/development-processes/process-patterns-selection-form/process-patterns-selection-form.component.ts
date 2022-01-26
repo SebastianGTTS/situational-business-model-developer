@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
-import { ProcessPattern } from '../../development-process-registry/process-pattern/process-pattern';
+import { ProcessPatternEntry } from '../../development-process-registry/process-pattern/process-pattern';
 import { SEARCH_FUNCTION, searchFunction } from '../../shared/search.service';
 
 @Component({
@@ -10,11 +10,11 @@ import { SEARCH_FUNCTION, searchFunction } from '../../shared/search.service';
   providers: [{ provide: SEARCH_FUNCTION, useValue: searchFunction }],
 })
 export class ProcessPatternsSelectionFormComponent {
-  @Input() processPatterns: ProcessPattern[];
+  @Input() processPatterns: ProcessPatternEntry[];
   @Input() contextSituationalFactors: {
     list: string;
-    element: SituationalFactor;
+    element?: SituationalFactor;
   }[] = [];
 
-  @Output() selectProcessPattern = new EventEmitter<ProcessPattern>();
+  @Output() selectProcessPattern = new EventEmitter<ProcessPatternEntry>();
 }

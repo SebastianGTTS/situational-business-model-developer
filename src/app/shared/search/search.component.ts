@@ -6,6 +6,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { SearchService } from '../search.service';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-search',
@@ -16,23 +17,23 @@ import { SearchService } from '../search.service';
 export class SearchComponent<T> implements OnChanges {
   @Input() heading: string;
   @Input() itemName: string;
-  @Input() content: TemplateRef<any>;
+  @Input() content: TemplateRef<unknown>;
   @Input() items: T[];
 
   constructor(private searchService: SearchService<T>) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.items) {
       this.searchForm.reset();
       this.searchService.items = changes.items.currentValue;
     }
   }
 
-  get searchForm() {
+  get searchForm(): FormGroup {
     return this.searchService.searchForm;
   }
 
-  get filteredResults() {
+  get filteredResults(): T[] {
     return this.searchService.filteredResults;
   }
 }

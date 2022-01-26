@@ -1,32 +1,63 @@
-import { FeatureModel } from './feature-model';
+import {
+  FeatureModel,
+  FeatureModelEntry,
+  FeatureModelInit,
+  FeatureModelJsonSchema,
+} from './feature-model';
 import { Instance, InstanceType } from './instance';
-import { Domain } from '../development-process-registry/knowledge/domain';
+import {
+  Domain,
+  DomainEntry,
+  DomainInit,
+} from '../development-process-registry/knowledge/domain';
 
-export class ExpertModel extends FeatureModel {
+export interface ExpertModelInit extends FeatureModelInit {
+  domains?: DomainInit[];
+  version?: string;
+}
+
+export interface ExpertModelEntry extends FeatureModelEntry {
+  domains: DomainEntry[];
+  version: string;
+}
+
+interface ExpertModelJsonSchema extends FeatureModelJsonSchema {
+  version: string;
+}
+
+export class ExpertModel extends FeatureModel implements ExpertModelInit {
   static readonly typeName = 'ExpertModel';
 
-  domains: Domain[];
+  domains: Domain[] = [];
   version: string;
 
-  constructor(expertModel: Partial<ExpertModel>) {
-    super(expertModel, ExpertModel.typeName);
-    this.domains = this.domains.map((domain) => new Domain(domain));
+  constructor(
+    entry: ExpertModelEntry | undefined,
+    init: ExpertModelInit | undefined
+  ) {
+    super(entry, init, ExpertModel.typeName);
+    if (entry != null) {
+      this.domains =
+        entry.domains?.map((domain) => new Domain(domain, undefined)) ??
+        this.domains;
+      this.version = entry.version;
+    } else if (init != null) {
+      this.domains =
+        init.domains?.map((domain) => new Domain(undefined, domain)) ??
+        this.domains;
+      this.version = init.version;
+    }
   }
 
-  protected init() {
-    super.init();
-    this.domains = [];
-  }
-
-  update(expertModel: Partial<ExpertModel>) {
+  update(expertModel: Partial<ExpertModel>): void {
     super.update(expertModel);
     if (expertModel.version !== undefined) {
       this.version = expertModel.version;
     }
   }
 
-  updateDomains(domains: Partial<Domain>[]) {
-    this.domains = domains.map((domain) => new Domain(domain));
+  updateDomains(domains: DomainInit[]): void {
+    this.domains = domains.map((domain) => new Domain(undefined, domain));
   }
 
   getExamples(): Instance[] {
@@ -41,7 +72,7 @@ export class ExpertModel extends FeatureModel {
     );
   }
 
-  toDb(): any {
+  toDb(): ExpertModelEntry {
     return {
       ...super.toDb(),
       domains: this.domains.map((domain) => domain.toDb()),
@@ -49,7 +80,7 @@ export class ExpertModel extends FeatureModel {
     };
   }
 
-  toJSON() {
+  toJSON(): ExpertModelJsonSchema {
     return {
       ...super.toJSON(),
       version: this.version,

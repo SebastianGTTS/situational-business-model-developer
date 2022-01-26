@@ -1,27 +1,59 @@
 import { DatabaseModel } from '../../database/database-model';
-import { Author, AuthorEntry } from '../../model/author';
+import { Author, AuthorEntry, AuthorInit } from '../../model/author';
 import {
   SituationalFactor,
   SituationalFactorEntry,
+  SituationalFactorInit,
 } from '../method-elements/situational-factor/situational-factor';
-import { Artifact, ArtifactEntry } from '../method-elements/artifact/artifact';
-import { Type, TypeEntry } from '../method-elements/type/type';
+import {
+  Artifact,
+  ArtifactEntry,
+  ArtifactInit,
+} from '../method-elements/artifact/artifact';
+import { Type, TypeEntry, TypeInit } from '../method-elements/type/type';
 import {
   Stakeholder,
   StakeholderEntry,
+  StakeholderInit,
 } from '../method-elements/stakeholder/stakeholder';
-import { Tool, ToolEntry } from '../method-elements/tool/tool';
+import { Tool, ToolEntry, ToolInit } from '../method-elements/tool/tool';
 import {
   MultipleSelection,
   MultipleSelectionEntry,
+  MultipleSelectionInit,
 } from './multiple-selection';
-import { ExecutionStep, ExecutionStepEntry } from './execution-step';
+import {
+  ExecutionStep,
+  ExecutionStepEntry,
+  ExecutionStepInit,
+} from './execution-step';
 import {
   MultipleMappingSelection,
   MultipleMappingSelectionEntry,
+  MultipleMappingSelectionInit,
 } from './multiple-mapping-selection';
-import { Selection, SelectionEntry } from './selection';
-import { DatabaseRootEntry } from '../../database/database-entry';
+import { Selection, SelectionEntry, SelectionInit } from './selection';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../../database/database-entry';
+
+export interface DevelopmentMethodInit extends DatabaseRootInit {
+  name: string;
+  description?: string;
+  examples?: string[];
+  author: AuthorInit;
+
+  types?: SelectionInit<TypeInit>[];
+  situationalFactors?: SelectionInit<SituationalFactorInit>[];
+
+  inputArtifacts?: MultipleMappingSelectionInit<ArtifactInit>[][];
+  outputArtifacts?: MultipleSelectionInit<ArtifactInit>[][];
+  stakeholders?: MultipleSelectionInit<StakeholderInit>[][];
+  tools?: MultipleSelectionInit<ToolInit>[][];
+
+  executionSteps?: ExecutionStepInit[];
+}
 
 export interface DevelopmentMethodEntry extends DatabaseRootEntry {
   name: string;
@@ -40,7 +72,10 @@ export interface DevelopmentMethodEntry extends DatabaseRootEntry {
   executionSteps: ExecutionStepEntry[];
 }
 
-export class DevelopmentMethod extends DatabaseModel {
+export class DevelopmentMethod
+  extends DatabaseModel
+  implements DevelopmentMethodInit
+{
   static readonly typeName = 'DevelopmentMethod';
 
   name: string;
@@ -58,9 +93,104 @@ export class DevelopmentMethod extends DatabaseModel {
 
   executionSteps: ExecutionStep[] = [];
 
-  constructor(developmentMethod: Partial<DevelopmentMethod>) {
-    super(DevelopmentMethod.typeName);
-    this.update(developmentMethod);
+  constructor(
+    entry: DevelopmentMethodEntry | undefined,
+    init: DevelopmentMethodInit | undefined
+  ) {
+    super(entry, init, DevelopmentMethod.typeName);
+    const element = entry ?? init;
+    this.name = element.name;
+    this.description = element.description;
+    this.examples = element.examples ?? this.examples;
+    if (entry != null) {
+      this.author = new Author(entry.author, undefined);
+      this.types =
+        entry.types?.map(
+          (selection) => new Selection<Type>(selection, undefined, Type)
+        ) ?? this.types;
+      this.situationalFactors =
+        entry.situationalFactors?.map(
+          (selection) =>
+            new Selection<SituationalFactor>(
+              selection,
+              undefined,
+              SituationalFactor
+            )
+        ) ?? this.situationalFactors;
+      this.inputArtifacts =
+        entry.inputArtifacts?.map((group) =>
+          group.map(
+            (inputArtifact) =>
+              new MultipleMappingSelection(inputArtifact, undefined, Artifact)
+          )
+        ) ?? this.inputArtifacts;
+      this.outputArtifacts =
+        entry.outputArtifacts?.map((group) =>
+          group.map(
+            (outputArtifact) =>
+              new MultipleSelection(outputArtifact, undefined, Artifact)
+          )
+        ) ?? this.outputArtifacts;
+      this.stakeholders =
+        entry.stakeholders?.map((group) =>
+          group.map(
+            (stakeholder) =>
+              new MultipleSelection(stakeholder, undefined, Stakeholder)
+          )
+        ) ?? this.stakeholders;
+      this.tools =
+        entry.tools?.map((group) =>
+          group.map((tool) => new MultipleSelection(tool, undefined, Tool))
+        ) ?? this.tools;
+      this.executionSteps =
+        entry.executionSteps?.map(
+          (executionStep) => new ExecutionStep(executionStep, undefined)
+        ) ?? this.executionSteps;
+    } else {
+      this.author = new Author(undefined, init.author);
+      this.types =
+        init.types?.map(
+          (selection) => new Selection<Type>(undefined, selection, Type)
+        ) ?? this.types;
+      this.situationalFactors =
+        init.situationalFactors?.map(
+          (selection) =>
+            new Selection<SituationalFactor>(
+              undefined,
+              selection,
+              SituationalFactor
+            )
+        ) ?? this.situationalFactors;
+      this.inputArtifacts =
+        init.inputArtifacts?.map((group) =>
+          group.map(
+            (inputArtifact) =>
+              new MultipleMappingSelection(undefined, inputArtifact, Artifact)
+          )
+        ) ?? this.inputArtifacts;
+      this.outputArtifacts =
+        init.outputArtifacts?.map((group) =>
+          group.map(
+            (outputArtifact) =>
+              new MultipleSelection(undefined, outputArtifact, Artifact)
+          )
+        ) ?? this.outputArtifacts;
+      this.stakeholders =
+        init.stakeholders?.map((group) =>
+          group.map(
+            (stakeholder) =>
+              new MultipleSelection(undefined, stakeholder, Stakeholder)
+          )
+        ) ?? this.stakeholders;
+      this.tools =
+        init.tools?.map((group) =>
+          group.map((tool) => new MultipleSelection(undefined, tool, Tool))
+        ) ?? this.tools;
+      this.executionSteps =
+        init.executionSteps?.map(
+          (executionStep) => new ExecutionStep(undefined, executionStep)
+        ) ?? this.executionSteps;
+    }
   }
 
   /**
@@ -70,43 +200,40 @@ export class DevelopmentMethod extends DatabaseModel {
    */
   update(developmentMethod: Partial<DevelopmentMethod>): void {
     Object.assign(this, developmentMethod);
-    this.author = new Author(this.author);
+    this.author = new Author(undefined, this.author);
     this.types = this.types.map(
-      (selection) => new Selection(selection, (element) => new Type(element))
+      (selection) => new Selection(undefined, selection, Type)
     );
     this.situationalFactors = this.situationalFactors.map(
-      (selection) =>
-        new Selection(selection, (element) => new SituationalFactor(element))
+      (selection) => new Selection(undefined, selection, SituationalFactor)
     );
     this.inputArtifacts = this.inputArtifacts.map((group) =>
       group.map(
         (artifact) =>
-          new MultipleMappingSelection<Artifact>(
-            artifact,
-            (a) => new Artifact(a)
-          )
+          new MultipleMappingSelection<Artifact>(undefined, artifact, Artifact)
       )
     );
     this.outputArtifacts = this.outputArtifacts.map((group) =>
       group.map(
         (artifact) =>
-          new MultipleSelection<Artifact>(artifact, (a) => new Artifact(a))
+          new MultipleSelection<Artifact>(undefined, artifact, Artifact)
       )
     );
     this.stakeholders = this.stakeholders.map((group) =>
       group.map(
         (stakeholder) =>
           new MultipleSelection<Stakeholder>(
+            undefined,
             stakeholder,
-            (s) => new Stakeholder(s)
+            Stakeholder
           )
       )
     );
     this.tools = this.tools.map((group) =>
-      group.map((tool) => new MultipleSelection<Tool>(tool, (t) => new Tool(t)))
+      group.map((tool) => new MultipleSelection<Tool>(undefined, tool, Tool))
     );
     this.executionSteps = this.executionSteps.map(
-      (step) => new ExecutionStep(step)
+      (step) => new ExecutionStep(undefined, step)
     );
   }
 

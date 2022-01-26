@@ -5,7 +5,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { Feature } from '../../../canvas-meta-model/feature';
+import { Feature, FeatureInit } from '../../../canvas-meta-model/feature';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FeatureModel } from '../../../canvas-meta-model/feature-model';
 import { Instance } from '../../../canvas-meta-model/instance';
@@ -50,8 +50,8 @@ export class InstanceComponent {
   private modalReference: NgbModalRef;
   modalFeature: Feature;
 
-  @ViewChild('addModal', { static: true }) addModal: any;
-  @ViewChild('deleteModal', { static: true }) deleteModal: any;
+  @ViewChild('addModal', { static: true }) addModal: unknown;
+  @ViewChild('deleteModal', { static: true }) deleteModal: unknown;
 
   constructor(
     private instanceService: InstanceService,
@@ -63,7 +63,7 @@ export class InstanceComponent {
    *
    * @param featureId id of the parent feature
    */
-  openAddDecisionModal(featureId: string) {
+  openAddDecisionModal(featureId: string): void {
     this.modalFeature = this.featureModel.getFeature(featureId);
     this.modalReference = this.modalService.open(this.addModal, { size: 'lg' });
   }
@@ -73,7 +73,7 @@ export class InstanceComponent {
    *
    * @param feature the feature to add (values will be copied to a new object)
    */
-  addFeature(feature: Partial<Feature>): void {
+  addFeature(feature: FeatureInit): void {
     const addedFeature = this.featureModel.addFeature(
       feature,
       this.modalFeature.id
@@ -87,7 +87,7 @@ export class InstanceComponent {
    *
    * @param featureId id of the feature to add
    */
-  addDecision(featureId: string) {
+  addDecision(featureId: string): void {
     this.featureModel.addFeatureToInstance(this.instance.id, featureId);
     this.updateFeatureModel.emit();
   }
@@ -97,7 +97,7 @@ export class InstanceComponent {
    *
    * @param featureId id of the feature to delete
    */
-  openDeleteDecisionModal(featureId: string) {
+  openDeleteDecisionModal(featureId: string): void {
     this.modalFeature = this.featureModel.getFeature(featureId);
     this.modalReference = this.modalService.open(this.deleteModal, {
       size: 'lg',
@@ -115,12 +115,12 @@ export class InstanceComponent {
     this.closeModal();
   }
 
-  update(patternInfo: any) {
+  update(patternInfo: Partial<Instance>): void {
     this.featureModel.updateInstance(this.instance.id, patternInfo);
     this.updateFeatureModel.emit();
   }
 
-  closeModal() {
+  closeModal(): void {
     this.modalReference.close();
     this.modalFeature = null;
     this.modalReference = null;

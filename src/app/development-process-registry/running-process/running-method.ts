@@ -1,16 +1,52 @@
-import { Step } from './step';
+import { Step, StepEntry, StepInit } from './step';
 import { StepArtifact } from './step-artifact';
 import { RunningMethodInfo } from './running-method-info';
-import { Decision } from '../bm-process/decision';
+import { Decision, DecisionEntry, DecisionInit } from '../bm-process/decision';
 import { ExecutionStep } from '../development-method/execution-step';
 import { ArtifactMapping } from '../development-method/artifact-mapping';
 import { Artifact } from '../method-elements/artifact/artifact';
-import { StepInputArtifact } from './step-input-artifact';
-import { Comment } from './comment';
+import {
+  StepInputArtifact,
+  StepInputArtifactEntry,
+  StepInputArtifactInit,
+} from './step-input-artifact';
+import { Comment, CommentEntry, CommentInit } from './comment';
 import { DatabaseModelPart } from '../../database/database-model-part';
-import { OutputArtifactMapping } from './output-artifact-mapping';
+import {
+  OutputArtifactMapping,
+  OutputArtifactMappingEntry,
+  OutputArtifactMappingInit,
+} from './output-artifact-mapping';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
+import { v4 as uuidv4 } from 'uuid';
 
-export class RunningMethod implements RunningMethodInfo, DatabaseModelPart {
+export interface RunningMethodInit extends DatabaseInit {
+  nodeId?: string;
+  executionId?: string;
+  comments?: CommentInit[];
+  decision: DecisionInit;
+
+  currentStepNumber?: number;
+  steps?: StepInit[];
+  inputArtifacts?: StepInputArtifactInit[];
+  outputArtifacts?: OutputArtifactMappingInit[];
+}
+
+export interface RunningMethodEntry extends DatabaseEntry {
+  nodeId?: string;
+  executionId: string;
+  comments: CommentEntry[];
+  decision: DecisionEntry;
+
+  currentStepNumber: number;
+  steps: StepEntry[];
+  inputArtifacts: StepInputArtifactEntry[];
+  outputArtifacts?: OutputArtifactMappingEntry[];
+}
+
+export class RunningMethod
+  implements RunningMethodInit, RunningMethodInfo, DatabaseModelPart
+{
   nodeId?: string = null;
   executionId: string;
   comments: Comment[] = [];
@@ -22,20 +58,48 @@ export class RunningMethod implements RunningMethodInfo, DatabaseModelPart {
   inputArtifacts: StepInputArtifact[] = null;
   outputArtifacts?: OutputArtifactMapping[];
 
-  constructor(runningMethod: Partial<RunningMethod>) {
-    Object.assign(this, runningMethod);
-
-    this.comments = this.comments.map((comment) => new Comment(comment));
-    this.decision = new Decision(this.decision);
-    this.inputArtifacts = this.inputArtifacts
-      ? this.inputArtifacts.map((artifact) => new StepInputArtifact(artifact))
-      : null;
-    this.outputArtifacts = this.outputArtifacts
-      ? this.outputArtifacts.map(
-          (outputArtifact) => new OutputArtifactMapping(outputArtifact)
-        )
-      : undefined;
-    this.steps = this.steps.map((step) => new Step(step));
+  constructor(
+    entry: RunningMethodEntry | undefined,
+    init: RunningMethodInit | undefined
+  ) {
+    const element = entry ?? init;
+    this.nodeId = element.nodeId;
+    this.executionId = element.executionId ?? uuidv4();
+    this.currentStepNumber =
+      element.currentStepNumber ?? this.currentStepNumber;
+    if (entry != null) {
+      this.comments =
+        entry.comments?.map((comment) => new Comment(comment, undefined)) ??
+        this.comments;
+      this.decision = new Decision(entry.decision, undefined);
+      this.steps =
+        entry.steps?.map((step) => new Step(step, undefined)) ?? this.steps;
+      this.inputArtifacts =
+        entry.inputArtifacts?.map(
+          (artifact) => new StepInputArtifact(artifact, undefined)
+        ) ?? this.inputArtifacts;
+      this.outputArtifacts =
+        entry.outputArtifacts?.map(
+          (artifact) => new OutputArtifactMapping(artifact, undefined)
+        ) ?? this.outputArtifacts;
+    } else if (init != null) {
+      this.comments =
+        init.comments?.map((comment) => new Comment(undefined, comment)) ??
+        this.comments;
+      this.decision = new Decision(undefined, init.decision);
+      this.steps =
+        init.steps?.map((step) => new Step(undefined, step)) ?? this.steps;
+      this.inputArtifacts =
+        init.inputArtifacts?.map(
+          (artifact) => new StepInputArtifact(undefined, artifact)
+        ) ?? this.inputArtifacts;
+      this.outputArtifacts =
+        init.outputArtifacts?.map(
+          (artifact) => new OutputArtifactMapping(undefined, artifact)
+        ) ?? this.outputArtifacts;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   /**
@@ -295,7 +359,7 @@ export class RunningMethod implements RunningMethodInfo, DatabaseModelPart {
     return this.decision.method.executionSteps[this.currentStepNumber];
   }
 
-  toDb(): any {
+  toDb(): RunningMethodEntry {
     return {
       nodeId: this.nodeId,
       executionId: this.executionId,

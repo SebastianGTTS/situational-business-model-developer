@@ -9,7 +9,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
+import {
+  Artifact,
+  ArtifactEntry,
+} from '../../development-process-registry/method-elements/artifact/artifact';
 import { ArtifactService } from '../../development-process-registry/method-elements/artifact/artifact.service';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
@@ -38,7 +41,7 @@ export class ArtifactsSelectionFormComponent
   });
   changed = false;
 
-  methodElements: Artifact[] = [];
+  methodElements: ArtifactEntry[] = [];
   listNames: string[] = [];
 
   private allowNoneSubscription: Subscription;
@@ -50,7 +53,7 @@ export class ArtifactsSelectionFormComponent
     private artifactService: ArtifactService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadMethodElements();
 
     this.allowNoneSubscription = this.artifactsForm
@@ -81,7 +84,7 @@ export class ArtifactsSelectionFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.artifacts) {
       const oldArtifactGroups: MultipleSelection<Artifact>[][] =
         changes.artifacts.previousValue;
@@ -93,7 +96,7 @@ export class ArtifactsSelectionFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.allowNoneSubscription) {
       this.allowNoneSubscription.unsubscribe();
     }
@@ -102,21 +105,21 @@ export class ArtifactsSelectionFormComponent
     }
   }
 
-  add() {
+  add(): void {
     this.formArray.push(this.fb.array([]));
   }
 
-  remove(index: number) {
+  remove(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitArtifactsForm.emit(
       this.artifactsForm.get('artifacts') as FormArray
     );
   }
 
-  private loadForm(artifacts: MultipleSelection<Artifact>[][]) {
+  private loadForm(artifacts: MultipleSelection<Artifact>[][]): void {
     const formArrays = artifacts.map((group) =>
       this.fb.array(
         group.map((element) => {
@@ -167,7 +170,7 @@ export class ArtifactsSelectionFormComponent
     return this.artifactsForm.get('artifacts') as FormArray;
   }
 
-  createFormGroupFactory = () =>
+  createFormGroupFactory = (): FormGroup =>
     this.fb.group({
       list: ['', Validators.required],
       element: null,

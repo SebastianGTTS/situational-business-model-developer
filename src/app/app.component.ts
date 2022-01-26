@@ -53,7 +53,7 @@ export class AppComponent {
 
   async printDevelopmentMethods(): Promise<void> {
     const methods = (await this.developmentMethodService.getList()).map(
-      (method) => new DevelopmentMethod(method)
+      (method) => new DevelopmentMethod(method, undefined)
     );
     const out = methods.map((method) => method.toDb());
     out.forEach((method) => delete (method as DatabaseMeta)._rev);
@@ -62,52 +62,52 @@ export class AppComponent {
 
   async printBmProcesses(): Promise<void> {
     const processes = (await this.bmProcessService.getList()).map(
-      (process) => new BmProcess(process)
+      (process) => new BmProcess(process, undefined)
     );
     const out = processes.map((process) => process.toDb());
-    out.forEach((process) => delete process._rev);
+    out.forEach((process) => delete (process as DatabaseMeta)._rev);
     console.log(out);
   }
 
   async printRunningProcesses(): Promise<void> {
     const processes = (await this.runningProcessService.getList()).map(
-      (process) => new RunningProcess(process)
+      (process) => new RunningProcess(process, undefined)
     );
     const out = processes.map((process) => process.toDb());
-    out.forEach((process) => delete process._rev);
+    out.forEach((process) => delete (process as DatabaseMeta)._rev);
     console.log(out);
   }
 
   async printExpertModels(): Promise<void> {
     const models = (await this.expertModelService.getList()).map(
-      (model) => new ExpertModel(model)
+      (model) => new ExpertModel(model, undefined)
     );
     const out = models.map((model) => model.toDb());
-    out.forEach((model) => delete model._rev);
+    out.forEach((model) => delete (model as DatabaseMeta)._rev);
     console.log(out);
   }
 
   async printCompanyModels(): Promise<void> {
     const models = (await this.companyModelService.getAll()).map(
-      (model) => new CompanyModel(model)
+      (model) => new CompanyModel(model, undefined)
     );
     const out = models.map((model) => model.toDb());
-    out.forEach((model) => delete model._rev);
+    out.forEach((model) => delete (model as DatabaseMeta)._rev);
     console.log(out);
   }
 
   async printDomains(): Promise<void> {
     const models = (await this.domainService.getList()).map(
-      (domain) => new Domain(domain)
+      (domain) => new Domain(domain, undefined)
     );
     const out = models.map((domain) => domain.toDb());
-    out.forEach((domain) => delete domain._rev);
+    out.forEach((domain) => delete (domain as DatabaseMeta)._rev);
     console.log(out);
   }
 
   async printCanvasDefinitions(): Promise<void> {
     const models = (await this.canvasDefinitionService.getList()).map(
-      (canvasDefinition) => new CanvasDefinition(canvasDefinition)
+      (canvasDefinition) => new CanvasDefinition(canvasDefinition, undefined)
     );
     const out = models.map((canvasDefinition) => canvasDefinition.toDb());
     out.forEach(

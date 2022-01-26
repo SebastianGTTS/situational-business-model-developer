@@ -1,7 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { FeatureModel } from '../../../canvas-meta-model/feature-model';
-import { CanvasDefinition } from '../../../canvas-meta-model/canvas-definition';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  FeatureModel,
+  FeatureModelEntry,
+  FeatureModelInit,
+} from '../../../canvas-meta-model/feature-model';
+import {
+  CanvasDefinition,
+  CanvasDefinitionEntry,
+} from '../../../canvas-meta-model/canvas-definition';
 import { CanvasDefinitionService } from '../../../canvas-meta-model/canvas-definition.service';
 import { ListService } from '../../../shared/list.service';
 import { ModelList } from './model-list';
@@ -24,7 +31,7 @@ export class ModelListComponent implements OnInit, ModelList {
     description: string;
   }>();
 
-  canvasDefinitions: CanvasDefinition[] = [];
+  canvasDefinitions: CanvasDefinitionEntry[] = [];
 
   modelForm = this.fb.group({
     definition: [null, Validators.required],
@@ -35,20 +42,23 @@ export class ModelListComponent implements OnInit, ModelList {
   constructor(
     private canvasDefinitionService: CanvasDefinitionService,
     private fb: FormBuilder,
-    private listService: ListService<FeatureModel>
+    private listService: ListService<FeatureModel, FeatureModelInit>
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadCanvasDefinitions();
   }
 
-  resetAddForm() {
+  resetAddForm(): void {
     this.modelForm.reset();
   }
 
-  addModelForwardEmitter() {
+  addModelForwardEmitter(): void {
     this.addModel.emit({
-      definition: new CanvasDefinition(this.modelForm.value.definition),
+      definition: new CanvasDefinition(
+        this.modelForm.value.definition,
+        undefined
+      ),
       name: this.modelForm.value.name,
       description: this.modelForm.value.description,
     });
@@ -58,11 +68,11 @@ export class ModelListComponent implements OnInit, ModelList {
     this.canvasDefinitions = await this.canvasDefinitionService.getList();
   }
 
-  get definitionControl() {
-    return this.modelForm.get('definition');
+  get definitionControl(): FormControl {
+    return this.modelForm.get('definition') as FormControl;
   }
 
-  get modelList(): FeatureModel[] {
+  get modelList(): FeatureModelEntry[] {
     return this.listService.elements;
   }
 

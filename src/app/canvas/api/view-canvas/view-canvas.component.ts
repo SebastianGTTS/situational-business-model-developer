@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ProcessApiService } from '../process-api.service';
+import { ProcessApiService } from '../../../development-process-registry/module-api/process-api.service';
 import { CanvasResolveService } from '../../canvas-resolve.service';
 import { InstanceLoaderService } from '../instance-loader.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { RunningArtifact } from '../../../development-process-registry/running-process/running-artifact';
 import { ConcreteArtifactService } from '../../../development-process-registry/running-process/concrete-artifact.service';
+import { CompanyModel } from '../../../canvas-meta-model/company-model';
+import { Instance } from '../../../canvas-meta-model/instance';
 
 @Component({
   selector: 'app-view-canvas',
@@ -27,7 +29,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.querySubscription = this.route.queryParamMap.subscribe(
       async (params) => {
         if (params.has('artifactId')) {
@@ -42,13 +44,13 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.querySubscription) {
       this.querySubscription.unsubscribe();
     }
   }
 
-  finish() {
+  finish(): void {
     this.canvasResolveService.resolveEditCanvas(
       this.processApiService.stepInfo,
       this.companyModel._id,
@@ -56,11 +58,11 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
     );
   }
 
-  get companyModel() {
+  get companyModel(): CompanyModel {
     return this.instanceLoaderService.companyModel;
   }
 
-  get instance() {
+  get instance(): Instance {
     return this.instanceLoaderService.instance;
   }
 

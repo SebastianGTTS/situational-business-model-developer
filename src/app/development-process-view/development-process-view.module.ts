@@ -7,6 +7,7 @@ import { RunningProcessMethodCommentFormComponent } from './running-process-meth
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,12 @@ import { QuillModule } from 'ngx-quill';
     RunningProcessMethodCommentsComponent,
     RunningProcessMethodCommentFormComponent,
   ],
-  imports: [CommonModule, ReactiveFormsModule, QuillModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    QuillModule,
+    NgbPaginationModule,
+  ],
   exports: [
     RunningProcessViewerComponent,
     KanbanBoardComponent,

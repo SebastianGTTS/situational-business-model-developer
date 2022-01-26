@@ -82,13 +82,11 @@ export class DevelopmentMethodSelectExecutionStepsComponent
   }
 
   addStep(): void {
-    this.formArray.push(
-      this.executionStepsFormService.createExecutionStepForm()
-    );
+    this.executionStepsFormService.addExecutionStep(this.formArray);
   }
 
   removeStep(index: number): void {
-    this.formArray.removeAt(index);
+    this.executionStepsFormService.removeExecutionStep(this.formArray, index);
   }
 
   loadForm(executionSteps: ExecutionStep[]): void {

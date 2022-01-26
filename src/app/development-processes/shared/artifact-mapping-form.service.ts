@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ArtifactMapping } from '../../development-process-registry/development-method/artifact-mapping';
+import {
+  ArtifactMapping,
+  ArtifactMappingInit,
+} from '../../development-process-registry/development-method/artifact-mapping';
+
+export type MappingsFormValue = MappingFormValue[];
 
 export interface MappingFormValue {
   output: boolean;
@@ -57,25 +62,61 @@ export class ArtifactMappingFormService {
         this.fb.control(null, Validators.required)
       );
     }
+    mappingForm.get('artifact').reset();
   }
 
-  getMappings(mappings: MappingFormValue[]): ArtifactMapping[] {
+  /**
+   * Resets the step and artifact.
+   *
+   * @param mappingsForm the mappings in which to search
+   * @param step the step to which a mapping should point to reset it
+   */
+  removeMappingTo(mappingsForm: FormArray, step: number): void {
+    mappingsForm.controls.forEach((mappingForm: FormGroup) => {
+      if (
+        mappingForm.get('output').value === false &&
+        mappingForm.get('step').value === step
+      ) {
+        mappingForm.get('step').reset();
+        mappingForm.get('artifact').reset();
+      }
+    });
+  }
+
+  /**
+   * Resets only the artifact.
+   *
+   * @param mappingsForm the mappings in which to search
+   * @param step the step to which a mapping should point to reset it
+   */
+  resetMappingTo(mappingsForm: FormArray, step: number): void {
+    mappingsForm.controls.forEach((mappingForm: FormGroup) => {
+      if (
+        mappingForm.get('output').value === false &&
+        mappingForm.get('step').value === step
+      ) {
+        mappingForm.get('artifact').reset();
+      }
+    });
+  }
+
+  getMappings(mappings: MappingsFormValue): ArtifactMappingInit[] {
     return mappings.map((mapping) => this.getMapping(mapping));
   }
 
-  getMapping(mapping: MappingFormValue): ArtifactMapping {
+  getMapping(mapping: MappingFormValue): ArtifactMappingInit {
     if (mapping.output) {
-      return new ArtifactMapping({
+      return {
         output: mapping.output,
         group: mapping.group,
         artifact: mapping.artifact,
-      });
+      };
     } else {
-      return new ArtifactMapping({
+      return {
         output: mapping.output,
         step: mapping.step,
         artifact: mapping.artifact,
-      });
+      };
     }
   }
 }

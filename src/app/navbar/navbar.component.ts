@@ -84,6 +84,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
       roles: [InternalRoles.EXPERT],
     },
     {
+      name: 'Templates',
+      route: ['whiteboard', 'templates'],
+      roles: [InternalRoles.EXPERT],
+    },
+    {
       name: 'Explanation',
       route: ['explanation'],
       roles: [InternalRoles.EXPERT, InternalRoles.BUSINESSDEVELOPER],

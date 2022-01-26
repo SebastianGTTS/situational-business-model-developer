@@ -3,6 +3,7 @@ import bmdl from '../../../assets/bpmn_bmdl.json';
 import rbmp from '../../../assets/bpmn_running_process.json';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { isLabel } from 'bpmn-js/lib/util/LabelUtil';
 import { RunningProcess } from './running-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 
@@ -33,7 +34,7 @@ export class ProcessExecutionModelerService {
     modeler: BpmnModeler
   ): Promise<void> {
     const result = await modeler.saveXML();
-    runningProcess.process.update({ processDiagram: result.xml });
+    runningProcess.process.processDiagram = result.xml;
     modeler.destroy();
   }
 
@@ -42,7 +43,7 @@ export class ProcessExecutionModelerService {
    *
    * @param modeler the modeler
    */
-  abortModeling(modeler: BpmnModeler) {
+  abortModeling(modeler: BpmnModeler): void {
     modeler.destroy();
   }
 
@@ -93,7 +94,10 @@ export class ProcessExecutionModelerService {
     return modeler
       .get('elementRegistry')
       .find(
-        (node) => is(node, 'bpmn:StartEvent') && is(node.parent, 'bpmn:Process')
+        (node) =>
+          is(node, 'bpmn:StartEvent') &&
+          is(node.parent, 'bpmn:Process') &&
+          !isLabel(node)
       );
   }
 
@@ -160,10 +164,11 @@ export class ProcessExecutionModelerService {
    */
   isCommonNode(node): boolean {
     return (
-      is(node, 'bpmn:StartEvent') ||
-      is(node, 'bpmn:EndEvent') ||
-      is(node, 'bpmn:ExclusiveGateway') ||
-      is(node, 'bpmn:ParallelGateway')
+      (is(node, 'bpmn:StartEvent') ||
+        is(node, 'bpmn:EndEvent') ||
+        is(node, 'bpmn:ExclusiveGateway') ||
+        is(node, 'bpmn:ParallelGateway')) &&
+      !isLabel(node)
     );
   }
 
@@ -174,7 +179,7 @@ export class ProcessExecutionModelerService {
    * @return true if the node is an exclusive gateway
    */
   isExclusiveGateway(node): boolean {
-    return is(node, 'bpmn:ExclusiveGateway');
+    return is(node, 'bpmn:ExclusiveGateway') && !isLabel(node);
   }
 
   /**
@@ -184,7 +189,7 @@ export class ProcessExecutionModelerService {
    * @return true if the node is a parallel gateway
    */
   isParallelGateway(node): boolean {
-    return is(node, 'bpmn:ParallelGateway');
+    return is(node, 'bpmn:ParallelGateway') && !isLabel(node);
   }
 
   /**
@@ -194,7 +199,9 @@ export class ProcessExecutionModelerService {
    * @return true if the node is executable
    */
   isExecutable(node): boolean {
-    return is(node, 'bpmn:Task') || is(node, 'bpmn:CallActivity');
+    return (
+      (is(node, 'bpmn:Task') || is(node, 'bpmn:CallActivity')) && !isLabel(node)
+    );
   }
 
   /**
@@ -204,7 +211,7 @@ export class ProcessExecutionModelerService {
    * @return true if the node is a sub process
    */
   isSubProcess(node): boolean {
-    return is(node, 'bpmn:SubProcess');
+    return is(node, 'bpmn:SubProcess') && !isLabel(node);
   }
 
   /**

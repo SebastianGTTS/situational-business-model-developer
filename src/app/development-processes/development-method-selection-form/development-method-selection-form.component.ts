@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
+import { DevelopmentMethodEntry } from '../../development-process-registry/development-method/development-method';
 import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
 
 @Component({
@@ -15,18 +15,19 @@ import { SituationalFactor } from '../../development-process-registry/method-ele
   styleUrls: ['./development-method-selection-form.component.css'],
 })
 export class DevelopmentMethodSelectionFormComponent implements OnChanges {
-  @Input() developmentMethod: DevelopmentMethod;
+  @Input() developmentMethod: DevelopmentMethodEntry;
   @Input() contextSituationalFactors: {
     list: string;
-    element: SituationalFactor;
+    element?: SituationalFactor;
   }[] = [];
 
-  @Output() selectDevelopmentMethod = new EventEmitter<DevelopmentMethod>();
+  @Output() selectDevelopmentMethod =
+    new EventEmitter<DevelopmentMethodEntry>();
 
   needed: SituationalFactor[] = [];
   provided: SituationalFactor[] = [];
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.contextSituationalFactors) {
       this.needed = changes.contextSituationalFactors.currentValue.map(
         (factor) => factor.element

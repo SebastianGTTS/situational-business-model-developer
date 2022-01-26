@@ -3,40 +3,69 @@ import { DatabaseModel } from '../database/database-model';
 import {
   CanvasDefinitionCell,
   CanvasDefinitionCellEntry,
+  CanvasDefinitionCellInit,
 } from './canvas-definition-cell';
 import { getId } from '../model/utils';
-import { DatabaseRootEntry } from '../database/database-entry';
+import {
+  DatabaseRootEntry,
+  DatabaseRootInit,
+} from '../database/database-entry';
+
+export interface CanvasDefinitionInit extends DatabaseRootInit {
+  name: string;
+  description?: string;
+  rows?: CanvasDefinitionCellInit[][];
+  relationshipTypes?: string[];
+}
 
 export interface CanvasDefinitionEntry extends DatabaseRootEntry {
   name: string;
-  description: string;
+  description?: string;
   rows: CanvasDefinitionCellEntry[][];
   relationshipTypes: string[];
 }
 
 interface CanvasDefinitionJsonSchema {
   name: string;
-  description: string;
+  description?: string;
   rows: CanvasDefinitionCellEntry[][];
   relationshipTypes: string[];
 }
 
-export class CanvasDefinition extends DatabaseModel {
+export class CanvasDefinition
+  extends DatabaseModel
+  implements CanvasDefinitionInit
+{
   static readonly typeName = 'CanvasDefinition';
 
   name: string;
-  description: string;
+  description?: string;
 
   rows: CanvasDefinitionCell[][] = [];
 
   relationshipTypes: string[] = [];
 
-  constructor(canvasDefinition: Partial<CanvasDefinition>) {
-    super(CanvasDefinition.typeName);
-    Object.assign(this, canvasDefinition);
-    this.rows = this.rows.map((row) =>
-      row.map((cell) => new CanvasDefinitionCell(cell))
-    );
+  constructor(
+    entry: CanvasDefinitionEntry | undefined,
+    init: CanvasDefinitionInit | undefined
+  ) {
+    super(entry, init, CanvasDefinition.typeName);
+    const element = entry ?? init;
+    this.name = element.name;
+    this.description = element.description;
+    this.relationshipTypes =
+      element.relationshipTypes ?? this.relationshipTypes;
+    if (entry != null) {
+      this.rows =
+        entry.rows?.map((row) =>
+          row.map((cell) => new CanvasDefinitionCell(cell, undefined))
+        ) ?? this.rows;
+    } else if (init != null) {
+      this.rows =
+        init.rows?.map((row) =>
+          row.map((cell) => new CanvasDefinitionCell(undefined, cell))
+        ) ?? this.rows;
+    }
   }
 
   update(canvasDefinition: Partial<CanvasDefinition>): void {
@@ -71,7 +100,9 @@ export class CanvasDefinition extends DatabaseModel {
       row
         .filter((cell) => !cell.isSpacer)
         .forEach((cell) => {
-          rootFeatures.push(new Feature(cell.id, null, { name: cell.name }));
+          rootFeatures.push(
+            new Feature(undefined, { name: cell.name }, cell.id, null)
+          );
         })
     );
     return rootFeatures;

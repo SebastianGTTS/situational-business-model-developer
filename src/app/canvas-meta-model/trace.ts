@@ -1,22 +1,33 @@
 import { DatabaseModelPart } from '../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../database/database-entry';
+
+export interface TraceInit extends DatabaseInit {
+  expertFeatureIdMap?: { [expertModelFeatureId: string]: string };
+}
+
+export interface TraceEntry extends DatabaseEntry {
+  expertFeatureIdMap: { [expertModelFeatureId: string]: string };
+}
 
 export class Trace implements DatabaseModelPart {
   // stored
   expertFeatureIdMap: { [expertModelFeatureId: string]: string } = {};
 
-  constructor(trace: Partial<Trace>) {
-    Object.assign(this, trace);
+  constructor(entry: TraceEntry, init: TraceInit) {
+    const element = entry ?? init;
+    this.expertFeatureIdMap =
+      element.expertFeatureIdMap ?? this.expertFeatureIdMap;
   }
 
-  addTrace(expertFeatureId: string, companyFeatureId: string) {
+  addTrace(expertFeatureId: string, companyFeatureId: string): void {
     this.expertFeatureIdMap[expertFeatureId] = companyFeatureId;
   }
 
-  deleteTrace(expertFeatureId: string) {
+  deleteTrace(expertFeatureId: string): void {
     delete this.expertFeatureIdMap[expertFeatureId];
   }
 
-  toDb(): any {
+  toDb(): TraceEntry {
     return {
       expertFeatureIdMap: this.expertFeatureIdMap,
     };

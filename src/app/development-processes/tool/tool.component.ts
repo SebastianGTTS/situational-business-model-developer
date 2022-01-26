@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { Tool } from '../../development-process-registry/method-elements/tool/tool';
+import {
+  Tool,
+  ToolInit,
+} from '../../development-process-registry/method-elements/tool/tool';
 import { ToolService } from '../../development-process-registry/method-elements/tool/tool.service';
 import { MethodElementLoaderService } from '../shared/method-element-loader.service';
 import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
@@ -15,19 +18,19 @@ import { MethodElementService } from '../../development-process-registry/method-
 })
 export class ToolComponent {
   constructor(
-    private toolLoaderService: MethodElementLoaderService<Tool>,
+    private toolLoaderService: MethodElementLoaderService<Tool, ToolInit>,
     private toolService: ToolService
   ) {}
 
-  async updateValue(value: any) {
+  async updateValue(value: any): Promise<void> {
     await this.toolService.update(this.tool._id, value);
   }
 
-  get tool() {
+  get tool(): Tool {
     return this.toolLoaderService.methodElement;
   }
 
-  get listNames() {
+  get listNames(): string[] {
     return this.toolLoaderService.listNames;
   }
 }

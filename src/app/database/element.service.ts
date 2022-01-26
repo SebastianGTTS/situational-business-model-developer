@@ -1,18 +1,23 @@
 import { DatabaseModel } from './database-model';
 import { Observable } from 'rxjs';
+import { EntryType } from './database-model-part';
+import { DatabaseRootInit, DbId } from './database-entry';
 
-export interface ElementService<T extends DatabaseModel> {
+export interface ElementService<
+  T extends DatabaseModel,
+  S extends DatabaseRootInit
+> {
   /**
    * Get a list of all elements of this type in the database
    */
-  getList(): Promise<T[]>;
+  getList(): Promise<EntryType<T>[]>;
 
   /**
    * Add an element to the database
    *
    * @param element the element to add
    */
-  add(element: Partial<T>): Promise<any>;
+  add(element: S): Promise<void>;
 
   /**
    * Update an element in the database
@@ -20,7 +25,7 @@ export interface ElementService<T extends DatabaseModel> {
    * @param id the id of the element
    * @param element the new data of the element
    */
-  update?(id: string, element: Partial<T>): Promise<any>;
+  update?(id: DbId, element: Partial<T>): Promise<void>;
 
   /**
    * Get an element from the database
@@ -28,7 +33,7 @@ export interface ElementService<T extends DatabaseModel> {
    * @param id the id of the element to get
    * @return the element from the database
    */
-  get(id: string): Promise<T>;
+  get(id: DbId): Promise<T>;
 
   /**
    * Get the changes of an element
@@ -36,12 +41,12 @@ export interface ElementService<T extends DatabaseModel> {
    * @param id the id of the element
    * @return the changes feed
    */
-  getChangesFeed(id: string): Observable<void>;
+  getChangesFeed(id: DbId): Observable<void>;
 
   /**
    * Remove an element from the database
    *
    * @param id the id of the element
    */
-  delete(id: string): Promise<void>;
+  delete(id: DbId): Promise<void>;
 }

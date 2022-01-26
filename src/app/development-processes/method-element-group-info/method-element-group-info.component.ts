@@ -8,8 +8,17 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { MethodElement } from '../../development-process-registry/method-elements/method-element';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  MethodElement,
+  MethodElementEntry,
+} from '../../development-process-registry/method-elements/method-element';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { GroupSelection } from '../../development-process-registry/bm-process/decision';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
@@ -28,7 +37,7 @@ export class MethodElementGroupInfoComponent
   @Input() groups: MultipleSelection<MethodElement>[][];
   @Input() selection: GroupSelection<MethodElement>;
 
-  @Input() methodElements: MethodElement[] = [];
+  @Input() methodElements: MethodElementEntry[] = [];
 
   @Output() submitGroupsForm = new EventEmitter<FormGroup>();
 
@@ -43,7 +52,7 @@ export class MethodElementGroupInfoComponent
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedIndexSubscription =
       this.selectedGroupControl.valueChanges.subscribe((value) =>
         this.generateControls(value)
@@ -56,7 +65,7 @@ export class MethodElementGroupInfoComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.groups) {
       this.loadForm();
     } else if (changes.selection) {
@@ -70,7 +79,7 @@ export class MethodElementGroupInfoComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.selectedIndexSubscription) {
       this.selectedIndexSubscription.unsubscribe();
     }
@@ -79,11 +88,11 @@ export class MethodElementGroupInfoComponent
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitGroupsForm.emit(this.form);
   }
 
-  private loadForm() {
+  private loadForm(): void {
     this.selectedGroupControl.setValue(this.selection.selectedGroup, {
       emitEvent: false,
     });
@@ -93,7 +102,7 @@ export class MethodElementGroupInfoComponent
     }
   }
 
-  private generateControls(selectedGroup: number) {
+  private generateControls(selectedGroup: number): void {
     if (selectedGroup !== null) {
       const elements = this.groups[selectedGroup].map((element, index) => {
         if (
@@ -115,15 +124,15 @@ export class MethodElementGroupInfoComponent
     }
   }
 
-  get selectedGroupControl() {
-    return this.form.get('selectedGroup');
+  get selectedGroupControl(): FormControl {
+    return this.form.get('selectedGroup') as FormControl;
   }
 
-  get selectedGroup() {
+  get selectedGroup(): number {
     return this.selectedGroupControl.value;
   }
 
-  get elementsFormArray() {
+  get elementsFormArray(): FormArray {
     return this.form.get('elements') as FormArray;
   }
 }

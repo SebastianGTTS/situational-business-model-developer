@@ -1,5 +1,8 @@
 import { Component, Input, Optional } from '@angular/core';
-import { MethodElement } from '../../development-process-registry/method-elements/method-element';
+import {
+  MethodElement,
+  MethodElementEntry,
+} from '../../development-process-registry/method-elements/method-element';
 import { merge, Observable, Subject } from 'rxjs';
 import {
   FormArray,
@@ -21,7 +24,7 @@ export class MethodElementInfoComponent {
 
   @Input() element: MultipleSelection<MethodElement>;
 
-  @Input() methodElements: MethodElement[] = [];
+  @Input() methodElements: MethodElementEntry[] = [];
 
   openElementInput = new Subject<[HTMLInputElement, string]>();
 
@@ -32,7 +35,7 @@ export class MethodElementInfoComponent {
 
   searchElements =
     (field: HTMLInputElement) =>
-    (input: Observable<string>): Observable<MethodElement[]> => {
+    (input: Observable<string>): Observable<MethodElementEntry[]> => {
       return merge(
         getTypeaheadInputPipe(input),
         this.openElementInput.pipe(

@@ -10,7 +10,10 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToolService } from '../../development-process-registry/method-elements/tool/tool.service';
-import { Tool } from '../../development-process-registry/method-elements/tool/tool';
+import {
+  Tool,
+  ToolEntry,
+} from '../../development-process-registry/method-elements/tool/tool';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -34,7 +37,7 @@ export class ToolsSelectionFormComponent
   });
   changed = false;
 
-  methodElements: Tool[] = [];
+  methodElements: ToolEntry[] = [];
   listNames: string[] = [];
 
   private changeSubscription: Subscription;
@@ -45,7 +48,7 @@ export class ToolsSelectionFormComponent
     private toolService: ToolService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadTools();
     this.changeSubscription = this.toolsForm.valueChanges
       .pipe(
@@ -58,7 +61,7 @@ export class ToolsSelectionFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.tools) {
       const oldToolGroups: MultipleSelection<Tool>[][] =
         changes.tools.previousValue;
@@ -70,25 +73,25 @@ export class ToolsSelectionFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  add() {
+  add(): void {
     this.formArray.push(this.fb.array([]));
   }
 
-  remove(index: number) {
+  remove(index: number): void {
     this.formArray.removeAt(index);
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitToolsForm.emit(this.toolsForm.get('tools') as FormArray);
   }
 
-  private loadForm(tools: MultipleSelection<Tool>[][]) {
+  private loadForm(tools: MultipleSelection<Tool>[][]): void {
     const formArrays = tools.map((group) =>
       this.fb.array(
         group.map((element) =>
@@ -111,10 +114,10 @@ export class ToolsSelectionFormComponent
     const tools = await this.toolService.getList();
     this.methodElements = tools.concat(
       this.moduleService.modules.map((module) => {
-        return new Tool({
+        return new Tool(undefined, {
           name: module.name,
           list: module.list,
-        });
+        }).toDb();
       })
     );
     this.listNames = [
@@ -130,7 +133,7 @@ export class ToolsSelectionFormComponent
     return this.toolsForm.get('tools') as FormArray;
   }
 
-  createFormGroupFactory = () =>
+  createFormGroupFactory = (): FormGroup =>
     this.fb.group({
       list: ['', Validators.required],
       element: null,

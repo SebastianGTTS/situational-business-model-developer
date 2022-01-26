@@ -1,30 +1,33 @@
 import { Injectable } from '@angular/core';
-import { ExpertModel } from './expert-model';
+import { ExpertModel, ExpertModelEntry, ExpertModelInit } from './expert-model';
 import { Domain } from '../development-process-registry/knowledge/domain';
-import { Instance } from './instance';
+import { InstanceInit } from './instance';
 import { FeatureModelService } from './feature-model.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ExpertModelService extends FeatureModelService<ExpertModel> {
-  protected get typeName(): string {
-    return ExpertModel.typeName;
-  }
+export class ExpertModelService extends FeatureModelService<
+  ExpertModel,
+  ExpertModelInit
+> {
+  protected readonly typeName = ExpertModel.typeName;
 
-  async getList(selector = {}): Promise<ExpertModel[]> {
-    return this.pouchdbService.find<ExpertModel>(ExpertModel.typeName, {
+  protected readonly elementConstructor = ExpertModel;
+
+  async getList(selector = {}): Promise<ExpertModelEntry[]> {
+    return this.pouchdbService.find<ExpertModelEntry>(ExpertModel.typeName, {
       selector,
     });
   }
 
-  async updateDomains(id: string, domains: Partial<Domain>[]): Promise<void> {
+  async updateDomains(id: string, domains: Domain[]): Promise<void> {
     const expertModel = await this.get(id);
     expertModel.updateDomains(domains);
     await this.save(expertModel);
   }
 
-  async addInstance(id: string, instance: Partial<Instance>): Promise<void> {
+  async addInstance(id: string, instance: InstanceInit): Promise<void> {
     const expertModel = await this.get(id);
     expertModel.addInstance(instance);
     await this.save(expertModel);
@@ -38,9 +41,5 @@ export class ExpertModelService extends FeatureModelService<ExpertModel> {
 
   async save(expertModel: ExpertModel): Promise<void> {
     await this.pouchdbService.put(expertModel);
-  }
-
-  protected createElement(element: Partial<ExpertModel>): ExpertModel {
-    return new ExpertModel(element);
   }
 }

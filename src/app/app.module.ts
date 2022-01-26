@@ -23,6 +23,8 @@ import { ChangePasswordFormComponent } from './change-password-form/change-passw
 import { ProfileComponent } from './profile/profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { QuillModule } from 'ngx-quill';
+import { WhiteboardMetaModelModule } from './whiteboard-meta-model/whiteboard-meta-model.module';
+import { WhiteboardModule } from './whiteboard/whiteboard.module';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,7 @@ import { QuillModule } from 'ngx-quill';
     DatabaseModule,
     DevelopmentProcessRegistryModule,
     CanvasMetaModelModule,
+    WhiteboardMetaModelModule,
     NgbModule,
     ReactiveFormsModule,
 
@@ -54,6 +57,7 @@ import { QuillModule } from 'ngx-quill';
     }),
 
     CanvasModule,
+    WhiteboardModule,
 
     DevelopmentProcessesModule,
 

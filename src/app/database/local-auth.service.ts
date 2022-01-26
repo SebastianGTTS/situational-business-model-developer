@@ -10,37 +10,36 @@ export class LocalAuthService implements AuthService {
 
   set redirectTo(redirectTo: string) {}
 
-  get username() {
-    return null;
+  get username(): undefined {
+    return undefined;
   }
 
-  get group() {
-    return null;
+  get group(): undefined {
+    return undefined;
   }
 
-  async init(): Promise<any> {
-    this.pouchdbService.init('bmdlFeatureModeler', null, null);
+  async init(): Promise<void> {
+    this.pouchdbService.init('bmdlFeatureModeler');
     const info = await this.pouchdbService.getDatabaseInfo();
     if (info.doc_count === 0 && environment.exampleData) {
       console.log('No docs detected. Adding default data.');
       await this.pouchdbService.addDefaultData();
     }
-    return null;
   }
 
   isLoggedIn(): boolean {
     return true;
   }
 
-  login(username: string, password: string): Observable<any> {
+  login(username: string, password: string): Observable<void> {
     return of();
   }
 
-  logout(): Observable<any> {
+  logout(): Observable<void> {
     return of();
   }
 
-  changePassword(newPassword: string): Observable<any> {
+  changePassword(newPassword: string): Observable<void> {
     throw new Error('Not implemented');
   }
 }

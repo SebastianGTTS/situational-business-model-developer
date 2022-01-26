@@ -205,7 +205,13 @@
       <ul class="list-group">
         <li *ngFor="let decision of decisions" class="list-group-item">
           <div class="d-flex justify-content-between align-items-baseline">
-            <h5>Node {{ decision.type }}</h5>
+            <h5>
+              Exclusive Gateway<span
+                *ngIf="decision.businessObject && decision.businessObject.name"
+              >
+                {{ decision.businessObject.name }}</span
+              >
+            </h5>
             <div class="d-flex align-items-baseline">
               <button
                 (click)="focus(decision.id)"

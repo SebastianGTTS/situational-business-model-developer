@@ -1,7 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomainService } from '../../development-process-registry/knowledge/domain.service';
-import { Domain } from '../../development-process-registry/knowledge/domain';
+import {
+  Domain,
+  DomainEntry,
+  DomainInit,
+} from '../../development-process-registry/knowledge/domain';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
 
@@ -19,39 +23,39 @@ export class DomainsComponent {
     name: ['', Validators.required],
   });
 
-  modalDomain: Domain;
+  modalDomain: DomainEntry;
   private modalReference: NgbModalRef;
 
   @ViewChild('deleteDomainModal', { static: true })
-  deleteDomainModal: any;
+  deleteDomainModal: unknown;
 
   constructor(
     private fb: FormBuilder,
-    private listService: ListService<Domain>,
+    private listService: ListService<Domain, DomainInit>,
     private modalService: NgbModal
   ) {}
 
-  async addDomain() {
+  async addDomain(): Promise<void> {
     await this.listService.add(this.domainForm.value);
     this.domainForm.reset();
   }
 
-  openDeleteDomainModal(domain: Domain) {
+  openDeleteDomainModal(domain: DomainEntry): void {
     this.modalDomain = domain;
     this.modalReference = this.modalService.open(this.deleteDomainModal, {
       size: 'lg',
     });
   }
 
-  async deleteDomain(domain: Domain) {
+  async deleteDomain(domain: DomainEntry): Promise<void> {
     await this.listService.delete(domain._id);
   }
 
-  getRouterLink(domain: Domain) {
+  getRouterLink(domain: DomainEntry): string[] {
     return ['/', 'domains', 'detail', domain._id];
   }
 
-  get domains(): Domain[] {
+  get domains(): DomainEntry[] {
     return this.listService.elements;
   }
 

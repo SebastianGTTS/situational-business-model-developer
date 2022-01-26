@@ -1,6 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
+import {
+  DevelopmentMethod,
+  DevelopmentMethodEntry,
+  DevelopmentMethodInit,
+} from '../../development-process-registry/development-method/development-method';
 import { DevelopmentMethodService } from '../../development-process-registry/development-method/development-method.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
@@ -19,19 +23,21 @@ export class DevelopmentMethodsComponent {
     name: this.fb.control('', Validators.required),
   });
 
-  modalDevelopmentMethod: DevelopmentMethod;
+  modalDevelopmentMethod: DevelopmentMethodEntry;
   private modalReference: NgbModalRef;
 
   @ViewChild('deleteDevelopmentMethodModal', { static: true })
-  deleteDevelopmentMethodModal: any;
+  deleteDevelopmentMethodModal: unknown;
 
   constructor(
-    private listService: ListService<DevelopmentMethod>,
+    private listService: ListService<DevelopmentMethod, DevelopmentMethodInit>,
     private fb: FormBuilder,
     private modalService: NgbModal
   ) {}
 
-  openDeleteDevelopmentMethodModal(developmentMethod: DevelopmentMethod) {
+  openDeleteDevelopmentMethodModal(
+    developmentMethod: DevelopmentMethodEntry
+  ): void {
     this.modalDevelopmentMethod = developmentMethod;
     this.modalReference = this.modalService.open(
       this.deleteDevelopmentMethodModal,
@@ -41,16 +47,19 @@ export class DevelopmentMethodsComponent {
     );
   }
 
-  async deleteDevelopmentMethod(id: string) {
+  async deleteDevelopmentMethod(id: string): Promise<void> {
     await this.listService.delete(id);
   }
 
-  async addDevelopmentMethod(developmentMethodForm: FormGroup) {
-    await this.listService.add({ name: developmentMethodForm.value.name });
+  async addDevelopmentMethod(developmentMethodForm: FormGroup): Promise<void> {
+    await this.listService.add({
+      name: developmentMethodForm.value.name,
+      author: {},
+    });
     this.developmentMethodForm.reset();
   }
 
-  get developmentMethodsList(): DevelopmentMethod[] {
+  get developmentMethodsList(): DevelopmentMethodEntry[] {
     return this.listService.elements;
   }
 

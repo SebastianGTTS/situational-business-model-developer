@@ -1,6 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BmProcess } from '../../development-process-registry/bm-process/bm-process';
+import {
+  BmProcess,
+  BmProcessEntry,
+  BmProcessInit,
+} from '../../development-process-registry/bm-process/bm-process';
 import { BmProcessService } from '../../development-process-registry/bm-process/bm-process.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
@@ -19,35 +23,35 @@ export class BmProcessesComponent {
     name: this.fb.control('', Validators.required),
   });
 
-  modalBmProcess: BmProcess;
+  modalBmProcess: BmProcessEntry;
   private modalReference: NgbModalRef;
 
   @ViewChild('deleteBmProcessModal', { static: true })
-  deleteBmProcessModal: any;
+  deleteBmProcessModal: unknown;
 
   constructor(
     private fb: FormBuilder,
-    private listService: ListService<BmProcess>,
+    private listService: ListService<BmProcess, BmProcessInit>,
     private modalService: NgbModal
   ) {}
 
-  openDeleteBmProcessModal(bmProcess: BmProcess) {
+  openDeleteBmProcessModal(bmProcess: BmProcessEntry): void {
     this.modalBmProcess = bmProcess;
     this.modalReference = this.modalService.open(this.deleteBmProcessModal, {
       size: 'lg',
     });
   }
 
-  async deleteBmProcess(id: string) {
+  async deleteBmProcess(id: string): Promise<void> {
     await this.listService.delete(id);
   }
 
-  async addBmProcess(bmProcessForm: FormGroup) {
+  async addBmProcess(bmProcessForm: FormGroup): Promise<void> {
     await this.listService.add({ name: bmProcessForm.value.name });
     this.bmProcessForm.reset();
   }
 
-  get bmProcessesList(): BmProcess[] {
+  get bmProcessesList(): BmProcessEntry[] {
     return this.listService.elements;
   }
 

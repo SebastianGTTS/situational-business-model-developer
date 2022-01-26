@@ -15,7 +15,7 @@ export class CanvasDefinitionLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const canvasDefinitionId = paramMap.get('id');
     this.changesFeed = this.canvasDefinitionService
       .getChangesFeed(canvasDefinitionId)
@@ -23,7 +23,9 @@ export class CanvasDefinitionLoaderService extends ElementLoaderService {
     void this.loadCanvasDefinition(canvasDefinitionId);
   }
 
-  private async loadCanvasDefinition(canvasDefinitionId: string) {
+  private async loadCanvasDefinition(
+    canvasDefinitionId: string
+  ): Promise<void> {
     this.canvasDefinition = await this.canvasDefinitionService.get(
       canvasDefinitionId
     );

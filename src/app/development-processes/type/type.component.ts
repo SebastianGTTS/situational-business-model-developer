@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { Type } from '../../development-process-registry/method-elements/type/type';
+import {
+  Type,
+  TypeInit,
+} from '../../development-process-registry/method-elements/type/type';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
 import { MethodElementLoaderService } from '../shared/method-element-loader.service';
 import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
@@ -15,19 +18,19 @@ import { MethodElementService } from '../../development-process-registry/method-
 })
 export class TypeComponent {
   constructor(
-    private typeLoaderService: MethodElementLoaderService<Type>,
+    private typeLoaderService: MethodElementLoaderService<Type, TypeInit>,
     private typeService: TypeService
   ) {}
 
-  async updateValue(value: any) {
+  async updateValue(value: any): Promise<void> {
     await this.typeService.update(this.type._id, value);
   }
 
-  get type() {
+  get type(): Type {
     return this.typeLoaderService.methodElement;
   }
 
-  get listNames() {
+  get listNames(): string[] {
     return this.typeLoaderService.listNames;
   }
 }

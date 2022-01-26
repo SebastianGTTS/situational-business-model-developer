@@ -49,12 +49,18 @@ export class FeatureFormComponent implements OnInit, OnChanges {
     if (feature === null) {
       if (this.featureList.length > 0) {
         feature = new Feature(
-          null,
-          new Feature(this.featureList[0].id, null, {}),
-          { name: '' }
+          undefined,
+          { name: '' },
+          undefined,
+          new Feature(
+            undefined,
+            { name: '' },
+            this.featureList[0].id,
+            undefined
+          )
         );
       } else {
-        feature = new Feature(null, null, { name: '' });
+        feature = new Feature(undefined, { name: '' }, undefined, undefined);
       }
     }
     this.featureForm = this.fb.group({

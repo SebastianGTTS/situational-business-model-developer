@@ -21,7 +21,10 @@ export class KanbanBoardComponent {
   @Output() viewExecution = new EventEmitter<string>(); // emits execution id
   @Output() viewComments = new EventEmitter<string>(); // emits execution id
 
-  _showInfo(info: KanbanBoardMethodInfo) {
+  donePage: number = 1;
+  donePageSize: number = 4;
+
+  _showInfo(info: KanbanBoardMethodInfo): void {
     if (info.executionId) {
       this.showExecutionInfo.emit(info.executionId);
     } else if (info.nodeId) {
@@ -29,7 +32,7 @@ export class KanbanBoardComponent {
     }
   }
 
-  _startExecution(info: KanbanBoardMethodInfo) {
+  _startExecution(info: KanbanBoardMethodInfo): void {
     if (info.executionId) {
       this.startExecution.emit(info.executionId);
     } else if (info.nodeId) {

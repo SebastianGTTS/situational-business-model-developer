@@ -1,22 +1,34 @@
 import { DatabaseModelPart } from './database-model-part';
 import { Equality } from '../shared/equality';
+import { DatabaseRootEntry, DatabaseRootInit, DbType } from './database-entry';
+import { v4 as uuidv4 } from 'uuid';
 
 export class DatabaseModel
-  implements DatabaseModelPart, Equality<DatabaseModel>
+  implements DatabaseRootInit, DatabaseModelPart, Equality<DatabaseModel>
 {
   _id: string;
-  _rev: string;
+  _rev?: string;
 
   readonly type: string;
 
-  protected constructor(type: string) {
-    this.type = type;
+  protected constructor(
+    entry: DatabaseRootEntry | undefined,
+    init: DatabaseRootInit | undefined,
+    type: DbType
+  ) {
+    if (entry != null) {
+      this._id = entry._id;
+      this._rev = entry._rev;
+      this.type = entry.type;
+    } else if (init != null) {
+      this._id = init._id ?? DatabaseModel.getId();
+      this.type = type;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
-  toDb(): any {
-    if (!this._id) {
-      this._id = String(Date.now());
-    }
+  toDb(): DatabaseRootEntry {
     return {
       type: this.type,
       _id: this._id,
@@ -28,7 +40,7 @@ export class DatabaseModel
    * Reset the models database state and add it as a new model if pushed to pouchdb
    */
   resetDatabaseState(): void {
-    this._id = String(Date.now());
+    this._id = DatabaseModel.getId();
     this._rev = undefined;
   }
 
@@ -43,5 +55,9 @@ export class DatabaseModel
       return false;
     }
     return this._id === other._id && this._rev === other._rev;
+  }
+
+  private static getId(): string {
+    return String(Date.now()) + uuidv4();
   }
 }

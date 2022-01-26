@@ -8,7 +8,10 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { Domain } from '../../development-process-registry/knowledge/domain';
+import {
+  Domain,
+  DomainEntry,
+} from '../../development-process-registry/knowledge/domain';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomainService } from '../../development-process-registry/knowledge/domain.service';
 import { Subscription } from 'rxjs';
@@ -25,6 +28,10 @@ export class DomainsSelectionFormComponent
 {
   @Input() domains: Domain[];
 
+  /**
+   * Emits a form array containing of real domains,
+   * i.e., of type Domain
+   */
   @Output() submitDomainsForm = new EventEmitter<FormArray>();
 
   domainsForm: FormGroup = this.fb.group({
@@ -32,13 +39,13 @@ export class DomainsSelectionFormComponent
   });
   changed = false;
 
-  domainDefinitions: Domain[] = [];
+  domainDefinitions: DomainEntry[] = [];
 
   private changeSubscription: Subscription;
 
   constructor(private domainService: DomainService, private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadDomains();
     this.changeSubscription = this.domainsForm.valueChanges
       .pipe(
@@ -50,7 +57,7 @@ export class DomainsSelectionFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.domains) {
       const oldDomains: Domain[] = changes.domains.previousValue;
       const newDomains: Domain[] = changes.domains.currentValue;
@@ -60,28 +67,28 @@ export class DomainsSelectionFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  add() {
+  add(): void {
     this.domainsFormArray.push(this.fb.control(null, Validators.required));
   }
 
-  remove(index: number) {
+  remove(index: number): void {
     this.domainsFormArray.removeAt(index);
   }
 
-  private loadForm(domains: Domain[]) {
+  private loadForm(domains: Domain[]): void {
     const formGroups = domains.map((domain) =>
       this.fb.control(domain, Validators.required)
     );
     this.domainsForm.setControl('domains', this.fb.array(formGroups));
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitDomainsForm.emit(this.domainsFormArray);
   }
 

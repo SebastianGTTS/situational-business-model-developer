@@ -3,6 +3,7 @@ import { DevelopmentMethodService } from '../../development-process-registry/dev
 import { FormArray, FormGroup } from '@angular/forms';
 import { ExecutionStepsFormService } from '../shared/execution-steps-form.service';
 import { DevelopmentMethodLoaderService } from '../shared/development-method-loader.service';
+import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
 
 @Component({
   selector: 'app-development-method',
@@ -17,25 +18,27 @@ export class DevelopmentMethodComponent {
     private executionStepsFormService: ExecutionStepsFormService
   ) {}
 
-  async updateExecutionSteps(form: FormArray) {
+  async updateExecutionSteps(form: FormArray): Promise<void> {
     const executionSteps = this.executionStepsFormService.getExecutionSteps(
       form.value
     );
     await this.updateDevelopmentMethodValue({ executionSteps });
   }
 
-  async updateDevelopmentMethod(form: FormGroup) {
+  async updateDevelopmentMethod(form: FormGroup): Promise<void> {
     await this.updateDevelopmentMethodValue(form.value);
   }
 
-  async updateDevelopmentMethodValue(value: any) {
+  async updateDevelopmentMethodValue(
+    value: Partial<DevelopmentMethod>
+  ): Promise<void> {
     await this.developmentMethodService.update(
       this.developmentMethod._id,
       value
     );
   }
 
-  get developmentMethod() {
+  get developmentMethod(): DevelopmentMethod {
     return this.developmentMethodLoaderService.developmentMethod;
   }
 }

@@ -73,6 +73,8 @@ import { ListPipe } from './pipes/list.pipe';
 import { QuillModule } from 'ngx-quill';
 import { RunningProcessSelectOutputArtifactComponent } from './running-process-select-output-artifact/running-process-select-output-artifact.component';
 import { DevelopmentMethodIncompleteModalComponent } from './development-method-incomplete-modal/development-method-incomplete-modal.component';
+import { DevelopmentMethodFormComponent } from './development-method-form/development-method-form.component';
+import { ProcessPatternFormComponent } from './process-pattern-form/process-pattern-form.component';
 
 @NgModule({
   declarations: [
@@ -147,6 +149,8 @@ import { DevelopmentMethodIncompleteModalComponent } from './development-method-
     ListPipe,
     RunningProcessSelectOutputArtifactComponent,
     DevelopmentMethodIncompleteModalComponent,
+    DevelopmentMethodFormComponent,
+    ProcessPatternFormComponent,
   ],
   imports: [DevelopmentProcessesRoutingModule, SharedModule, QuillModule],
 })

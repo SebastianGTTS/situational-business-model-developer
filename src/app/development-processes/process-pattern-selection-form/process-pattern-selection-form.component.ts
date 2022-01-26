@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { ProcessPattern } from '../../development-process-registry/process-pattern/process-pattern';
+import { ProcessPatternEntry } from '../../development-process-registry/process-pattern/process-pattern';
 import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
 
 @Component({
@@ -15,18 +15,18 @@ import { SituationalFactor } from '../../development-process-registry/method-ele
   styleUrls: ['./process-pattern-selection-form.component.css'],
 })
 export class ProcessPatternSelectionFormComponent implements OnChanges {
-  @Input() processPattern: ProcessPattern;
+  @Input() processPattern: ProcessPatternEntry;
   @Input() contextSituationalFactors: {
     list: string;
     element: SituationalFactor;
   }[] = [];
 
-  @Output() selectProcessPattern = new EventEmitter<ProcessPattern>();
+  @Output() selectProcessPattern = new EventEmitter<ProcessPatternEntry>();
 
   needed: SituationalFactor[] = [];
   provided: SituationalFactor[] = [];
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.contextSituationalFactors) {
       this.needed = changes.contextSituationalFactors.currentValue.map(
         (factor) => factor.element

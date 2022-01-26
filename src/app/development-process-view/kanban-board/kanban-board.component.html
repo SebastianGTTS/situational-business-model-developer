@@ -75,7 +75,13 @@
   <div class="col">
     <h6 class="text-center">Done</h6>
     <div class="d-flex flex-column align-items-center">
-      <div *ngFor="let info of done" class="card text-center w-75 my-2">
+      <div
+        *ngFor="
+          let info of done
+            | slice: (donePage - 1) * donePageSize:donePage * donePageSize
+        "
+        class="card text-center w-75 my-2"
+      >
         <div class="card-body">
           <div class="card-title font-weight-bold">{{ info.methodName }}</div>
           <button
@@ -93,6 +99,13 @@
           </button>
         </div>
       </div>
+      <ngb-pagination
+        *ngIf="done.length > donePageSize"
+        [collectionSize]="done.length"
+        [(page)]="donePage"
+        [pageSize]="donePageSize"
+        class="mt-3"
+      ></ngb-pagination>
     </div>
   </div>
 </div>

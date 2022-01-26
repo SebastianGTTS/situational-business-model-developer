@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { FeatureModel } from '../../../canvas-meta-model/feature-model';
 import { MergeService } from '../merge.service';
 import { ExpertModelService } from '../../../canvas-meta-model/expert-model.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ExpertModelEntry } from '../../../canvas-meta-model/expert-model';
 
 @Component({
   selector: 'app-merge-expert-models',
@@ -14,11 +14,11 @@ import { Subscription } from 'rxjs';
 export class MergeExpertModelsComponent implements OnInit, OnDestroy {
   companyModelId: string;
 
-  selectedExpertModelList: FeatureModel[];
+  selectedExpertModelList: ExpertModelEntry[];
   selectedExpertModelForm = this.fb.group({
     expertModelId: [null, Validators.required],
   });
-  unselectedExpertModelList: FeatureModel[];
+  unselectedExpertModelList: ExpertModelEntry[];
 
   private routeSubscription: Subscription;
 
@@ -30,20 +30,20 @@ export class MergeExpertModelsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.routeSubscription = this.route.paramMap.subscribe((paramMap) => {
       this.companyModelId = paramMap.get('companyModelId');
       void this.loadExpertModels(this.companyModelId);
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
   }
 
-  async selectExpertModel() {
+  async selectExpertModel(): Promise<void> {
     await this.mergeService.selectExpertModel(
       this.companyModelId,
       this.selectedExpertModelForm.value.expertModelId
@@ -52,7 +52,7 @@ export class MergeExpertModelsComponent implements OnInit, OnDestroy {
     await this.loadExpertModels(this.companyModelId);
   }
 
-  async unselectExpertModel(expertModelId: string) {
+  async unselectExpertModel(expertModelId: string): Promise<void> {
     await this.mergeService.unselectExpertModel(
       this.companyModelId,
       expertModelId

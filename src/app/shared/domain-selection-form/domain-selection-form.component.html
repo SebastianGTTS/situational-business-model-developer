@@ -11,6 +11,7 @@
         [editable]="false"
         [resultFormatter]="formatter"
         [inputFormatter]="formatter"
+        (selectItem)="selectItem($event)"
         (click)="openDomainInput.next($any($event.target).value)"
         (focus)="openDomainInput.next($any($event.target).value)"
       />

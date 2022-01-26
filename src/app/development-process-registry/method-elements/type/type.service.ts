@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { MethodElementService } from '../method-element.service';
-import { Type } from './type';
+import { Type, TypeInit } from './type';
 import { DevelopmentProcessRegistryModule } from '../../development-process-registry.module';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
-export class TypeService extends MethodElementService<Type> {
-  protected createElement(element: Partial<Type>): Type {
-    return new Type(element);
-  }
+export class TypeService extends MethodElementService<Type, TypeInit> {
+  protected readonly typeName = Type.typeName;
 
-  protected get typeName(): string {
-    return Type.typeName;
-  }
+  protected readonly elementConstructor = Type;
 }

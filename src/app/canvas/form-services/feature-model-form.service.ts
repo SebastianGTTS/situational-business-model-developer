@@ -26,7 +26,7 @@ export class FeatureModelFormService {
     return form;
   }
 
-  get(formValue: FeatureModelFormValue): Partial<FeatureModel> {
+  get(formValue: FeatureModelFormValue): FeatureModelFormValue {
     return {
       name: formValue.name,
       description: formValue.description,

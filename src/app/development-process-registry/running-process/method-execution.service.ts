@@ -5,10 +5,8 @@ import { ArtifactDataType } from './artifact-data';
 import { ModuleService } from '../module-api/module.service';
 import { Router } from '@angular/router';
 import { RunningMethod } from './running-method';
-import { Artifact } from '../method-elements/artifact/artifact';
 import { StepInputArtifact } from './step-input-artifact';
 import { Decision } from '../bm-process/decision';
-import { Step } from './step';
 import { MethodExecutionOutput } from '../module-api/method-execution-output';
 import { MethodExecutionInput } from '../module-api/method-execution-input';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
@@ -46,9 +44,11 @@ export class MethodExecutionService {
    */
   addMethod(runningProcess: RunningProcess, decision: Decision): void {
     runningProcess.addTodoMethod(
-      new RunningMethod({
+      new RunningMethod(undefined, {
         decision,
-        steps: decision.method.executionSteps.map(() => new Step({})),
+        steps: decision.method.executionSteps.map(() => {
+          return {};
+        }),
       })
     );
   }
@@ -93,7 +93,7 @@ export class MethodExecutionService {
   startTodoMethodExecution(
     runningProcess: RunningProcess,
     executionId: string
-  ) {
+  ): void {
     const method = runningProcess.getTodoMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_DEFINED);
@@ -121,7 +121,7 @@ export class MethodExecutionService {
     method.inputArtifacts = inputArtifactMapping.map((mapping) => {
       const artifact = runningProcess.artifacts[mapping.artifact];
       const version = artifact.versions[mapping.version];
-      return new StepInputArtifact({
+      return new StepInputArtifact(undefined, {
         identifier: artifact.identifier,
         artifact: artifact.artifact,
         data: version.data,
@@ -255,13 +255,16 @@ export class MethodExecutionService {
     method.finishStepExecution(
       artifacts.map(
         (artifactData, index) =>
-          new StepArtifact({
-            artifact: new Artifact({
+          new StepArtifact(undefined, {
+            identifier: undefined,
+            artifact: {
+              name: undefined,
+              list: undefined,
               metaModel: {
                 name: undefined,
-                type: moduleMethodDefinition.output[index].metaModelType,
+                type: moduleMethodDefinition.output[index].type,
               },
-            }),
+            },
             data: artifactData,
           })
       )
@@ -355,7 +358,7 @@ export class MethodExecutionService {
     await this.addOutputArtifacts(
       runningProcess,
       executionId,
-      method.outputArtifacts
+      method.outputArtifacts ?? []
     );
     await this.removeUnusedArtifacts(method);
     runningProcess.addExecutedMethod({
@@ -397,12 +400,12 @@ export class MethodExecutionService {
     return Promise.all(
       stepArtifacts.map(async (artifact) => {
         if (artifact.data.type === ArtifactDataType.REFERENCE) {
-          return new StepArtifact({
+          return new StepArtifact(undefined, {
             ...artifact,
             data: await this.artifactDataService.copy(artifact.data),
           });
         }
-        return new StepArtifact(artifact);
+        return new StepArtifact(undefined, artifact);
       })
     );
   }

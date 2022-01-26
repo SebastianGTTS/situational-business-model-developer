@@ -1,0 +1,26 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'whiteboard', 'templates']">
+      Whiteboard Templates
+    </a>
+    <a
+      *ngIf="whiteboardTemplate != null"
+      class="nav-link active"
+      [routerLink]="[]"
+    >
+      {{ whiteboardTemplate.name }}
+    </a>
+  </nav>
+</div>
+
+<main *ngIf="whiteboardTemplate != null" role="main">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Whiteboard Template</h6>
+    <app-whiteboard-canvas
+      [whiteboardCanvas]="whiteboardTemplate.whiteboard"
+    ></app-whiteboard-canvas>
+    <button class="btn btn-primary mt-1" (click)="saveWhiteboard()">
+      Save Whiteboard
+    </button>
+  </div>
+</main>

@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { PouchdbService } from '../../database/pouchdb.service';
-import { RunningProcess } from './running-process';
+import {
+  RunningProcess,
+  RunningProcessEntry,
+  RunningProcessInit,
+} from './running-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { ArtifactDataType } from './artifact-data';
 import { ProcessExecutionService } from './process-execution.service';
@@ -17,10 +21,13 @@ import { OutputArtifactMapping } from './output-artifact-mapping';
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
-export class RunningProcessService extends DefaultElementService<RunningProcess> {
-  protected get typeName(): string {
-    return RunningProcess.typeName;
-  }
+export class RunningProcessService extends DefaultElementService<
+  RunningProcess,
+  RunningProcessInit
+> {
+  protected readonly typeName = RunningProcess.typeName;
+
+  protected readonly elementConstructor = RunningProcess;
 
   constructor(
     private artifactDataService: ArtifactDataService,
@@ -36,11 +43,11 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    *
    * @param element the running process
    */
-  async add(element: Partial<RunningProcess>) {
-    const runningProcess = new RunningProcess(element);
+  async add(element: RunningProcessInit): Promise<void> {
+    const runningProcess = new RunningProcess(undefined, element);
     await this.processExecutionService.initRunningProcess(runningProcess);
     await this.processExecutionService.jumpToNextMethod(runningProcess);
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -54,7 +61,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
     runningProcess: RunningProcess,
     nodeId: string = null,
     flowId: string = null
-  ) {
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -66,7 +73,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       nodeId,
       flowId
     );
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -74,7 +81,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    *
    * @param runningProcess the running process
    */
-  async jumpSteps(runningProcess: RunningProcess) {
+  async jumpSteps(runningProcess: RunningProcess): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -82,7 +89,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       );
     }
     await this.processExecutionService.jumpToNextMethod(runningProcess);
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -91,7 +98,10 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param runningProcessId the id of the running process
    * @param nodeId the id of the node to execute
    */
-  async startMethodExecution(runningProcessId: string, nodeId: string) {
+  async startMethodExecution(
+    runningProcessId: string,
+    nodeId: string
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcessId);
     if (
       !(await this.processExecutionService.canExecuteNode(
@@ -102,7 +112,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       throw new Error('Can not execute node');
     }
     this.methodExecutionService.startMethodExecution(databaseProcess, nodeId);
-    return this.save(databaseProcess);
+    await this.save(databaseProcess);
   }
 
   /**
@@ -114,13 +124,13 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
   async startTodoMethodExecution(
     runningProcessId: string,
     executionId: string
-  ) {
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcessId);
     this.methodExecutionService.startTodoMethodExecution(
       databaseProcess,
       executionId
     );
-    return this.save(databaseProcess);
+    await this.save(databaseProcess);
   }
 
   /**
@@ -129,7 +139,10 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param runningProcess the running process
    * @param executionId the id of the executed method
    */
-  async executeMethodStep(runningProcess: RunningProcess, executionId: string) {
+  async executeMethodStep(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -150,7 +163,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       runningProcess = await this.get(runningProcess._id);
     }
     await this.methodExecutionService.executeStep(runningProcess, executionId);
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -159,7 +172,10 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param stepInfo the info about the running step
    * @param output the output of the method of the module
    */
-  async finishExecuteStep(stepInfo: StepInfo, output: MethodExecutionOutput) {
+  async finishExecuteStep(
+    stepInfo: StepInfo,
+    output: MethodExecutionOutput
+  ): Promise<void> {
     const databaseProcess = await this.get(stepInfo.runningProcessId);
     this.methodExecutionService.finishExecuteStep(
       databaseProcess,
@@ -167,7 +183,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       stepInfo.step,
       output
     );
-    return this.save(databaseProcess);
+    await this.save(databaseProcess);
   }
 
   /**
@@ -209,7 +225,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
   async abortMethodExecution(
     runningProcess: RunningProcess,
     executionId: string
-  ) {
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -220,7 +236,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       runningProcess,
       executionId
     );
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   async getExecutableElements(runningProcess: RunningProcess): Promise<any[]> {
@@ -262,7 +278,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
     runningProcess: RunningProcess,
     executionId: string,
     inputArtifactMapping: { artifact: number; version: number }[]
-  ) {
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -274,7 +290,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       executionId,
       inputArtifactMapping
     );
-    return this.save(databaseProcess);
+    await this.save(databaseProcess);
   }
 
   async updateOutputArtifacts(
@@ -302,10 +318,13 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param runningProcessId the id of the running process
    * @param artifact the artifact to import into the running process
    */
-  async importArtifact(runningProcessId: string, artifact: RunningArtifact) {
+  async importArtifact(
+    runningProcessId: string,
+    artifact: RunningArtifact
+  ): Promise<void> {
     const runningProcess = await this.get(runningProcessId);
     runningProcess.importArtifact(artifact);
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -314,7 +333,10 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param runningProcess the running process
    * @param decision the method decisions
    */
-  async addMethod(runningProcess: RunningProcess, decision: Decision) {
+  async addMethod(
+    runningProcess: RunningProcess,
+    decision: Decision
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -322,7 +344,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       );
     }
     this.methodExecutionService.addMethod(runningProcess, decision);
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -331,7 +353,10 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param runningProcess the running process
    * @param executionId the id of the method to remove
    */
-  async removeMethod(runningProcess: RunningProcess, executionId: string) {
+  async removeMethod(
+    runningProcess: RunningProcess,
+    executionId: string
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -339,7 +364,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       );
     }
     this.methodExecutionService.removeMethod(runningProcess, executionId);
-    return this.save(runningProcess);
+    await this.save(runningProcess);
   }
 
   /**
@@ -348,8 +373,8 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param id id of the running process
    */
   async delete(id: string): Promise<void> {
-    const result = await this.pouchdbService.get<RunningProcess>(id);
-    const runningProcess = new RunningProcess(result);
+    const result = await this.pouchdbService.get<RunningProcessEntry>(id);
+    const runningProcess = new RunningProcess(result, undefined);
     // abort all running methods
     runningProcess.runningMethods.forEach((method) =>
       this.methodExecutionService.abortMethodExecution(
@@ -375,11 +400,15 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param executionId the id of the method currently executed
    * @param comment the comment to add
    */
-  async addComment(id: string, executionId: string, comment: Comment) {
+  async addComment(
+    id: string,
+    executionId: string,
+    comment: Comment
+  ): Promise<void> {
     const process = await this.get(id);
     const method = process.getRunningMethod(executionId);
     method.addComment(comment);
-    return this.save(process);
+    await this.save(process);
   }
 
   /**
@@ -389,12 +418,16 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param executionId the id of the method currently executed
    * @param comment the comment to add
    */
-  async updateComment(id: string, executionId: string, comment: Comment) {
+  async updateComment(
+    id: string,
+    executionId: string,
+    comment: Comment
+  ): Promise<void> {
     const process = await this.get(id);
     const method = process.getRunningMethod(executionId);
     const dbComment = method.getComment(comment.id);
     dbComment.update(comment);
-    return this.save(process);
+    await this.save(process);
   }
 
   /**
@@ -404,11 +437,15 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
    * @param executionId the id of the method currently executed
    * @param commentId the id of the comment to remove
    */
-  async removeComment(id: string, executionId: string, commentId: string) {
+  async removeComment(
+    id: string,
+    executionId: string,
+    commentId: string
+  ): Promise<void> {
     const process = await this.get(id);
     const method = process.getRunningMethod(executionId);
     method.removeComment(commentId);
-    return this.save(process);
+    await this.save(process);
   }
 
   /**
@@ -422,7 +459,7 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
     runningProcess: RunningProcess,
     runningArtifact: RunningArtifact,
     identifier: string
-  ) {
+  ): Promise<void> {
     const databaseProcess = await this.get(runningProcess._id);
     if (databaseProcess._rev !== runningProcess._rev) {
       throw new Error(
@@ -430,10 +467,6 @@ export class RunningProcessService extends DefaultElementService<RunningProcess>
       );
     }
     runningProcess.renameArtifact(runningArtifact, identifier);
-    return this.save(runningProcess);
-  }
-
-  protected createElement(element: Partial<RunningProcess>): RunningProcess {
-    return new RunningProcess(element);
+    await this.save(runningProcess);
   }
 }

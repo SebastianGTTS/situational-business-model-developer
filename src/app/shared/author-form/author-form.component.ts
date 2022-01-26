@@ -34,7 +34,7 @@ export class AuthorFormComponent implements OnInit, OnChanges {
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.author === null) {
       this.loadForm();
     }
@@ -49,7 +49,7 @@ export class AuthorFormComponent implements OnInit, OnChanges {
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.author) {
       const oldAuthor: Author = changes.author.previousValue;
       const newAuthor: Author = changes.author.currentValue;
@@ -59,11 +59,11 @@ export class AuthorFormComponent implements OnInit, OnChanges {
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitAuthorForm.emit(this.authorForm);
   }
 
-  private loadForm(author: Author = new Author({})) {
+  private loadForm(author: Author = new Author(undefined, {})): void {
     this.authorForm.patchValue(author);
   }
 }

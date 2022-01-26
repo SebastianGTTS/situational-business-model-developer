@@ -8,7 +8,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Type } from '../../development-process-registry/method-elements/type/type';
+import {
+  Type,
+  TypeEntry,
+} from '../../development-process-registry/method-elements/type/type';
 import { TypeService } from '../../development-process-registry/method-elements/type/type.service';
 
 @Component({
@@ -31,22 +34,22 @@ export class ProcessPatternTypesFormComponent implements OnInit, OnChanges {
     forbiddenType: this.fb.array([]),
   });
 
-  methodElements: Type[];
+  methodElements: TypeEntry[];
   listNames: string[];
 
   constructor(private fb: FormBuilder, private typeService: TypeService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     void this.loadTypes();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.types) {
       this.loadForm(changes.types.currentValue);
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitTypesForm.emit(this.typesForm);
   }
 
@@ -54,8 +57,11 @@ export class ProcessPatternTypesFormComponent implements OnInit, OnChanges {
     inherit: boolean;
     neededType: { list: string; element: Type }[];
     forbiddenType: { list: string; element: Type }[];
-  }) {
-    const mapTypeToFormGroup = (type: { list: string; element: Type }) =>
+  }): void {
+    const mapTypeToFormGroup = (type: {
+      list: string;
+      element: Type;
+    }): FormGroup =>
       this.fb.group({
         list: [type.list, Validators.required],
         element: type.element,
@@ -84,7 +90,7 @@ export class ProcessPatternTypesFormComponent implements OnInit, OnChanges {
     ];
   }
 
-  createFormGroupFactory = () =>
+  createFormGroupFactory = (): FormGroup =>
     this.fb.group({
       list: ['', Validators.required],
       element: null,

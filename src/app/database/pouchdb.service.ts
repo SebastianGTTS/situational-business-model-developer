@@ -6,7 +6,12 @@ import examples from '../../examples';
 import { from, Observable, Subject } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { DatabaseRootEntry, DbId, DbRev, DbType } from './database-entry';
+import {
+  DatabaseRevision,
+  DatabaseRootEntry,
+  DbId,
+  DbType,
+} from './database-entry';
 
 export enum DatabaseErrors {
   INVALID_NAME = 'Name of database may only contain characters or numbers.',
@@ -31,8 +36,8 @@ export class PouchdbService {
 
   init(
     name: string,
-    expired: () => Promise<void>,
-    error: () => Promise<void>
+    expired?: () => Promise<void>,
+    error?: () => Promise<void>
   ): void {
     if (this.db) {
       void this.db.close();
@@ -91,7 +96,7 @@ export class PouchdbService {
       .catch((error) => this.handleError(error));
   }
 
-  async find<T extends DatabaseModel>(
+  async find<T extends DatabaseRootEntry>(
     type: DbType,
     request: PouchDB.Find.FindRequest<T>
   ): Promise<T[]> {
@@ -118,7 +123,9 @@ export class PouchdbService {
     }
   }
 
-  async get<T extends DatabaseModel>(id: DbId): Promise<T> {
+  async get<T extends DatabaseRootEntry>(
+    id: DbId
+  ): Promise<T & DatabaseRevision> {
     try {
       return await this.getDb().get<T>(id);
     } catch (error) {
@@ -142,7 +149,7 @@ export class PouchdbService {
     }
   }
 
-  async remove(model: DatabaseModel & { _rev: DbRev }): Promise<void> {
+  async remove(model: DatabaseRevision): Promise<void> {
     try {
       await this.getDb().remove(model);
     } catch (error) {
@@ -156,10 +163,10 @@ export class PouchdbService {
    * @param id the id of the model
    * @return the changes feed, needs to be canceled to stop receiving changes
    */
-  getChangesFeed<T extends DatabaseModel>(id: DbId): Observable<void> {
+  getChangesFeed(id: DbId): Observable<void> {
     const subject = new Subject<void>();
     const changes = this.getDb()
-      .changes<T>({
+      .changes({
         since: 'now',
         live: true,
         doc_ids: [id],
@@ -198,7 +205,7 @@ export class PouchdbService {
    */
   async addDefaultData(): Promise<void> {
     try {
-      await this.getDb().bulkDocs(examples);
+      await this.getDb().bulkDocs(examples as DatabaseRootEntry[]);
     } catch (error) {
       return this.handleError(error);
     }

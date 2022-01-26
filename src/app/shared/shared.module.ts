@@ -14,9 +14,12 @@ import { SearchComponent } from './search/search.component';
 import { ListWrapperComponent } from './list-wrapper/list-wrapper.component';
 import { ResultsListItemComponent } from './results-list-item/results-list-item.component';
 import { RouterModule } from '@angular/router';
+import { ApiNavigationComponent } from './api-navigation/api-navigation.component';
+import { StepErrorsComponent } from './step-errors/step-errors.component';
 
 @NgModule({
   declarations: [
+    ApiNavigationComponent,
     AuthorFormComponent,
     AuthorInfoComponent,
     DescriptionFormComponent,
@@ -27,6 +30,7 @@ import { RouterModule } from '@angular/router';
     SearchComponent,
     ListWrapperComponent,
     ResultsListItemComponent,
+    StepErrorsComponent,
   ],
   imports: [
     CommonModule,
@@ -40,6 +44,7 @@ import { RouterModule } from '@angular/router';
     NgbModule,
     ReactiveFormsModule,
 
+    ApiNavigationComponent,
     AuthorFormComponent,
     AuthorInfoComponent,
     DeleteModalComponent,
@@ -50,6 +55,7 @@ import { RouterModule } from '@angular/router';
     SearchComponent,
     ListWrapperComponent,
     ResultsListItemComponent,
+    StepErrorsComponent,
   ],
 })
 export class SharedModule {}

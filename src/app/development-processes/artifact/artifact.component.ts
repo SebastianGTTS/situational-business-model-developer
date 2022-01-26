@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
+import {
+  Artifact,
+  ArtifactInit,
+} from '../../development-process-registry/method-elements/artifact/artifact';
 import { ArtifactService } from '../../development-process-registry/method-elements/artifact/artifact.service';
 import { MethodElementLoaderService } from '../shared/method-element-loader.service';
 import { MethodElementService } from '../../development-process-registry/method-elements/method-element.service';
@@ -15,19 +18,22 @@ import { MethodElementService } from '../../development-process-registry/method-
 })
 export class ArtifactComponent {
   constructor(
-    private artifactLoaderService: MethodElementLoaderService<Artifact>,
+    private artifactLoaderService: MethodElementLoaderService<
+      Artifact,
+      ArtifactInit
+    >,
     private artifactService: ArtifactService
   ) {}
 
-  async updateValue(value: any) {
+  async updateValue(value: any): Promise<void> {
     await this.artifactService.update(this.artifact._id, value);
   }
 
-  get artifact() {
+  get artifact(): Artifact {
     return this.artifactLoaderService.methodElement;
   }
 
-  get listNames() {
+  get listNames(): string[] {
     return this.artifactLoaderService.listNames;
   }
 }

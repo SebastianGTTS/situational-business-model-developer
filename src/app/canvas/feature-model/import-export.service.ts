@@ -39,7 +39,8 @@ export class ImportExportService {
   async importExpertModel(file): Promise<ExpertModel> {
     const json = await this.importJson(file);
     const expertModel = new ExpertModel(
-      JSON.parse(JSON.stringify(new ExpertModel(json)))
+      undefined,
+      new ExpertModel(json, undefined)
     );
     this.canvasModelConsistencyService.checkFormalConsistency(expertModel);
     await this.expertModelService.save(expertModel);

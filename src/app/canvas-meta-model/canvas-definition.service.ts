@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CanvasDefinition } from './canvas-definition';
+import { CanvasDefinition, CanvasDefinitionInit } from './canvas-definition';
 import { CanvasDefinitionCell } from './canvas-definition-cell';
 import { DefaultElementService } from '../database/default-element.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CanvasDefinitionService extends DefaultElementService<CanvasDefinition> {
-  protected get typeName(): string {
-    return CanvasDefinition.typeName;
-  }
+export class CanvasDefinitionService extends DefaultElementService<
+  CanvasDefinition,
+  CanvasDefinitionInit
+> {
+  protected readonly typeName = CanvasDefinition.typeName;
+
+  protected readonly elementConstructor = CanvasDefinition;
 
   async updateRows(
     id: string,
@@ -24,11 +27,5 @@ export class CanvasDefinitionService extends DefaultElementService<CanvasDefinit
     const dbElement = await this.get(id);
     dbElement.update(element);
     await this.save(dbElement);
-  }
-
-  protected createElement(
-    element: Partial<CanvasDefinition>
-  ): CanvasDefinition {
-    return new CanvasDefinition(element);
   }
 }

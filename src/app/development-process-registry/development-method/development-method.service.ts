@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { DevelopmentMethod } from './development-method';
+import {
+  DevelopmentMethod,
+  DevelopmentMethodEntry,
+  DevelopmentMethodInit,
+} from './development-method';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { Type } from '../method-elements/type/type';
 import { DefaultElementService } from '../../database/default-element.service';
@@ -9,10 +13,13 @@ import { ModuleService } from '../module-api/module.service';
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
-export class DevelopmentMethodService extends DefaultElementService<DevelopmentMethod> {
-  protected get typeName(): string {
-    return DevelopmentMethod.typeName;
-  }
+export class DevelopmentMethodService extends DefaultElementService<
+  DevelopmentMethod,
+  DevelopmentMethodInit
+> {
+  protected readonly typeName = DevelopmentMethod.typeName;
+
+  protected readonly elementConstructor = DevelopmentMethod;
 
   constructor(
     private moduleService: ModuleService,
@@ -30,9 +37,9 @@ export class DevelopmentMethodService extends DefaultElementService<DevelopmentM
   async getValidDevelopmentMethods(
     needed: { list: string; element: { _id: string; name: string } }[],
     forbidden: { list: string; element: { _id: string; name: string } }[]
-  ): Promise<DevelopmentMethod[]> {
+  ): Promise<DevelopmentMethodEntry[]> {
     return (
-      await this.pouchdbService.find<DevelopmentMethod>(
+      await this.pouchdbService.find<DevelopmentMethodEntry>(
         DevelopmentMethod.typeName,
         {
           selector: {},
@@ -47,11 +54,13 @@ export class DevelopmentMethodService extends DefaultElementService<DevelopmentM
    * @param id id of the development method
    * @param developmentMethod the new values of the object (values will be copied)
    */
-  update(id: string, developmentMethod: Partial<DevelopmentMethod>) {
-    return this.get(id).then((method) => {
-      method.update(developmentMethod);
-      return this.save(method);
-    });
+  async update(
+    id: string,
+    developmentMethod: Partial<DevelopmentMethod>
+  ): Promise<void> {
+    const method = await this.get(id);
+    method.update(developmentMethod);
+    await this.save(method);
   }
 
   /**
@@ -162,11 +171,5 @@ export class DevelopmentMethodService extends DefaultElementService<DevelopmentM
         )
       );
     });
-  }
-
-  protected createElement(
-    element: Partial<DevelopmentMethod>
-  ): DevelopmentMethod {
-    return new DevelopmentMethod(element);
   }
 }

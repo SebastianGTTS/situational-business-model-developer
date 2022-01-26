@@ -54,10 +54,8 @@ import { RefineCanvasComponent } from './api/refine-canvas/refine-canvas.compone
 import { InstanceSelectPatternFormComponent } from './instances/instance-select-pattern-form/instance-select-pattern-form.component';
 import { ViewCanvasComponent } from './api/view-canvas/view-canvas.component';
 import { EditModelComponent } from './api/edit-model/edit-model.component';
-import { StepErrorsComponent } from './api/step-errors/step-errors.component';
 import { CanvasDefinitionFormComponent } from './canvas-definition/canvas-definition-form/canvas-definition-form.component';
 import { CanvasDefinitionRowFormComponent } from './canvas-definition/canvas-definition-row-form/canvas-definition-row-form.component';
-import { ApiNavigationComponent } from './api/api-navigation/api-navigation.component';
 import { CanvasDefinitionRelationshipsFormComponent } from './canvas-definition/canvas-definition-relationships-form/canvas-definition-relationships-form.component';
 import { CanvasElementsComponent } from './elements/canvas-elements/canvas-elements.component';
 import { CanvasDefinitionOverviewComponent } from './canvas-definition/canvas-definition-overview/canvas-definition-overview.component';
@@ -78,7 +76,6 @@ import { PatternHintComponent } from './instances/pattern-hint/pattern-hint.comp
   imports: [SharedModule, CanvasRoutingModule],
   declarations: [
     // api
-    ApiNavigationComponent,
     CompareComponent,
     CreateCanvasComponent,
     CreateCanvasConfigurationComponent,
@@ -89,7 +86,6 @@ import { PatternHintComponent } from './instances/pattern-hint/pattern-hint.comp
     EditModelComponent,
     RefineCanvasComponent,
     SelectCanvasDefinitionConfigurationComponent,
-    StepErrorsComponent,
     ViewCanvasComponent,
 
     // canvas-definition

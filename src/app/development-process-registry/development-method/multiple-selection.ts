@@ -3,30 +3,63 @@ import {
   MethodElementEntry,
 } from '../method-elements/method-element';
 import { Equality } from '../../shared/equality';
-import { DatabaseModelPart } from '../../database/database-model-part';
-import { DatabaseEntry } from '../../database/database-entry';
+import {
+  DatabaseConstructor,
+  DatabaseModelPart,
+  EntryType,
+  InitType,
+} from '../../database/database-model-part';
+import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
+
+export interface MultipleSelectionInit<T extends DatabaseInit>
+  extends DatabaseInit {
+  list: string;
+  element?: T;
+  multiple?: boolean;
+  multipleElements?: boolean;
+}
 
 export interface MultipleSelectionEntry<T extends MethodElementEntry>
   extends DatabaseEntry {
   list: string;
-  element: T;
+  element?: T;
   multiple: boolean;
   multipleElements: boolean;
 }
 
 export class MultipleSelection<T extends MethodElement>
-  implements Equality<MultipleSelection<T>>, DatabaseModelPart
+  implements
+    MultipleSelectionInit<T>,
+    Equality<MultipleSelection<T>>,
+    DatabaseModelPart
 {
   list: string;
-  element: T;
+  element?: T;
   multiple = false;
   multipleElements = false;
 
   constructor(
-    selection: MultipleSelection<T>,
-    createElement: (element: Partial<T>) => T
+    entry: MultipleSelectionEntry<EntryType<T>> | undefined,
+    init: MultipleSelectionInit<InitType<T>> | undefined,
+    databaseConstructor: DatabaseConstructor<T>
   ) {
-    this.update(selection, createElement);
+    const element = entry ?? init;
+    this.list = element.list;
+    this.multiple = element.multiple ?? this.multiple;
+    this.multipleElements = element.multipleElements ?? this.multipleElements;
+    if (entry != null) {
+      this.element =
+        entry.element != null
+          ? new databaseConstructor(entry.element, undefined)
+          : undefined;
+    } else if (init != null) {
+      this.element =
+        init.element != null
+          ? new databaseConstructor(undefined, init.element)
+          : undefined;
+    } else {
+      throw new Error('Either entry or init must be provided.');
+    }
   }
 
   update(

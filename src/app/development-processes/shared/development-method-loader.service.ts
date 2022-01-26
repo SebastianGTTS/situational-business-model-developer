@@ -15,7 +15,7 @@ export class DevelopmentMethodLoaderService extends ElementLoaderService {
     super(route);
   }
 
-  protected initParams(paramMap: ParamMap) {
+  protected initParams(paramMap: ParamMap): void {
     const developmentMethodId = paramMap.get('id');
     this.changesFeed = this.developmentMethodService
       .getChangesFeed(developmentMethodId)
@@ -23,7 +23,9 @@ export class DevelopmentMethodLoaderService extends ElementLoaderService {
     void this.loadDevelopmentMethod(developmentMethodId);
   }
 
-  private async loadDevelopmentMethod(developmentMethodId: string) {
+  private async loadDevelopmentMethod(
+    developmentMethodId: string
+  ): Promise<void> {
     this.developmentMethod = await this.developmentMethodService.get(
       developmentMethodId
     );
