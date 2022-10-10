@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "artifact-module": {
+      "description": "Generate an artifact module in the project.",
+      "factory": "./artifact-module/index#artifactModule",
+      "schema": "./artifact-module/schema.json"
+    },
+    "tool-module": {
+      "description": "Generate a tool module in the project.",
+      "factory": "./tool-module/index#toolModule",
+      "schema": "./tool-module/schema.json"
+    }
+  }
+}

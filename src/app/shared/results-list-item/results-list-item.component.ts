@@ -6,6 +6,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./results-list-item.component.css'],
 })
 export class ResultsListItemComponent {
-  @Input() viewLink: string[];
+  @Input() viewLink!: string[];
   @Output() delete = new EventEmitter();
 }

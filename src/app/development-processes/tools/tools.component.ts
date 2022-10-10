@@ -4,10 +4,7 @@ import { ToolService } from '../../development-process-registry/method-elements/
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { Module } from '../../development-process-registry/module-api/module';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import {
-  Tool,
-  ToolEntry,
-} from '../../development-process-registry/method-elements/tool/tool';
+import { ToolEntry } from '../../development-process-registry/method-elements/tool/tool';
 
 @Component({
   selector: 'app-tools',
@@ -15,13 +12,13 @@ import {
   styleUrls: ['./tools.component.css'],
 })
 export class ToolsComponent implements OnInit {
-  elementLists: { listName: string; elements: ToolEntry[] }[] = null;
+  elementLists?: { listName: string; elements: ToolEntry[] }[];
   listNames: string[] = [];
 
-  moduleLists: { listName: string; elements: Module[] }[] = null;
+  moduleLists?: { listName: string; elements: Module[] }[];
 
-  modalTool: Tool;
-  private modalReference: NgbModalRef;
+  modalTool?: ToolEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteToolModal', { static: true }) deleteToolModal: unknown;
 
@@ -46,7 +43,7 @@ export class ToolsComponent implements OnInit {
       .catch((error) => console.log('Load: ' + error));
   }
 
-  openDeleteToolModal(tool: Tool): void {
+  openDeleteToolModal(tool: ToolEntry): void {
     this.modalTool = tool;
     this.modalReference = this.modalService.open(this.deleteToolModal, {
       size: 'lg',

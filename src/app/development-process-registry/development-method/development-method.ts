@@ -17,26 +17,24 @@ import {
   StakeholderInit,
 } from '../method-elements/stakeholder/stakeholder';
 import { Tool, ToolEntry, ToolInit } from '../method-elements/tool/tool';
-import {
-  MultipleSelection,
-  MultipleSelectionEntry,
-  MultipleSelectionInit,
-} from './multiple-selection';
-import {
-  ExecutionStep,
-  ExecutionStepEntry,
-  ExecutionStepInit,
-} from './execution-step';
-import {
-  MultipleMappingSelection,
-  MultipleMappingSelectionEntry,
-  MultipleMappingSelectionInit,
-} from './multiple-mapping-selection';
 import { Selection, SelectionEntry, SelectionInit } from './selection';
 import {
   DatabaseRootEntry,
   DatabaseRootInit,
 } from '../../database/database-entry';
+import { Groups, GroupsEntry, GroupsInit } from './groups';
+import {
+  ArtifactGroups,
+  ArtifactGroupsEntry,
+  ArtifactGroupsInit,
+} from './artifact-groups';
+import {
+  createExecutionStep,
+  ExecutionStep,
+  ExecutionStepEntry,
+  ExecutionStepInit,
+  isMethodExecutionStep,
+} from './execution-step';
 
 export interface DevelopmentMethodInit extends DatabaseRootInit {
   name: string;
@@ -47,10 +45,10 @@ export interface DevelopmentMethodInit extends DatabaseRootInit {
   types?: SelectionInit<TypeInit>[];
   situationalFactors?: SelectionInit<SituationalFactorInit>[];
 
-  inputArtifacts?: MultipleMappingSelectionInit<ArtifactInit>[][];
-  outputArtifacts?: MultipleSelectionInit<ArtifactInit>[][];
-  stakeholders?: MultipleSelectionInit<StakeholderInit>[][];
-  tools?: MultipleSelectionInit<ToolInit>[][];
+  inputArtifacts?: ArtifactGroupsInit;
+  outputArtifacts?: GroupsInit<ArtifactInit>;
+  stakeholders?: GroupsInit<StakeholderInit>;
+  tools?: GroupsInit<ToolInit>;
 
   executionSteps?: ExecutionStepInit[];
 }
@@ -64,10 +62,10 @@ export interface DevelopmentMethodEntry extends DatabaseRootEntry {
   types: SelectionEntry<TypeEntry>[];
   situationalFactors: SelectionEntry<SituationalFactorEntry>[];
 
-  inputArtifacts: MultipleMappingSelectionEntry<ArtifactEntry>[][];
-  outputArtifacts: MultipleSelectionEntry<ArtifactEntry>[][];
-  stakeholders: MultipleSelectionEntry<StakeholderEntry>[][];
-  tools: MultipleSelectionEntry<ToolEntry>[][];
+  inputArtifacts: ArtifactGroupsEntry;
+  outputArtifacts: GroupsEntry<ArtifactEntry>;
+  stakeholders: GroupsEntry<StakeholderEntry>;
+  tools: GroupsEntry<ToolEntry>;
 
   executionSteps: ExecutionStepEntry[];
 }
@@ -79,17 +77,17 @@ export class DevelopmentMethod
   static readonly typeName = 'DevelopmentMethod';
 
   name: string;
-  description: string;
+  description = '';
   examples: string[] = [];
   author: Author;
 
   types: Selection<Type>[] = [];
   situationalFactors: Selection<SituationalFactor>[] = [];
 
-  inputArtifacts: MultipleMappingSelection<Artifact>[][] = [];
-  outputArtifacts: MultipleSelection<Artifact>[][] = [];
-  stakeholders: MultipleSelection<Stakeholder>[][] = [];
-  tools: MultipleSelection<Tool>[][] = [];
+  inputArtifacts: ArtifactGroups;
+  outputArtifacts: Groups<Artifact>;
+  stakeholders: Groups<Stakeholder>;
+  tools: Groups<Tool>;
 
   executionSteps: ExecutionStep[] = [];
 
@@ -99,8 +97,11 @@ export class DevelopmentMethod
   ) {
     super(entry, init, DevelopmentMethod.typeName);
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.name = element.name;
-    this.description = element.description;
+    this.description = element.description ?? this.description;
     this.examples = element.examples ?? this.examples;
     if (entry != null) {
       this.author = new Author(entry.author, undefined);
@@ -117,36 +118,23 @@ export class DevelopmentMethod
               SituationalFactor
             )
         ) ?? this.situationalFactors;
-      this.inputArtifacts =
-        entry.inputArtifacts?.map((group) =>
-          group.map(
-            (inputArtifact) =>
-              new MultipleMappingSelection(inputArtifact, undefined, Artifact)
-          )
-        ) ?? this.inputArtifacts;
-      this.outputArtifacts =
-        entry.outputArtifacts?.map((group) =>
-          group.map(
-            (outputArtifact) =>
-              new MultipleSelection(outputArtifact, undefined, Artifact)
-          )
-        ) ?? this.outputArtifacts;
-      this.stakeholders =
-        entry.stakeholders?.map((group) =>
-          group.map(
-            (stakeholder) =>
-              new MultipleSelection(stakeholder, undefined, Stakeholder)
-          )
-        ) ?? this.stakeholders;
-      this.tools =
-        entry.tools?.map((group) =>
-          group.map((tool) => new MultipleSelection(tool, undefined, Tool))
-        ) ?? this.tools;
+      this.inputArtifacts = new ArtifactGroups(entry.inputArtifacts, undefined);
+      this.outputArtifacts = new Groups<Artifact>(
+        entry.outputArtifacts,
+        undefined,
+        Artifact
+      );
+      this.stakeholders = new Groups<Stakeholder>(
+        entry.stakeholders,
+        undefined,
+        Stakeholder
+      );
+      this.tools = new Groups<Tool>(entry.tools, undefined, Tool);
       this.executionSteps =
-        entry.executionSteps?.map(
-          (executionStep) => new ExecutionStep(executionStep, undefined)
+        entry.executionSteps?.map((executionStep) =>
+          createExecutionStep(executionStep, undefined)
         ) ?? this.executionSteps;
-    } else {
+    } else if (init != null) {
       this.author = new Author(undefined, init.author);
       this.types =
         init.types?.map(
@@ -161,35 +149,27 @@ export class DevelopmentMethod
               SituationalFactor
             )
         ) ?? this.situationalFactors;
-      this.inputArtifacts =
-        init.inputArtifacts?.map((group) =>
-          group.map(
-            (inputArtifact) =>
-              new MultipleMappingSelection(undefined, inputArtifact, Artifact)
-          )
-        ) ?? this.inputArtifacts;
-      this.outputArtifacts =
-        init.outputArtifacts?.map((group) =>
-          group.map(
-            (outputArtifact) =>
-              new MultipleSelection(undefined, outputArtifact, Artifact)
-          )
-        ) ?? this.outputArtifacts;
-      this.stakeholders =
-        init.stakeholders?.map((group) =>
-          group.map(
-            (stakeholder) =>
-              new MultipleSelection(undefined, stakeholder, Stakeholder)
-          )
-        ) ?? this.stakeholders;
-      this.tools =
-        init.tools?.map((group) =>
-          group.map((tool) => new MultipleSelection(undefined, tool, Tool))
-        ) ?? this.tools;
+      this.inputArtifacts = new ArtifactGroups(
+        undefined,
+        init.inputArtifacts ?? {}
+      );
+      this.outputArtifacts = new Groups<Artifact>(
+        undefined,
+        init.outputArtifacts ?? {},
+        Artifact
+      );
+      this.stakeholders = new Groups<Stakeholder>(
+        undefined,
+        init.stakeholders ?? {},
+        Stakeholder
+      );
+      this.tools = new Groups<Tool>(undefined, init.tools ?? {}, Tool);
       this.executionSteps =
-        init.executionSteps?.map(
-          (executionStep) => new ExecutionStep(undefined, executionStep)
+        init.executionSteps?.map((executionStep) =>
+          createExecutionStep(undefined, executionStep)
         ) ?? this.executionSteps;
+    } else {
+      throw new Error('Either entry or init must be provided.');
     }
   }
 
@@ -207,33 +187,20 @@ export class DevelopmentMethod
     this.situationalFactors = this.situationalFactors.map(
       (selection) => new Selection(undefined, selection, SituationalFactor)
     );
-    this.inputArtifacts = this.inputArtifacts.map((group) =>
-      group.map(
-        (artifact) =>
-          new MultipleMappingSelection<Artifact>(undefined, artifact, Artifact)
-      )
+    this.inputArtifacts = new ArtifactGroups(undefined, this.inputArtifacts);
+    this.outputArtifacts = new Groups<Artifact>(
+      undefined,
+      this.outputArtifacts,
+      Artifact
     );
-    this.outputArtifacts = this.outputArtifacts.map((group) =>
-      group.map(
-        (artifact) =>
-          new MultipleSelection<Artifact>(undefined, artifact, Artifact)
-      )
+    this.stakeholders = new Groups<Stakeholder>(
+      undefined,
+      this.stakeholders,
+      Stakeholder
     );
-    this.stakeholders = this.stakeholders.map((group) =>
-      group.map(
-        (stakeholder) =>
-          new MultipleSelection<Stakeholder>(
-            undefined,
-            stakeholder,
-            Stakeholder
-          )
-      )
-    );
-    this.tools = this.tools.map((group) =>
-      group.map((tool) => new MultipleSelection<Tool>(undefined, tool, Tool))
-    );
-    this.executionSteps = this.executionSteps.map(
-      (step) => new ExecutionStep(undefined, step)
+    this.tools = new Groups<Tool>(undefined, this.tools, Tool);
+    this.executionSteps = this.executionSteps.map((step) =>
+      createExecutionStep(undefined, step)
     );
   }
 
@@ -258,31 +225,37 @@ export class DevelopmentMethod
     // check step mappings
     for (let i = 0; i < this.executionSteps.length; i++) {
       const executionStep = this.executionSteps[i];
-      for (let j = 0; j < executionStep.outputMappings.length; j++) {
-        const outputArtifact = executionStep.outputMappings[j];
-        for (const mapping of outputArtifact) {
-          if (
-            mapping.output === false &&
-            mapping.step === step &&
-            mapping.artifact < artifactDefined.length
-          ) {
-            artifactDefined[mapping.artifact].push({
-              isStep: true,
-              index: i,
-              artifact: j,
-            });
+      if (isMethodExecutionStep(executionStep)) {
+        for (let j = 0; j < executionStep.outputMappings.length; j++) {
+          const outputArtifact = executionStep.outputMappings[j];
+          for (const mapping of outputArtifact) {
+            if (
+              !mapping.output &&
+              mapping.step === step &&
+              mapping.artifact < artifactDefined.length
+            ) {
+              artifactDefined[mapping.artifact].push({
+                isStep: true,
+                index: i,
+                artifact: j,
+              });
+            }
           }
         }
       }
     }
 
     // check input groups
-    for (let i = 0; i < this.inputArtifacts.length; i++) {
-      const inputGroup = this.inputArtifacts[i];
-      for (let j = 0; j < inputGroup.length; j++) {
-        const artifact = inputGroup[j];
+    for (let i = 0; i < this.inputArtifacts.groups.length; i++) {
+      const inputGroup = this.inputArtifacts.groups[i];
+      for (let j = 0; j < inputGroup.items.length; j++) {
+        const artifact = inputGroup.items[j];
         for (const mapping of artifact.mapping) {
-          if (mapping.output === false && mapping.step === step) {
+          if (
+            !mapping.output &&
+            mapping.step === step &&
+            mapping.artifact < artifactDefined.length
+          ) {
             artifactDefined[mapping.artifact].push({
               isStep: false,
               index: i,
@@ -301,8 +274,8 @@ export class DevelopmentMethod
    */
   getAllToolNames(): Set<string> {
     const tools: Set<string> = new Set<string>();
-    this.tools.forEach((toolGroup) =>
-      toolGroup.forEach((tool) => {
+    this.tools.groups.forEach((toolGroup) =>
+      toolGroup.items.forEach((tool) => {
         if (tool.element != null) {
           tools.add(tool.element.name);
         }
@@ -322,16 +295,10 @@ export class DevelopmentMethod
       situationalFactors: this.situationalFactors.map((factor) =>
         factor.toDb()
       ),
-      inputArtifacts: this.inputArtifacts.map((group) =>
-        group.map((artifact) => artifact.toDb())
-      ),
-      outputArtifacts: this.outputArtifacts.map((group) =>
-        group.map((artifact) => artifact.toDb())
-      ),
-      stakeholders: this.stakeholders.map((group) =>
-        group.map((element) => element.toDb())
-      ),
-      tools: this.tools.map((group) => group.map((tool) => tool.toDb())),
+      inputArtifacts: this.inputArtifacts.toDb(),
+      outputArtifacts: this.outputArtifacts.toDb(),
+      stakeholders: this.stakeholders.toDb(),
+      tools: this.tools.toDb(),
       executionSteps: this.executionSteps.map((step) => step.toDb()),
     };
   }

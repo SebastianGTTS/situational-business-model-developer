@@ -1,4 +1,5 @@
-<ng-container *ngIf="inputArtifacts.length === 0">
+<div class="alert alert-info" *ngIf="inputArtifacts == null">Loading...</div>
+<ng-container *ngIf="inputArtifacts != null && inputArtifacts.length === 0">
   <div class="alert alert-info">
     This building block has no input artifacts.
   </div>
@@ -14,25 +15,33 @@
 </ng-container>
 <form
   [formGroup]="form"
-  *ngIf="inputArtifacts.length > 0"
+  *ngIf="inputArtifacts != null && inputArtifacts.length > 0"
   (ngSubmit)="submitForm()"
 >
   <div formArrayName="inputArtifacts">
     <div
       class="my-3 p-3 bg-white rounded shadow-sm"
-      *ngFor="let artifact of inputArtifacts; let index = index"
+      *ngFor="let elementOptional of inputArtifacts; let index = index"
       formGroupName="{{ index }}"
     >
       <h6 class="border-bottom border-gray pb-2">
-        Artifact Type: {{ artifact.name }} ({{ artifact.list | list }})
+        Artifact Type:
+        {{ elementOptional.element.name | optional: elementOptional.optional }}
+        ({{ elementOptional.element.list | list }})
       </h6>
       <div class="form-group">
         <label for="artifact">Artifact</label>
         <select class="form-control" id="artifact" formControlName="artifact">
+          <option *ngIf="elementOptional.optional" [ngValue]="null">
+            None
+          </option>
           <ng-container
             *ngFor="let a of runningProcess.artifacts; let index = index"
           >
-            <option *ngIf="a.artifact._id === artifact._id" [ngValue]="index">
+            <option
+              *ngIf="a.artifact._id === elementOptional.element._id"
+              [ngValue]="index"
+            >
               {{ a.identifier }}
             </option>
           </ng-container>

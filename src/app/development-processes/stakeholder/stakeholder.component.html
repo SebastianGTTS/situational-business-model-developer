@@ -1,6 +1,9 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="stakeholder">
-    <a class="nav-link active" [routerLink]="[]">{{ stakeholder.name }}</a>
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'stakeholders']">Stakeholders</a>
+    <a class="nav-link active" *ngIf="stakeholder" [routerLink]="[]">{{
+      stakeholder.name
+    }}</a>
   </nav>
 </div>
 

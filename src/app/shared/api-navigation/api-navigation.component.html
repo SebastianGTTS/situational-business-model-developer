@@ -1,6 +1,7 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="runningProcess">
+  <nav class="nav nav-underline" *ngIf="runningProcess != null">
     <a
+      *ngIf="!runningProcess.contextChange"
       class="nav-link"
       [routerLink]="[
         '/',
@@ -9,8 +10,20 @@
         runningProcess._id
       ]"
     >
-      {{ runningProcess.process.name }} &ndash;
-      {{ runningProcess.name }}
+      {{ runningProcess | runningProcessName }}
+    </a>
+    <a
+      *ngIf="runningProcess.contextChange"
+      class="nav-link"
+      [routerLink]="['/', 'bmprocess']"
+      >Business Model Development Methods</a
+    >
+    <a
+      *ngIf="runningProcess.contextChange"
+      class="nav-link"
+      [routerLink]="['/', 'bmprocess', 'contextchange', runningProcess._id]"
+    >
+      Context Change: {{ runningProcess | runningProcessName }}
     </a>
     <a
       *ngIf="runningMethod != null"
@@ -28,6 +41,31 @@
     </a>
     <ng-content></ng-content>
     <a class="nav-link active" [routerLink]="[]" [queryParams]="queryParams">
+      {{ apiName ?? 'Step' }}
+    </a>
+  </nav>
+  <nav class="nav nav-underline" *ngIf="artifact != null">
+    <a class="nav-link" [routerLink]="['/', 'concreteArtifacts']">
+      Concrete Artifacts
+    </a>
+    <a
+      class="nav-link"
+      [routerLink]="['/', 'concreteArtifacts', 'detail', artifact._id]"
+    >
+      {{ artifact.identifier }}
+    </a>
+    <a
+      *ngIf="artifactVersion != null"
+      class="nav-link"
+      [routerLink]="['/', 'concreteArtifacts', 'detail', artifact._id]"
+    >
+      Version #{{ artifactVersion + 1 }}
+    </a>
+    <a
+      class="nav-link active"
+      [routerLink]="[]"
+      [queryParams]="artifactQueryParams"
+    >
       {{ apiName ?? 'Step' }}
     </a>
   </nav>

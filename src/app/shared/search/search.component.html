@@ -9,7 +9,7 @@
   />
 </form>
 <h5>{{ heading }}</h5>
-<div *ngIf="!items" class="alert alert-info">Loading...</div>
+<div *ngIf="items == null" class="alert alert-info">Loading...</div>
 <div *ngIf="items && items.length === 0" class="alert alert-info">
   No fitting {{ itemName }}
 </div>

@@ -7,6 +7,7 @@
   </div>
   <div class="modal-body">
     <app-development-method-summary
+      *ngIf="modalDecision != null"
       [decision]="modalDecision"
     ></app-development-method-summary>
   </div>
@@ -25,35 +26,28 @@
   </div>
 </ng-template>
 
-<ng-template #showArtifactVersionModal let-d="dismiss">
+<ng-template #notCompletelyDefinedModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">
-      Version #{{ modalArtifact.versions.indexOf(modalArtifactVersion) + 1 }} of
-      {{ modalArtifact.identifier }} &ndash; {{ modalArtifact.artifact.name }}
+    <h4 class="modal-title" *ngIf="modalToDoMethod != null">
+      Can not execute method {{ modalToDoMethod.decision.method.name }}
     </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <ng-container
-      *ngIf="getArtifactDataTypeString() === modalArtifactVersion.data.type"
-    >
-      <h5>Note</h5>
-      <quill-view [content]="modalArtifactVersion.data.data"></quill-view>
-    </ng-container>
-    <ng-container
-      *ngIf="getArtifactDataTypeReference() === modalArtifactVersion.data.type"
-    >
-      <h5>Reference</h5>
-      This version points on another object in the database.
+    You need to completely define the method before executing it. Edit the
+    method to define it completely.
+  </div>
+  <div class="modal-footer" *ngIf="modalToDoMethod != null">
+    <div class="d-flex align-items-baseline">
       <button
-        class="btn btn-xs btn-primary"
-        (click)="viewArtifactReference(modalArtifactVersion.data.data)"
+        class="btn btn-primary"
+        (click)="d(); editToDoMethod(modalToDoMethod.executionId)"
       >
-        View
+        Edit method
       </button>
-    </ng-container>
+    </div>
   </div>
 </ng-template>
 
@@ -66,38 +60,75 @@
   </div>
   <div class="modal-body">
     <app-development-methods-selection-form
-      [contextSituationalFactors]="runningProcess.process.situationalFactors"
+      *ngIf="runningProcess != null"
+      [allowTypeFilter]="true"
+      [contextSituationalFactors]="runningProcess.situationalFactors"
       [developmentMethods]="modalDevelopmentMethods"
-      (selectDevelopmentMethod)="configureMethod($event)"
+      (selectDevelopmentMethod)="addToDoMethod($event)"
     ></app-development-methods-selection-form>
   </div>
 </ng-template>
 
 <ng-template #methodConfigurationModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">
-      Configure Building Block {{ modalDevelopmentMethod.name }}
+    <h4 class="modal-title" *ngIf="modalToDoMethod != null">
+      Configure Building Block {{ modalToDoMethod.decision.method.name }}
     </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
-    <app-method-info
-      [contextSituationalFactors]="runningProcess.process.situationalFactors"
-      [developmentMethod]="modalDevelopmentMethod"
-      [decision]="modalDecision"
-      (updateDecisions)="updateDecision($event)"
-    ></app-method-info>
+  <ng-container *ngIf="runningProcess != null && modalToDoMethod != null">
+    <div class="modal-body">
+      <app-method-info
+        #methodInfo
+        [runningProcess]="runningProcess"
+        [contextDomains]="runningProcess.domains"
+        [contextSituationalFactors]="runningProcess.situationalFactors"
+        [developmentMethod]="modalToDoMethod.decision.method"
+        [decision]="modalToDoMethod.decision"
+        (updateDecisions)="updateDecision($event)"
+      ></app-method-info>
+    </div>
+    <div class="modal-footer d-flex align-items-baseline">
+      <button class="btn btn-secondary" (click)="d()">Close</button>
+      <button
+        class="ml-auto btn btn-primary"
+        (click)="methodInfo.update(); d()"
+      >
+        Update all and finish editing
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #methodArtifactsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Artifacts of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
-  <div class="modal-footer">
-    <button class="btn btn-primary" (click)="addMethod()">Add method</button>
+  <div
+    class="modal-body"
+    *ngIf="modalRunningMethodInfoArtifacts != null && runningProcess != null"
+  >
+    <app-running-process-artifacts
+      [runningProcess]="runningProcess"
+      [artifactVersions]="modalRunningMethodInfoArtifacts"
+      [allowChanges]="false"
+      (focusNode)="focus($event); d()"
+      (editArtifact)="editArtifact($event); d()"
+      (viewArtifactVersion)="viewArtifactVersion($event); d()"
+    ></app-running-process-artifacts>
   </div>
 </ng-template>
 
 <ng-template #commentsModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
       Comments of {{ modalRunningMethodInfo.methodName }}
     </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
@@ -106,68 +137,18 @@
   </div>
   <div class="modal-body">
     <app-running-process-method-comments
+      *ngIf="modalRunningMethodInfo != null"
       [comments]="modalRunningMethodInfo.comments"
       [editable]="false"
     ></app-running-process-method-comments>
   </div>
 </ng-template>
 
-<ng-template #artifactExportModal let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">Export Artifact</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <app-running-process-artifact-export-form
-      [artifact]="modalArtifact"
-      (submitArtifactExportForm)="
-        exportArtifact($event.value.identifier, modalArtifact); d()
-      "
-    ></app-running-process-artifact-export-form>
-  </div>
-</ng-template>
-
-<ng-template #artifactImportModal let-d="dismiss" let-c="close">
-  <div class="modal-header">
-    <h4 class="modal-title">Import Artifact</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <app-running-process-artifact-import-form
-      (selectArtifact)="importArtifact($event._id); c()"
-    ></app-running-process-artifact-import-form>
-  </div>
-</ng-template>
-
-<ng-template #artifactRenameModal let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">
-      Rename Artifact {{ modalArtifact.identifier }} &ndash;
-      {{ modalArtifact.artifact.name }}
-    </h4>
-    <button type="button" class="close" aria-label="Close" (click)="d()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <app-running-process-artifact-rename-form
-      [artifact]="modalArtifact"
-      (submitArtifactExportForm)="
-        renameArtifact($event.value.identifier, modalArtifact); c()
-      "
-    ></app-running-process-artifact-rename-form>
-  </div>
-</ng-template>
-
 <div class="nav-scroller bg-white shadow-sm">
   <nav class="nav nav-underline" *ngIf="runningProcess">
-    <a class="nav-link active" [routerLink]="[]"
-      >{{ runningProcess.process.name }} &ndash; {{ runningProcess.name }}</a
-    >
+    <a class="nav-link active" [routerLink]="[]">{{
+      runningProcess | runningProcessName
+    }}</a>
   </nav>
 </div>
 
@@ -193,6 +174,7 @@
 
 <main *ngIf="runningProcess" role="main">
   <app-running-process-viewer
+    *ngIf="runningProcess.hasProcess()"
     [runningProcess]="runningProcess"
   ></app-running-process-viewer>
 
@@ -238,17 +220,35 @@
       <app-running-process-kanban-board
         [runningProcess]="runningProcess"
         (addTodo)="openSelectMethodModal()"
+        (editTodo)="editToDoMethod($event)"
         (removeTodo)="removeMethod($event)"
         (viewNode)="focus($event)"
         (showInfo)="openInfoModal($event)"
         (startNodeExecution)="startNodeExecution($event)"
         (startExecution)="startExecution($event)"
         (viewExecution)="viewExecution($event)"
+        (viewArtifacts)="viewArtifacts($event)"
         (viewComments)="openCommentsModal($event)"
       ></app-running-process-kanban-board>
     </div>
 
-    <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <app-running-process-artifacts
+      [runningProcess]="runningProcess"
+      (focusNode)="focus($event)"
+      (importArtifact)="importArtifact($event)"
+      (exportArtifact)="exportArtifact($event.identifier, $event.artifact)"
+      (renameArtifact)="renameArtifact($event.identifier, $event.artifact)"
+      (viewArtifactVersion)="viewArtifactVersion($event)"
+      (editArtifact)="editArtifact($event)"
+      (addArtifact)="addArtifact($event.artifact, $event.output)"
+      (createArtifact)="createArtifact($event)"
+      (removeArtifact)="removeArtifact($event)"
+    ></app-running-process-artifacts>
+
+    <div
+      *ngIf="runningProcess.hasProcess()"
+      class="my-3 p-3 bg-white rounded shadow-sm"
+    >
       <div
         class="
           d-flex
@@ -258,76 +258,46 @@
           mb-2
         "
       >
-        <h6 class="pb-2 mb-0">Artifacts</h6>
-        <button class="btn btn-xs btn-dark" (click)="openArtifactImportModal()">
-          Import Artifact
+        <h6 class="pb-2 mb-0">Context</h6>
+        <button
+          *ngIf="runningProcess.hasProcess()"
+          class="btn btn-xs btn-dark"
+          (click)="openRequestContextChangeModal()"
+        >
+          Request context change
         </button>
       </div>
-      <div
-        *ngIf="runningProcess.artifacts.length === 0"
-        class="alert alert-info mb-0"
-      >
-        There are no artifacts
+      <div class="my-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2">Domain</h6>
+        <ul class="list-group">
+          <li
+            class="list-group-item"
+            *ngFor="let domain of runningProcess.domains"
+          >
+            {{ domain.name }}
+          </li>
+        </ul>
       </div>
-      <ul *ngIf="runningProcess.artifacts.length > 0" class="list-group">
-        <li
-          *ngFor="let artifact of runningProcess.artifacts"
-          class="list-group-item"
-        >
-          <div class="d-flex">
-            <div>
-              {{ artifact.identifier }} &ndash; {{ artifact.artifact.name }}
-            </div>
-            <div class="ml-auto">
-              <div
-                class="btn btn-dark btn-xs mr-1"
-                (click)="openRenameArtifactModal(artifact)"
-              >
-                Rename
-              </div>
-              <div
-                class="btn btn-dark btn-xs"
-                (click)="openArtifactExportModal(artifact)"
-              >
-                Export
-              </div>
-            </div>
-          </div>
-          <ul *ngIf="artifact.versions.length > 0">
-            <li *ngFor="let version of artifact.versions; let index = index">
-              <a
-                [routerLink]="[]"
-                (click)="openShowArtifactVersionModal(artifact, version)"
-                >Version #{{ index + 1 }}</a
-              >
-              &ndash;
-              <a
-                *ngIf="
-                  version.createdBy !== 'manual' &&
-                  version.createdBy !== 'imported'
-                "
-                [routerLink]="[]"
-                (click)="focus(version.createdBy)"
-              >
-                {{
-                  runningProcess.process.decisions[version.createdBy].method
-                    .name
-                }}
-              </a>
-              <span *ngIf="version.createdBy === 'manual'">
-                {{
-                  runningProcess.getExecutedMethod(version.executedBy)
-                    .methodName
-                }}
-              </span>
-              <span *ngIf="version.createdBy === 'imported'">
-                Imported from {{ version.importName }}
-              </span>
-              &ndash; {{ version.time | date: 'short' }}
-            </li>
-          </ul>
-        </li>
-      </ul>
+      <div class="mt-3 p-3 bg-white rounded shadow-sm">
+        <h6 class="border-bottom border-gray pb-2">Situational Factors</h6>
+        <ul class="list-group">
+          <li
+            class="list-group-item"
+            *ngFor="let situationalFactor of runningProcess.situationalFactors"
+          >
+            {{ situationalFactor.element!.factor.name }}:
+            {{ situationalFactor.element!.value }}
+          </li>
+        </ul>
+      </div>
     </div>
+
+    <app-context-edit
+      *ngIf="!runningProcess.hasProcess()"
+      [domains]="runningProcess.domains"
+      [situationalFactors]="runningProcess.situationalFactors"
+      (updateDomains)="updateDomains($event)"
+      (updateSituationalFactors)="updateSituationalFactors($event)"
+    ></app-context-edit>
   </div>
 </main>

@@ -1,0 +1,34 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'expertModels']">
+      Canvas Building Blocks
+    </a>
+    <a
+      *ngIf="expertModel != null"
+      class="nav-link"
+      [routerLink]="['/', 'expertModels', expertModel._id]"
+    >
+      {{ expertModel.name }}
+    </a>
+    <a
+      *ngIf="expertModel != null && pattern != null"
+      class="nav-link active"
+      [routerLink]="[]"
+    >
+      {{ pattern.name }}
+    </a>
+  </nav>
+</div>
+
+<main
+  *ngIf="expertModel != null && pattern != null"
+  role="main"
+  class="container"
+>
+  <app-instance
+    [featureModel]="expertModel"
+    [instance]="pattern"
+    (updateFeatureModel)="updateExpertModel()"
+    (createAdaptation)="createAdaptation()"
+  ></app-instance>
+</main>

@@ -4,6 +4,7 @@ describe('ProcessPattern', () => {
   it('should create', () => {
     const processPattern = new ProcessPattern(undefined, {
       name: 'Test Pattern',
+      pattern: '',
     });
     expect(processPattern).toBeTruthy();
     expect(processPattern.name).toBe('Test Pattern');

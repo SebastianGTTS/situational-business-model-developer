@@ -24,8 +24,8 @@
     class="form-group"
     formArrayName="neededType"
     [createFormGroupFactory]="createFormGroupFactory"
-    [listNames]="listNames"
-    [methodElements]="methodElements"
+    [listNames]="listNames ?? []"
+    [methodElements]="methodElements ?? []"
     methodElementName="Needed Type"
   ></app-method-elements-selection-form>
 
@@ -34,8 +34,8 @@
     class="form-group"
     formArrayName="forbiddenType"
     [createFormGroupFactory]="createFormGroupFactory"
-    [listNames]="listNames"
-    [methodElements]="methodElements"
+    [listNames]="listNames ?? []"
+    [methodElements]="methodElements ?? []"
     methodElementName="Forbidden Type"
   ></app-method-elements-selection-form>
 

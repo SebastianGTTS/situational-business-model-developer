@@ -9,15 +9,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class ConfirmLeaveModalComponent {
   constructor(private activeModal: NgbActiveModal) {}
 
-  close() {
+  close(): void {
     this.activeModal.dismiss();
   }
 
-  leave() {
+  leave(): void {
     this.activeModal.close(false);
   }
 
-  saveChanges() {
+  saveChanges(): void {
     this.activeModal.close(true);
   }
 }

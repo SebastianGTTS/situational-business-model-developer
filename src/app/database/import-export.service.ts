@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { PouchdbService } from './pouchdb.service';
+import { DatabaseRootEntry } from './database-entry';
 
 interface ImportExportContent {
   identifier: string;
-  docs: any[];
+  docs: DatabaseRootEntry[];
 }
 
 @Injectable({
@@ -48,15 +49,17 @@ export class ImportExportService {
     console.log('Finished');
   }
 
+  // noinspection JSMethodCanBeStatic
   /**
    * Check whether the file has the correct content.
    * Throws an error if the file can not be imported.
    *
    * @return the docs to be imported
    */
-  private convertContentToDocs(content: unknown): any[] {
+  private convertContentToDocs(content: unknown): DatabaseRootEntry[] {
     if (
       typeof content === 'object' &&
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       'identifier' in content! &&
       'docs' in content
     ) {
@@ -84,7 +87,7 @@ export class ImportExportService {
         (event: ProgressEvent<FileReader>) => {
           let json = null;
           try {
-            json = JSON.parse(event.target!.result as string);
+            json = JSON.parse(event.target?.result as string);
           } catch (error) {
             reject(error);
             return;

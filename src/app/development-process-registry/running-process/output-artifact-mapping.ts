@@ -32,17 +32,19 @@ export class OutputArtifactMapping
     entry: OutputArtifactMappingEntry | undefined,
     init: OutputArtifactMappingInit | undefined
   ) {
-    const element = entry ?? init;
-    this.isDefinition = element.isDefinition;
-    this.artifact = element.artifact;
-    this.artifactName = element.artifactName;
+    let element;
     if (entry != null) {
+      element = entry;
       this.data = new ArtifactData(entry.data, undefined);
     } else if (init != null) {
+      element = init;
       this.data = new ArtifactData(undefined, init.data);
     } else {
       throw new Error('Either entry or init must be provided.');
     }
+    this.isDefinition = element.isDefinition;
+    this.artifact = element.artifact;
+    this.artifactName = element.artifactName;
   }
 
   toDb(): OutputArtifactMappingEntry {

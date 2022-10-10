@@ -1,0 +1,47 @@
+<form [formGroup]="searchForm">
+  <div class="form-row">
+    <div class="col form-row">
+      <div class="form-group col">
+        <label for="search">Search</label>
+        <input
+          formControlName="search"
+          type="text"
+          class="form-control mb-2 mr-sm-2"
+          id="search"
+          placeholder="Search"
+        />
+      </div>
+    </div>
+    <div class="col">
+      <app-method-element-selection-form
+        [listNames]="typeLists"
+        [methodElements]="types"
+        [removeAllowed]="false"
+        methodElementName="Type"
+      ></app-method-element-selection-form>
+    </div>
+  </div>
+</form>
+<h5>{{ heading }}</h5>
+<div *ngIf="items == null" class="alert alert-info">Loading...</div>
+<div *ngIf="items && items.length === 0" class="alert alert-info">
+  No fitting {{ itemName }}
+</div>
+<div
+  *ngIf="
+    items && items.length > 0 && filteredResults && filteredResults.length === 0
+  "
+>
+  No fitting {{ itemName }} for search and selected filters.
+</div>
+<ul
+  *ngIf="filteredResults && filteredResults.length > 0"
+  class="list-group shadow-sm"
+>
+  <li *ngFor="let item of filteredResults" class="list-group-item">
+    <ng-container
+      [ngTemplateOutlet]="content"
+      [ngTemplateOutletContext]="{ $implicit: item }"
+    ></ng-container>
+  </li>
+</ul>

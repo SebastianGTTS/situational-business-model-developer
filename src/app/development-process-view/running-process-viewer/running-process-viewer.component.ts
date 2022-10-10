@@ -2,17 +2,21 @@ import {
   AfterContentInit,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import BpmnViewer from 'bpmn-js/lib/NavigatedViewer';
-import { RunningProcess } from '../../development-process-registry/running-process/running-process';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { FullRunningProcess } from '../../development-process-registry/running-process/running-process';
 import { RunningProcessViewerService } from '../shared/running-process-viewer.service';
+import { BpmnFlowNode, BpmnSequenceFlow } from 'bpmn-js';
+import * as BpmnUtils from '../../development-process-registry/bpmn/bpmn-utils';
+import RunningProcessViewRenderer from '../bpmn-extensions/running-process-view/RunningProcessViewRenderer';
 
 @Component({
   selector: 'app-running-process-viewer',
@@ -22,69 +26,115 @@ import { RunningProcessViewerService } from '../shared/running-process-viewer.se
 export class RunningProcessViewerComponent
   implements OnInit, OnChanges, AfterContentInit, OnDestroy
 {
-  @Input() runningProcess: RunningProcess;
+  @Input() runningProcess?: FullRunningProcess;
+  @Input() unreachable?: Set<string>;
+  @Input() missingArtifacts?: Set<string>;
 
-  private viewer: BpmnViewer;
+  @Output() startExecution = new EventEmitter<string>();
+  @Output() fakeExecution = new EventEmitter<string>();
+  @Output() skipExecution = new EventEmitter<string>();
 
-  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLDivElement>;
+  private viewer: BpmnViewer = this.runningProcessViewerService.getBpmnViewer();
+
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef<HTMLDivElement>;
 
   constructor(
     private runningProcessViewerService: RunningProcessViewerService
   ) {}
 
-  ngOnInit() {
-    this.viewer = this.runningProcessViewerService.getBpmnViewer();
-    if (this.runningProcess) {
-      this.loadBmProcess(this.runningProcess, true);
+  ngOnInit(): void {
+    const eventBus = this.viewer.get('eventBus');
+    eventBus.on('bmp.startExecution', (event, node) =>
+      this.startExecution.emit(node.id)
+    );
+    eventBus.on('bmp.fakeExecution', (event, node) =>
+      this.fakeExecution.emit(node.id)
+    );
+    eventBus.on('bmp.skipExecution', (event, node) =>
+      this.skipExecution.emit(node.id)
+    );
+    if (this.runningProcess != null) {
+      this.setUnreachable();
+      this.setMissingArtifacts();
+      void this.loadBmProcess(this.runningProcess, true);
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.runningProcess && this.viewer) {
-      this.loadBmProcess(
-        changes.runningProcess.currentValue,
-        changes.runningProcess.firstChange
-      );
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.viewer != null) {
+      if (changes.runningProcess) {
+        void this.loadBmProcess(
+          changes.runningProcess.currentValue,
+          changes.runningProcess.firstChange
+        );
+      }
+      if (changes.unreachable) {
+        this.setUnreachable();
+      }
+      if (changes.missingArtifacts) {
+        this.setMissingArtifacts();
+      }
+      if (changes.missingArtifacts || changes.unreachable) {
+        const changedElements = this.viewer
+          .get('elementRegistry')
+          .filter((element) => BpmnUtils.isFlowNode(element));
+        this.viewer
+          .get('eventBus')
+          .fire('elements.changed', { elements: changedElements });
+      }
     }
   }
 
-  ngAfterContentInit() {
+  ngAfterContentInit(): void {
     this.viewer.attachTo(this.canvas.nativeElement);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.viewer.destroy();
   }
 
-  focus(id: string) {
+  focus(id: string): void {
     this.runningProcessViewerService.focusElement(this.viewer, id);
     this.canvas.nativeElement.scrollIntoView({ behavior: 'smooth' });
   }
 
-  getSelectedFlowNode() {
+  getSelectedFlowNode(): BpmnFlowNode | undefined {
     const selection = this.viewer.get('selection').get()[0];
-    if (is(selection, 'bpmn:FlowNode')) {
-      return selection;
+    if (BpmnUtils.isFlowNode(selection)) {
+      return selection as BpmnFlowNode;
     }
-    return null;
+    return undefined;
   }
 
-  getSelectedFlow() {
+  getSelectedFlow(): BpmnSequenceFlow | undefined {
     const selection = this.viewer.get('selection').get()[0];
-    if (is(selection, 'bpmn:SequenceFlow')) {
-      return selection;
+    if (BpmnUtils.isSequenceFlow(selection)) {
+      return selection as BpmnSequenceFlow;
     }
-    return null;
+    return undefined;
   }
 
-  private loadBmProcess(runningProcess: RunningProcess, firstLoad: boolean) {
-    this.viewer
-      .importXML(runningProcess.process.processDiagram)
-      .then(() => {
-        if (firstLoad) {
-          this.runningProcessViewerService.resizeView(this.viewer);
-        }
-      })
-      .catch((error) => console.log('LoadBmProcess: ' + error));
+  private async loadBmProcess(
+    runningProcess: FullRunningProcess,
+    firstLoad: boolean
+  ): Promise<void> {
+    await this.viewer.importXML(runningProcess.process.processDiagram);
+    if (firstLoad) {
+      this.runningProcessViewerService.resizeView(this.viewer);
+    }
+  }
+
+  private setUnreachable(): void {
+    const runningProcessViewRenderer = this.viewer.get(
+      'runningProcessViewRenderer'
+    ) as RunningProcessViewRenderer;
+    runningProcessViewRenderer.unreachable = this.unreachable;
+  }
+
+  private setMissingArtifacts(): void {
+    const runningProcessViewRenderer = this.viewer.get(
+      'runningProcessViewRenderer'
+    ) as RunningProcessViewRenderer;
+    runningProcessViewRenderer.missingArtifacts = this.missingArtifacts;
   }
 }

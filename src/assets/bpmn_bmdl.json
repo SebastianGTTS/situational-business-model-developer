@@ -12,7 +12,8 @@
       "properties": [
         {
           "name": "inherit",
-          "type": "Boolean"
+          "type": "Boolean",
+          "isAttr": true
         },
         {
           "name": "neededType",

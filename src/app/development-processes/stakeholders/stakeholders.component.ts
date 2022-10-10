@@ -2,10 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { StakeholderService } from '../../development-process-registry/method-elements/stakeholder/stakeholder.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import {
-  Stakeholder,
-  StakeholderEntry,
-} from '../../development-process-registry/method-elements/stakeholder/stakeholder';
+import { StakeholderEntry } from '../../development-process-registry/method-elements/stakeholder/stakeholder';
 
 @Component({
   selector: 'app-stakeholders',
@@ -13,11 +10,11 @@ import {
   styleUrls: ['./stakeholders.component.css'],
 })
 export class StakeholdersComponent implements OnInit {
-  elementLists: { listName: string; elements: StakeholderEntry[] }[] = null;
+  elementLists?: { listName: string; elements: StakeholderEntry[] }[];
   listNames: string[] = [];
 
-  modalStakeholder: Stakeholder;
-  private modalReference: NgbModalRef;
+  modalStakeholder?: StakeholderEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteStakeholderModal', { static: true })
   deleteStakeholderModal: unknown;
@@ -41,7 +38,7 @@ export class StakeholdersComponent implements OnInit {
       .catch((error) => console.log('Load: ' + error));
   }
 
-  openDeleteStakeholderModal(stakeholder: Stakeholder): void {
+  openDeleteStakeholderModal(stakeholder: StakeholderEntry): void {
     this.modalStakeholder = stakeholder;
     this.modalReference = this.modalService.open(this.deleteStakeholderModal, {
       size: 'lg',

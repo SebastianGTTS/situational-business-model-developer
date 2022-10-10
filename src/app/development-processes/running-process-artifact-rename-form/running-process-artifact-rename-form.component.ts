@@ -15,15 +15,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./running-process-artifact-rename-form.component.css'],
 })
 export class RunningProcessArtifactRenameFormComponent implements OnChanges {
-  @Input() artifact: RunningArtifact;
+  @Input() artifact!: RunningArtifact;
 
   @Output() submitArtifactExportForm = new EventEmitter<FormGroup>();
 
-  form: FormGroup;
+  form?: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.artifact) {
       const newArtifact: RunningArtifact = changes.artifact.currentValue;
       const oldArtifact: RunningArtifact = changes.artifact.previousValue;
@@ -38,7 +38,7 @@ export class RunningProcessArtifactRenameFormComponent implements OnChanges {
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitArtifactExportForm.emit(this.form);
   }
 }

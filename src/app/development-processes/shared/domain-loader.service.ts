@@ -6,7 +6,7 @@ import { ElementLoaderService } from '../../database/element-loader.service';
 
 @Injectable()
 export class DomainLoaderService extends ElementLoaderService {
-  domain: Domain = null;
+  domain?: Domain;
 
   constructor(private domainService: DomainService, route: ActivatedRoute) {
     super(route);
@@ -14,10 +14,14 @@ export class DomainLoaderService extends ElementLoaderService {
 
   protected initParams(paramMap: ParamMap): void {
     const domainId = paramMap.get('id');
-    this.changesFeed = this.domainService
-      .getChangesFeed(domainId)
-      .subscribe(() => this.loadDomain(domainId));
-    void this.loadDomain(domainId);
+    if (domainId != null) {
+      this.changesFeed = this.domainService
+        .getChangesFeed(domainId)
+        .subscribe(() => this.loadDomain(domainId));
+      void this.loadDomain(domainId);
+    } else {
+      this.domain = undefined;
+    }
   }
 
   private async loadDomain(domainId: string): Promise<void> {

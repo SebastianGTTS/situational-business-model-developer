@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="submitForm()">
+<form *ngIf="form != null" [formGroup]="form" (ngSubmit)="submitForm()">
   <div class="form-group form-row">
     <label for="identifier" class="col-sm-4 col-form-label">Name</label>
     <div class="col-sm-8">

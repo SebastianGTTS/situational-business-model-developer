@@ -1,77 +1,49 @@
 import {
-  ArtifactMapping,
-  ArtifactMappingEntry,
-  ArtifactMappingInit,
-} from './artifact-mapping';
-import { Equality } from '../../shared/equality';
-import { equalsListOfLists } from '../../shared/utils';
-import { DatabaseModelPart } from '../../database/database-model-part';
-import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
+  EmptyExecutionStep,
+  EmptyExecutionStepEntry,
+  EmptyExecutionStepInit,
+} from './empty-execution-step';
+import {
+  MethodExecutionStep,
+  MethodExecutionStepEntry,
+  MethodExecutionStepInit,
+} from './method-execution-step';
 
-export interface ExecutionStepInit extends DatabaseInit {
-  module?: string;
-  method?: string;
-  predefinedInput?: any;
-  outputMappings?: ArtifactMappingInit[][];
-}
+export type ExecutionStepInit =
+  | EmptyExecutionStepInit
+  | MethodExecutionStepInit;
 
-export interface ExecutionStepEntry extends DatabaseEntry {
-  module: string;
-  method: string;
-  predefinedInput: any;
-  outputMappings: ArtifactMappingEntry[][];
-}
+export type ExecutionStepEntry =
+  | EmptyExecutionStepEntry
+  | MethodExecutionStepEntry;
 
-export class ExecutionStep
-  implements ExecutionStepInit, Equality<ExecutionStep>, DatabaseModelPart
-{
-  module: string;
-  method: string;
-  predefinedInput: any;
-  outputMappings: ArtifactMapping[][] = [];
+export type ExecutionStep = EmptyExecutionStep | MethodExecutionStep;
 
-  constructor(
-    entry: ExecutionStepEntry | undefined,
-    init: ExecutionStepInit | undefined
-  ) {
-    const element = entry ?? init;
-    this.module = element.module;
-    this.method = element.method;
-    this.predefinedInput = element.predefinedInput;
-    if (entry != null) {
-      this.outputMappings =
-        entry.outputMappings?.map((mappings) =>
-          mappings.map((mapping) => new ArtifactMapping(mapping, undefined))
-        ) ?? this.outputMappings;
-    } else if (init != null) {
-      this.outputMappings =
-        init.outputMappings?.map((mappings) =>
-          mappings.map((mapping) => new ArtifactMapping(undefined, mapping))
-        ) ?? this.outputMappings;
+export function createExecutionStep(
+  entry: ExecutionStepEntry | undefined,
+  init: ExecutionStepInit | undefined
+): ExecutionStep {
+  if (entry != null) {
+    if (isMethodExecutionStep(entry)) {
+      return new MethodExecutionStep(entry, undefined);
     } else {
-      throw new Error('Either entry or init must be provided.');
+      return new EmptyExecutionStep(entry, undefined);
     }
-  }
-
-  toDb(): ExecutionStepEntry {
-    return {
-      module: this.module,
-      method: this.method,
-      predefinedInput: this.predefinedInput,
-      outputMappings: this.outputMappings.map((mappings) =>
-        mappings.map((mapping) => mapping.toDb())
-      ),
-    };
-  }
-
-  equals(other: ExecutionStep): boolean {
-    if (other == null) {
-      return false;
+  } else if (init != null) {
+    if (isMethodExecutionStep(init)) {
+      return new MethodExecutionStep(undefined, init);
+    } else {
+      return new EmptyExecutionStep(undefined, init);
     }
-    return (
-      this.module === other.module &&
-      this.method === other.method &&
-      equalsListOfLists(this.outputMappings, other.outputMappings)
-    );
+  } else {
+    throw new Error('Either entry or init must be provided.');
   }
+}
+
+export function isMethodExecutionStep(
+  step: ExecutionStepEntry | ExecutionStepInit
+): step is MethodExecutionStepEntry | MethodExecutionStepInit {
+  return (
+    (step as MethodExecutionStepEntry | MethodExecutionStepInit).method != null
+  );
 }

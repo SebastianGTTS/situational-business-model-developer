@@ -22,8 +22,8 @@ import { equalsListString, getTypeaheadInputPipe } from '../../shared/utils';
 export class SituationalFactorFormComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  @Input() situationalFactor: SituationalFactorDefinition;
-  @Input() listNames: string[];
+  @Input() situationalFactor!: SituationalFactorDefinition;
+  @Input() listNames!: string[];
 
   @Output() submitSituationalFactorForm = new EventEmitter<FormGroup>();
 
@@ -35,11 +35,11 @@ export class SituationalFactorFormComponent
 
   openListInput = new Subject<string>();
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changeSubscription = this.form.valueChanges
       .pipe(
         debounceTime(300),
@@ -51,7 +51,7 @@ export class SituationalFactorFormComponent
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.situationalFactor) {
       const oldSituationalFactor: SituationalFactorDefinition =
         changes.situationalFactor.previousValue;
@@ -63,14 +63,14 @@ export class SituationalFactorFormComponent
     }
   }
 
-  ngOnDestroy() {
-    if (this.changeSubscription) {
+  ngOnDestroy(): void {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
     this.openListInput.complete();
   }
 
-  searchLists = (input: Observable<string>) => {
+  searchLists = (input: Observable<string>): Observable<string[]> => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
       map((term) =>
         this.listNames
@@ -82,10 +82,11 @@ export class SituationalFactorFormComponent
     );
   };
 
+  // noinspection JSMethodCanBeStatic
   private equals(
     situationalFactorA: SituationalFactorDefinition,
     situationalFactorB: SituationalFactorDefinition
-  ) {
+  ): boolean {
     if (situationalFactorA == null && situationalFactorB == null) {
       return true;
     }
@@ -98,7 +99,7 @@ export class SituationalFactorFormComponent
     );
   }
 
-  private loadForm(situationalFactor: SituationalFactorDefinition) {
+  private loadForm(situationalFactor: SituationalFactorDefinition): void {
     this.form.patchValue(situationalFactor);
     this.valuesFormArray.clear();
     situationalFactor.values.forEach((value, index) =>
@@ -109,11 +110,11 @@ export class SituationalFactorFormComponent
     );
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitSituationalFactorForm.emit(this.form);
   }
 
-  get valuesFormArray() {
+  get valuesFormArray(): FormArray {
     return this.form.get('values') as FormArray;
   }
 }

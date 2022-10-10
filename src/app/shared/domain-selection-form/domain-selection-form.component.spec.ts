@@ -57,7 +57,7 @@ describe('Domain Selection Form Component', () => {
     const subscription = formControl.valueChanges.subscribe(
       () => valueChangesCount++
     );
-    const inputField: HTMLInputElement = spectator.query('#domainSelection0');
+    const inputField = spectator.query('#domainSelection0') as HTMLInputElement;
     spectator.typeInElement('Test', inputField);
     expect(valueChangesCount).toBe(1);
     expect(formControl.value).toBeFalsy();

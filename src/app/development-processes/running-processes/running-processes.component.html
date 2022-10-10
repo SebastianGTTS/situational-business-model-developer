@@ -1,17 +1,42 @@
 <ng-template #deleteProcessModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalRunningProcess != null"
     (dismiss)="d()"
     (delete)="deleteRunningProcess(modalRunningProcess._id); c()"
   >
     <div modalTitle>
-      Delete Running Method {{ modalRunningProcess.process.name }} &ndash;
-      {{ modalRunningProcess.name }}
+      Delete Running Method {{ modalRunningProcess | runningProcessName }}
     </div>
-    You are deleting the running method {{ modalRunningProcess.name }}, which
-    executes the method {{ modalRunningProcess.process.name }}. By deleting this
-    running method all corresponding models are deleted too. This can not be
-    undone.
+    You are deleting the running method {{ modalRunningProcess.name
+    }}<span *ngIf="modalRunningProcess.process != null"
+      >, which executes the method {{ modalRunningProcess.process.name }}</span
+    >. By deleting this running method all corresponding models are deleted too.
+    This can not be undone.
   </app-delete-modal>
+</ng-template>
+
+<ng-template #errorProcessModal let-d="dismiss">
+  <div class="modal-header" *ngIf="modalBmProcess != null">
+    <h4 class="modal-title">
+      Error instantiating Method {{ modalBmProcess.name }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close Window</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="modalBmProcess != null">
+    <div class="alert alert-danger">
+      This Business Model Development Method cannot be instantiated, because it
+      is not completely defined. The method engineer first has to define it
+      completely. More information is available in the error panel on the
+      <a
+        [routerLink]="['/', 'bmprocess', 'bmprocessview', modalBmProcess._id]"
+        (click)="d()"
+        >Business Model Development Method composition page</a
+      >.
+    </div>
+  </div>
 </ng-template>
 
 <div class="nav-scroller bg-white shadow-sm">
@@ -22,7 +47,7 @@
       class="nav-link"
       [routerLink]="['runningprocessview', runningProcess._id]"
     >
-      {{ runningProcess.process.name }} &ndash; {{ runningProcess.name }}
+      {{ runningProcess | runningProcessName }}
     </a>
   </nav>
 </div>
@@ -53,10 +78,7 @@
         *ngFor="let runningProcess of runningProcessesList"
       >
         <div>
-          <span
-            >{{ runningProcess.process.name }} &ndash;
-            {{ runningProcess.name }}</span
-          >
+          <span>{{ runningProcess | runningProcessName }}</span>
         </div>
         <div>
           <a
@@ -97,6 +119,9 @@
                 processControl.invalid && processControl.touched
               "
             >
+              <option [ngValue]="null">
+                No Method &ndash; Lightweight Execution
+              </option>
               <option *ngFor="let process of processes" [ngValue]="process">
                 {{ process.name }}
               </option>
@@ -129,4 +154,6 @@
       </form>
     </div>
   </div>
+
+  <app-running-processes-context-list></app-running-processes-context-list>
 </main>

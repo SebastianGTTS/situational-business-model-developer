@@ -1,39 +1,64 @@
 <div [formGroup]="formGroup" class="form-row">
   <div class="form-group col-md">
-    <label for="selectOutput">To other step or output</label>
-    <select id="selectOutput" class="form-control" formControlName="output">
+    <label for="selectOutput-{{ stepNumber }}">To other step or output</label>
+    <select
+      id="selectOutput-{{ stepNumber }}"
+      class="form-control"
+      formControlName="output"
+    >
       <option [ngValue]="false">Step</option>
       <option [ngValue]="true">Output</option>
     </select>
   </div>
   <ng-container *ngIf="!outputControl.value">
     <div class="form-group col-md">
-      <label for="inputStep">Step</label>
-      <select id="inputStep" class="form-control" formControlName="step">
-        <ng-container
-          *ngFor="
-            let step of executionStepsFormValue ??
-              developmentMethod.executionSteps;
-            let index = index
-          "
-        >
-          <option
-            *ngIf="stepNumber == null || index > stepNumber"
-            [ngValue]="index"
+      <label for="inputStep-{{ stepNumber }}">Step</label>
+      <select
+        id="inputStep-{{ stepNumber }}"
+        class="form-control"
+        formControlName="step"
+      >
+        <ng-container *ngIf="executionStepsFormValue != null">
+          <ng-container
+            *ngFor="let step of executionStepsFormValue; let index = index"
           >
-            #{{ index + 1 }}
-          </option>
+            <option
+              *ngIf="stepNumber == null || index > stepNumber"
+              [ngValue]="index"
+            >
+              #{{ index + 1 }}
+            </option>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="executionStepsFormValue == null">
+          <ng-container
+            *ngFor="
+              let step of developmentMethod.executionSteps;
+              let index = index
+            "
+          >
+            <option
+              *ngIf="stepNumber == null || index > stepNumber"
+              [ngValue]="index"
+            >
+              #{{ index + 1 }}
+            </option>
+          </ng-container>
         </ng-container>
       </select>
     </div>
   </ng-container>
   <ng-container *ngIf="outputControl.value">
     <div class="form-group col-md">
-      <label for="inputGroup">Group</label>
-      <select id="inputGroup" class="form-control" formControlName="group">
+      <label for="inputGroup-{{ stepNumber }}">Group</label>
+      <select
+        id="inputGroup-{{ stepNumber }}"
+        class="form-control"
+        formControlName="group"
+      >
         <option
           *ngFor="
-            let group of developmentMethod.outputArtifacts;
+            let group of developmentMethod.outputArtifacts.groups;
             let index = index
           "
           [ngValue]="index"
@@ -44,18 +69,20 @@
     </div>
   </ng-container>
   <div class="form-group col">
-    <label for="inputArtifact">Artifact</label>
+    <label for="inputArtifact-{{ stepNumber }}">Artifact</label>
     <div class="input-group">
       <select
-        id="inputArtifact"
+        id="inputArtifact-{{ stepNumber }}"
         class="form-control"
+        [class.is-invalid]="
+          artifactControl.invalid ||
+          artifactControl.value >= artifacts.length ||
+          !artifacts[artifactControl.value].compatible
+        "
         formControlName="artifact"
       >
         <ng-container *ngFor="let artifact of artifacts; let index = index">
-          <option
-            *ngIf="artifactConformsToMetaModel(artifact)"
-            [ngValue]="index"
-          >
+          <option *ngIf="artifact.compatible" [ngValue]="index">
             #{{ index + 1 }} {{ artifact.name }}
           </option>
         </ng-container>

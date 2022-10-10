@@ -53,13 +53,13 @@ export class Selection<T extends DatabaseModelPart & Equality<T>>
     createElement: (element: Partial<T>) => T
   ): void {
     Object.assign(this, selection);
-    this.element = this.element ? createElement(this.element) : null;
+    this.element = this.element ? createElement(this.element) : undefined;
   }
 
   toDb(): SelectionEntry<EntryType<T>> {
     return {
       list: this.list,
-      element: this.element ? (this.element.toDb() as EntryType<T>) : null,
+      element: this.element ? (this.element.toDb() as EntryType<T>) : undefined,
     };
   }
 

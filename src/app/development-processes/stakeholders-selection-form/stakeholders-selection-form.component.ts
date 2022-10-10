@@ -2,115 +2,54 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
-  OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   Stakeholder,
   StakeholderEntry,
 } from '../../development-process-registry/method-elements/stakeholder/stakeholder';
 import { StakeholderService } from '../../development-process-registry/method-elements/stakeholder/stakeholder.service';
-import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
-import { Subscription } from 'rxjs';
-import { equalsListOfLists } from '../../shared/utils';
-import { debounceTime, tap } from 'rxjs/operators';
+import { Groups } from '../../development-process-registry/development-method/groups';
+import {
+  ELEMENT_CONSTRUCTOR,
+  GroupsFormService,
+} from '../shared/groups-form.service';
+import { Updatable, UPDATABLE } from '../../shared/updatable';
+import { GroupsFormComponent } from '../groups-form/groups-form.component';
 
 @Component({
   selector: 'app-stakeholders-selection-form',
   templateUrl: './stakeholders-selection-form.component.html',
   styleUrls: ['./stakeholders-selection-form.component.css'],
+  providers: [
+    GroupsFormService,
+    { provide: ELEMENT_CONSTRUCTOR, useValue: Stakeholder },
+    {
+      provide: UPDATABLE,
+      useExisting: StakeholdersSelectionFormComponent,
+    },
+  ],
 })
-export class StakeholdersSelectionFormComponent
-  implements OnInit, OnChanges, OnDestroy
-{
-  @Input() stakeholders: MultipleSelection<Stakeholder>[][];
+export class StakeholdersSelectionFormComponent implements OnInit, Updatable {
+  @Input() stakeholders!: Groups<Stakeholder>;
 
-  @Output() submitStakeholdersForm = new EventEmitter<FormArray>();
-
-  stakeholdersForm: FormGroup = this.fb.group({
-    stakeholders: this.fb.array([]),
-  });
-  changed = false;
+  @Output() submitStakeholdersForm = new EventEmitter<Groups<Stakeholder>>();
 
   methodElements: StakeholderEntry[] = [];
   listNames: string[] = [];
 
-  private changeSubscription: Subscription;
+  @ViewChild(GroupsFormComponent) groupsFormComponent!: Updatable;
 
-  constructor(
-    private fb: FormBuilder,
-    private stakeholderService: StakeholderService
-  ) {}
+  constructor(private stakeholderService: StakeholderService) {}
 
   ngOnInit(): void {
     void this.loadStakeholders();
-    this.changeSubscription = this.stakeholdersForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        tap(
-          (value) =>
-            (this.changed = !equalsListOfLists(
-              this.stakeholders,
-              value.stakeholders
-            ))
-        )
-      )
-      .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.stakeholders) {
-      const oldStakeholderGroups: MultipleSelection<Stakeholder>[][] =
-        changes.stakeholders.previousValue;
-      const newStakeholderGroups: MultipleSelection<Stakeholder>[][] =
-        changes.stakeholders.currentValue;
-      if (!equalsListOfLists(oldStakeholderGroups, newStakeholderGroups)) {
-        this.loadForm(changes.stakeholders.currentValue);
-      }
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.changeSubscription) {
-      this.changeSubscription.unsubscribe();
-    }
-  }
-
-  add(): void {
-    this.formArray.push(this.fb.array([]));
-  }
-
-  remove(index: number): void {
-    this.formArray.removeAt(index);
-  }
-
-  submitForm(): void {
-    this.submitStakeholdersForm.emit(
-      this.stakeholdersForm.get('stakeholders') as FormArray
-    );
-  }
-
-  private loadForm(stakeholders: MultipleSelection<Stakeholder>[][]): void {
-    const formArrays = stakeholders.map((group) =>
-      this.fb.array(
-        group.map((element) =>
-          this.fb.group({
-            list: [element.list, Validators.required],
-            element: { value: element.element, disabled: element.multiple },
-            multiple: element.multiple,
-            multipleElements: {
-              value: element.multipleElements,
-              disabled: element.multiple,
-            },
-          })
-        )
-      )
-    );
-    this.stakeholdersForm.setControl('stakeholders', this.fb.array(formArrays));
+  update(): void {
+    this.groupsFormComponent.update();
   }
 
   private async loadStakeholders(): Promise<void> {
@@ -119,16 +58,4 @@ export class StakeholdersSelectionFormComponent
       ...new Set(this.methodElements.map((element) => element.list)),
     ];
   }
-
-  get formArray(): FormArray {
-    return this.stakeholdersForm.get('stakeholders') as FormArray;
-  }
-
-  createFormGroupFactory = (): FormGroup =>
-    this.fb.group({
-      list: ['', Validators.required],
-      element: null,
-      multiple: false,
-      multipleElements: false,
-    });
 }

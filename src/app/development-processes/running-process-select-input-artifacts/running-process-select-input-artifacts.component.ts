@@ -7,9 +7,10 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { RunningProcess } from '../../development-process-registry/running-process/running-process';
-import { Decision } from '../../development-process-registry/bm-process/decision';
 import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { MethodDecision } from '../../development-process-registry/bm-process/method-decision';
+import { SelectedElementOptional } from '../../development-process-registry/bm-process/element-decision';
 
 @Component({
   selector: 'app-running-process-select-input-artifacts',
@@ -17,12 +18,12 @@ import { FormArray, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./running-process-select-input-artifacts.component.css'],
 })
 export class RunningProcessSelectInputArtifactsComponent implements OnChanges {
-  @Input() runningProcess: RunningProcess;
-  @Input() decision: Decision;
+  @Input() runningProcess!: RunningProcess;
+  @Input() decision!: MethodDecision;
 
   @Output() selectInputArtifacts = new EventEmitter<FormArray>();
 
-  inputArtifacts: Artifact[];
+  inputArtifacts?: SelectedElementOptional<Artifact>[];
 
   form = this.fb.group({
     inputArtifacts: this.fb.array([]),
@@ -32,20 +33,20 @@ export class RunningProcessSelectInputArtifactsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.decision) {
-      const decision: Decision = changes.decision.currentValue;
-      const artifacts = [];
-      decision.inputArtifacts
-        .getList(decision.method.inputArtifacts)
-        .elements.forEach((element) => artifacts.push(...element.elements));
-      this.inputArtifacts = artifacts;
-      this.loadForm(artifacts);
+      const decision: MethodDecision = changes.decision.currentValue;
+      this.inputArtifacts =
+        decision.inputArtifacts.getSelectedElementsOptional();
+      this.loadForm(this.inputArtifacts);
     }
   }
 
-  loadForm(artifacts: Artifact[]): void {
-    const formGroups = artifacts.map(() =>
+  loadForm(artifacts: SelectedElementOptional<Artifact>[]): void {
+    const formGroups = artifacts.map((selectedElement) =>
       this.fb.group({
-        artifact: this.fb.control(null, Validators.required),
+        artifact: this.fb.control(
+          null,
+          selectedElement.optional ? undefined : Validators.required
+        ),
       })
     );
     this.form.setControl('inputArtifacts', this.fb.array(formGroups));

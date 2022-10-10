@@ -29,13 +29,13 @@ import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 export class SituationalFactorSelectionFormComponent
   implements OnInit, OnDestroy
 {
-  @Input() methodElements: SituationalFactorDefinitionEntry[];
-  @Input() listNames: string[];
+  @Input() methodElements!: SituationalFactorDefinitionEntry[];
+  @Input() listNames!: string[];
 
   @Output() remove = new EventEmitter<void>();
 
-  private listChangeSubscription: Subscription;
-  private factorChangeSubscription: Subscription;
+  private listChangeSubscription?: Subscription;
+  private factorChangeSubscription?: Subscription;
 
   openListInput = new Subject<string>();
   openElementInput = new Subject<string>();
@@ -70,10 +70,10 @@ export class SituationalFactorSelectionFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.listChangeSubscription) {
+    if (this.listChangeSubscription != null) {
       this.listChangeSubscription.unsubscribe();
     }
-    if (this.factorChangeSubscription) {
+    if (this.factorChangeSubscription != null) {
       this.factorChangeSubscription.unsubscribe();
     }
     this.openListInput.complete();

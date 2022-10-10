@@ -5,8 +5,12 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { append, attr, remove, select } from 'tiny-svg';
 import { BmProcess } from '../../../development-process-registry/bm-process/bm-process';
 import { BmProcessService } from '../../../development-process-registry/bm-process/bm-process.service';
+import { BpmnElement, BpmnFlowNode, EventBus } from 'bpmn-js';
 
-export default class BmProcessTaskRenderer extends BaseRenderer {
+export default class BmProcessTaskRenderer
+  extends BaseRenderer
+  implements BpmnElements.TaskRenderer
+{
   static $inject = ['eventBus', 'bpmnRenderer', 'textRenderer'];
 
   private static readonly HIGH_PRIORITY = 1500;
@@ -14,35 +18,44 @@ export default class BmProcessTaskRenderer extends BaseRenderer {
   private bpmnRenderer: BpmnRenderer;
   private textRenderer: TextRenderer;
 
-  private process: BmProcess = null;
-  private bmProcessService: BmProcessService;
+  process?: BmProcess;
+  bmProcessService?: BmProcessService;
 
-  constructor(eventBus, bpmnRenderer, textRenderer) {
+  constructor(
+    eventBus: EventBus,
+    bpmnRenderer: BpmnRenderer,
+    textRenderer: TextRenderer
+  ) {
     super(eventBus, BmProcessTaskRenderer.HIGH_PRIORITY);
 
     this.bpmnRenderer = bpmnRenderer;
     this.textRenderer = textRenderer;
   }
 
-  canRender(element) {
+  canRender(element: BpmnElement): boolean {
     return is(element, 'bpmn:Task') || is(element, 'bpmn:CallActivity');
   }
 
-  drawShape(parentNode: SVGGElement, element) {
+  drawShape(parentNode: SVGGElement, element: BpmnFlowNode): SVGRectElement {
     const shape: SVGRectElement = this.bpmnRenderer.drawShape(
       parentNode,
       element
     );
     const method = element.businessObject.get('method');
     if (method) {
-      remove(select(parentNode, 'text'));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      remove(select(parentNode, 'text')!);
       const methodName = this.textRenderer.createText(method.name, {
         box: element,
         align: 'center-middle',
         padding: 5,
       });
       append(parentNode, methodName);
-      if (this.process && element.id in this.process.decisions) {
+      if (
+        this.process != null &&
+        this.bmProcessService != null &&
+        element.id in this.process.decisions
+      ) {
         const decision = this.process.decisions[element.id];
         if (!this.bmProcessService.checkDecisionStepArtifacts(decision)) {
           attr(shape, { stroke: 'orange', rx: 2, ry: 2 });
@@ -60,7 +73,7 @@ export default class BmProcessTaskRenderer extends BaseRenderer {
     return shape;
   }
 
-  getShapePath(shape) {
+  getShapePath(shape: unknown): unknown {
     return this.bpmnRenderer.getShapePath(shape);
   }
 }

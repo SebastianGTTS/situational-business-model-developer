@@ -12,6 +12,7 @@ import {
   DbId,
   DbType,
 } from './database-entry';
+import FindResponse = PouchDB.Find.FindResponse;
 
 export enum DatabaseErrors {
   INVALID_NAME = 'Name of database may only contain characters or numbers.',
@@ -74,6 +75,7 @@ export class PouchdbService {
     } else {
       const options: PouchDB.Configuration.DatabaseConfiguration = {
         fetch: (fetchUrl, fetchOptions) => {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           (fetchOptions!.headers as Headers).set(
             'X-CouchDB-WWW-Authenticate',
             'Cookie'
@@ -182,17 +184,18 @@ export class PouchdbService {
   /**
    * Called on error
    */
-  private async handleError(error: PouchDB.Core.Error): Promise<never> {
+  private async handleError(error: unknown): Promise<never> {
+    const pouchDbError = error as PouchDB.Core.Error;
     if (
-      error.status === 401 &&
-      error.error === 'unauthorized' &&
+      pouchDbError.status === 401 &&
+      pouchDbError.error === 'unauthorized' &&
       this.expired != null
     ) {
       await this.expired();
     }
     if (
-      error.status === 500 &&
-      error.error === 'internal_server_error' &&
+      pouchDbError.status === 500 &&
+      pouchDbError.error === 'internal_server_error' &&
       this.error != null
     ) {
       await this.error();
@@ -252,9 +255,9 @@ export class PouchdbService {
     }
   }
 
-  private async _find(
-    request: PouchDB.Find.FindRequest<{}>
-  ): Promise<PouchDB.Find.FindResponse<{}>> {
+  private async _find<T extends DatabaseRootEntry>(
+    request: PouchDB.Find.FindRequest<T>
+  ): Promise<PouchDB.Find.FindResponse<T>> {
     const response = await this.getDb().find(request);
     if ('bookmark' in response) {
       const couchDbResponse = response as CouchDBFindResponse;
@@ -274,7 +277,7 @@ export class PouchdbService {
         }
       }
     }
-    return response;
+    return response as FindResponse<T>;
   }
 
   /**

@@ -5,7 +5,10 @@ import {
   RunningProcessInit,
 } from '../../development-process-registry/running-process/running-process';
 import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
-import { BmProcessEntry } from '../../development-process-registry/bm-process/bm-process';
+import {
+  BmProcess,
+  BmProcessEntry,
+} from '../../development-process-registry/bm-process/bm-process';
 import {
   FormBuilder,
   FormControl,
@@ -26,14 +29,20 @@ import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
   ],
 })
 export class RunningProcessesComponent implements OnInit {
-  addRunningProcessForm: FormGroup;
+  addRunningProcessForm: FormGroup = this.fb.group({
+    name: ['', Validators.required],
+    process: [null],
+  });
   processes: BmProcessEntry[] = [];
 
-  modalRunningProcess: RunningProcess;
-  private modalReference: NgbModalRef;
+  modalBmProcess?: BmProcess;
+  modalRunningProcess?: RunningProcessEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteProcessModal', { static: true })
   deleteProcessModal: unknown;
+  @ViewChild('errorProcessModal', { static: true })
+  errorProcessModal: unknown;
 
   constructor(
     private bmProcessService: BmProcessService,
@@ -44,29 +53,36 @@ export class RunningProcessesComponent implements OnInit {
 
   ngOnInit(): void {
     void this.loadProcesses();
-    this.initForm();
-  }
-
-  initForm(): void {
-    this.addRunningProcessForm = this.fb.group({
-      name: ['', Validators.required],
-      process: [null, Validators.required],
-    });
   }
 
   async addRunningProcess(): Promise<void> {
+    let process: BmProcess | undefined;
+    if (this.processControl.value == null) {
+      process = undefined;
+    } else {
+      process = new BmProcess(this.processControl.value, undefined);
+      if (!this.bmProcessService.isComplete(process)) {
+        this.modalBmProcess = process;
+        this.modalReference = this.modalService.open(this.errorProcessModal, {
+          size: 'lg',
+        });
+        return;
+      }
+    }
     await this.listService.add({
-      process: this.processControl.value,
+      process: process,
       name: this.nameControl.value,
     });
-    this.initForm();
+    this.addRunningProcessForm.reset();
   }
 
   async loadProcesses(): Promise<void> {
     this.processes = await this.bmProcessService.getList();
   }
 
-  async openDeleteProcessModal(runningProcess: RunningProcess): Promise<void> {
+  async openDeleteProcessModal(
+    runningProcess: RunningProcessEntry
+  ): Promise<void> {
     this.modalRunningProcess = runningProcess;
     this.modalReference = this.modalService.open(this.deleteProcessModal, {
       size: 'lg',
@@ -85,7 +101,7 @@ export class RunningProcessesComponent implements OnInit {
     return this.addRunningProcessForm.get('name') as FormControl;
   }
 
-  get runningProcessesList(): RunningProcessEntry[] {
+  get runningProcessesList(): RunningProcessEntry[] | undefined {
     return this.listService.elements;
   }
 

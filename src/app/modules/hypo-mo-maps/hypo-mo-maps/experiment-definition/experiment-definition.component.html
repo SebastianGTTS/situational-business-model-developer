@@ -1,0 +1,131 @@
+<ng-template #updateExperimentModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalExperiment != null">
+      {{ modalExperiment.name }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalExperiment != null && experimentList != null"
+  >
+    <div class="text-muted pt-3">
+      <app-experiment-form
+        [experiment]="modalExperiment"
+        [experimentList]="experimentList"
+        (submitExperimentForm)="updateExperiment($event)"
+      ></app-experiment-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #addExperimentModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Add Experiment</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalExperiment != null && experimentList != null"
+  >
+    <div class="text-muted pt-3">
+      <app-experiment-form
+        [experiment]="modalExperiment"
+        [experimentList]="experimentList"
+        submitButtonText="Add Experiment"
+        (submitExperimentForm)="addExperiment($event)"
+      ></app-experiment-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #confirmDeleteModal let-d="dismiss">
+  <div class="modal-header">
+    <h4
+      class="modal-title"
+      id="modal-basic-title"
+      *ngIf="modalExperiment != null"
+    >
+      {{ modalExperiment.name }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="modalExperiment != null">
+    <div class="alert alert-warning" role="alert">
+      <p>
+        You are trying to remove the experiment "{{ modalExperiment.name }}".
+        Please keep in mind that you are removing also all subexperiments.
+      </p>
+    </div>
+  </div>
+  <div class="modal-footer" *ngIf="modalExperiment != null">
+    <button
+      type="button"
+      class="btn btn-block btn-danger"
+      (click)="removeExperiment(modalExperiment.id)"
+    >
+      Delete Experiment
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #manageArtifactsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalExperiment != null">
+      Manage Artifacts of {{ modalExperiment.name }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="modalExperiment != null">
+    <div class="text-muted pt-3">
+      <app-manage-artifacts-form
+        [experiment]="modalExperiment"
+        (submitManageArtifactsForm)="updateExperiment($event)"
+      ></app-manage-artifacts-form>
+    </div>
+  </div>
+</ng-template>
+
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline" *ngIf="experimentDefinition">
+    <a class="nav-link" [routerLink]="['/', 'hypomomaps', 'experiments']"
+      >Experiments</a
+    >
+    <a class="nav-link active" [routerLink]="[]">{{
+      experimentDefinition.experiment.name
+    }}</a>
+  </nav>
+</div>
+
+<main *ngIf="experimentDefinition" role="main" class="container">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Experiment Tree</h6>
+    <div class="mt-1">
+      <app-experiment-tree
+        [experiments]="[experimentDefinition.experiment]"
+        (manageArtifacts)="openManageArtifactsModal($event)"
+        (addExperiment)="openAddExperimentModal($event)"
+        (updateExperiment)="openUpdateExperimentModal($event)"
+        (deleteExperiment)="openDeleteExperimentModal($event)"
+      ></app-experiment-tree>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Edit Author Information</h6>
+    <div class="text-muted pt-3">
+      <app-author-form
+        [author]="experimentDefinition.author"
+        (submitAuthorForm)="updateAuthor($event.value)"
+      ></app-author-form>
+    </div>
+  </div>
+</main>

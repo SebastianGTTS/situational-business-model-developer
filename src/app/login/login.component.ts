@@ -15,14 +15,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
-  errorReason: string = null;
+  errorReason?: string;
 
   expired = false;
   passwordChanged = false;
   dbError = false;
 
-  private loginSubscription: Subscription;
-  private querySubscription: Subscription;
+  private loginSubscription?: Subscription;
+  private querySubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.modalService.dismissAll();
     this.querySubscription = this.route.queryParamMap.subscribe(
       (queryParamMap) => {
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
@@ -58,19 +58,19 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  async closeAlert() {
+  async closeAlert(): Promise<void> {
     await this.router.navigate([]);
   }
 
-  async login() {
+  async login(): Promise<void> {
     if (this.loginSubscription) {
       this.loginSubscription.unsubscribe();
     }
-    this.errorReason = null;
+    this.errorReason = undefined;
     this.loginSubscription = this.authService
-      .login(this.form.get('username').value, this.form.get('password').value)
+      .login(this.form.get('username')?.value, this.form.get('password')?.value)
       .subscribe(
-        () => (this.errorReason = null),
+        () => (this.errorReason = undefined),
         (error) => {
           console.error(error);
           if (error.message != null) {

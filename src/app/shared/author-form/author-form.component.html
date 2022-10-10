@@ -30,7 +30,7 @@
         class="form-control"
         id="email"
         aria-describedby="eMailErrorDescription"
-        [class.is-invalid]="authorForm.get('email').hasError('email')"
+        [class.is-invalid]="authorForm.get('email')?.hasError('email')"
       />
       <div id="eMailErrorDescription" class="invalid-feedback">
         Email is not valid.

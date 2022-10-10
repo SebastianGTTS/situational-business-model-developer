@@ -1,7 +1,7 @@
 <app-list-wrapper
   [listTitle]="listTitle"
   [loading]="elementLists == null"
-  [noResults]="elementLists && elementLists.length === 0"
+  [noResults]="elementLists != null && elementLists.length === 0"
 >
   <div noResults>No elements defined.</div>
   <div

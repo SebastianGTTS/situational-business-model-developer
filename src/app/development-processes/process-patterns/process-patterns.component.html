@@ -1,5 +1,6 @@
 <ng-template #deleteProcessPatternModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalProcessPattern != null"
     (dismiss)="d()"
     (delete)="deleteProcessPattern(modalProcessPattern._id); c()"
   >
@@ -35,25 +36,30 @@
     [noResults]="noResults"
   >
     <div noResults>No Method Patterns defined.</div>
-    <ul results class="list-group">
-      <li
-        class="list-group-item"
-        *ngFor="let processPattern of processPatternList"
-      >
-        <app-results-list-item
-          [viewLink]="['processview', processPattern._id]"
-          (delete)="openDeleteProcessPatternModal(processPattern)"
+    <ng-container *ngIf="processPatternListFiltered != null" results>
+      <div *ngIf="processPatternListFiltered.length === 0">
+        No Method Patterns found for search: {{ searchValue }}.
+      </div>
+      <ul *ngIf="processPatternListFiltered.length > 0" class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let processPattern of processPatternListFiltered"
         >
-          <ng-container itemTitle>
-            {{ processPattern.name }}
-          </ng-container>
-          <ng-container itemDescription>
-            {{ processPattern.description }}
-          </ng-container>
-          <app-author-info [author]="processPattern.author"></app-author-info>
-        </app-results-list-item>
-      </li>
-    </ul>
+          <app-results-list-item
+            [viewLink]="['processview', processPattern._id]"
+            (delete)="openDeleteProcessPatternModal(processPattern)"
+          >
+            <ng-container itemTitle>
+              {{ processPattern.name }}
+            </ng-container>
+            <ng-container itemDescription>
+              {{ processPattern.description }}
+            </ng-container>
+            <app-author-info [author]="processPattern.author"></app-author-info>
+          </app-results-list-item>
+        </li>
+      </ul>
+    </ng-container>
   </app-list-wrapper>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">

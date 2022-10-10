@@ -1,7 +1,5 @@
 <main
-  *ngIf="
-    processApiService.runningProcess == null && processApiService.errorLoading
-  "
+  *ngIf="runningProcess == null && errorLoading"
   role="main"
   class="container"
 >
@@ -16,11 +14,7 @@
 </main>
 
 <main
-  *ngIf="
-    processApiService.runningMethod == null &&
-    processApiService.runningProcess != null &&
-    processApiService.errorLoading
-  "
+  *ngIf="runningMethod == null && runningProcess != null && errorLoading"
   role="main"
   class="container"
 >
@@ -34,7 +28,7 @@
           '/',
           'runningprocess',
           'runningprocessview',
-          processApiService.runningProcess._id
+          runningProcess._id
         ]"
       >
         Go back to kanban board of running method
@@ -44,18 +38,16 @@
 </main>
 
 <main
-  *ngIf="
-    processApiService.runningMethod != null &&
-    !processApiService.isCorrectStep()
-  "
+  *ngIf="runningProcess != null && runningMethod != null && !isCorrectStep"
   role="main"
   class="container"
 >
   <div class="alert alert-info my-3">
     <p
       *ngIf="
-        processApiService.stepInfo.step >
-        processApiService.runningMethod.currentStepNumber
+        stepInfo != null &&
+        stepInfo.step != null &&
+        stepInfo.step > runningMethod.currentStepNumber
       "
     >
       This step cannot be executed yet, because the previous step has not been
@@ -63,8 +55,9 @@
     </p>
     <p
       *ngIf="
-        processApiService.stepInfo.step <
-        processApiService.runningMethod.currentStepNumber
+        stepInfo != null &&
+        stepInfo.step != null &&
+        stepInfo.step < runningMethod.currentStepNumber
       "
     >
       Step already executed.
@@ -75,9 +68,9 @@
           '/',
           'runningprocess',
           'runningprocessview',
-          processApiService.runningProcess._id,
+          runningProcess._id,
           'method',
-          processApiService.runningMethod.executionId
+          runningMethod.executionId
         ]"
       >
         Go back to development step overview

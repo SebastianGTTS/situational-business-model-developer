@@ -23,8 +23,8 @@ export class MethodElementsSelectionFormComponent {
   @Input() methodElements: MethodElementEntry[] = [];
   @Input() listNames: string[] = [];
 
-  @Input() methodElementFormTemplate: TemplateRef<unknown>;
-  @Input() createFormGroupFactory: () => FormGroup;
+  @Input() methodElementFormTemplate!: TemplateRef<unknown>;
+  @Input() createFormGroupFactory!: () => FormGroup;
 
   constructor(private formArrayName: FormArrayName) {}
 

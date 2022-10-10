@@ -10,21 +10,24 @@ export interface AuthorInit extends DatabaseInit {
 }
 
 export interface AuthorEntry extends DatabaseEntry {
-  name: string;
-  company: string;
-  email: string;
-  website: string;
+  name?: string;
+  company?: string;
+  email?: string;
+  website?: string;
 }
 
 export class Author implements AuthorInit, Equality<Author>, DatabaseModelPart {
   // JSON Schema (stored)
-  name: string;
-  company: string;
-  email: string;
-  website: string;
+  name?: string;
+  company?: string;
+  email?: string;
+  website?: string;
 
   constructor(entry: AuthorEntry | undefined, init: AuthorInit | undefined) {
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.name = element.name;
     this.company = element.company;
     this.email = element.email;

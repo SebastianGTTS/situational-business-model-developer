@@ -3,16 +3,11 @@ import { InternalRoles, UserService } from '../user.service';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-
-class NavItem {
-  name: string;
-  route?: string[];
-  roles: string[];
-}
-
-class RootNavItem extends NavItem {
-  submenu?: RootNavItem[];
-}
+import { ModuleService } from '../development-process-registry/module-api/module.service';
+import {
+  MenuNavItem,
+  NavItem,
+} from '../development-process-registry/module-api/nav-item';
 
 @Component({
   selector: 'app-navbar',
@@ -20,7 +15,7 @@ class RootNavItem extends NavItem {
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  navItems: RootNavItem[] = [
+  navItems: NavItem[] = [
     {
       name: 'Method Enactment',
       route: ['runningprocess'],
@@ -58,37 +53,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       roles: [InternalRoles.EXPERT],
     },
     {
-      name: 'Model Composition',
-      route: ['companyModels'],
-      roles: [InternalRoles.EXPERT],
-    },
-    {
-      name: 'Canvas Model Repository',
-      submenu: [
-        {
-          name: 'Canvas Building Blocks',
-          route: ['expertModels'],
-          roles: [InternalRoles.EXPERT],
-        },
-        {
-          name: 'Canvas Models',
-          route: ['canvas', 'definitions'],
-          roles: [InternalRoles.EXPERT],
-        },
-        {
-          name: 'Canvas Elements',
-          route: ['canvasElements'],
-          roles: [InternalRoles.EXPERT],
-        },
-      ],
-      roles: [InternalRoles.EXPERT],
-    },
-    {
-      name: 'Templates',
-      route: ['whiteboard', 'templates'],
-      roles: [InternalRoles.EXPERT],
-    },
-    {
       name: 'Explanation',
       route: ['explanation'],
       roles: [InternalRoles.EXPERT, InternalRoles.BUSINESSDEVELOPER],
@@ -100,10 +64,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     role: [],
   });
 
-  private roleSubscription: Subscription;
+  private roleSubscription?: Subscription;
 
   constructor(
     private fb: FormBuilder,
+    private moduleService: ModuleService,
     private router: Router,
     private userService: UserService
   ) {}
@@ -112,10 +77,41 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.roleForm.setValue({ role: this.userService.activatedRole });
     this.roleSubscription = this.roleForm
       .get('role')
-      .valueChanges.subscribe((role) => {
+      ?.valueChanges.subscribe((role) => {
         this.userService.activatedRole = role;
         void this.router.navigate(['/', 'start']);
       });
+    this.merge(this.navItems, this.moduleService.getNavigationItems());
+  }
+
+  /**
+   * Merges the new navigation items into the old navigation items
+   *
+   * @param oldNavItems
+   * @param newNavItems
+   * @private
+   */
+  private merge(oldNavItems: NavItem[], newNavItems: NavItem[]): void {
+    const navItemNames: Set<string> = new Set<string>(
+      oldNavItems.map((item) => item.name)
+    );
+    for (const newItem of newNavItems) {
+      if (navItemNames.has(newItem.name)) {
+        const oldIndex = oldNavItems.findIndex(
+          (item) => item.name === newItem.name
+        );
+        const oldItem = oldNavItems[oldIndex];
+        if ('submenu' in newItem && 'submenu' in oldItem) {
+          this.merge(oldItem.submenu, newItem.submenu);
+          oldItem.roles.concat(newItem.roles);
+        } else {
+          oldNavItems.splice(oldIndex, 1, newItem);
+        }
+      } else {
+        navItemNames.add(newItem.name);
+        oldNavItems.push(newItem);
+      }
+    }
   }
 
   ngOnDestroy(): void {
@@ -130,5 +126,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   get currentRole(): InternalRoles {
     return this.userService.activatedRole;
+  }
+
+  isMenuItem(navItem: NavItem): navItem is MenuNavItem {
+    return 'submenu' in navItem;
   }
 }

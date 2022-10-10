@@ -8,7 +8,7 @@ import {
   RunningArtifactInit,
 } from './running-artifact';
 import { ArtifactDataType } from './artifact-data';
-import { ArtifactVersion } from './artifact-version';
+import { ArtifactVersion, ArtifactVersionId } from './artifact-version';
 import { ArtifactDataService } from './artifact-data.service';
 import { ElementService } from '../../database/element.service';
 import { DatabaseRevision, DbId } from '../../database/database-entry';
@@ -24,8 +24,60 @@ export class ConcreteArtifactService
     private pouchdbService: PouchdbService
   ) {}
 
-  async add(artifact: RunningArtifactInit): Promise<void> {
-    await this.pouchdbService.post(new RunningArtifact(undefined, artifact));
+  async add(artifact: RunningArtifactInit): Promise<RunningArtifact> {
+    const add = new RunningArtifact(undefined, artifact);
+    await this.pouchdbService.post(add);
+    return add;
+  }
+
+  /**
+   * View an internal artifact
+   *
+   * @param id
+   * @param versionId
+   */
+  async view(id: DbId, versionId: ArtifactVersionId): Promise<void> {
+    const artifact = await this.get(id);
+    const version = artifact.getVersion(versionId);
+    if (version == null) {
+      throw new Error('Artifact does not contain a version with the versionId');
+    }
+    this.artifactDataService.edit(version.data, {
+      referenceType: 'Artifact',
+      artifactId: artifact._id,
+      versionId: version.id,
+    });
+  }
+
+  /**
+   * Edit an internal artifact
+   *
+   * @param id
+   */
+  async edit(id: DbId): Promise<void> {
+    const artifact = await this.get(id);
+    const latestVersion = artifact.getLatestVersion();
+    if (latestVersion == null) {
+      throw new Error('Artifact without versions');
+    }
+    let editVersion: ArtifactVersion;
+    if (latestVersion.editing) {
+      editVersion = latestVersion;
+    } else {
+      artifact.addVersion({
+        createdBy: 'added',
+        data: await this.artifactDataService.copy(latestVersion.data),
+        editing: true,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      editVersion = artifact.getLatestVersion()!;
+      await this.save(artifact);
+    }
+    this.artifactDataService.edit(editVersion.data, {
+      referenceType: 'Artifact',
+      artifactId: artifact._id,
+      versionId: editVersion.id,
+    });
   }
 
   /**
@@ -57,6 +109,7 @@ export class ConcreteArtifactService
     artifact.identifier = identifier;
     artifact.versions.forEach((version) => {
       version.createdBy = 'imported';
+      version.executedBy = undefined;
       if (version.importName == null) {
         version.importName = importName;
       }

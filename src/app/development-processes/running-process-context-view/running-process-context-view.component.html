@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">
+      Request from business developer
+    </h6>
+    <div class="my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom border-gray pb-2">Comment</h6>
+      <p class="mb-0">
+        <span class="show-new-lines">{{
+          runningProcess.contextChangeInfo.comment
+        }}</span>
+      </p>
+    </div>
+    <app-domains-list
+      [domains]="runningProcess.contextChangeInfo.oldDomains"
+      [newDomains]="runningProcess.contextChangeInfo.suggestedDomains"
+    ></app-domains-list>
+    <app-situational-factors-list
+      [situationalFactors]="
+        runningProcess.contextChangeInfo.oldSituationalFactors
+      "
+      [newSituationalFactors]="
+        runningProcess.contextChangeInfo.suggestedSituationalFactors
+      "
+    ></app-situational-factors-list>
+  </div>
+
+  <app-context-edit
+    [domains]="runningProcess.domains"
+    [situationalFactors]="runningProcess.situationalFactors"
+    (updateDomains)="updateDomains($event)"
+    (updateSituationalFactors)="updateSituationalFactors($event)"
+  >
+    <button (click)="applySuggestion()" class="ml-auto btn btn-primary btn-xs">
+      Take over from business developer's suggestion
+    </button>
+  </app-context-edit>
+</div>

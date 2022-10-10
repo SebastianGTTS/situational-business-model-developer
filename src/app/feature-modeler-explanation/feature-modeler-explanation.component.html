@@ -1,3 +1,4 @@
+<!--suppress AngularUndefinedBinding -->
 <div class="my-3 p-3 bg-white rounded shadow-sm">
   <h6 class="border-bottom border-gray pb-2">
     Explanation of the Model Engine
@@ -45,7 +46,7 @@
   <h6 class="border-bottom border-gray pb-2">Execution Steps</h6>
 
   <ngb-carousel
-    interval="0"
+    [interval]="0"
     [showNavigationArrows]="false"
     [showNavigationIndicators]="false"
     (slide)="updatePagination($event)"

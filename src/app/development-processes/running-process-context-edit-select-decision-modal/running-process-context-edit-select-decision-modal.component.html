@@ -1,0 +1,55 @@
+<div class="modal-header">
+  <h4 class="modal-title">Select Decision for {{ developmentMethod.name }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" *ngIf="removedMethodMapping != null">
+  <div class="alert alert-info">
+    There are already decisions for the building block
+    {{ developmentMethod.name }}, please select one or create a new building
+    block decision
+  </div>
+  <ul class="list-group shadow-sm">
+    <li
+      *ngFor="let removedMethod of removedMethods; let index = index"
+      class="list-group-item"
+    >
+      <div class="d-flex align-items-baseline">
+        <h5>Decision #{{ index + 1 }}</h5>
+        <button
+          (click)="insertDevelopmentMethodDecision.emit(removedMethod)"
+          type="button"
+          class="btn btn-primary ml-auto btn-xs"
+        >
+          Select
+        </button>
+      </div>
+      <app-development-method-summary
+        [decision]="removedMethod.decision"
+        [showInfo]="false"
+      ></app-development-method-summary>
+      <ul class="list-group shadow-sm">
+        <li
+          *ngFor="
+            let execution of removedMethodMapping[removedMethod.id].executions;
+            let index = index
+          "
+          class="list-group-item"
+        >
+          Execution #{{ index + 1 }}
+          <app-running-process-artifacts
+            [runningProcess]="runningProcess"
+            [artifactVersions]="execution.artifacts"
+            [allowChanges]="false"
+          ></app-running-process-artifacts>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" (click)="insertDevelopmentMethodNew.emit()">
+    Create new decision
+  </button>
+</div>

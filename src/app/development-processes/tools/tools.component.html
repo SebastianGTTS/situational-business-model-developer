@@ -1,5 +1,9 @@
 <ng-template #deleteToolModal let-d="dismiss" let-c="close">
-  <app-delete-modal (dismiss)="d()" (delete)="delete(modalTool._id); c()">
+  <app-delete-modal
+    *ngIf="modalTool != null"
+    (dismiss)="d()"
+    (delete)="delete(modalTool._id); c()"
+  >
     <div modalTitle>Delete Tool {{ modalTool.name }}</div>
     You are deleting the tool {{ modalTool.name }}. This can not be undone. This
     action will not delete the tool from method building blocks that are using
@@ -37,7 +41,7 @@
   <app-list-wrapper
     listTitle="Loaded Modules"
     [loading]="moduleLists == null"
-    [noResults]="moduleLists && moduleLists.length === 0"
+    [noResults]="moduleLists != null && moduleLists.length === 0"
   >
     <div noResults>No modules loaded.</div>
     <div

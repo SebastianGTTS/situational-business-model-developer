@@ -1,7 +1,12 @@
-import { ExecutionStep } from './execution-step';
+import { createExecutionStep, isMethodExecutionStep } from './execution-step';
 
 describe('ExecutionStep', () => {
-  it('should create an instance', () => {
-    expect(new ExecutionStep()).toBeTruthy();
+  it('should create', () => {
+    const executionStep = createExecutionStep(undefined, {
+      name: 'Empty step',
+      description: 'Empty description',
+    });
+    expect(executionStep).toBeTruthy();
+    expect(isMethodExecutionStep(executionStep)).toBe(false);
   });
 });

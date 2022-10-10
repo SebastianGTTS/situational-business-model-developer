@@ -4,30 +4,36 @@ import {
   SituationalFactorEntry,
 } from '../method-elements/situational-factor/situational-factor';
 import { DevelopmentMethod } from '../development-method/development-method';
-import { Decision, DecisionEntry, DecisionInit } from './decision';
 import { Domain, DomainEntry, DomainInit } from '../knowledge/domain';
 import { Selection, SelectionEntry } from '../development-method/selection';
 import {
   DatabaseRootEntry,
   DatabaseRootInit,
 } from '../../database/database-entry';
+import {
+  MethodDecision,
+  MethodDecisionEntry,
+  MethodDecisionInit,
+} from './method-decision';
+
+export type BmProcessDiagram = string;
 
 export interface BmProcessInit extends DatabaseRootInit {
   initial?: boolean;
   name: string;
-  processDiagram?: string;
+  processDiagram: BmProcessDiagram;
   domains?: DomainInit[];
   situationalFactors?: Selection<SituationalFactor>[];
-  decisions?: { [elementId: string]: Decision };
+  decisions?: { [elementId: string]: MethodDecisionInit };
 }
 
 export interface BmProcessEntry extends DatabaseRootEntry {
   initial: boolean;
   name: string;
-  processDiagram: string;
+  processDiagram: BmProcessDiagram;
   domains: DomainEntry[];
   situationalFactors: SelectionEntry<SituationalFactorEntry>[];
-  decisions: { [elementId: string]: DecisionEntry };
+  decisions: { [elementId: string]: MethodDecisionEntry };
 }
 
 export class BmProcess extends DatabaseModel {
@@ -37,23 +43,21 @@ export class BmProcess extends DatabaseModel {
 
   name: string;
 
-  processDiagram: string;
+  processDiagram: BmProcessDiagram;
 
   domains: Domain[] = [];
   situationalFactors: Selection<SituationalFactor>[] = [];
 
-  decisions: { [elementId: string]: Decision } = {};
+  decisions: { [elementId: string]: MethodDecision } = {};
 
   constructor(
     entry: BmProcessEntry | undefined,
     init: BmProcessInit | undefined
   ) {
     super(entry, init, BmProcess.typeName);
-    const element = entry ?? init;
-    this.initial = element.initial ?? this.initial;
-    this.name = element.name;
-    this.processDiagram = element.processDiagram;
+    let element;
     if (entry != null) {
+      element = entry;
       this.domains =
         entry.domains?.map((domain) => new Domain(domain, undefined)) ??
         this.domains;
@@ -69,10 +73,14 @@ export class BmProcess extends DatabaseModel {
       if (entry.decisions) {
         Object.entries(entry.decisions).forEach(
           ([elementId, decision]) =>
-            (this.decisions[elementId] = new Decision(decision, undefined))
+            (this.decisions[elementId] = new MethodDecision(
+              decision,
+              undefined
+            ))
         );
       }
     } else if (init != null) {
+      element = init;
       this.domains =
         init.domains?.map((domain) => new Domain(undefined, domain)) ??
         this.domains;
@@ -88,80 +96,23 @@ export class BmProcess extends DatabaseModel {
       if (init.decisions) {
         Object.entries(init.decisions).forEach(
           ([elementId, decision]) =>
-            (this.decisions[elementId] = new Decision(undefined, decision))
+            (this.decisions[elementId] = new MethodDecision(
+              undefined,
+              decision
+            ))
         );
       }
+    } else {
+      throw new Error('Either entry or init must be provided.');
     }
-  }
-
-  checkMatchByFactor(factorMap: {
-    [listName: string]: { [factorName: string]: string };
-  }): {
-    missing: SituationalFactor[];
-    low: SituationalFactor[];
-    incorrect: SituationalFactor[];
-  } {
-    const result: {
-      missing: SituationalFactor[];
-      low: SituationalFactor[];
-      incorrect: SituationalFactor[];
-    } = {
-      missing: [],
-      low: [],
-      incorrect: [],
-    };
-    this.situationalFactors
-      .map((element) => element.element)
-      .forEach((factor) => {
-        if (
-          factor.factor.list in factorMap &&
-          factor.factor.name in factorMap[factor.factor.list]
-        ) {
-          const value = factorMap[factor.factor.list][factor.factor.name];
-          if (factor.value !== value) {
-            if (factor.factor.ordered) {
-              if (
-                factor.factor.values.indexOf(factor.value) >
-                factor.factor.values.indexOf(value)
-              ) {
-                result.low.push(factor);
-              }
-            } else {
-              result.incorrect.push(factor);
-            }
-          }
-        } else {
-          result.missing.push(factor);
-        }
-      });
-    return result;
-  }
-
-  /**
-   * Check for match between context and given factors
-   *
-   * @param factorMap the given factors that should fulfill the context of this process
-   * @returns factor names that are missing, have too low or incorrect values
-   */
-  checkMatch(factorMap: {
-    [listName: string]: { [factorName: string]: string };
-  }): { missing: string[]; low: string[]; incorrect: string[] } {
-    const result = this.checkMatchByFactor(factorMap);
-    return {
-      low: result.low.map((factor) => factor.factor.name),
-      incorrect: result.incorrect.map((factor) => factor.factor.name),
-      missing: result.missing.map((factor) => factor.factor.name),
-    };
+    this.initial = element.initial ?? this.initial;
+    this.name = element.name;
+    this.processDiagram = element.processDiagram;
   }
 
   addDecision(id: string, method: DevelopmentMethod): void {
-    this.decisions[id] = new Decision(undefined, {
+    this.decisions[id] = new MethodDecision(undefined, {
       method: method,
-      stakeholders: {},
-      inputArtifacts: {},
-      outputArtifacts: {},
-      tools: {},
-      stepDecisions: method.executionSteps.map(() => null),
     });
   }
 
@@ -182,16 +133,27 @@ export class BmProcess extends DatabaseModel {
    *
    * @param decisions the new decisions
    */
-  updateDecisions(decisions: { [elementId: string]: DecisionInit }): void {
+  updateDecisions(decisions: {
+    [elementId: string]: MethodDecisionInit;
+  }): void {
     this.decisions = {};
     Object.entries(decisions).forEach(
       ([elementId, decision]) =>
-        (this.decisions[elementId] = new Decision(undefined, decision))
+        (this.decisions[elementId] = new MethodDecision(undefined, decision))
+    );
+  }
+
+  /**
+   * Checks whether all method decisions are correctly filled out, except for the step decisions.
+   */
+  isComplete(): boolean {
+    return Object.values(this.decisions).every((decision) =>
+      decision.isComplete()
     );
   }
 
   toDb(): BmProcessEntry {
-    const decisions: { [elementId: string]: DecisionEntry } = {};
+    const decisions: { [elementId: string]: MethodDecisionEntry } = {};
     Object.entries(this.decisions).forEach(([id, decision]) => {
       decisions[id] = decision.toDb();
     });

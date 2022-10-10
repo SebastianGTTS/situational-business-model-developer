@@ -11,14 +11,23 @@ import {
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
+import { Updatable, UPDATABLE } from '../../shared/updatable';
 
 @Component({
   selector: 'app-examples-form',
   templateUrl: './examples-form.component.html',
   styleUrls: ['./examples-form.component.css'],
+  providers: [
+    {
+      provide: UPDATABLE,
+      useExisting: ExamplesFormComponent,
+    },
+  ],
 })
-export class ExamplesFormComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() examples: string[];
+export class ExamplesFormComponent
+  implements OnInit, OnChanges, OnDestroy, Updatable
+{
+  @Input() examples!: string[];
 
   @Output() submitExamplesForm = new EventEmitter<FormArray>();
 
@@ -27,11 +36,11 @@ export class ExamplesFormComponent implements OnInit, OnChanges, OnDestroy {
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changeSubscription = this.examplesForm.valueChanges
       .pipe(
         debounceTime(300),
@@ -43,7 +52,7 @@ export class ExamplesFormComponent implements OnInit, OnChanges, OnDestroy {
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.examples) {
       const oldExamples = changes.examples.previousValue;
       const newExamples = changes.examples.currentValue;
@@ -53,24 +62,30 @@ export class ExamplesFormComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    if (this.changeSubscription) {
+  ngOnDestroy(): void {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitExamplesForm.emit(this.formArray);
   }
 
-  private loadForm(examples: string[]) {
+  update(): void {
+    if (this.changed && this.examplesForm.valid) {
+      this.submitForm();
+    }
+  }
+
+  private loadForm(examples: string[]): void {
     const formGroups = examples.map((example) =>
       this.fb.control(example, Validators.required)
     );
     this.examplesForm.setControl('examples', this.fb.array(formGroups));
   }
 
-  private equalExamples(examplesA: string[], examplesB: string[]) {
+  private equalExamples(examplesA: string[], examplesB: string[]): boolean {
     if (examplesA == null && examplesB == null) {
       return true;
     }

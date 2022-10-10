@@ -1,5 +1,6 @@
 <ng-template #deleteBmProcessModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalBmProcess != null"
     (dismiss)="d()"
     (delete)="deleteBmProcess(modalBmProcess._id); c()"
   >
@@ -107,4 +108,8 @@
       </form>
     </div>
   </div>
+
+  <app-running-processes-context-list
+    [editable]="true"
+  ></app-running-processes-context-list>
 </main>

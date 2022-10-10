@@ -1,5 +1,3 @@
-window.fetch = undefined; // without this imports do not work
-
 import {
   createServiceFactory,
   SpectatorService,

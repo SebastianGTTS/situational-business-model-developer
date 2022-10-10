@@ -19,7 +19,7 @@ import { SEARCH_FUNCTION } from '../../shared/search.service';
   ],
 })
 export class RunningProcessArtifactImportFormComponent implements OnInit {
-  artifacts: RunningArtifactEntry[];
+  artifacts?: RunningArtifactEntry[];
 
   @Output() selectArtifact = new EventEmitter<RunningArtifact>();
 

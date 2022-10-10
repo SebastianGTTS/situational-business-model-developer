@@ -4,6 +4,7 @@ import { FormArray, FormArrayName } from '@angular/forms';
 import { ArtifactMappingFormService } from '../shared/artifact-mapping-form.service';
 import { ExecutionStepsFormValue } from '../shared/execution-steps-form.service';
 import { MetaModelIdentifier } from '../../development-process-registry/meta-model-definition';
+import { MetaModelData } from '../../development-process-registry/method-elements/artifact/artifact';
 
 @Component({
   selector: 'app-development-method-artifact-mappings',
@@ -12,9 +13,10 @@ import { MetaModelIdentifier } from '../../development-process-registry/meta-mod
 })
 export class DevelopmentMethodArtifactMappingsComponent {
   @Input() executionStepsFormValue?: ExecutionStepsFormValue;
-  @Input() developmentMethod: DevelopmentMethod;
-  @Input() metaModel: MetaModelIdentifier;
-  @Input() stepNumber: number = null;
+  @Input() developmentMethod!: DevelopmentMethod;
+  @Input() metaModel!: Readonly<MetaModelIdentifier>;
+  @Input() metaModelData?: MetaModelData;
+  @Input() stepNumber?: number;
 
   constructor(
     private artifactMappingService: ArtifactMappingFormService,

@@ -4,9 +4,9 @@ import {
   MethodElementInit,
 } from '../method-element';
 
-export interface TypeInit extends MethodElementInit {}
+export type TypeInit = MethodElementInit;
 
-export interface TypeEntry extends MethodElementEntry {}
+export type TypeEntry = MethodElementEntry;
 
 export class Type extends MethodElement {
   static readonly typeName = 'Type';
@@ -18,13 +18,14 @@ export class Type extends MethodElement {
   ): boolean {
     const hasType = (type: {
       list: string;
-      element: { _id: string; name: string };
+      element?: { _id: string; name: string };
     }): boolean => {
       if (type.element) {
         const ids = types
           .map((t) => t.element)
-          .filter((t) => t)
-          .map((t) => t._id);
+          .filter((t) => t != null)
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          .map((t) => t!._id);
         return ids.includes(type.element._id);
       } else {
         const listNames = types.map((t) => t.list).filter((l) => l);

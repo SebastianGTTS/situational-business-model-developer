@@ -22,17 +22,52 @@ import {
 } from './running-method-info';
 import { v4 as uuidv4 } from 'uuid';
 import { Artifact } from '../method-elements/artifact/artifact';
-import { ArtifactVersionInit } from './artifact-version';
+import {
+  ArtifactVersion,
+  ArtifactVersionId,
+  ArtifactVersionInit,
+} from './artifact-version';
 import { OutputArtifactMapping } from './output-artifact-mapping';
 import {
   DatabaseRootEntry,
   DatabaseRootInit,
+  DbId,
 } from '../../database/database-entry';
 import { Comment } from './comment';
+import {
+  Selection,
+  SelectionEntry,
+  SelectionInit,
+} from '../development-method/selection';
+import {
+  SituationalFactor,
+  SituationalFactorEntry,
+  SituationalFactorInit,
+} from '../method-elements/situational-factor/situational-factor';
+import { Domain, DomainEntry, DomainInit } from '../knowledge/domain';
+import {
+  ContextChangeInfo,
+  ContextChangeInfoEntry,
+  ContextChangeInfoInit,
+} from './context-change-info';
+
+export type FullRunningProcess = RunningProcess & { process: BmProcess };
+export type ContextChangeRunningProcess = RunningProcess & {
+  process: BmProcess;
+  contextChange: true;
+  contextChangeInfo: ContextChangeInfo;
+};
 
 export interface RunningProcessInit extends DatabaseRootInit {
   name: string;
-  process: BmProcessInit;
+  process?: BmProcessInit;
+
+  readonly domains?: DomainInit[];
+  readonly situationalFactors?: SelectionInit<SituationalFactorInit>[];
+
+  contextChange?: boolean;
+  contextChangeInfo?: ContextChangeInfoInit;
+  previousContextChanges?: ContextChangeInfoInit[];
 
   todoMethods?: RunningMethodInit[];
   runningMethods?: RunningMethodInit[];
@@ -43,7 +78,14 @@ export interface RunningProcessInit extends DatabaseRootInit {
 
 export interface RunningProcessEntry extends DatabaseRootEntry {
   name: string;
-  process: BmProcessEntry;
+  process?: BmProcessEntry;
+
+  domains: DomainEntry[];
+  situationalFactors: SelectionEntry<SituationalFactorEntry>[];
+
+  contextChange: boolean;
+  contextChangeInfo?: ContextChangeInfoEntry;
+  previousContextChanges: ContextChangeInfoEntry[];
 
   todoMethods: RunningMethodEntry[];
   runningMethods: RunningMethodEntry[];
@@ -59,7 +101,32 @@ export class RunningProcess
   static readonly typeName = 'RunningProcess';
 
   name: string;
-  process: BmProcess;
+  process?: BmProcess;
+
+  /**
+   * For full process: empty
+   * For light process: real domains
+   */
+  _domains: Domain[] = [];
+  /**
+   * For full process: empty
+   * For light process: real situational factors
+   */
+  _situationalFactors: Selection<SituationalFactor>[] = [];
+
+  /**
+   * True if the context should be changed or currently ongoing
+   */
+  contextChange = false;
+  /**
+   * Info about the currently ongoing context change
+   */
+  contextChangeInfo?: ContextChangeInfo;
+  /**
+   * Info about previous context changes.
+   * For light process: empty.
+   */
+  previousContextChanges: ContextChangeInfo[] = [];
 
   todoMethods: RunningMethod[] = [];
   runningMethods: RunningMethod[] = [];
@@ -67,11 +134,36 @@ export class RunningProcess
 
   artifacts: RunningArtifact[] = [];
 
-  constructor(entry: RunningProcessEntry, init: RunningProcessInit) {
+  constructor(
+    entry: RunningProcessEntry | undefined,
+    init: RunningProcessInit | undefined
+  ) {
     super(entry, init, RunningProcess.typeName);
-    this.name = (entry ?? init).name;
     if (entry != null) {
-      this.process = new BmProcess(entry.process, undefined);
+      this.name = entry.name;
+      this.process = entry.process
+        ? new BmProcess(entry.process, undefined)
+        : undefined;
+      this._domains =
+        entry.domains?.map((domain) => new Domain(domain, undefined)) ??
+        this._domains;
+      this._situationalFactors =
+        entry.situationalFactors?.map(
+          (factor) =>
+            new Selection<SituationalFactor>(
+              factor,
+              undefined,
+              SituationalFactor
+            )
+        ) ?? this._situationalFactors;
+      this.contextChange = entry.contextChange ?? this.contextChange;
+      this.contextChangeInfo = entry.contextChangeInfo
+        ? new ContextChangeInfo(entry.contextChangeInfo, undefined)
+        : undefined;
+      this.previousContextChanges =
+        entry.previousContextChanges?.map(
+          (contextChange) => new ContextChangeInfo(contextChange, undefined)
+        ) ?? this.previousContextChanges;
       this.todoMethods =
         entry.todoMethods?.map(
           (method) => new RunningMethod(method, undefined)
@@ -96,8 +188,31 @@ export class RunningProcess
         entry.artifacts?.map(
           (element) => new RunningArtifact(element, undefined)
         ) ?? this.artifacts;
-    } else {
-      this.process = new BmProcess(undefined, init.process);
+    } else if (init != null) {
+      this.name = init.name;
+      this.process = init.process
+        ? new BmProcess(undefined, init.process)
+        : undefined;
+      this._domains =
+        init.domains?.map((domain) => new Domain(undefined, domain)) ??
+        this._domains;
+      this._situationalFactors =
+        init.situationalFactors?.map(
+          (factor) =>
+            new Selection<SituationalFactor>(
+              undefined,
+              factor,
+              SituationalFactor
+            )
+        ) ?? this._situationalFactors;
+      this.contextChange = init.contextChange ?? this.contextChange;
+      this.contextChangeInfo = init.contextChangeInfo
+        ? new ContextChangeInfo(undefined, init.contextChangeInfo)
+        : undefined;
+      this.previousContextChanges =
+        init.previousContextChanges?.map(
+          (contextChange) => new ContextChangeInfo(undefined, contextChange)
+        ) ?? this.previousContextChanges;
       this.todoMethods =
         init.todoMethods?.map(
           (method) => new RunningMethod(undefined, method)
@@ -122,6 +237,8 @@ export class RunningProcess
         init.artifacts?.map(
           (element) => new RunningArtifact(undefined, element)
         ) ?? this.artifacts;
+    } else {
+      throw new Error('Either entry or init must be provided.');
     }
   }
 
@@ -129,12 +246,15 @@ export class RunningProcess
    * Add a method to the list of manually added methods that can be executed later
    *
    * @param runningMethod the running method
+   *
+   * @return the added running method
    */
-  addTodoMethod(runningMethod: RunningMethod): void {
+  addTodoMethod(runningMethod: RunningMethod): RunningMethod {
     if (runningMethod.executionId == null) {
       runningMethod.executionId = uuidv4();
     }
     this.todoMethods.push(runningMethod);
+    return runningMethod;
   }
 
   /**
@@ -176,6 +296,9 @@ export class RunningProcess
    * @return the added running method
    */
   addRunningMethodOfProcess(nodeId: string): RunningMethod {
+    if (this.process == null) {
+      throw new Error('Can not add method of process to lightweight execution');
+    }
     const method = new RunningMethod(undefined, {
       nodeId,
       decision: this.process.decisions[nodeId],
@@ -193,7 +316,7 @@ export class RunningProcess
    * @param executionId the id of the running method
    * @return the running method
    */
-  getRunningMethod(executionId: string): RunningMethod | undefined {
+  getRunningMethod(executionId: string | undefined): RunningMethod | undefined {
     return this.runningMethods.find(
       (method) => method.executionId === executionId
     );
@@ -242,12 +365,45 @@ export class RunningProcess
   }
 
   /**
+   * Remove an executed method. Also maps affected artifacts to added manually.
+   *
+   * @param executionId
+   */
+  removeExecutedMethod(executionId: string): void {
+    if (!this.isContextChange()) {
+      throw new Error('Running Process must be in context change mode.');
+    }
+    this.executedMethods = this.executedMethods.filter(
+      (executedMethod) => executedMethod.executionId !== executionId
+    );
+    this.contextChangeInfo.removeExecutedMethod(executionId);
+    this.getArtifactsOfExecutedMethod(executionId).forEach((artifact) =>
+      artifact.versions.forEach((version) => {
+        version.createdBy = 'added';
+        version.executedBy = undefined;
+      })
+    );
+  }
+
+  /**
+   * Get all executions by the node id
+   *
+   * @param nodeId
+   */
+  getExecutionsByNodeId(nodeId: string): RunningMethodInfo[] {
+    return this.executedMethods.filter((info) => info.nodeId === nodeId);
+  }
+
+  /**
    * Checks whether a method to execute is defined for the node
    *
    * @param nodeId the id of the node
    * @return true if a method is defined
    */
   isExecutable(nodeId: string): boolean {
+    if (this.process == null) {
+      return false;
+    }
     return nodeId in this.process.decisions;
   }
 
@@ -275,6 +431,71 @@ export class RunningProcess
   }
 
   /**
+   * Get all artifact versions created by a specific method
+   *
+   * @param executionId
+   */
+  getArtifactsOfExecutedMethod(
+    executionId: string
+  ): { artifact: RunningArtifact; versions: ArtifactVersion[] }[] {
+    const artifactVersions: {
+      artifact: RunningArtifact;
+      versions: ArtifactVersion[];
+    }[] = [];
+    for (const artifact of this.artifacts) {
+      const versions: ArtifactVersion[] = artifact.versions.filter(
+        (version) =>
+          version.executedBy != null && version.executedBy === executionId
+      );
+      if (versions.length > 0) {
+        artifactVersions.push({
+          artifact: artifact,
+          versions: versions,
+        });
+      }
+    }
+    return artifactVersions;
+  }
+
+  getArtifactVersion(
+    versionId: ArtifactVersionId
+  ): ArtifactVersion | undefined {
+    for (const artifact of this.artifacts) {
+      const version = artifact.getVersion(versionId);
+      if (version != null) {
+        return version;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Get all artifact versions created by a specific node
+   *
+   * @param nodeId
+   */
+  getArtifactsCreatedByNode(
+    nodeId: string
+  ): { artifact: RunningArtifact; versions: ArtifactVersion[] }[] {
+    const artifactVersions: {
+      artifact: RunningArtifact;
+      versions: ArtifactVersion[];
+    }[] = [];
+    for (const artifact of this.artifacts) {
+      const versions: ArtifactVersion[] = artifact.versions.filter(
+        (version) => version.createdBy === nodeId
+      );
+      if (versions.length > 0) {
+        artifactVersions.push({
+          artifact: artifact,
+          versions: versions,
+        });
+      }
+    }
+    return artifactVersions;
+  }
+
+  /**
    * Add the output artifacts of a method to the artifacts list of this process
    *
    * @param executionId the id of the executed method
@@ -284,10 +505,18 @@ export class RunningProcess
   addOutputArtifacts(
     executionId: string,
     outputArtifacts: Artifact[],
-    outputArtifactsMapping: OutputArtifactMapping[]
+    outputArtifactsMapping: (OutputArtifactMapping | undefined)[]
   ): void {
     const method = this.getRunningMethod(executionId);
+    if (method == null) {
+      throw new Error(
+        'Running Method with executionId ' + executionId + ' does not exist'
+      );
+    }
     outputArtifactsMapping.forEach((output, index) => {
+      if (output == null) {
+        return;
+      }
       const version: ArtifactVersionInit = {
         createdBy: method.nodeId ? method.nodeId : 'manual',
         executedBy: method.executionId,
@@ -295,15 +524,46 @@ export class RunningProcess
       };
       if (output.isDefinition) {
         const artifact = new RunningArtifact(undefined, {
-          identifier: output.artifactName,
+          identifier: output.artifactName ?? '',
           artifact: outputArtifacts[index],
         });
         artifact.addVersion(version);
         this.artifacts.push(artifact);
       } else {
-        this.artifacts[output.artifact].addVersion(version);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.artifacts[output.artifact!].addVersion(version);
       }
     });
+  }
+
+  /**
+   * Add a manually created artifact to the running process
+   *
+   * @param artifact
+   * @param outputArtifactMapping
+   * @param editing
+   */
+  addOutputArtifact(
+    artifact: Artifact,
+    outputArtifactMapping: OutputArtifactMapping,
+    editing = false
+  ): void {
+    const version: ArtifactVersionInit = {
+      createdBy: 'added',
+      data: outputArtifactMapping.data,
+      editing: editing,
+    };
+    if (outputArtifactMapping.isDefinition) {
+      const runningArtifact = new RunningArtifact(undefined, {
+        identifier: outputArtifactMapping.artifactName ?? '',
+        artifact: artifact,
+      });
+      runningArtifact.addVersion(version);
+      this.artifacts.push(runningArtifact);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.artifacts[outputArtifactMapping.artifact!].addVersion(version);
+    }
   }
 
   /**
@@ -328,11 +588,59 @@ export class RunningProcess
     artifact.identifier = identifier;
   }
 
+  /**
+   * Remove a running artifact
+   *
+   * @param id artifact's id
+   */
+  removeArtifact(id: DbId): void {
+    this.artifacts = this.artifacts.filter((artifact) => artifact._id !== id);
+  }
+
+  /**
+   * Whether this process has a bm process defined or is a lightweight running process
+   */
+  hasProcess(): this is FullRunningProcess {
+    return this.process != null;
+  }
+
+  /**
+   * Whether this process is currently in a context change situation
+   */
+  isContextChange(): this is ContextChangeRunningProcess {
+    return this.contextChange;
+  }
+
+  get situationalFactors(): Selection<SituationalFactor>[] {
+    if (this.hasProcess()) {
+      return this.process.situationalFactors;
+    } else {
+      return this._situationalFactors;
+    }
+  }
+
+  get domains(): Domain[] {
+    if (this.hasProcess()) {
+      return this.process.domains;
+    } else {
+      return this._domains;
+    }
+  }
+
   toDb(): RunningProcessEntry {
     return {
       ...super.toDb(),
       name: this.name,
-      process: this.process.toDb(),
+      process: this.process?.toDb(),
+      domains: this._domains.map((domain) => domain.toDb()),
+      situationalFactors: this._situationalFactors.map((factor) =>
+        factor.toDb()
+      ),
+      contextChange: this.contextChange,
+      contextChangeInfo: this.contextChangeInfo?.toDb(),
+      previousContextChanges: this.previousContextChanges.map((contextChange) =>
+        contextChange.toDb()
+      ),
       todoMethods: this.todoMethods.map((method) => method.toDb()),
       runningMethods: this.runningMethods.map((method) => method.toDb()),
       executedMethods: this.executedMethods.map((executedMethod) => {

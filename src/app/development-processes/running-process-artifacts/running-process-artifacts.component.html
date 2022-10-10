@@ -1,0 +1,220 @@
+<ng-template #artifactShowVersionModal let-d="dismiss">
+  <app-concrete-artifact-show-version-modal
+    [artifact]="modalArtifact"
+    [version]="modalArtifactVersion"
+    (viewArtifactVersion)="viewArtifactVersion.emit(modalArtifactVersion); d()"
+    (editArtifactVersion)="editArtifact.emit(modalArtifact); d()"
+    (dismiss)="d()"
+  ></app-concrete-artifact-show-version-modal>
+</ng-template>
+
+<ng-template #artifactExportModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Export Artifact</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-artifact-export-form
+      *ngIf="modalArtifact != null"
+      [artifact]="modalArtifact"
+      (submitArtifactExportForm)="
+        exportArtifact.emit({
+          identifier: $event.value.identifier,
+          artifact: modalArtifact
+        });
+        c()
+      "
+    ></app-running-process-artifact-export-form>
+  </div>
+</ng-template>
+
+<ng-template #artifactImportModal let-d="dismiss" let-c="close">
+  <div class="modal-header">
+    <h4 class="modal-title">Import Artifact</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-artifact-import-form
+      (selectArtifact)="importArtifact.emit($event._id); c()"
+    ></app-running-process-artifact-import-form>
+  </div>
+</ng-template>
+
+<ng-template #artifactRenameModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalArtifact != null">
+      Rename Artifact {{ modalArtifact.identifier }} &ndash;
+      {{ modalArtifact.artifact.name }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-artifact-rename-form
+      *ngIf="modalArtifact != null"
+      [artifact]="modalArtifact"
+      (submitArtifactExportForm)="
+        renameArtifact.emit({
+          identifier: $event.value.identifier,
+          artifact: modalArtifact
+        });
+        c()
+      "
+    ></app-running-process-artifact-rename-form>
+  </div>
+</ng-template>
+
+<ng-template #artifactRemoveModal let-c="close" let-d="dismiss">
+  <app-delete-modal
+    *ngIf="modalArtifact != null"
+    (dismiss)="d()"
+    (delete)="removeArtifact.emit(modalArtifact); c()"
+  >
+    <div modalTitle>Remove artifact</div>
+    This will remove the artifact {{ modalArtifact.identifier }} with all
+    versions. This cannot be undone.
+  </app-delete-modal>
+</ng-template>
+
+<ng-template #addArtifactModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Add Artifact</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-artifact-add-form
+      [processArtifacts]="runningProcess.artifacts"
+      (addArtifact)="addArtifact.emit($event); c()"
+      (createArtifact)="createArtifact.emit($event); c()"
+    ></app-running-process-artifact-add-form>
+  </div>
+</ng-template>
+
+<div
+  class="my-3 p-3 bg-white rounded shadow-sm"
+  *ngIf="_artifactVersions != null"
+>
+  <div class="d-flex align-items-baseline border-bottom border-gray mb-2">
+    <h6 class="pb-2 mb-0">Artifacts</h6>
+    <button
+      *ngIf="allowChanges"
+      class="ml-auto btn btn-xs btn-dark"
+      (click)="openAddArtifactModal()"
+    >
+      Add Artifact
+    </button>
+    <button
+      *ngIf="allowChanges"
+      class="ml-1 btn btn-xs btn-dark"
+      (click)="openArtifactImportModal()"
+    >
+      Import Artifact
+    </button>
+  </div>
+  <div *ngIf="_artifactVersions.length === 0" class="alert alert-info mb-0">
+    There are no artifacts
+  </div>
+  <ul *ngIf="_artifactVersions.length > 0" class="list-group">
+    <li
+      *ngFor="let artifactVersions of _artifactVersions"
+      class="list-group-item"
+    >
+      <div class="d-flex">
+        <div>
+          {{ artifactVersions.artifact.identifier }} &ndash;
+          {{ artifactVersions.artifact.artifact.name }}
+        </div>
+        <div class="ml-auto" *ngIf="allowChanges">
+          <div
+            class="btn btn-dark btn-xs mr-1"
+            (click)="openArtifactRenameModal(artifactVersions.artifact)"
+          >
+            Rename
+          </div>
+          <div
+            class="btn btn-dark btn-xs mr-1"
+            (click)="openArtifactExportModal(artifactVersions.artifact)"
+          >
+            Export
+          </div>
+          <div
+            class="btn btn-dark btn-xs"
+            (click)="openArtifactRemoveModal(artifactVersions.artifact)"
+          >
+            Remove
+          </div>
+        </div>
+      </div>
+      <ul *ngIf="artifactVersions.versions.length > 0">
+        <li *ngFor="let version of artifactVersions.versions">
+          <a
+            [routerLink]="[]"
+            (click)="
+              openArtifactShowVersionModal(artifactVersions.artifact, version)
+            "
+            >Version #{{
+              artifactVersions.artifact.getVersionNumber(version) + 1
+            }}</a
+          >
+          &ndash;
+          <a
+            *ngIf="
+              version.createdBy !== 'manual' &&
+              version.createdBy !== 'imported' &&
+              runningProcess.hasProcess() &&
+              runningProcess.process.decisions[version.createdBy] != null
+            "
+            [routerLink]="[]"
+            (click)="focusNode.emit(version.createdBy)"
+          >
+            {{
+              runningProcess.process.decisions[version.createdBy].method.name
+            }}
+          </a>
+          <span *ngIf="version.createdBy === 'manual'">
+            {{
+              runningProcess.getExecutedMethod(version.executedBy!)!.methodName
+            }}
+          </span>
+          <span *ngIf="version.createdBy === 'imported'">
+            Imported from {{ version.importName }}
+          </span>
+          <span *ngIf="version.createdBy === 'added'"
+            >Added manually<span *ngIf="version.editing">
+              (editable)</span
+            ></span
+          >
+          <span
+            *ngIf="
+              version.createdBy !== 'manual' &&
+              version.createdBy !== 'imported' &&
+              version.createdBy !== 'added' &&
+              runningProcess.hasProcess() &&
+              runningProcess.process.decisions[version.createdBy] == null
+            "
+          >
+            Missing Method
+          </span>
+          <span
+            *ngIf="
+              version.createdBy !== 'manual' &&
+              version.createdBy !== 'imported' &&
+              version.createdBy !== 'added' &&
+              !runningProcess.hasProcess()
+            "
+          >
+            Missing Process
+          </span>
+          &ndash; {{ version.time | date: 'short' }}
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

@@ -11,14 +11,14 @@ import {
   styleUrls: ['./enaction-explanation.component.css'],
 })
 export class EnactionExplanationComponent {
-  @ViewChild(NgbCarousel) carousel: NgbCarousel;
-  @ViewChild(NgbPagination) pagination: NgbPagination;
+  @ViewChild(NgbCarousel) carousel!: NgbCarousel;
+  @ViewChild(NgbPagination) pagination!: NgbPagination;
 
-  updateCarousel(tab: number) {
+  updateCarousel(tab: number): void {
     this.carousel.select(String(tab));
   }
 
-  updatePagination(slideEvent: NgbSlideEvent) {
+  updatePagination(slideEvent: NgbSlideEvent): void {
     this.pagination.selectPage(Number(slideEvent.current));
   }
 }

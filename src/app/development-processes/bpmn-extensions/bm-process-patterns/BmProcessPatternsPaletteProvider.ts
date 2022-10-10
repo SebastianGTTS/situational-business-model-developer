@@ -1,7 +1,8 @@
 import PaletteProvider from 'bpmn-js/lib/features/palette/PaletteProvider';
+import { BpmnElement } from 'bpmn-js';
 
 export default class BmProcessPatternsPaletteProvider extends PaletteProvider {
-  getPaletteEntries(element) {
+  getPaletteEntries(element: BpmnElement): { [id: string]: unknown } {
     const actionNames = [
       'hand-tool',
       'lasso-tool',
@@ -14,7 +15,7 @@ export default class BmProcessPatternsPaletteProvider extends PaletteProvider {
       'tool-separator',
     ];
     const actions = super.getPaletteEntries(element);
-    const newActions = {};
+    const newActions: { [id: string]: unknown } = {};
     for (const name of actionNames) {
       newActions[name] = actions[name];
     }

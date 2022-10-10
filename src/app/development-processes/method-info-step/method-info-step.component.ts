@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   EventEmitter,
   Input,
   OnChanges,
@@ -8,12 +7,18 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { ExecutionStep } from '../../development-process-registry/development-method/execution-step';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { ConfigurationFormPlaceholderDirective } from '../configuration-form-placeholder.directive';
 import { ControlContainer, FormGroup } from '@angular/forms';
 import { Domain } from '../../development-process-registry/knowledge/domain';
 import { BmProcess } from '../../development-process-registry/bm-process/bm-process';
+import { StepDecision } from '../../development-process-registry/module-api/module-method';
+import {
+  ExecutionStep,
+  isMethodExecutionStep,
+} from '../../development-process-registry/development-method/execution-step';
+import { MethodExecutionStep } from '../../development-process-registry/development-method/method-execution-step';
+import { RunningProcess } from '../../development-process-registry/running-process/running-process';
 
 @Component({
   selector: 'app-method-info-step',
@@ -21,53 +26,59 @@ import { BmProcess } from '../../development-process-registry/bm-process/bm-proc
   styleUrls: ['./method-info-step.component.css'],
 })
 export class MethodInfoStepComponent implements OnChanges {
-  @Input() bmProcess: BmProcess;
-  @Input() contextDomains: Domain[];
-  @Input() step: ExecutionStep;
-  @Input() stepDecision: any;
+  @Input() bmProcess?: BmProcess;
+  @Input() runningProcess?: RunningProcess;
+  @Input() contextDomains!: Domain[];
+  @Input() step!: ExecutionStep;
+  @Input() stepDecision?: StepDecision;
 
-  @Output() forceUpdate = new EventEmitter<any>();
+  @Output() forceUpdate = new EventEmitter<StepDecision>();
 
   @ViewChild(ConfigurationFormPlaceholderDirective, { static: true })
-  configurationFormHost: ConfigurationFormPlaceholderDirective;
+  configurationFormHost!: ConfigurationFormPlaceholderDirective;
 
   constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
     private controlContainer: ControlContainer,
     private moduleService: ModuleService
   ) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.bmProcess || changes.step) {
       this.initConfiguration(changes.step.currentValue);
     }
   }
 
-  initConfiguration(step: ExecutionStep) {
-    const method = this.moduleService.getModuleMethod(step.module, step.method);
-    if (
-      method.decisionConfigurationFormComponent != null &&
-      method.createDecisionConfigurationForm != null
-    ) {
-      const configurationFormComponentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(
+  initConfiguration(step: ExecutionStep): void {
+    if (isMethodExecutionStep(step)) {
+      const method = this.moduleService.getModuleMethod(
+        step.module,
+        step.method
+      );
+      if (
+        method?.decisionConfigurationFormComponent != null &&
+        method.createDecisionConfigurationForm != null
+      ) {
+        const viewContainerRef = this.configurationFormHost.viewContainerRef;
+        viewContainerRef.clear();
+        const componentRef = viewContainerRef.createComponent(
           method.decisionConfigurationFormComponent
         );
-      const viewContainerRef = this.configurationFormHost.viewContainerRef;
-      viewContainerRef.clear();
-      const componentRef = viewContainerRef.createComponent(
-        configurationFormComponentFactory
-      );
-      componentRef.instance.formGroup = this.formGroup;
-      componentRef.instance.bmProcess = this.bmProcess;
-      componentRef.instance.predefinedInput = this.step.predefinedInput;
-      componentRef.instance.contextDomains = this.contextDomains;
-      componentRef.instance.forceUpdate = this.forceUpdate;
-      componentRef.instance.stepDecision = this.stepDecision;
+        componentRef.instance.formGroup = this.formGroup;
+        componentRef.instance.bmProcess = this.bmProcess;
+        componentRef.instance.runningProcess = this.runningProcess;
+        componentRef.instance.predefinedInput = step.predefinedInput;
+        componentRef.instance.contextDomains = this.contextDomains;
+        componentRef.instance.forceUpdate = this.forceUpdate;
+        componentRef.instance.stepDecision = this.stepDecision;
+      }
     }
   }
 
-  get formGroup() {
+  get formGroup(): FormGroup {
     return this.controlContainer.control as FormGroup;
+  }
+
+  isMethodExecutionStep(step: ExecutionStep): step is MethodExecutionStep {
+    return isMethodExecutionStep(step);
   }
 }

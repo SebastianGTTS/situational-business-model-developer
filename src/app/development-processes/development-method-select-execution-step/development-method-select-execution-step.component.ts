@@ -1,6 +1,5 @@
 import {
   Component,
-  ComponentFactoryResolver,
   EventEmitter,
   Input,
   OnChanges,
@@ -30,6 +29,12 @@ import {
   ExecutionStepsFormService,
   ExecutionStepsFormValue,
 } from '../shared/execution-steps-form.service';
+import {
+  ArtifactMappingFormService,
+  MappingsFormValueValid,
+} from '../shared/artifact-mapping-form.service';
+import { ArtifactMapping } from '../../development-process-registry/development-method/artifact-mapping';
+import { DevelopmentMethodService } from '../../development-process-registry/development-method/development-method.service';
 
 @Component({
   selector: 'app-development-method-select-execution-step',
@@ -40,27 +45,38 @@ export class DevelopmentMethodSelectExecutionStepComponent
   implements OnInit, OnChanges, OnDestroy
 {
   @Input() executionStepsFormValue?: ExecutionStepsFormValue;
-  @Input() developmentMethod: DevelopmentMethod;
-  @Input() stepNumber: number;
+  @Input() developmentMethod!: DevelopmentMethod;
+  @Input() stepNumber!: number;
 
-  modules: Module[];
-  methods: ModuleMethod[] = [];
+  private modules: Module[] = [];
+  private methods: ModuleMethod[] = [];
 
-  artifactInputs: { isStep: boolean; index: number; artifact: number }[][];
+  artifactInputs: {
+    complete: boolean;
+    inputs: {
+      isStep: boolean;
+      index: number;
+      artifact: number;
+    }[];
+  }[] = [];
 
   @Output() remove = new EventEmitter<void>();
+
+  moduleDefinedInTools = true;
+  stepError: string | undefined;
 
   openModuleInput = new Subject<string>();
   openMethodInput = new Subject<string>();
 
   @ViewChild(ConfigurationFormPlaceholderDirective, { static: true })
-  configurationFormHost: ConfigurationFormPlaceholderDirective;
+  configurationFormHost!: ConfigurationFormPlaceholderDirective;
 
-  private moduleChangeSubscription: Subscription;
-  private methodChangeSubscription: Subscription;
+  private moduleChangeSubscription?: Subscription;
+  private methodChangeSubscription?: Subscription;
 
   constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
+    private artifactMappingService: ArtifactMappingFormService,
+    private developmentMethodService: DevelopmentMethodService,
     private executionStepsFormService: ExecutionStepsFormService,
     private fb: FormBuilder,
     private formGroupDirective: FormGroupDirective,
@@ -78,6 +94,7 @@ export class DevelopmentMethodSelectExecutionStepComponent
       .pipe(
         tap(() => this.methodControl.setValue(null)),
         tap(() => (this.methods = [])),
+        tap((module) => this.updateModuleDefinedInTools(module)),
         filter((module) => module),
         tap((module) => this.initMethods(module))
       )
@@ -112,6 +129,8 @@ export class DevelopmentMethodSelectExecutionStepComponent
       this.modules = this.moduleService.modules.filter((module) =>
         toolNames.has(module.name)
       );
+      this.updateModuleDefinedInTools(this.moduleControl.value);
+      this.updateStepError();
     }
     if (changes.developmentMethod || changes.stepNumber) {
       this.calculateInput();
@@ -126,6 +145,61 @@ export class DevelopmentMethodSelectExecutionStepComponent
     this.openMethodInput.complete();
   }
 
+  private updateModuleDefinedInTools(module: Module | undefined): void {
+    this.moduleDefinedInTools =
+      module == null ||
+      this.developmentMethod.getAllToolNames().has(module.name);
+  }
+
+  /**
+   * Update the step error help text.
+   */
+  private updateStepError(): void {
+    if (
+      this.selectedMethod != null &&
+      this.selectedMethod.isMethodCorrectlyDefined != null &&
+      this.formGroup.valid
+    ) {
+      const inputArtifacts = this.developmentMethod.checkStepInputArtifacts(
+        this.stepNumber,
+        this.selectedMethod.input.length
+      );
+      const predefinedInput = this.formGroup.get('predefinedInput')?.value;
+      const outputMappingsFormValue: MappingsFormValueValid[] =
+        this.formGroup.get('outputMappings')?.value;
+      const outputMappings: ArtifactMapping[][] = outputMappingsFormValue.map(
+        (output: MappingsFormValueValid) =>
+          this.artifactMappingService
+            .getMappings(output)
+            .map((mapping) => new ArtifactMapping(undefined, mapping))
+      );
+      if (
+        this.selectedMethod.isMethodCorrectlyDefined(
+          this.developmentMethod,
+          inputArtifacts,
+          predefinedInput,
+          outputMappings
+        )
+      ) {
+        this.stepError = undefined;
+      } else if (
+        this.selectedMethod.getHelpTextForMethodCorrectlyDefined != null
+      ) {
+        this.stepError =
+          this.selectedMethod.getHelpTextForMethodCorrectlyDefined(
+            this.developmentMethod,
+            inputArtifacts,
+            predefinedInput,
+            outputMappings
+          );
+      } else {
+        this.stepError = 'The module reports an error in this execution step.';
+      }
+    } else {
+      this.stepError = undefined;
+    }
+  }
+
   initMethods(module: Module): void {
     this.methods = Object.values(module.methods);
   }
@@ -138,18 +212,17 @@ export class DevelopmentMethodSelectExecutionStepComponent
       if (!this.formGroup.contains('predefinedInput')) {
         this.formGroup.addControl(
           'predefinedInput',
-          this.executionStepsFormService.createPredefinedInputForm(method, null)
+          this.executionStepsFormService.createPredefinedInputForm(
+            method,
+            undefined
+          ) as FormGroup
         );
       }
-      const configurationFormComponentFactory =
-        this.componentFactoryResolver.resolveComponentFactory(
-          method.configurationFormComponent
-        );
       const viewContainerRef = this.configurationFormHost.viewContainerRef;
       viewContainerRef.clear();
       const componentRef =
         viewContainerRef.createComponent<ConfigurationFormComponent>(
-          configurationFormComponentFactory
+          method.configurationFormComponent
         );
       componentRef.instance.formGroup = this.predefinedInputControl;
     }
@@ -162,10 +235,22 @@ export class DevelopmentMethodSelectExecutionStepComponent
 
   calculateInput(): void {
     if (this.selectedMethod != null) {
-      this.artifactInputs = this.developmentMethod.checkStepInputArtifacts(
-        this.stepNumber,
-        this.selectedMethod.input.length
-      );
+      this.artifactInputs = this.developmentMethod
+        .checkStepInputArtifacts(
+          this.stepNumber,
+          this.selectedMethod.input.length
+        )
+        .map((inputs) => {
+          return {
+            complete:
+              this.developmentMethodService.hasInputArtifactForStepArtifact(
+                this.developmentMethod,
+                this.stepNumber,
+                inputs
+              ),
+            inputs: inputs,
+          };
+        });
     } else {
       this.artifactInputs = [];
     }

@@ -1,0 +1,42 @@
+<div class="modal-header">
+  <h4 class="modal-title">Add Experiment</h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="text-muted pt-3">
+    <form
+      [formGroup]="formGroup"
+      (ngSubmit)="addExperiment.emit(selectedExperiment)"
+    >
+      <div class="form-group row">
+        <label for="experimentSelector" class="col-sm-4 col-form-label"
+          >Experiment Definition</label
+        >
+        <div class="col-sm-8">
+          <select
+            id="experimentSelector"
+            formControlName="experiment"
+            class="form-control"
+          >
+            <option *ngFor="let e of experiments" [ngValue]="e">
+              {{ e.experiment.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-12">
+          <button
+            type="submit"
+            class="btn btn-sm btn-dark btn-block"
+            [disabled]="!formGroup.valid"
+          >
+            Add Experiment
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

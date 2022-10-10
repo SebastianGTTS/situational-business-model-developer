@@ -6,7 +6,7 @@ import { ElementLoaderService } from '../../database/element-loader.service';
 
 @Injectable()
 export class ProcessPatternLoaderService extends ElementLoaderService {
-  processPattern: ProcessPattern = null;
+  processPattern?: ProcessPattern;
 
   constructor(
     private processPatternService: ProcessPatternService,
@@ -17,10 +17,14 @@ export class ProcessPatternLoaderService extends ElementLoaderService {
 
   protected initParams(paramMap: ParamMap): void {
     const processPatternId = paramMap.get('id');
-    this.changesFeed = this.processPatternService
-      .getChangesFeed(processPatternId)
-      .subscribe(() => this.loadProcessPattern(processPatternId));
-    void this.loadProcessPattern(processPatternId);
+    if (processPatternId != null) {
+      this.changesFeed = this.processPatternService
+        .getChangesFeed(processPatternId)
+        .subscribe(() => this.loadProcessPattern(processPatternId));
+      void this.loadProcessPattern(processPatternId);
+    } else {
+      this.processPattern = undefined;
+    }
   }
 
   private async loadProcessPattern(processPatternId: string): Promise<void> {

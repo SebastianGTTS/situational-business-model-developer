@@ -7,5 +7,5 @@ import { Author, AuthorEntry } from '../../model/author';
   styleUrls: ['./author-info.component.css'],
 })
 export class AuthorInfoComponent {
-  @Input() author: Author | AuthorEntry;
+  @Input() author?: Author | AuthorEntry;
 }

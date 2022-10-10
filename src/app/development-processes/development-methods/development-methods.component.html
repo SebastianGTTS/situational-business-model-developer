@@ -1,5 +1,6 @@
 <ng-template #deleteDevelopmentMethodModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalDevelopmentMethod != null"
     (dismiss)="d()"
     (delete)="deleteDevelopmentMethod(modalDevelopmentMethod._id); c()"
   >
@@ -38,27 +39,32 @@
     [noResults]="noResults"
   >
     <div noResults>No Method Building Blocks defined.</div>
-    <ul results class="list-group">
-      <li
-        class="list-group-item"
-        *ngFor="let developmentMethod of developmentMethodsList"
-      >
-        <app-results-list-item
-          [viewLink]="['methodview', developmentMethod._id]"
-          (delete)="openDeleteDevelopmentMethodModal(developmentMethod)"
+    <ng-container *ngIf="developmentMethodsListFiltered != null" results>
+      <div *ngIf="developmentMethodsListFiltered.length === 0">
+        No Method Building Blocks found for search: {{ searchValue }}.
+      </div>
+      <ul *ngIf="developmentMethodsListFiltered.length > 0" class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let developmentMethod of developmentMethodsListFiltered"
         >
-          <ng-container itemTitle>
-            {{ developmentMethod.name }}
-          </ng-container>
-          <ng-container itemDescription>
-            {{ developmentMethod.description }}
-          </ng-container>
-          <app-author-info
-            [author]="developmentMethod.author"
-          ></app-author-info>
-        </app-results-list-item>
-      </li>
-    </ul>
+          <app-results-list-item
+            [viewLink]="['methodview', developmentMethod._id]"
+            (delete)="openDeleteDevelopmentMethodModal(developmentMethod)"
+          >
+            <ng-container itemTitle>
+              {{ developmentMethod.name }}
+            </ng-container>
+            <ng-container itemDescription>
+              {{ developmentMethod.description }}
+            </ng-container>
+            <app-author-info
+              [author]="developmentMethod.author"
+            ></app-author-info>
+          </app-results-list-item>
+        </li>
+      </ul>
+    </ng-container>
   </app-list-wrapper>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">

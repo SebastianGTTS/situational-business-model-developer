@@ -12,127 +12,95 @@ import {
   MethodElement,
   MethodElementEntry,
 } from '../../development-process-registry/method-elements/method-element';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { GroupSelection } from '../../development-process-registry/bm-process/decision';
-import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
 import { debounceTime, tap } from 'rxjs/operators';
+import { GroupDecision } from '../../development-process-registry/bm-process/group-decision';
+import { GroupDecisionFormService } from '../shared/group-decision-form.service';
+import { UPDATABLE, Updatable } from '../../shared/updatable';
 
 @Component({
   selector: 'app-method-element-group-info',
   templateUrl: './method-element-group-info.component.html',
   styleUrls: ['./method-element-group-info.component.css'],
+  providers: [
+    { provide: UPDATABLE, useExisting: MethodElementGroupInfoComponent },
+  ],
 })
-export class MethodElementGroupInfoComponent
-  implements OnInit, OnChanges, OnDestroy
+export class MethodElementGroupInfoComponent<T extends MethodElement>
+  implements OnInit, OnChanges, OnDestroy, Updatable
 {
-  @Input() methodElementName: string;
+  @Input() methodElementName!: string;
 
-  @Input() groups: MultipleSelection<MethodElement>[][];
-  @Input() selection: GroupSelection<MethodElement>;
+  @Input() groupDecision!: GroupDecision<T>;
 
   @Input() methodElements: MethodElementEntry[] = [];
 
-  @Output() submitGroupsForm = new EventEmitter<FormGroup>();
+  @Output() submitGroupsForm = new EventEmitter<GroupDecision<T>>();
 
-  form: FormGroup = this.fb.group({
-    selectedGroup: [null, Validators.required],
-    elements: this.fb.array([]),
-  });
   changed = false;
 
-  private selectedIndexSubscription: Subscription;
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private groupDecisionFormService: GroupDecisionFormService<T>
+  ) {}
 
   ngOnInit(): void {
-    this.selectedIndexSubscription =
-      this.selectedGroupControl.valueChanges.subscribe((value) =>
-        this.generateControls(value)
-      );
     this.changeSubscription = this.form.valueChanges
       .pipe(
         debounceTime(300),
-        tap((value) => (this.changed = !this.selection.equals(value)))
+        tap((value) => {
+          if (this.form.valid) {
+            this.changed = !this.groupDecision.equals(
+              this.groupDecisionFormService.getGroupDecision(value)
+            );
+          } else {
+            this.changed = true;
+          }
+        })
       )
       .subscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.groups) {
-      this.loadForm();
-    } else if (changes.selection) {
-      const oldSelection: GroupSelection<MethodElement> =
-        changes.selection.previousValue;
-      const newSelection: GroupSelection<MethodElement> =
-        changes.selection.currentValue;
-      if (!newSelection.equals(oldSelection)) {
-        this.loadForm();
+    if (changes.groupDecision) {
+      const oldDecision: GroupDecision<T> = changes.groupDecision.previousValue;
+      const newDecision: GroupDecision<T> = changes.groupDecision.currentValue;
+      if (!newDecision.equals(oldDecision)) {
+        this.groupDecisionFormService.loadForm(newDecision);
+      } else {
+        this.groupDecisionFormService.updateGroups(newDecision.groups);
       }
     }
   }
 
   ngOnDestroy(): void {
-    if (this.selectedIndexSubscription) {
-      this.selectedIndexSubscription.unsubscribe();
-    }
-    if (this.changeSubscription) {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
 
   submitForm(): void {
-    this.submitGroupsForm.emit(this.form);
+    this.submitGroupsForm.emit(
+      this.groupDecisionFormService.getGroupDecision(
+        this.groupDecisionFormService.form.value
+      )
+    );
   }
 
-  private loadForm(): void {
-    this.selectedGroupControl.setValue(this.selection.selectedGroup, {
-      emitEvent: false,
-    });
-    this.generateControls(this.selection.selectedGroup);
-    if (this.selection.elements) {
-      this.elementsFormArray.patchValue(this.selection.elements);
+  update(): void {
+    if (this.changed && this.form.valid) {
+      this.submitForm();
     }
-  }
-
-  private generateControls(selectedGroup: number): void {
-    if (selectedGroup !== null) {
-      const elements = this.groups[selectedGroup].map((element, index) => {
-        if (
-          element.multiple &&
-          this.selection.elements &&
-          this.selection.elements[index]
-        ) {
-          return this.fb.array(
-            this.selection.elements[index].map(() =>
-              this.fb.control(null, Validators.required)
-            )
-          );
-        }
-        return this.fb.array(element.multiple ? [] : [this.fb.control(null)]);
-      });
-      this.form.setControl('elements', this.fb.array(elements));
-    } else {
-      this.form.setControl('elements', this.fb.control(null));
-    }
-  }
-
-  get selectedGroupControl(): FormControl {
-    return this.form.get('selectedGroup') as FormControl;
   }
 
   get selectedGroup(): number {
-    return this.selectedGroupControl.value;
+    return this.groupDecisionFormService.groupIndexControl.value;
   }
 
-  get elementsFormArray(): FormArray {
-    return this.form.get('elements') as FormArray;
+  get form(): FormGroup {
+    return this.groupDecisionFormService.form;
   }
 }

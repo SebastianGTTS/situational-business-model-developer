@@ -1,5 +1,10 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-change-password-form',
@@ -19,7 +24,7 @@ export class ChangePasswordFormComponent {
     },
     {
       validators: (group) => {
-        if (group.get('password').value !== group.get('confirm').value) {
+        if (group.get('password')?.value !== group.get('confirm')?.value) {
           return { passwordNotConfirmed: true };
         }
         return null;
@@ -29,16 +34,16 @@ export class ChangePasswordFormComponent {
 
   constructor(private fb: FormBuilder) {}
 
-  submitForm() {
+  submitForm(): void {
     this.changePassword.emit(this.passwordControl.value);
     this.passwordForm.reset();
   }
 
-  get passwordControl() {
-    return this.passwordForm.get('password');
+  get passwordControl(): FormControl {
+    return this.passwordForm.get('password') as FormControl;
   }
 
-  get confirmControl() {
-    return this.passwordForm.get('confirm');
+  get confirmControl(): FormControl {
+    return this.passwordForm.get('confirm') as FormControl;
   }
 }

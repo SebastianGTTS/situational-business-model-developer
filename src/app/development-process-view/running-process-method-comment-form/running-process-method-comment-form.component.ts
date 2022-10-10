@@ -27,7 +27,7 @@ import { filter, tap } from 'rxjs/operators';
 export class RunningProcessMethodCommentFormComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  @Input() comment: Comment = null;
+  @Input() comment?: Comment = undefined;
 
   @Output() submitCommentForm = new EventEmitter<FormGroup>();
 
@@ -37,7 +37,7 @@ export class RunningProcessMethodCommentFormComponent
     comment: ['', Validators.required],
   });
 
-  private userNameChangeSubscription: Subscription;
+  private userNameChangeSubscription?: Subscription;
 
   constructor(private authService: AuthService, private fb: FormBuilder) {}
 
@@ -45,8 +45,9 @@ export class RunningProcessMethodCommentFormComponent
     if (this.comment == null && this.authService.username != null) {
       this.userNameControl.disable();
       this.userNameControl.setValue(this.authService.username);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.userNameChangeSubscription = this.commentForm
-        .get('userName')
+        .get('userName')!
         .valueChanges.pipe(
           filter(
             (value) =>
@@ -67,7 +68,7 @@ export class RunningProcessMethodCommentFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.userNameChangeSubscription) {
+    if (this.userNameChangeSubscription != null) {
       this.userNameChangeSubscription.unsubscribe();
     }
   }

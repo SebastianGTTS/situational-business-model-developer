@@ -9,6 +9,20 @@ import { Type } from '../method-elements/type/type';
 import { DefaultElementService } from '../../database/default-element.service';
 import { PouchdbService } from '../../database/pouchdb.service';
 import { ModuleService } from '../module-api/module.service';
+import { ExecutionStep, isMethodExecutionStep } from './execution-step';
+import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
+import { SituationalFactorService } from '../method-elements/situational-factor/situational-factor.service';
+import { ArtifactMultipleMappingSelection } from './artifact-multiple-mapping-selection';
+import {
+  ArtifactMapping,
+  ArtifactOutputMapping,
+  ArtifactStepMapping,
+} from './artifact-mapping';
+import { MetaModelService } from '../meta-model.service';
+import { ModuleMethod } from '../module-api/module-method';
+import { MetaModelType } from '../meta-model-definition';
+import { Artifact } from '../method-elements/artifact/artifact';
+import { Groups } from './groups';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
@@ -22,10 +36,27 @@ export class DevelopmentMethodService extends DefaultElementService<
   protected readonly elementConstructor = DevelopmentMethod;
 
   constructor(
+    private metaModelService: MetaModelService,
     private moduleService: ModuleService,
-    pouchdbService: PouchdbService
+    pouchdbService: PouchdbService,
+    private situationalFactorService: SituationalFactorService
   ) {
     super(pouchdbService);
+  }
+
+  /**
+   * Get a list sorted by the distance to the situational factors
+   *
+   * @param situationalFactors
+   */
+  async getSortedList(
+    situationalFactors: SituationalFactor[]
+  ): Promise<DevelopmentMethodEntry[]> {
+    const list = await this.getList();
+    return this.situationalFactorService.sortByDistance(
+      situationalFactors,
+      list
+    );
   }
 
   /**
@@ -35,8 +66,8 @@ export class DevelopmentMethodService extends DefaultElementService<
    * @param forbidden forbidden types
    */
   async getValidDevelopmentMethods(
-    needed: { list: string; element: { _id: string; name: string } }[],
-    forbidden: { list: string; element: { _id: string; name: string } }[]
+    needed: { list: string; element?: { _id: string; name: string } }[],
+    forbidden: { list: string; element?: { _id: string; name: string } }[]
   ): Promise<DevelopmentMethodEntry[]> {
     return (
       await this.pouchdbService.find<DevelopmentMethodEntry>(
@@ -49,6 +80,26 @@ export class DevelopmentMethodService extends DefaultElementService<
   }
 
   /**
+   * Get a list of development methods that have the needed types, but not the forbidden ones.
+   * Additionally, sorted by the distance to the situational factors.
+   *
+   * @param needed needed types
+   * @param forbidden forbidden types
+   * @param situationalFactors
+   */
+  async getSortedValidDevelopmentMethods(
+    needed: { list: string; element?: { _id: string; name: string } }[],
+    forbidden: { list: string; element?: { _id: string; name: string } }[],
+    situationalFactors: SituationalFactor[]
+  ): Promise<DevelopmentMethodEntry[]> {
+    const list = await this.getValidDevelopmentMethods(needed, forbidden);
+    return this.situationalFactorService.sortByDistance(
+      situationalFactors,
+      list
+    );
+  }
+
+  /**
    * Update the development method.
    *
    * @param id id of the development method
@@ -58,9 +109,13 @@ export class DevelopmentMethodService extends DefaultElementService<
     id: string,
     developmentMethod: Partial<DevelopmentMethod>
   ): Promise<void> {
-    const method = await this.get(id);
-    method.update(developmentMethod);
-    await this.save(method);
+    try {
+      const method = await this.getWrite(id);
+      method.update(developmentMethod);
+      await this.save(method);
+    } finally {
+      this.freeWrite(id);
+    }
   }
 
   /**
@@ -71,7 +126,101 @@ export class DevelopmentMethodService extends DefaultElementService<
    * be used in processes
    */
   isCorrectlyDefined(developmentMethod: DevelopmentMethod): boolean {
-    return this.isExecutionStepsCorrectlyDefined(developmentMethod);
+    return (
+      this.isInputArtifactsCorrectlyDefined(developmentMethod) &&
+      this.isExecutionStepsCorrectlyDefined(developmentMethod)
+    );
+  }
+
+  /**
+   * Checks whether all input artifacts are correctly defined.
+   * Checks mappings.
+   *
+   * @param developmentMethod
+   */
+  isInputArtifactsCorrectlyDefined(
+    developmentMethod: DevelopmentMethod
+  ): boolean {
+    return developmentMethod.inputArtifacts.groups.every((group) =>
+      group.items.every((item) =>
+        this.isInputArtifactCorrectlyDefined(developmentMethod, item)
+      )
+    );
+  }
+
+  /**
+   * Checks whether a specific artifact is correctly defined.
+   * Checks mappings.
+   *
+   * @param developmentMethod
+   * @param artifactSelection
+   */
+  isInputArtifactCorrectlyDefined(
+    developmentMethod: DevelopmentMethod,
+    artifactSelection: ArtifactMultipleMappingSelection
+  ): boolean {
+    if (
+      artifactSelection.element == null ||
+      artifactSelection.element.metaModel == null ||
+      artifactSelection.optional
+    ) {
+      return artifactSelection.mapping.length === 0;
+    }
+    return artifactSelection.mapping.every((mapping) =>
+      this.isInputArtifactMappingCorrectlyDefined(
+        developmentMethod,
+        artifactSelection,
+        mapping
+      )
+    );
+  }
+
+  /**
+   * Checks whether a specific input mapping is pointing to the correct
+   * output mappings or steps.
+   *
+   * @param developmentMethod
+   * @param artifactSelection
+   * @param mapping
+   */
+  isInputArtifactMappingCorrectlyDefined(
+    developmentMethod: DevelopmentMethod,
+    artifactSelection: ArtifactMultipleMappingSelection,
+    mapping: ArtifactMapping
+  ): boolean {
+    if (mapping.isOutputMapping()) {
+      if (
+        !this.mappingPointsToDefinedOutput(
+          developmentMethod.outputArtifacts,
+          artifactSelection.element?.metaModel?.type,
+          mapping
+        )
+      ) {
+        return false;
+      }
+      const outputArtifact =
+        developmentMethod.outputArtifacts.groups[mapping.group].items[
+          mapping.artifact
+        ];
+      const api = this.metaModelService.getMetaModelDefinition(
+        outputArtifact.element?.metaModel?.type
+      )?.api;
+      if (api != null && api.compatibleMetaModelData != null) {
+        return api.compatibleMetaModelData(
+          artifactSelection.element?.metaModelData,
+          outputArtifact.element?.metaModelData
+        );
+      }
+      return true;
+    } else if (mapping.isStepMapping()) {
+      return this.mappingPointsToDefinedStepInput(
+        developmentMethod.executionSteps,
+        artifactSelection.element?.metaModel?.type,
+        mapping
+      );
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -85,8 +234,9 @@ export class DevelopmentMethodService extends DefaultElementService<
   isExecutionStepsCorrectlyDefined(
     developmentMethod: DevelopmentMethod
   ): boolean {
+    const toolNames = developmentMethod.getAllToolNames();
     return developmentMethod.executionSteps.every((executionStep, index) =>
-      this.isExecutionStepCorrectlyDefined(developmentMethod, index)
+      this.isExecutionStepCorrectlyDefined(developmentMethod, toolNames, index)
     );
   }
 
@@ -94,17 +244,141 @@ export class DevelopmentMethodService extends DefaultElementService<
    * Checks whether a single execution step is correctly defined
    *
    * @param developmentMethod the development method to check
+   * @param toolNames
    * @param step the step to check
    * @return true if the execution step is correctly defined
    */
   isExecutionStepCorrectlyDefined(
     developmentMethod: DevelopmentMethod,
+    toolNames: Set<string>,
     step: number
   ): boolean {
     return (
       this.hasInputArtifactForStep(developmentMethod, step) &&
-      this.isPredefinedInputDefined(developmentMethod, step)
+      this.isPredefinedInputDefined(developmentMethod, step) &&
+      this.isDefinedInTools(developmentMethod, toolNames, step) &&
+      this.isStepMappingsCorrectlyDefined(developmentMethod, step) &&
+      this.isExecutionStepMethodCorrect(developmentMethod, step)
     );
+  }
+
+  /**
+   * Checks whether the mappings and selected predefined input fit.
+   *
+   * @param developmentMethod
+   * @param step
+   */
+  isExecutionStepMethodCorrect(
+    developmentMethod: DevelopmentMethod,
+    step: number
+  ): boolean {
+    const executionStep = developmentMethod.executionSteps[step];
+    if (!isMethodExecutionStep(executionStep)) {
+      return true;
+    }
+    const method = this.moduleService.getModuleMethod(
+      executionStep.module,
+      executionStep.method
+    );
+    if (method == null) {
+      return false;
+    }
+    if (method.isMethodCorrectlyDefined == null) {
+      return true;
+    }
+    const inputArtifacts = developmentMethod.checkStepInputArtifacts(
+      step,
+      method.input.length
+    );
+    return method.isMethodCorrectlyDefined(
+      developmentMethod,
+      inputArtifacts,
+      executionStep.predefinedInput,
+      executionStep.outputMappings
+    );
+  }
+
+  /**
+   * Checks whether all mappings of a step are correctly defined.
+   *
+   * @param developmentMethod
+   * @param step
+   */
+  isStepMappingsCorrectlyDefined(
+    developmentMethod: DevelopmentMethod,
+    step: number
+  ): boolean {
+    const executionStep = developmentMethod.executionSteps[step];
+    if (!isMethodExecutionStep(executionStep)) {
+      return true;
+    }
+    const method = this.moduleService.getModuleMethod(
+      executionStep.module,
+      executionStep.method
+    );
+    if (method == null) {
+      return false;
+    }
+    return executionStep.outputMappings.every((artifactMappings, index) =>
+      artifactMappings.every((mapping) =>
+        this.isStepMappingCorrectlyDefined(
+          developmentMethod,
+          method,
+          index,
+          mapping
+        )
+      )
+    );
+  }
+
+  /**
+   * Checks whether a specific mapping of a specific step is correctly defined.
+   *
+   * @param developmentMethod
+   * @param method
+   * @param artifactIndex
+   * @param mapping
+   */
+  isStepMappingCorrectlyDefined(
+    developmentMethod: DevelopmentMethod,
+    method: ModuleMethod,
+    artifactIndex: number,
+    mapping: ArtifactMapping
+  ): boolean {
+    if (mapping.isOutputMapping()) {
+      return this.mappingPointsToDefinedOutput(
+        developmentMethod.outputArtifacts,
+        method.output[artifactIndex].type,
+        mapping
+      );
+    } else if (mapping.isStepMapping()) {
+      return this.mappingPointsToDefinedStepInput(
+        developmentMethod.executionSteps,
+        method.output[artifactIndex].type,
+        mapping
+      );
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Checks whether an execution step is selected in tools.
+   *
+   * @param developmentMethod
+   * @param toolNames
+   * @param step
+   */
+  isDefinedInTools(
+    developmentMethod: DevelopmentMethod,
+    toolNames: Set<string>,
+    step: number
+  ): boolean {
+    const executionStep = developmentMethod.executionSteps[step];
+    if (!isMethodExecutionStep(executionStep)) {
+      return true;
+    }
+    return toolNames.has(executionStep.module);
   }
 
   /**
@@ -121,10 +395,16 @@ export class DevelopmentMethodService extends DefaultElementService<
     step: number
   ): boolean {
     const executionStep = developmentMethod.executionSteps[step];
+    if (!isMethodExecutionStep(executionStep)) {
+      return true;
+    }
     const method = this.moduleService.getModuleMethod(
       executionStep.module,
       executionStep.method
     );
+    if (method == null) {
+      throw new Error('ExecutionStep uses unknown method');
+    }
     if (method.createConfigurationForm != null) {
       const form = method.createConfigurationForm(
         executionStep.predefinedInput
@@ -147,29 +427,115 @@ export class DevelopmentMethodService extends DefaultElementService<
     step: number
   ): boolean {
     const executionStep = developmentMethod.executionSteps[step];
+    if (!isMethodExecutionStep(executionStep)) {
+      return true;
+    }
     const method = this.moduleService.getModuleMethod(
       executionStep.module,
       executionStep.method
     );
+    if (method == null) {
+      throw new Error('ExecutionStep uses unknown method');
+    }
     const artifactInputs = developmentMethod.checkStepInputArtifacts(
       step,
       method.input.length
     );
-    return artifactInputs.every((artifactInput) => {
-      if (artifactInput.length === 0) {
-        return false;
-      }
-      return (
+    return artifactInputs.every((artifactInput) =>
+      this.hasInputArtifactForStepArtifact(
+        developmentMethod,
+        step,
         artifactInput
-          .filter((input) => input.isStep)
-          .some((input) => input.index < step) ||
-        developmentMethod.inputArtifacts.every(
-          (group, index) =>
-            artifactInput.filter(
-              (input) => !input.isStep && input.index === index
-            ).length > 0
-        )
-      );
-    });
+      )
+    );
+  }
+
+  /**
+   * Check whether a specific artifact of a specific execution step has
+   * enough input artifacts.
+   * This means either one step provides the artifact or at least one
+   * mapping is defined in every input group.
+   *
+   * @param developmentMethod
+   * @param step
+   * @param artifactInput
+   */
+  hasInputArtifactForStepArtifact(
+    developmentMethod: DevelopmentMethod,
+    step: number,
+    artifactInput: { isStep: boolean; index: number; artifact: number }[]
+  ): boolean {
+    if (artifactInput.length === 0) {
+      return false;
+    }
+    return (
+      artifactInput
+        .filter((input) => input.isStep)
+        .some((input) => input.index < step) ||
+      developmentMethod.inputArtifacts.groups.every(
+        (group, index) =>
+          artifactInput.filter(
+            (input) => !input.isStep && input.index === index
+          ).length > 0
+      )
+    );
+  }
+
+  /**
+   * Checks whether a mapping points to an existing output artifact and the
+   * metamodel types match.
+   *
+   * @param outputArtifacts
+   * @param metaModelType
+   * @param mapping
+   */
+  private mappingPointsToDefinedOutput(
+    outputArtifacts: Groups<Artifact>,
+    metaModelType: MetaModelType | undefined,
+    mapping: ArtifactOutputMapping
+  ): boolean {
+    if (
+      outputArtifacts.groups.length <= mapping.group ||
+      outputArtifacts.groups[mapping.group].items.length <= mapping.artifact
+    ) {
+      return false;
+    }
+    const outputArtifact =
+      outputArtifacts.groups[mapping.group].items[mapping.artifact];
+    if (
+      outputArtifact.element == null ||
+      outputArtifact.element.metaModel == null
+    ) {
+      return false;
+    }
+    return outputArtifact.element.metaModel.type === metaModelType;
+  }
+
+  /**
+   * Checks whether a mapping points to an existing step input and the
+   * metamodel types match.
+   *
+   * @param executionSteps
+   * @param metaModelType
+   * @param mapping
+   */
+  private mappingPointsToDefinedStepInput(
+    executionSteps: ExecutionStep[],
+    metaModelType: MetaModelType | undefined,
+    mapping: ArtifactStepMapping
+  ): boolean {
+    if (executionSteps.length <= mapping.step) {
+      return false;
+    }
+    const step = executionSteps[mapping.step];
+    if (!isMethodExecutionStep(step)) {
+      return false;
+    }
+    const method = this.moduleService.getModuleMethod(step.module, step.method);
+    if (method == null || method.input.length <= mapping.artifact) {
+      return false;
+    }
+    const input = method.input[mapping.artifact];
+    return input.type === metaModelType;
   }
 }

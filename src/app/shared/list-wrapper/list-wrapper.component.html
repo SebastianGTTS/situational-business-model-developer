@@ -20,6 +20,20 @@
     <ng-content select="[noResults]"></ng-content>
   </div>
   <div *ngIf="!loading && !noResults">
+    <form
+      *ngIf="searchForm != null"
+      [formGroup]="searchForm"
+      class="form-inline"
+    >
+      <label class="sr-only" for="search">Search</label>
+      <input
+        formControlName="search"
+        type="text"
+        class="form-control mb-2 mr-sm-2"
+        id="search"
+        placeholder="Search"
+      />
+    </form>
     <ng-content select="[results]"></ng-content>
   </div>
 </div>

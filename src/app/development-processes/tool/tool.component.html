@@ -1,6 +1,9 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="tool">
-    <a class="nav-link active" [routerLink]="[]">{{ tool.name }}</a>
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'tools']">Tools</a>
+    <a class="nav-link active" *ngIf="tool" [routerLink]="[]">{{
+      tool.name
+    }}</a>
   </nav>
 </div>
 

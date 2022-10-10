@@ -1,0 +1,9 @@
+<app-delete-modal
+  *ngIf="experiment != null"
+  (dismiss)="dismiss()"
+  (delete)="removeExperiment.emit(experiment.id)"
+>
+  <div modalTitle>Remove Experiment {{ experiment.name }}</div>
+  You are trying to remove the experiment "{{ experiment.name }}". Please keep
+  in mind that you are removing also all mappings to hypotheses.
+</app-delete-modal>

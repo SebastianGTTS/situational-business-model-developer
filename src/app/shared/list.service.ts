@@ -10,8 +10,8 @@ export const ELEMENT_SERVICE = new InjectionToken<
 
 @Injectable()
 export class ListService<T extends DatabaseModel, S extends DatabaseRootInit> {
-  private _elements: EntryType<T>[];
-  get elements(): EntryType<T>[] {
+  private _elements?: EntryType<T>[];
+  get elements(): EntryType<T>[] | undefined {
     return this._elements;
   }
 
@@ -19,7 +19,7 @@ export class ListService<T extends DatabaseModel, S extends DatabaseRootInit> {
     return this.elements == null;
   }
 
-  private _reloading: boolean;
+  private _reloading = false;
   get reloading(): boolean {
     return this._reloading;
   }
@@ -41,6 +41,9 @@ export class ListService<T extends DatabaseModel, S extends DatabaseRootInit> {
   }
 
   async delete(elementId: string): Promise<void> {
+    if (this._elements == null) {
+      return;
+    }
     this._reloading = true;
     const elements = this._elements;
     await this.elementService.delete(elementId);

@@ -6,7 +6,7 @@ import { ElementLoaderService } from '../../database/element-loader.service';
 
 @Injectable()
 export class BmProcessLoaderService extends ElementLoaderService {
-  bmProcess: BmProcess = null;
+  bmProcess?: BmProcess;
 
   constructor(
     private bmProcessService: BmProcessService,
@@ -17,10 +17,14 @@ export class BmProcessLoaderService extends ElementLoaderService {
 
   protected initParams(paramMap: ParamMap): void {
     const bmProcessId = paramMap.get('id');
-    this.changesFeed = this.bmProcessService
-      .getChangesFeed(bmProcessId)
-      .subscribe(() => this.loadBmProcess(bmProcessId));
-    void this.loadBmProcess(bmProcessId);
+    if (bmProcessId != null) {
+      this.changesFeed = this.bmProcessService
+        .getChangesFeed(bmProcessId)
+        .subscribe(() => this.loadBmProcess(bmProcessId));
+      void this.loadBmProcess(bmProcessId);
+    } else {
+      this.bmProcess = undefined;
+    }
   }
 
   private async loadBmProcess(bmProcessId: string): Promise<void> {

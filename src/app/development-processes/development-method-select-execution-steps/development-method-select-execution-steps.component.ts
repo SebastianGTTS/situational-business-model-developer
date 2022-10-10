@@ -10,22 +10,33 @@ import {
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
-import { ExecutionStep } from '../../development-process-registry/development-method/execution-step';
+import { MethodExecutionStep } from '../../development-process-registry/development-method/method-execution-step';
 import { ExecutionStepsFormService } from '../shared/execution-steps-form.service';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { equalsList } from '../../shared/utils';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
+import {
+  ExecutionStep,
+  isMethodExecutionStep,
+} from '../../development-process-registry/development-method/execution-step';
+import { Updatable, UPDATABLE } from '../../shared/updatable';
 
 @Component({
   selector: 'app-development-method-select-execution-steps',
   templateUrl: './development-method-select-execution-steps.component.html',
   styleUrls: ['./development-method-select-execution-steps.component.css'],
+  providers: [
+    {
+      provide: UPDATABLE,
+      useExisting: DevelopmentMethodSelectExecutionStepsComponent,
+    },
+  ],
 })
 export class DevelopmentMethodSelectExecutionStepsComponent
-  implements OnInit, OnChanges, OnDestroy
+  implements OnInit, OnChanges, OnDestroy, Updatable
 {
-  @Input() developmentMethod: DevelopmentMethod;
+  @Input() developmentMethod!: DevelopmentMethod;
 
   @Output() submitExecutionStepsSelectionForm = new EventEmitter<FormArray>();
 
@@ -34,7 +45,7 @@ export class DevelopmentMethodSelectExecutionStepsComponent
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(
     private executionStepsFormService: ExecutionStepsFormService,
@@ -48,10 +59,12 @@ export class DevelopmentMethodSelectExecutionStepsComponent
         debounceTime(300),
         tap(
           (value) =>
-            (this.changed = !this.equalExecutionSteps(
-              this.developmentMethod.executionSteps,
-              this.executionStepsFormService.getExecutionSteps(value.steps)
-            ))
+            (this.changed =
+              !this.executionStepsSelectionForm.valid ||
+              !this.equalExecutionSteps(
+                this.developmentMethod.executionSteps,
+                this.executionStepsFormService.getExecutionSteps(value.steps)
+              ))
         )
       )
       .subscribe();
@@ -85,6 +98,14 @@ export class DevelopmentMethodSelectExecutionStepsComponent
     this.executionStepsFormService.addExecutionStep(this.formArray);
   }
 
+  changeStep(index: number, isMethod: boolean): void {
+    this.executionStepsFormService.executionStepTypeChange(
+      this.formArray,
+      index,
+      isMethod
+    );
+  }
+
   removeStep(index: number): void {
     this.executionStepsFormService.removeExecutionStep(this.formArray, index);
   }
@@ -100,6 +121,12 @@ export class DevelopmentMethodSelectExecutionStepsComponent
     this.submitExecutionStepsSelectionForm.emit(this.formArray);
   }
 
+  update(): void {
+    if (this.changed && this.executionStepsSelectionForm.valid) {
+      this.submitForm();
+    }
+  }
+
   private equalExecutionSteps(
     executionStepsA: ExecutionStep[],
     executionStepsB: ExecutionStep[]
@@ -108,15 +135,18 @@ export class DevelopmentMethodSelectExecutionStepsComponent
       return false;
     }
     return executionStepsA.every((stepA, index) => {
+      if (!isMethodExecutionStep(stepA)) {
+        return true;
+      }
       if (stepA.module != null && stepA.method != null) {
         const method = this.moduleService.getModuleMethod(
           stepA.module,
           stepA.method
         );
-        if (method.equalPredefinedInput) {
+        if (method?.equalPredefinedInput != null) {
           return method.equalPredefinedInput(
             stepA.predefinedInput,
-            executionStepsB[index].predefinedInput
+            (executionStepsB[index] as MethodExecutionStep).predefinedInput
           );
         } else {
           return true;

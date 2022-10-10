@@ -1,4 +1,10 @@
 <div class="text-muted" [formGroup]="formGroup">
+  <div *ngIf="!moduleDefinedInTools" class="alert alert-danger my-3">
+    The used module is not defined in Tools!
+  </div>
+  <div *ngIf="stepError != null" class="alert alert-danger my-3">
+    {{ stepError }}
+  </div>
   <div class="form-row">
     <div class="form-group col">
       <label for="moduleInput">Module</label>
@@ -42,23 +48,35 @@
     Predefined Values
   </h5>
   <ng-template appConfigurationFormPlaceholder></ng-template>
-  <ng-container *ngIf="selectedMethod && selectedMethod.input.length > 0">
+  <ng-container
+    *ngIf="selectedMethod != null && selectedMethod.input.length > 0"
+  >
     <h5>Input Artifacts</h5>
     <ul class="list-group mb-3">
       <li
         class="list-group-item"
         *ngFor="let input of selectedMethod.input; let index = index"
       >
-        <b [class.text-danger]="artifactInputs[index].length === 0">{{
+        <b [class.text-danger]="!artifactInputs[index].complete">{{
           input.name
         }}</b>
-        <div *ngIf="artifactInputs[index].length === 0">
+        <div *ngIf="artifactInputs[index].inputs.length === 0">
           No input for this artifact defined
         </div>
-        <div *ngIf="artifactInputs[index].length > 0">
+        <div
+          *ngIf="
+            artifactInputs[index].inputs.length > 0 &&
+            !artifactInputs[index].complete
+          "
+        >
+          You need to define either one step before this step that provides the
+          artifact or there is at least one mapping from each input artifact
+          group to this artifact.
+        </div>
+        <div *ngIf="artifactInputs[index].inputs.length > 0">
           Input from:
           <ul>
-            <li *ngFor="let from of artifactInputs[index]">
+            <li *ngFor="let from of artifactInputs[index].inputs">
               {{ from.isStep ? 'Step' : 'Input Group' }} #{{
                 from.index + 1
               }}

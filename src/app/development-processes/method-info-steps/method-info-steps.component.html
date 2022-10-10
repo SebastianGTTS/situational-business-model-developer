@@ -4,6 +4,7 @@
       <app-method-info-step
         [formGroupName]="index.toString()"
         [bmProcess]="bmProcess"
+        [runningProcess]="runningProcess"
         [contextDomains]="contextDomains"
         [step]="step"
         [stepDecision]="stepDecisions[index]"
@@ -15,10 +16,12 @@
     <div class="col-sm-12">
       <button
         type="submit"
-        class="btn btn-sm btn-dark btn-block"
+        class="btn btn-sm btn-block"
+        [class.btn-dark]="!changed"
+        [class.btn-primary]="changed"
         [disabled]="!form.valid"
       >
-        <ng-container>Update</ng-container>
+        Update<span *ngIf="changed"> (unsaved changes)</span>
       </button>
     </div>
   </div>

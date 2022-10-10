@@ -16,11 +16,17 @@ export class MetaModelService {
     this.metaModels.push(definition);
   }
 
-  getMetaModelApi(metaModelType: MetaModelType): MetaModelApi {
-    return this.getMetaModelDefinition(metaModelType).api;
+  getMetaModelApi(metaModelType: MetaModelType | undefined): MetaModelApi {
+    const metaModelApi = this.getMetaModelDefinition(metaModelType)?.api;
+    if (metaModelApi == null) {
+      throw new Error('No meta model api for type ' + metaModelType);
+    }
+    return metaModelApi;
   }
 
-  getMetaModelDefinition(metaModelType: MetaModelType): MetaModelDefinition {
+  getMetaModelDefinition(
+    metaModelType: MetaModelType | undefined
+  ): MetaModelDefinition | undefined {
     return this.metaModels.find(
       (metaModelDefinition) => metaModelDefinition.type === metaModelType
     );

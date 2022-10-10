@@ -1,8 +1,7 @@
 import { DatabaseEntry, DatabaseInit } from './database-entry';
 
-export type InitType<T extends DatabaseModelPart> = ConstructorParameters<
-  DatabaseConstructor<T>
->[1];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any,@typescript-eslint/no-unused-vars
+export type InitType<T extends DatabaseModelPart> = NonNullable<any>;
 
 /**
  * Used to get the entry type of database model part.
@@ -14,7 +13,7 @@ export type EntryType<T extends DatabaseModelPart> = ReturnType<T['toDb']>;
  */
 export interface DatabaseConstructor<
   T extends DatabaseModelPart,
-  S extends DatabaseInit = DatabaseInit
+  S extends InitType<T> = InitType<T>
 > {
   new (entry: EntryType<T> | undefined, init: S | undefined): T;
 }

@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h4 class="modal-title">Request context change</h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" *ngIf="contextChangeSuggestions != null">
+  <div class="alert alert-info">
+    Request a context change from the method engineer. First, comment why and
+    what changes are necessary.
+  </div>
+  <app-description-form
+    [description]="contextChangeSuggestions.comment"
+    (submitDescriptionForm)="updateComment($event.value.description)"
+  ></app-description-form>
+  <div class="alert alert-info">
+    Here you can provide suggestions for the context change.
+  </div>
+  <app-context-edit
+    [domains]="contextChangeSuggestions.domains"
+    [situationalFactors]="contextChangeSuggestions.situationalFactors"
+    (updateDomains)="updateSuggestedDomains($event)"
+    (updateSituationalFactors)="updateSuggestedSituationalFactors($event)"
+  ></app-context-edit>
+</div>
+<div class="modal-footer">
+  <div class="d-flex align-items-baseline">
+    <button class="btn btn-primary" (click)="submit()">
+      Update all and request context change
+    </button>
+  </div>
+</div>

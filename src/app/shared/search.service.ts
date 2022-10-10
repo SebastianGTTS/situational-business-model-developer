@@ -5,11 +5,12 @@ import { debounceTime } from 'rxjs/operators';
 
 type SearchFunction<T> = (searchValue: string, item: T) => boolean;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SEARCH_FUNCTION = new InjectionToken<SearchFunction<any>>(
   'Search function'
 );
 
-export function searchFunction<T extends { name: string }>(
+export function defaultSearchFunction<T extends { name: string }>(
   searchValue: string,
   item: T
 ): boolean {
@@ -22,14 +23,14 @@ export class SearchService<T> implements OnDestroy {
     search: [''],
   });
 
-  private _items: T[];
-  set items(items: T[]) {
+  private _items?: T[];
+  set items(items: T[] | undefined) {
     this._items = items;
     this.search(this.searchForm.value.search);
   }
 
-  private _filteredResults: T[];
-  get filteredResults() {
+  private _filteredResults?: T[];
+  get filteredResults(): T[] | undefined {
     return this._filteredResults;
   }
 
@@ -39,28 +40,26 @@ export class SearchService<T> implements OnDestroy {
     private fb: FormBuilder,
     @Inject(SEARCH_FUNCTION) private searchFunction: SearchFunction<T>
   ) {
-    this.init();
-  }
-
-  private init() {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.searchSubscription = this.searchForm
-      .get('search')
+      .get('search')!
       .valueChanges.pipe(debounceTime(300))
       .subscribe((value) => this.search(value));
   }
 
-  private search(value?: string) {
+  private search(value?: string): void {
     if (value != null) {
       value = value.toLowerCase();
-      this._filteredResults = this._items.filter((item) =>
-        this.searchFunction(value, item)
+      this._filteredResults = this._items?.filter((item) =>
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.searchFunction(value!, item)
       );
     } else {
       this._filteredResults = this._items;
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.searchSubscription.unsubscribe();
   }
 }

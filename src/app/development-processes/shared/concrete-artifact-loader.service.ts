@@ -6,7 +6,7 @@ import { ElementLoaderService } from '../../database/element-loader.service';
 
 @Injectable()
 export class ConcreteArtifactLoaderService extends ElementLoaderService {
-  artifact: RunningArtifact = null;
+  artifact?: RunningArtifact;
 
   constructor(
     private concreteArtifactService: ConcreteArtifactService,
@@ -17,10 +17,14 @@ export class ConcreteArtifactLoaderService extends ElementLoaderService {
 
   protected initParams(paramMap: ParamMap): void {
     const artifactId = paramMap.get('id');
-    this.changesFeed = this.concreteArtifactService
-      .getChangesFeed(artifactId)
-      .subscribe(() => this.loadArtifact(artifactId));
-    void this.loadArtifact(artifactId);
+    if (artifactId != null) {
+      this.changesFeed = this.concreteArtifactService
+        .getChangesFeed(artifactId)
+        .subscribe(() => this.loadArtifact(artifactId));
+      void this.loadArtifact(artifactId);
+    } else {
+      this.artifact = undefined;
+    }
   }
 
   private async loadArtifact(artifactId: string): Promise<void> {

@@ -4,15 +4,20 @@ import {
   MethodElementInit,
 } from '../method-element';
 import { MetaModelIdentifier } from '../../meta-model-definition';
+import { DatabaseEntry } from '../../../database/database-entry';
+
+export type MetaModelData = DatabaseEntry;
 
 export interface ArtifactInit extends MethodElementInit {
   internalArtifact?: boolean;
   metaModel?: MetaModelIdentifier;
+  metaModelData?: MetaModelData;
 }
 
 export interface ArtifactEntry extends MethodElementEntry {
   internalArtifact: boolean;
   metaModel?: MetaModelIdentifier;
+  metaModelData?: MetaModelData;
 }
 
 export class Artifact extends MethodElement implements ArtifactInit {
@@ -20,6 +25,7 @@ export class Artifact extends MethodElement implements ArtifactInit {
 
   internalArtifact = false;
   metaModel?: MetaModelIdentifier = undefined;
+  metaModelData?: MetaModelData;
 
   constructor(
     entry: ArtifactEntry | undefined,
@@ -27,8 +33,12 @@ export class Artifact extends MethodElement implements ArtifactInit {
   ) {
     super(entry, init, Artifact.typeName);
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.internalArtifact = element.internalArtifact ?? this.internalArtifact;
     this.metaModel = element.metaModel;
+    this.metaModelData = element.metaModelData;
   }
 
   /**
@@ -50,6 +60,7 @@ export class Artifact extends MethodElement implements ArtifactInit {
             type: this.metaModel.type,
           }
         : undefined,
+      metaModelData: this.metaModelData,
     };
   }
 }

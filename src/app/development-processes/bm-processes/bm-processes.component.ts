@@ -8,6 +8,7 @@ import {
 import { BmProcessService } from '../../development-process-registry/bm-process/bm-process.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
+import { BmProcessDiagramService } from '../../development-process-registry/bm-process/bm-process-diagram.service';
 
 @Component({
   selector: 'app-bm-processes',
@@ -23,13 +24,14 @@ export class BmProcessesComponent {
     name: this.fb.control('', Validators.required),
   });
 
-  modalBmProcess: BmProcessEntry;
-  private modalReference: NgbModalRef;
+  modalBmProcess?: BmProcessEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteBmProcessModal', { static: true })
   deleteBmProcessModal: unknown;
 
   constructor(
+    private bmProcessDiagramService: BmProcessDiagramService,
     private fb: FormBuilder,
     private listService: ListService<BmProcess, BmProcessInit>,
     private modalService: NgbModal
@@ -47,11 +49,15 @@ export class BmProcessesComponent {
   }
 
   async addBmProcess(bmProcessForm: FormGroup): Promise<void> {
-    await this.listService.add({ name: bmProcessForm.value.name });
+    await this.listService.add({
+      name: bmProcessForm.value.name,
+      processDiagram:
+        await this.bmProcessDiagramService.getEmptyBmProcessDiagram(),
+    });
     this.bmProcessForm.reset();
   }
 
-  get bmProcessesList(): BmProcessEntry[] {
+  get bmProcessesList(): BmProcessEntry[] | undefined {
     return this.listService.elements;
   }
 

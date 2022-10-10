@@ -6,12 +6,16 @@ import { ModuleService } from '../module-api/module.service';
 import { Router } from '@angular/router';
 import { RunningMethod } from './running-method';
 import { StepInputArtifact } from './step-input-artifact';
-import { Decision } from '../bm-process/decision';
 import { MethodExecutionOutput } from '../module-api/method-execution-output';
 import { MethodExecutionInput } from '../module-api/method-execution-input';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { ArtifactDataService } from './artifact-data.service';
 import { OutputArtifactMapping } from './output-artifact-mapping';
+import {
+  MethodDecision,
+  MethodDecisionUpdate,
+} from '../bm-process/method-decision';
+import { isMethodExecutionStep } from '../development-method/execution-step';
 
 export enum MethodExecutionErrors {
   NO_METHOD = 'The node has no method defined',
@@ -24,6 +28,10 @@ export enum MethodExecutionErrors {
   STEPS_LEFT = 'There are steps left in this method',
   WRONG_STEP = 'Trying to finish the wrong step',
   MISSING_OUTPUT = 'The output artifacts are not correctly mapped',
+  MISSING_MODULE = 'A module is missing',
+  MISSING_MODULE_METHOD = 'A module method is missing',
+  MISSING_INPUT_ARTIFACT = 'The step can not be executed as an input artifact is missing',
+  FINISH_TEXTUAL_METHOD = 'A textual method is automatically finished',
 }
 
 @Injectable({
@@ -41,9 +49,14 @@ export class MethodExecutionService {
    *
    * @param runningProcess the running process
    * @param decision the method decisions
+   *
+   * @return the added running method
    */
-  addMethod(runningProcess: RunningProcess, decision: Decision): void {
-    runningProcess.addTodoMethod(
+  addMethod(
+    runningProcess: RunningProcess,
+    decision: MethodDecision
+  ): RunningMethod {
+    return runningProcess.addTodoMethod(
       new RunningMethod(undefined, {
         decision,
         steps: decision.method.executionSteps.map(() => {
@@ -51,6 +64,25 @@ export class MethodExecutionService {
         }),
       })
     );
+  }
+
+  /**
+   * Update a method decision of a running process that is executed out of the defined process
+   *
+   * @param runningProcess the running process
+   * @param executionId the execution id of the method to edit
+   * @param decision the method decisions
+   */
+  updateMethodDecision(
+    runningProcess: RunningProcess,
+    executionId: string,
+    decision: MethodDecisionUpdate
+  ): void {
+    const method = runningProcess.getTodoMethod(executionId);
+    if (method == null) {
+      throw new Error(MethodExecutionErrors.NOT_DEFINED);
+    }
+    method.decision.update(decision);
   }
 
   /**
@@ -112,16 +144,23 @@ export class MethodExecutionService {
   selectInputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    inputArtifactMapping: { artifact: number; version: number }[]
+    inputArtifactMapping: {
+      artifact: number | undefined;
+      version: number | undefined;
+    }[]
   ): void {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
     }
     method.inputArtifacts = inputArtifactMapping.map((mapping) => {
+      if (mapping.artifact == null || mapping.version == null) {
+        return undefined;
+      }
       const artifact = runningProcess.artifacts[mapping.artifact];
       const version = artifact.versions[mapping.version];
       return new StepInputArtifact(undefined, {
+        metaModelType: artifact.artifact.metaModel?.type,
         identifier: artifact.identifier,
         artifact: artifact.artifact,
         data: version.data,
@@ -149,13 +188,14 @@ export class MethodExecutionService {
     return this._isExecutionStepPrepared(method);
   }
 
+  // noinspection JSMethodCanBeStatic
   /**
    * Check whether the next execution step is already prepared
    *
    * @param method the method to check
    * @return true if the execution step is already prepared
    */
-  private _isExecutionStepPrepared(method: RunningMethod): boolean {
+  private _isExecutionStepPrepared(method: RunningMethod | undefined): boolean {
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
     }
@@ -182,20 +222,32 @@ export class MethodExecutionService {
     if (!method.hasStepsLeft()) {
       throw new Error(MethodExecutionErrors.NO_STEPS_LEFT);
     }
-    const currentStep = method.currentStep;
-    const module = this.moduleService.getModule(currentStep.module);
-    const moduleMethod = module.methods[currentStep.method];
     if (method.isPrepared()) {
       throw new Error(MethodExecutionErrors.ALREADY_PREPARED);
     }
-    const stepInput = method.getStepArtifacts(
-      method.currentStepNumber,
-      moduleMethod.input.length
-    );
-    const stepArtifacts: StepArtifact[] = await this.copyStepArtifacts(
-      stepInput
-    );
-    method.setInternalStepArtifacts(stepArtifacts);
+    const currentStep = method.currentStep;
+    let stepInput: (StepArtifact | undefined)[];
+    if (isMethodExecutionStep(currentStep)) {
+      const moduleMethod = this.moduleService.getModuleMethod(
+        currentStep.module,
+        currentStep.method
+      );
+      if (moduleMethod == null) {
+        throw new Error(MethodExecutionErrors.MISSING_MODULE_METHOD);
+      }
+      stepInput = method.getStepArtifacts(
+        method.currentStepNumber,
+        moduleMethod.input.length
+      );
+    } else {
+      stepInput = [];
+    }
+    const stepArtifacts: (StepArtifact | undefined)[] =
+      await this.copyStepArtifacts(stepInput);
+    if (stepArtifacts.some((artifact) => artifact == null)) {
+      throw new Error(MethodExecutionErrors.MISSING_INPUT_ARTIFACT);
+    }
+    method.setInternalStepArtifacts(stepArtifacts as StepArtifact[]);
   }
 
   /**
@@ -209,22 +261,30 @@ export class MethodExecutionService {
     executionId: string
   ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
-    if (!this._isExecutionStepPrepared(method)) {
+    if (!this._isExecutionStepPrepared(method) || method == null) {
       throw new Error(MethodExecutionErrors.NOT_PREPARED);
     }
     const currentStep = method.currentStep;
-    const module = this.moduleService.getModule(currentStep.module);
-    const moduleMethodDefinition = module.methods[currentStep.method];
-    const moduleService = module.service;
-    const internalStepArtifacts = method.getInternalStepArtifacts();
-    const input: MethodExecutionInput = {
-      router: this.router,
-      runningProcess,
-      runningMethod: method,
-      predefinedInput: method.currentStep.predefinedInput,
-      inputStepArtifacts: internalStepArtifacts,
-    };
-    moduleService.executeMethod(moduleMethodDefinition.name, input);
+    if (isMethodExecutionStep(currentStep)) {
+      const module = this.moduleService.getModule(currentStep.module);
+      if (module == null) {
+        throw new Error(MethodExecutionErrors.MISSING_MODULE);
+      }
+      const moduleMethodDefinition = module.methods[currentStep.method];
+      const moduleService = module.service;
+      const internalStepArtifacts = method.getInternalStepArtifacts();
+      const input: MethodExecutionInput = {
+        router: this.router,
+        runningProcess,
+        runningMethod: method,
+        predefinedInput: currentStep.predefinedInput,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        inputStepArtifacts: internalStepArtifacts!,
+      };
+      moduleService.executeMethod(moduleMethodDefinition.name, input);
+    } else {
+      method.finishStepExecution([]);
+    }
   }
 
   /**
@@ -242,40 +302,41 @@ export class MethodExecutionService {
     output: MethodExecutionOutput
   ): void {
     const method = runningProcess.getRunningMethod(executionId);
-    if (!this._isExecutionStepPrepared(method)) {
+    if (!this._isExecutionStepPrepared(method) || method == null) {
       throw new Error(MethodExecutionErrors.NOT_PREPARED);
     }
     if (method.currentStepNumber !== step) {
       throw new Error(MethodExecutionErrors.WRONG_STEP);
     }
     const currentStep = method.currentStep;
-    const module = this.moduleService.getModule(currentStep.module);
-    const moduleMethodDefinition = module.methods[currentStep.method];
-    const artifacts = output.outputArtifactData;
-    method.finishStepExecution(
-      artifacts.map(
-        (artifactData, index) =>
-          new StepArtifact(undefined, {
-            identifier: undefined,
-            artifact: {
-              name: undefined,
-              list: undefined,
-              metaModel: {
-                name: undefined,
-                type: moduleMethodDefinition.output[index].type,
-              },
-            },
-            data: artifactData,
-          })
-      )
-    );
-    void this.router.navigate([
-      'runningprocess',
-      'runningprocessview',
-      runningProcess._id,
-      'method',
-      executionId,
-    ]);
+    if (isMethodExecutionStep(currentStep)) {
+      const moduleMethodDefinition = this.moduleService.getModuleMethod(
+        currentStep.module,
+        currentStep.method
+      );
+      if (moduleMethodDefinition == null) {
+        throw new Error(MethodExecutionErrors.MISSING_MODULE_METHOD);
+      }
+      const artifacts = output.outputArtifactData;
+      method.finishStepExecution(
+        artifacts.map(
+          (artifactData, index) =>
+            new StepArtifact(undefined, {
+              metaModelType: moduleMethodDefinition.output[index].type,
+              data: artifactData,
+            })
+        )
+      );
+      void this.router.navigate([
+        'runningprocess',
+        'runningprocessview',
+        runningProcess._id,
+        'method',
+        executionId,
+      ]);
+    } else {
+      throw new Error(MethodExecutionErrors.FINISH_TEXTUAL_METHOD);
+    }
   }
 
   /**
@@ -288,14 +349,11 @@ export class MethodExecutionService {
   updateOutputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    outputArtifacts: OutputArtifactMapping[]
+    outputArtifacts: (OutputArtifactMapping | undefined)[]
   ): void {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
-    }
-    if (method.hasStepsLeft()) {
-      throw new Error(MethodExecutionErrors.STEPS_LEFT);
     }
     method.updateOutputArtifacts(outputArtifacts);
   }
@@ -310,7 +368,7 @@ export class MethodExecutionService {
   private async addOutputArtifacts(
     runningProcess: RunningProcess,
     executionId: string,
-    outputArtifactsMapping: OutputArtifactMapping[]
+    outputArtifactsMapping: (OutputArtifactMapping | undefined)[]
   ): Promise<void> {
     const method = runningProcess.getRunningMethod(executionId);
     if (method == null) {
@@ -324,8 +382,10 @@ export class MethodExecutionService {
       method.getOutputArtifacts()
     );
     for (let i = 0; i < methodOutputArtifacts.length; i++) {
-      if (methodOutputArtifacts[i] != null) {
-        outputArtifactsMapping[i].data = methodOutputArtifacts[i].data;
+      const methodOutputArtifact = methodOutputArtifacts[i];
+      const outputArtifactMapping = outputArtifactsMapping[i];
+      if (methodOutputArtifact != null && outputArtifactMapping != null) {
+        outputArtifactMapping.data = methodOutputArtifact.data;
       }
     }
     runningProcess.addOutputArtifacts(
@@ -395,10 +455,13 @@ export class MethodExecutionService {
    * @return the copied step artifacts
    */
   private async copyStepArtifacts(
-    stepArtifacts: StepArtifact[]
-  ): Promise<StepArtifact[]> {
+    stepArtifacts: (StepArtifact | undefined)[]
+  ): Promise<(StepArtifact | undefined)[]> {
     return Promise.all(
       stepArtifacts.map(async (artifact) => {
+        if (artifact == null) {
+          return undefined;
+        }
         if (artifact.data.type === ArtifactDataType.REFERENCE) {
           return new StepArtifact(undefined, {
             ...artifact,

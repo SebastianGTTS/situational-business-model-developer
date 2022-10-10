@@ -74,14 +74,15 @@ export class OptionsComponent {
   }
 
   fileChange(event: Event): void {
-    this.importError = null;
+    this.importError = undefined;
     const fileInput = event.target as HTMLInputElement;
-    this.file = fileInput.files[0];
+    this.file = fileInput.files?.[0];
   }
 
   async submitForm(): Promise<void> {
     try {
-      await this.importExportService.importDatabase(this.file);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      await this.importExportService.importDatabase(this.file!);
     } catch (error) {
       if (typeof error === 'string') {
         this.importError = error;
@@ -93,7 +94,7 @@ export class OptionsComponent {
       }
       throw error;
     }
-    this.modalReference!.close();
+    this.modalReference?.close();
   }
 
   async exportDatabase(): Promise<void> {
@@ -105,7 +106,7 @@ export class OptionsComponent {
   }
 
   isLocalDatabase(): boolean {
-    return environment.localDatabase === true;
+    return environment.localDatabase;
   }
 
   /**
@@ -119,6 +120,6 @@ export class OptionsComponent {
   }
 
   get verifyControl(): AbstractControl {
-    return this.form.get('verify');
+    return this.form.get('verify') as AbstractControl;
   }
 }

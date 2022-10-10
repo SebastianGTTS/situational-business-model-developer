@@ -1,0 +1,21 @@
+import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { <%= classify(name) %>ToolRoutingModule } from './<%= dasherize(name) %>-tool-routing.module';
+import { <%= classify(name) %>ToolService } from './<%= dasherize(name) %>-tool.service';
+import { SharedModule } from '../../../shared/shared.module';
+
+@NgModule({
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (<%= camelize(name) %>ToolService: <%= classify(name) %>ToolService) => (): void =>
+        <%= camelize(name) %>ToolService.init(),
+      deps: [<%= classify(name) %>ToolService],
+      multi: true,
+    },
+  ],
+  imports: [SharedModule, <%= classify(name) %>ToolRoutingModule],
+  declarations: [
+    // add declared components
+  ],
+})
+export class <%= classify(name) %>ToolModule {}

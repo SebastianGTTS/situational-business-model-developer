@@ -1,0 +1,173 @@
+<div class="d-flex mb-1 justify-content-center">
+  <div class="d-flex flex-1">
+    <div class="btn-group" role="group" aria-label="Zoom">
+      <button type="button" class="btn btn-light" (click)="zoom(-1)">
+        <i class="fas fa-minus fa-fw whiteboard-icon"></i
+        ><span class="sr-only">Zoom out</span>
+      </button>
+      <button type="button" class="btn btn-light" (click)="zoom(1)">
+        <i class="fas fa-plus fa-fw whiteboard-icon"></i
+        ><span class="sr-only">Zoom in</span>
+      </button>
+      <button type="button" class="ml-3 btn btn-light" (click)="zoomReset()">
+        <b>Reset zoom</b>
+      </button>
+    </div>
+  </div>
+  <div class="d-flex">
+    <form [formGroup]="controlsForm">
+      <div
+        class="btn-group btn-group-toggle"
+        ngbRadioGroup
+        name="control"
+        formControlName="control"
+      >
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.VIEW" />
+          <i class="fas fa-mouse-pointer fa-fw whiteboard-icon"></i
+          ><span class="sr-only">View</span>
+        </label>
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.MOVE" />
+          <i class="fas fa-arrows-alt fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Move screen</span>
+        </label>
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.DRAWING" />
+          <i class="fas fa-pen fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Free drawing</span>
+        </label>
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.TEXT" />
+          <i class="fas fa-paragraph fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Text</span>
+        </label>
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.NOTE" />
+          <i class="far fa-sticky-note fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Note</span>
+        </label>
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.RECT" />
+          <i class="far fa-square fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Rectangle</span>
+        </label>
+        <label ngbButtonLabel class="btn-light">
+          <input ngbButton type="radio" [value]="controls.IMAGE" />
+          <i class="far fa-image fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Image</span>
+        </label>
+      </div>
+      <div class="ml-3 btn-group btn-group-toggle">
+        <label class="btn-light" ngbButtonLabel>
+          <input type="checkbox" formControlName="colorMenu" ngbButton />
+          <i class="fas fa-palette fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Color</span>
+        </label>
+        <label class="btn-light" ngbButtonLabel>
+          <input type="checkbox" formControlName="fontMenu" ngbButton />
+          <i class="fas fa-font fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Font</span>
+        </label>
+        <label class="btn-light" ngbButtonLabel>
+          <input type="checkbox" formControlName="propertiesMenu" ngbButton />
+          <i class="fas fa-sliders-h fa-fw whiteboard-icon"></i
+          ><span class="sr-only">Properties</span>
+        </label>
+      </div>
+    </form>
+  </div>
+  <div class="flex-1 d-flex">
+    <button class="ml-auto btn btn-light" (click)="delete()">
+      <i class="fas fa-trash fa-fw whiteboard-icon"></i
+      ><span class="sr-only">Delete</span>
+    </button>
+  </div>
+</div>
+<div *ngIf="colorMenuShown" class="d-flex mb-1 justify-content-center">
+  <form [formGroup]="colorForm">
+    <div
+      *ngIf="!isDrawingMode"
+      class="btn-group btn-group-toggle mr-3"
+      ngbRadioGroup
+      name="control"
+      formControlName="control"
+    >
+      <label ngbButtonLabel class="btn-light">
+        <input ngbButton type="radio" [value]="colorControls.FILL" />
+        <i class="fas fa-square fa-fw whiteboard-icon"></i
+        ><span class="sr-only">fill</span>
+      </label>
+      <label ngbButtonLabel class="btn-light">
+        <input ngbButton type="radio" [value]="colorControls.STROKE" />
+        <i class="far fa-square fa-fw whiteboard-icon"></i
+        ><span class="sr-only">outline</span>
+      </label>
+    </div>
+    <div
+      class="btn-group btn-group-toggle"
+      ngbRadioGroup
+      name="color"
+      formControlName="color"
+    >
+      <label *ngIf="!isDrawingMode" ngbButtonLabel class="btn-light">
+        <input ngbButton type="radio" [value]="noColor" />
+        <i class="fas fa-tint-slash fa-fw whiteboard-icon"></i
+        ><span class="sr-only">{{ noColor.name }}</span>
+      </label>
+      <label *ngFor="let color of colors" ngbButtonLabel class="btn-light">
+        <input ngbButton type="radio" [value]="color" />
+        <i
+          [style.color]="color.value"
+          class="fas fa-square fa-fw whiteboard-icon"
+        ></i
+        ><span class="sr-only">{{ color.name }}</span>
+      </label>
+    </div>
+  </form>
+</div>
+<div *ngIf="fontMenuShown" class="d-flex mb-1 justify-content-center">
+  <form [formGroup]="textForm">
+    <div class="btn-group btn-group-toggle">
+      <label class="btn-light" ngbButtonLabel>
+        <input type="checkbox" formControlName="bold" ngbButton />
+        <i class="fas fa-bold fa-fw whiteboard-icon"></i
+        ><span class="sr-only">bold</span>
+      </label>
+      <label class="btn-light" ngbButtonLabel>
+        <input type="checkbox" formControlName="italic" ngbButton />
+        <i class="fas fa-italic fa-fw whiteboard-icon"></i
+        ><span class="sr-only">italic</span>
+      </label>
+      <label class="btn-light" ngbButtonLabel>
+        <input type="checkbox" formControlName="underline" ngbButton />
+        <i class="fas fa-underline fa-fw whiteboard-icon"></i
+        ><span class="sr-only">underline</span>
+      </label>
+      <label class="btn-light" ngbButtonLabel>
+        <input type="checkbox" formControlName="strikethrough" ngbButton />
+        <i class="fas fa-strikethrough fa-fw whiteboard-icon"></i
+        ><span class="sr-only">strikethrough</span>
+      </label>
+    </div>
+  </form>
+</div>
+<div *ngIf="propertiesMenuShown" class="d-flex mb-1 justify-content-center">
+  <form [formGroup]="propertiesForm">
+    <div class="form-group mb-0">
+      <label for="widthInput">Line Width</label>
+      <input
+        id="widthInput"
+        class="form-control"
+        type="number"
+        formControlName="width"
+        min="0"
+        step="0.1"
+        placeholder="e.g., 1"
+      />
+    </div>
+  </form>
+</div>
+<div class="border" #canvasWrapper>
+  <canvas #canvasElement></canvas>
+</div>

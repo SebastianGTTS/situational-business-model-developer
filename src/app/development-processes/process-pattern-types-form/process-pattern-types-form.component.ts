@@ -20,7 +20,7 @@ import { TypeService } from '../../development-process-registry/method-elements/
   styleUrls: ['./process-pattern-types-form.component.css'],
 })
 export class ProcessPatternTypesFormComponent implements OnInit, OnChanges {
-  @Input() types: {
+  @Input() types!: {
     inherit: boolean;
     neededType: { list: string; element: Type }[];
     forbiddenType: { list: string; element: Type }[];
@@ -34,8 +34,8 @@ export class ProcessPatternTypesFormComponent implements OnInit, OnChanges {
     forbiddenType: this.fb.array([]),
   });
 
-  methodElements: TypeEntry[];
-  listNames: string[];
+  methodElements?: TypeEntry[];
+  listNames?: string[];
 
   constructor(private fb: FormBuilder, private typeService: TypeService) {}
 
@@ -71,7 +71,7 @@ export class ProcessPatternTypesFormComponent implements OnInit, OnChanges {
       types.forbiddenType.map(mapTypeToFormGroup);
 
     if (types.inherit) {
-      this.typesForm.get('inherit').setValue(types.inherit);
+      this.typesForm.get('inherit')?.setValue(types.inherit);
     }
     this.typesForm.setControl(
       'neededType',

@@ -1,6 +1,10 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ProcessPattern } from '../../development-process-registry/process-pattern/process-pattern';
-import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
+import {
+  SituationalFactor,
+  SituationalFactorEntry,
+} from '../../development-process-registry/method-elements/situational-factor/situational-factor';
+import { Selection } from '../../development-process-registry/development-method/selection';
 
 @Component({
   selector: 'app-pattern-info',
@@ -8,26 +12,28 @@ import { SituationalFactor } from '../../development-process-registry/method-ele
   styleUrls: ['./pattern-info.component.css'],
 })
 export class PatternInfoComponent implements OnChanges {
-  @Input() processPattern: ProcessPattern;
-  @Input() contextSituationalFactors: {
-    list: string;
-    element: SituationalFactor;
-  }[] = [];
+  @Input() processPattern!: ProcessPattern;
+  @Input() contextSituationalFactors: Selection<SituationalFactor>[] = [];
 
   needed: SituationalFactor[] = [];
-  provided: SituationalFactor[] = [];
+  provided: SituationalFactorEntry[] = [];
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.contextSituationalFactors) {
-      this.needed = changes.contextSituationalFactors.currentValue.map(
-        (factor) => factor.element
+      const currentContextSituationalFactors: Selection<SituationalFactor>[] =
+        changes.contextSituationalFactors.currentValue;
+      this.needed = currentContextSituationalFactors.map(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (factor) => factor.element!
       );
     }
     if (changes.processPattern) {
-      this.provided =
-        changes.processPattern.currentValue.situationalFactors.map(
-          (factor) => factor.element
-        );
+      const currentProcessPattern: ProcessPattern =
+        changes.processPattern.currentValue;
+      this.provided = currentProcessPattern.situationalFactors.map(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (factor) => factor.element!.toDb()
+      );
     }
   }
 }

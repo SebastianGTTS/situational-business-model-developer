@@ -6,7 +6,7 @@ import { ElementLoaderService } from '../../database/element-loader.service';
 
 @Injectable()
 export class DevelopmentMethodLoaderService extends ElementLoaderService {
-  developmentMethod: DevelopmentMethod = null;
+  developmentMethod?: DevelopmentMethod;
 
   constructor(
     private developmentMethodService: DevelopmentMethodService,
@@ -17,10 +17,14 @@ export class DevelopmentMethodLoaderService extends ElementLoaderService {
 
   protected initParams(paramMap: ParamMap): void {
     const developmentMethodId = paramMap.get('id');
-    this.changesFeed = this.developmentMethodService
-      .getChangesFeed(developmentMethodId)
-      .subscribe(() => this.loadDevelopmentMethod(developmentMethodId));
-    void this.loadDevelopmentMethod(developmentMethodId);
+    if (developmentMethodId != null) {
+      this.changesFeed = this.developmentMethodService
+        .getChangesFeed(developmentMethodId)
+        .subscribe(() => this.loadDevelopmentMethod(developmentMethodId));
+      void this.loadDevelopmentMethod(developmentMethodId);
+    } else {
+      this.developmentMethod = undefined;
+    }
   }
 
   private async loadDevelopmentMethod(

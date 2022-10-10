@@ -33,6 +33,14 @@
     </p>
   </div>
 
+  <div *ngIf="!correctlyDefined" class="alert alert-danger">
+    This Method Building Block has errors.
+  </div>
+
+  <div *ngIf="correctlyDefined" class="alert alert-success">
+    This Method Building Block is correctly defined.
+  </div>
+
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2 mb-0">Method Building Block</h6>
     <div class="text-muted pt-3">
@@ -92,15 +100,28 @@
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Input Artifacts</h6>
+    <div
+      class="
+        d-flex
+        align-items-baseline
+        justify-content-between
+        border-bottom border-gray
+      "
+    >
+      <h6 class="pb-2 mb-0">Input Artifacts</h6>
+      <ng-container *ngIf="!inputArtifactsCorrectlyDefined">
+        <i class="text-danger fas fa-exclamation-circle"></i>
+        <span class="sr-only">(Error in this part)</span>
+      </ng-container>
+    </div>
     <div class="pt-3">
-      <app-artifacts-selection-form
+      <app-artifacts-mapping-selection-form
         [artifacts]="developmentMethod.inputArtifacts"
         [developmentMethod]="developmentMethod"
         (submitArtifactsForm)="
-          updateDevelopmentMethodValue({ inputArtifacts: $event.value })
+          updateDevelopmentMethodValue({ inputArtifacts: $event })
         "
-      ></app-artifacts-selection-form>
+      ></app-artifacts-mapping-selection-form>
     </div>
   </div>
 
@@ -110,7 +131,7 @@
       <app-artifacts-selection-form
         [artifacts]="developmentMethod.outputArtifacts"
         (submitArtifactsForm)="
-          updateDevelopmentMethodValue({ outputArtifacts: $event.value })
+          updateDevelopmentMethodValue({ outputArtifacts: $event })
         "
       ></app-artifacts-selection-form>
     </div>
@@ -122,7 +143,7 @@
       <app-stakeholders-selection-form
         [stakeholders]="developmentMethod.stakeholders"
         (submitStakeholdersForm)="
-          updateDevelopmentMethodValue({ stakeholders: $event.value })
+          updateDevelopmentMethodValue({ stakeholders: $event })
         "
       ></app-stakeholders-selection-form>
     </div>
@@ -133,15 +154,26 @@
     <div class="text-muted pt-3">
       <app-tools-selection-form
         [tools]="developmentMethod.tools"
-        (submitToolsForm)="
-          updateDevelopmentMethodValue({ tools: $event.value })
-        "
+        (submitToolsForm)="updateDevelopmentMethodValue({ tools: $event })"
       ></app-tools-selection-form>
     </div>
   </div>
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Execution steps</h6>
+    <div
+      class="
+        d-flex
+        align-items-baseline
+        justify-content-between
+        border-bottom border-gray
+      "
+    >
+      <h6 class="pb-2 mb-0">Execution steps</h6>
+      <ng-container *ngIf="!executionStepsCorrectlyDefined">
+        <i class="text-danger fas fa-exclamation-circle"></i>
+        <span class="sr-only">(Error in this part)</span>
+      </ng-container>
+    </div>
     <div class="pt-3">
       <div class="alert alert-info">
         The modules must first be added in the tools before they can be selected
@@ -166,3 +198,11 @@
     </div>
   </div>
 </main>
+
+<div class="fixed-bottom d-flex">
+  <div class="ml-auto p-3 bg-white rounded shadow-sm">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</div>

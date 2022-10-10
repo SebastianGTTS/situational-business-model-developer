@@ -2,23 +2,30 @@ import { Injectable } from '@angular/core';
 import bmdl from '../../../assets/bpmn_bmdl.json';
 import rbmp from '../../../assets/bpmn_running_process.json';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
-import { isLabel } from 'bpmn-js/lib/util/LabelUtil';
-import { RunningProcess } from './running-process';
+import { FullRunningProcess } from './running-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
+import * as BpmnUtils from '../bpmn/bpmn-utils';
+import {
+  BpmnElement,
+  BpmnFlowNode,
+  BpmnSequenceFlow,
+  BpmnSubProcess,
+} from 'bpmn-js';
+import { ModelerService } from '../bpmn/modeler.service';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
-export class ProcessExecutionModelerService {
+export class ProcessExecutionModelerService extends ModelerService {
   /**
    * Get a BpmnModeler with the imported running process
    *
    * @param runningProcess the running process to import
    * @return the bpmnModeler
    */
-  async initModeling(runningProcess: RunningProcess): Promise<BpmnModeler> {
-    const processModeler = this.getRunningProcessModeler();
+  async initModeling(runningProcess: FullRunningProcess): Promise<BpmnModeler> {
+    const processModeler =
+      ProcessExecutionModelerService.getRunningProcessModeler();
     await processModeler.importXML(runningProcess.process.processDiagram);
     return processModeler;
   }
@@ -30,7 +37,7 @@ export class ProcessExecutionModelerService {
    * @param modeler the modeler
    */
   async endModeling(
-    runningProcess: RunningProcess,
+    runningProcess: FullRunningProcess,
     modeler: BpmnModeler
   ): Promise<void> {
     const result = await modeler.saveXML();
@@ -39,20 +46,11 @@ export class ProcessExecutionModelerService {
   }
 
   /**
-   * Destroy the modeler
-   *
-   * @param modeler the modeler
-   */
-  abortModeling(modeler: BpmnModeler): void {
-    modeler.destroy();
-  }
-
-  /**
    * Get a BpmnModeler with customizations to manage running processes
    *
    * @return a bpmnModeler
    */
-  private getRunningProcessModeler(): BpmnModeler {
+  private static getRunningProcessModeler(): BpmnModeler {
     return new BpmnModeler({
       additionalModules: [],
       moddleExtensions: {
@@ -69,19 +67,36 @@ export class ProcessExecutionModelerService {
    * @param filter the filter function
    * @return the list of the filtered nodes
    */
-  filterNodes(modeler: BpmnModeler, filter: (node) => boolean): any[] {
+  filterNodes(
+    modeler: BpmnModeler,
+    filter: (node: BpmnElement) => boolean
+  ): BpmnElement[] {
     return modeler.get('elementRegistry').filter(filter);
   }
 
   /**
-   * Get a node from a node id
+   * Get all nodes in the diagram
    *
-   * @param modeler the modeler
-   * @param nodeId the id of the node
-   * @return the node
+   * @param modeler
    */
-  getNode(modeler: BpmnModeler, nodeId: string): any {
-    return modeler.get('elementRegistry').get(nodeId);
+  getNodes(modeler: BpmnModeler): BpmnFlowNode[] {
+    return modeler
+      .get('elementRegistry')
+      .filter((element: BpmnElement) => this.isNode(element)) as BpmnFlowNode[];
+  }
+
+  /**
+   * Get all flows in the diagram
+   *
+   * @param modeler
+   * @return all elements of type bpmn:SequenceFlow
+   */
+  getFlows(modeler: BpmnModeler): BpmnSequenceFlow[] {
+    return modeler
+      .get('elementRegistry')
+      .filter((element: BpmnElement) =>
+        this.isFlow(element)
+      ) as BpmnSequenceFlow[];
   }
 
   /**
@@ -90,15 +105,18 @@ export class ProcessExecutionModelerService {
    * @param modeler the modeler
    * @return the start event node
    */
-  getStartNode(modeler: BpmnModeler): any {
-    return modeler
+  getStartNode(modeler: BpmnModeler): BpmnFlowNode {
+    const node = modeler
       .get('elementRegistry')
       .find(
-        (node) =>
-          is(node, 'bpmn:StartEvent') &&
-          is(node.parent, 'bpmn:Process') &&
-          !isLabel(node)
+        (element: BpmnElement) =>
+          BpmnUtils.isStartEvent(element) &&
+          BpmnUtils.isProcess((element as BpmnFlowNode).parent)
       );
+    if (node == null) {
+      throw new Error('Element does not exist');
+    }
+    return node as BpmnFlowNode;
   }
 
   /**
@@ -107,8 +125,8 @@ export class ProcessExecutionModelerService {
    * @param node the node to check
    * @return the token count
    */
-  getTokens(node): number {
-    return node.businessObject.get('tokens');
+  getTokens(node: BpmnFlowNode): number {
+    return node.businessObject.get('tokens') as number;
   }
 
   /**
@@ -117,7 +135,7 @@ export class ProcessExecutionModelerService {
    * @param node the node
    * @return the incoming flows
    */
-  getIncomingFlows(node): any[] {
+  getIncomingFlows(node: BpmnFlowNode): BpmnSequenceFlow[] {
     return node.incoming;
   }
 
@@ -127,7 +145,7 @@ export class ProcessExecutionModelerService {
    * @param node the node
    * @return the target flows
    */
-  getTargetFlows(node): any[] {
+  getTargetFlows(node: BpmnFlowNode): BpmnSequenceFlow[] {
     let currentNode;
     let outgoingFlows;
     for (
@@ -135,7 +153,7 @@ export class ProcessExecutionModelerService {
       outgoingFlows.length === 0;
       currentNode = currentNode.parent, outgoingFlows = currentNode.outgoing
     ) {
-      if (is(currentNode.parent, 'bpmn:Process')) {
+      if (BpmnUtils.isProcess(currentNode.parent)) {
         return [];
       }
     }
@@ -148,10 +166,13 @@ export class ProcessExecutionModelerService {
    * @param flow the flow to analyse
    * @return the target node
    */
-  getTargetNode(flow): any {
+  getTargetNode(flow: BpmnSequenceFlow): BpmnFlowNode {
     const target = flow.target;
-    if (is(target, 'bpmn:SubProcess')) {
-      return target.children.find((element) => is(element, 'bpmn:StartEvent'));
+    if (BpmnUtils.isSubProcess(target)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return (target as BpmnSubProcess).children.find((element) =>
+        BpmnUtils.isStartEvent(element)
+      )!;
     }
     return target;
   }
@@ -162,13 +183,12 @@ export class ProcessExecutionModelerService {
    * @param node the node to check
    * @return true if the node is a common node
    */
-  isCommonNode(node): boolean {
+  isCommonNode(node: BpmnElement): boolean {
     return (
-      (is(node, 'bpmn:StartEvent') ||
-        is(node, 'bpmn:EndEvent') ||
-        is(node, 'bpmn:ExclusiveGateway') ||
-        is(node, 'bpmn:ParallelGateway')) &&
-      !isLabel(node)
+      BpmnUtils.isStartEvent(node) ||
+      BpmnUtils.isEndEvent(node) ||
+      BpmnUtils.isExclusiveGateway(node) ||
+      BpmnUtils.isParallelGateway(node)
     );
   }
 
@@ -178,8 +198,8 @@ export class ProcessExecutionModelerService {
    * @param node the node to check
    * @return true if the node is an exclusive gateway
    */
-  isExclusiveGateway(node): boolean {
-    return is(node, 'bpmn:ExclusiveGateway') && !isLabel(node);
+  isExclusiveGateway(node: BpmnElement): boolean {
+    return BpmnUtils.isExclusiveGateway(node);
   }
 
   /**
@@ -188,8 +208,8 @@ export class ProcessExecutionModelerService {
    * @param node the node to check
    * @return true if the node is a parallel gateway
    */
-  isParallelGateway(node): boolean {
-    return is(node, 'bpmn:ParallelGateway') && !isLabel(node);
+  isParallelGateway(node: BpmnElement): boolean {
+    return BpmnUtils.isParallelGateway(node);
   }
 
   /**
@@ -198,10 +218,8 @@ export class ProcessExecutionModelerService {
    * @param node the node to check
    * @return true if the node is executable
    */
-  isExecutable(node): boolean {
-    return (
-      (is(node, 'bpmn:Task') || is(node, 'bpmn:CallActivity')) && !isLabel(node)
-    );
+  isExecutable(node: BpmnElement): boolean {
+    return BpmnUtils.isTask(node) || BpmnUtils.isCallActivity(node);
   }
 
   /**
@@ -210,8 +228,32 @@ export class ProcessExecutionModelerService {
    * @param node the node to check
    * @return true if the node is a sub process
    */
-  isSubProcess(node): boolean {
-    return is(node, 'bpmn:SubProcess') && !isLabel(node);
+  isSubProcess(node: BpmnElement): boolean {
+    return BpmnUtils.isSubProcess(node);
+  }
+
+  /**
+   * Checks whether the element is a flow element
+   *
+   * @param element
+   * @return true if the element is a flow element
+   */
+  isFlow(element: BpmnElement): boolean {
+    return BpmnUtils.isSequenceFlow(element);
+  }
+
+  /**
+   * Checks whether the element is a node, i.e., an element where executed can be set
+   *
+   * @param element
+   * @return true if it is a node
+   */
+  isNode(element: BpmnElement): boolean {
+    return (
+      this.isCommonNode(element) ||
+      BpmnUtils.isTask(element) ||
+      BpmnUtils.isCallActivity(element)
+    );
   }
 
   /**
@@ -221,7 +263,7 @@ export class ProcessExecutionModelerService {
    * @param node the node
    * @param value whether the node is executed or not
    */
-  setExecuted(modeler: BpmnModeler, node, value: boolean = true): void {
+  setExecuted(modeler: BpmnModeler, node: BpmnFlowNode, value = true): void {
     modeler.get('modeling').updateProperties(node, { executed: value });
   }
 
@@ -232,7 +274,7 @@ export class ProcessExecutionModelerService {
    * @param flow the flow
    * @param value whether the flow is used or not
    */
-  setUsed(modeler: BpmnModeler, flow, value: boolean = true): void {
+  setUsed(modeler: BpmnModeler, flow: BpmnSequenceFlow, value = true): void {
     modeler.get('modeling').updateProperties(flow, { used: value });
   }
 
@@ -243,10 +285,10 @@ export class ProcessExecutionModelerService {
    * @param node the node to update
    * @param delta the delta of tokens
    */
-  updateTokens(modeler: BpmnModeler, node, delta: number): void {
+  updateTokens(modeler: BpmnModeler, node: BpmnFlowNode, delta: number): void {
     const modeling = modeler.get('modeling');
     let current = node;
-    while (current && !is(current, 'bpmn:Process')) {
+    while (current && !BpmnUtils.isProcess(node)) {
       modeling.updateProperties(current, {
         tokens: this.getTokens(current) + delta,
       });

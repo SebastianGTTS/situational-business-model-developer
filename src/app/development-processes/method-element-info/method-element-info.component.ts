@@ -3,75 +3,57 @@ import {
   MethodElement,
   MethodElementEntry,
 } from '../../development-process-registry/method-elements/method-element';
-import { merge, Observable, Subject } from 'rxjs';
 import {
   FormArray,
-  FormArrayName,
-  FormBuilder,
-  Validators,
+  FormControl,
+  FormGroup,
+  FormGroupName,
 } from '@angular/forms';
-import { getTypeaheadInputPipe } from '../../shared/utils';
-import { filter, map } from 'rxjs/operators';
 import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
+import { GroupDecisionFormService } from '../shared/group-decision-form.service';
 
 @Component({
   selector: 'app-method-element-info',
   templateUrl: './method-element-info.component.html',
   styleUrls: ['./method-element-info.component.css'],
 })
-export class MethodElementInfoComponent {
-  @Input() methodElementName: string;
+export class MethodElementInfoComponent<T extends MethodElement> {
+  @Input() methodElementName!: string;
 
-  @Input() element: MultipleSelection<MethodElement>;
+  @Input() element!: MultipleSelection<T>;
 
   @Input() methodElements: MethodElementEntry[] = [];
 
-  openElementInput = new Subject<[HTMLInputElement, string]>();
-
   constructor(
-    private fb: FormBuilder,
-    @Optional() private formArrayName: FormArrayName
+    @Optional() private formGroupName: FormGroupName,
+    private groupDecisionFormService: GroupDecisionFormService<T>
   ) {}
 
-  searchElements =
-    (field: HTMLInputElement) =>
-    (input: Observable<string>): Observable<MethodElementEntry[]> => {
-      return merge(
-        getTypeaheadInputPipe(input),
-        this.openElementInput.pipe(
-          filter(([f]) => f === field),
-          map(([, i]) => i)
-        )
-      ).pipe(
-        map((term) =>
-          this.methodElements
-            .filter(
-              (methodElement) =>
-                methodElement.list.toLowerCase() ===
-                  this.element.list.toLowerCase() &&
-                methodElement.name.toLowerCase().includes(term.toLowerCase())
-            )
-            .slice(0, 7)
-        )
-      );
-    };
-
-  add(index: number = null): void {
-    if (index === null) {
-      index = this.formArray.length;
+  add(index?: number): void {
+    if (this.formGroup != null) {
+      this.groupDecisionFormService.addElement(this.formGroup, index);
     }
-    this.formArray.insert(index, this.fb.control(null, Validators.required));
   }
 
   remove(index: number): void {
-    this.formArray.removeAt(index);
+    if (this.formGroup != null) {
+      this.groupDecisionFormService.removeElement(this.formGroup, index);
+    }
   }
 
-  formatter(x: { name: string }): string {
-    return x.name;
+  get formGroup(): FormGroup | undefined {
+    return this.formGroupName ? this.formGroupName.control : undefined;
   }
 
-  get formArray(): FormArray {
-    return this.formArrayName ? this.formArrayName.control : null;
+  get formElement(): FormControl | undefined {
+    return !this.element.multiple
+      ? (this.formGroup?.get('element') as FormControl)
+      : undefined;
+  }
+
+  get formArray(): FormArray | undefined {
+    return this.element.multiple
+      ? (this.formGroup?.get('elements') as FormArray)
+      : undefined;
   }
 }

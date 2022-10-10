@@ -1,8 +1,8 @@
-FROM node:14 AS build
+FROM node:16 AS build
 WORKDIR /app
 RUN chown -R node:node /app
 USER node:node
-COPY . .
+COPY --chown=node:node . .
 RUN npm ci
 RUN npm run build -- --configuration production
 

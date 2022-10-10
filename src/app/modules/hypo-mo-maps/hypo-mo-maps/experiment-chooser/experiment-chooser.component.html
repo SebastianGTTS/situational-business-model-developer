@@ -1,0 +1,215 @@
+<ng-template #experimentOverviewModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalExperiment != null">
+      Execute experiment {{ modalExperiment.name }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalExperiment != null && experimentExecutionForm != null"
+  >
+    <div class="alert alert-info" role="alert">
+      Select evidence gain for every hypothesis and whether the hypothesis is
+      approved or disapproved.
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="mr-1">Selected Experiment:</div>
+      <app-experiment-info
+        [experiment]="modalExperiment"
+        class="border rounded p-2"
+      ></app-experiment-info>
+    </div>
+    <div class="mt-2" *ngIf="modalExperiment.artifacts.length > 0">
+      <div>Artifacts:</div>
+      <ul>
+        <li *ngFor="let artifact of modalExperiment.artifacts">
+          {{ artifact }}
+        </li>
+      </ul>
+    </div>
+    <div class="mt-2">
+      <form [formGroup]="experimentExecutionForm">
+        <table formArrayName="hypotheses" class="table">
+          <thead>
+            <tr>
+              <th scope="col">Hypothesis</th>
+              <th scope="col">Metric</th>
+              <th scope="col">Evidence</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let mapping of modalHypothesisMappings; let index = index"
+              formGroupName="{{ index }}"
+            >
+              <td class="align-middle">
+                <app-hypothesis-info
+                  [hypothesis]="mapping.hypothesis"
+                  [showEvidence]="true"
+                ></app-hypothesis-info>
+              </td>
+              <td class="align-middle">{{ mapping.metric }}</td>
+              <td class="align-middle">
+                <ngb-rating
+                  [max]="modalExperiment.maxEvidence!"
+                  formControlName="evidence"
+                ></ngb-rating>
+              </td>
+              <td class="align-middle text-right">
+                <div
+                  class="btn-group btn-group-sm btn-group-toggle"
+                  ngbRadioGroup
+                  name="radioApproved"
+                  formControlName="approved"
+                >
+                  <label ngbButtonLabel class="btn-primary">
+                    <input ngbButton type="radio" [value]="true" /> Approved
+                  </label>
+                  <label ngbButtonLabel class="btn-primary">
+                    <input ngbButton type="radio" [value]="false" /> Disapproved
+                  </label>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer" *ngIf="experimentExecutionForm != null">
+    <button
+      [disabled]="!experimentExecutionForm.valid"
+      type="button"
+      class="btn btn-block btn-primary"
+      (click)="submitExecuteExperiment(experimentExecutionForm)"
+    >
+      Execute experiment
+    </button>
+  </div>
+</ng-template>
+
+<div
+  *ngIf="hypoMoMap != null && hypoMoMap.mappings.length === 0"
+  class="alert alert-info mb-0"
+>
+  There are no mappings left.
+</div>
+
+<form
+  *ngIf="hypoMoMap != null && hypoMoMap.mappings.length > 0"
+  [formGroup]="methodForm"
+>
+  <div class="my-3 alert alert-info" role="alert">
+    <p>
+      You can choose between three different methods to choose an experiment to
+      execute:
+    </p>
+    <ul>
+      <li>
+        Highest Priority: Finds the hypothesis with the highest priority and you
+        can select a corresponding experiment to execute.
+      </li>
+      <li>
+        Best Estimated Ratio: Calculates the hypotheses evidence gain for every
+        experiment divided by the costs of the experiment. The hypotheses
+        evidence gain is the maximum evidence gain that the experiment can bring
+        through its execution. This is calculated by summing up the differences
+        between the maximum evidence of the experiment and the current evidence
+        of every connected hypothesis.
+      </li>
+      <li>
+        Best Discounted Ratio: Like Best Estimated Ratio, but the hypotheses
+        evidence gain is weighted per hypothesis with one fifth of the priority
+        of the hypothesis.
+      </li>
+    </ul>
+  </div>
+  <div
+    class="btn-group btn-group-toggle"
+    ngbRadioGroup
+    name="radioMethod"
+    formControlName="method"
+  >
+    <label ngbButtonLabel class="btn-primary">
+      <input ngbButton type="radio" value="highestPriority" /> Highest Priority
+    </label>
+    <label ngbButtonLabel class="btn-primary">
+      <input ngbButton type="radio" value="estimatedRatio" /> Best Estimated
+      Ratio
+    </label>
+    <label ngbButtonLabel class="btn-primary">
+      <input ngbButton type="radio" value="discountedRatio" /> Best Discounted
+      Ratio
+    </label>
+  </div>
+</form>
+
+<div *ngIf="selectedHypothesis" class="mt-2 d-flex align-items-center">
+  <div class="mr-1">Selected Hypothesis:</div>
+  <app-hypothesis-info
+    [hypothesis]="selectedHypothesis"
+    class="border rounded p-2"
+  ></app-hypothesis-info>
+</div>
+
+<div *ngIf="possibleExperiments && possibleExperiments.length > 0" class="mt-2">
+  <div>Possible Experiments:</div>
+  <ul class="list-group">
+    <li
+      *ngFor="let experiment of possibleExperiments"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <app-experiment-info [experiment]="experiment"></app-experiment-info>
+      <div>
+        <button
+          (click)="openExperimentOverview(experiment)"
+          type="button"
+          class="btn btn-primary btn-xs"
+        >
+          Select
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div
+  *ngIf="
+    possibleExperimentsWithRatio && possibleExperimentsWithRatio.length > 0
+  "
+  class="mt-2"
+>
+  <div>Possible Experiments:</div>
+  <table class="table mt-1">
+    <thead>
+      <tr>
+        <th scope="col">Experiment</th>
+        <th scope="col">Ratio</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let experiment of possibleExperimentsWithRatio">
+        <td>
+          <app-experiment-info
+            [experiment]="experiment.experiment"
+          ></app-experiment-info>
+        </td>
+        <td class="align-middle">{{ experiment.ratio | number: '1.2-2' }}</td>
+        <td class="align-middle text-right">
+          <button
+            (click)="openExperimentOverview(experiment.experiment)"
+            type="button"
+            class="btn btn-primary btn-xs"
+          >
+            Select
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

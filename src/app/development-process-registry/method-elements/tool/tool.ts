@@ -4,9 +4,9 @@ import {
   MethodElementInit,
 } from '../method-element';
 
-export interface ToolInit extends MethodElementInit {}
+export type ToolInit = MethodElementInit;
 
-export interface ToolEntry extends MethodElementEntry {}
+export type ToolEntry = MethodElementEntry;
 
 export class Tool extends MethodElement {
   static readonly typeName = 'Tool';

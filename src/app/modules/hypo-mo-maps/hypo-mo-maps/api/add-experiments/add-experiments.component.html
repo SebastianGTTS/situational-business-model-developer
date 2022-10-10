@@ -1,0 +1,111 @@
+<app-api-navigation apiName="Add Experiments"></app-api-navigation>
+
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="hypoMoMap != null && runningMethod != null"
+  role="main"
+  class="container"
+>
+  <div class="my-3 alert alert-info">
+    <p>
+      Map experiments and hypotheses to later execute experiments and validate
+      the corresponding hypotheses.
+    </p>
+    <ul class="mb-0">
+      <li>Add experiments at the bottom of the page</li>
+      <li>Set costs and maximum evidence of the experiments</li>
+      <li>Map the experiments and hypotheses</li>
+    </ul>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <div
+      class="
+        d-flex
+        align-items-baseline
+        justify-content-between
+        border-bottom border-gray
+        mb-2
+      "
+    >
+      <h6 class="pb-2 mb-0">Hypothesis Tree</h6>
+    </div>
+    <div class="mt-1">
+      <app-hypothesis-tree
+        [hypotheses]="hypoMoMap.hypotheses"
+        [processPhase]="'stepMap'"
+        [hypothesisExperimentMap]="hypothesisExperimentMap"
+        (addExperiment)="openAddExperimentToHypothesisModal($event)"
+        (showMappings)="openShowMappingsHypothesisModal($event)"
+      ></app-hypothesis-tree>
+    </div>
+    <div class="mt-1">
+      <app-hypothesis-tree-legend></app-hypothesis-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <div
+      class="
+        d-flex
+        align-items-baseline
+        justify-content-between
+        border-bottom border-gray
+        mb-2
+      "
+    >
+      <h6 class="pb-2 mb-0">Experiment Tree</h6>
+      <button (click)="openAddExperimentModal()" class="btn btn-primary btn-sm">
+        Add Experiment
+      </button>
+    </div>
+    <app-used-experiment-tree
+      [usedExperiments]="hypoMoMap.usedExperimentsList"
+      (addHypothesis)="
+        openAddHypothesisToExperimentModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (setCostAndScore)="
+        openEvidenceCostsModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (showMappings)="
+        openShowMappingsExperimentModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (showArtifacts)="
+        openShowArtifactsModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (deleteExperiment)="openRemoveExperimentModal($event)"
+    ></app-used-experiment-tree>
+    <div class="mt-1">
+      <app-used-experiment-tree-legend></app-used-experiment-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Finish editing</h6>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">
+      Finish editing
+    </button>
+  </div>
+</main>

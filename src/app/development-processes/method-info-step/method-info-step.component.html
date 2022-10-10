@@ -1,2 +1,5 @@
-<h6>{{ step.module }} &ndash; {{ step.method }}</h6>
+<h6 *ngIf="isMethodExecutionStep(step)">
+  {{ step.module }} &ndash; {{ step.method }}
+</h6>
+<h6 *ngIf="!isMethodExecutionStep(step)">{{ step.name }}</h6>
 <ng-template appConfigurationFormPlaceholder></ng-template>

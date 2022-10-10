@@ -8,10 +8,11 @@ import { ToolExplanationComponent } from './tool-explanation/tool-explanation.co
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DevelopmentProcessesModule } from './development-processes/development-processes.module';
+import { HypoMoMapsModule } from './modules/hypo-mo-maps/hypo-mo-maps/hypo-mo-maps.module';
 import { DevelopmentProcessRegistryModule } from './development-process-registry/development-process-registry.module';
 import { OptionsComponent } from './options/options.component';
-import { CanvasMetaModelModule } from './canvas-meta-model/canvas-meta-model.module';
-import { CanvasModule } from './canvas/canvas.module';
+import { CanvasMetaModelModule } from './modules/canvas/canvas-meta-model/canvas-meta-model.module';
+import { CanvasModule } from './modules/canvas/canvas/canvas.module';
 import { MethodModelerExplanationComponent } from './method-modeler-explanation/method-modeler-explanation.component';
 import { FeatureModelerExplanationComponent } from './feature-modeler-explanation/feature-modeler-explanation.component';
 import { EnactionExplanationComponent } from './enaction-explanation/enaction-explanation.component';
@@ -23,8 +24,11 @@ import { ChangePasswordFormComponent } from './change-password-form/change-passw
 import { ProfileComponent } from './profile/profile.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { QuillModule } from 'ngx-quill';
-import { WhiteboardMetaModelModule } from './whiteboard-meta-model/whiteboard-meta-model.module';
-import { WhiteboardModule } from './whiteboard/whiteboard.module';
+import { WhiteboardMetaModelModule } from './modules/whiteboard/whiteboard-meta-model/whiteboard-meta-model.module';
+import { WhiteboardModule } from './modules/whiteboard/whiteboard/whiteboard.module';
+import { HypoMoMapMetaModelModule } from './modules/hypo-mo-maps/hypo-mo-map-meta-model/hypo-mo-map-meta-model.module';
+// import { ExampleArtifactModule } from './modules/example/example-artifact/example-artifact.module';
+// import { ExampleToolModule } from './modules/example/example-tool/example-tool.module';
 
 @NgModule({
   declarations: [
@@ -48,7 +52,10 @@ import { WhiteboardModule } from './whiteboard/whiteboard.module';
     DatabaseModule,
     DevelopmentProcessRegistryModule,
     CanvasMetaModelModule,
+    HypoMoMapMetaModelModule,
     WhiteboardMetaModelModule,
+    // ExampleArtifactModule,
+    // Add your artifact modules here
     NgbModule,
     ReactiveFormsModule,
 
@@ -57,7 +64,10 @@ import { WhiteboardModule } from './whiteboard/whiteboard.module';
     }),
 
     CanvasModule,
+    HypoMoMapsModule,
     WhiteboardModule,
+    // ExampleToolModule,
+    // Add your tool modules here
 
     DevelopmentProcessesModule,
 

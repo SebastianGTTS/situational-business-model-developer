@@ -16,7 +16,7 @@ import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 })
 export class DomainSelectionFormComponent {
   @Input() domainDefinitions: DomainEntry[] = [];
-  @Input() index: number;
+  @Input() index!: number;
 
   @Output() remove = new EventEmitter<void>();
 

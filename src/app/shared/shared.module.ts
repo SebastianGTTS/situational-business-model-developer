@@ -16,6 +16,7 @@ import { ResultsListItemComponent } from './results-list-item/results-list-item.
 import { RouterModule } from '@angular/router';
 import { ApiNavigationComponent } from './api-navigation/api-navigation.component';
 import { StepErrorsComponent } from './step-errors/step-errors.component';
+import { RunningProcessNamePipe } from './running-process-name.pipe';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { StepErrorsComponent } from './step-errors/step-errors.component';
     ListWrapperComponent,
     ResultsListItemComponent,
     StepErrorsComponent,
+    RunningProcessNamePipe,
   ],
   imports: [
     CommonModule,
@@ -56,6 +58,7 @@ import { StepErrorsComponent } from './step-errors/step-errors.component';
     ListWrapperComponent,
     ResultsListItemComponent,
     StepErrorsComponent,
+    RunningProcessNamePipe,
   ],
 })
 export class SharedModule {}

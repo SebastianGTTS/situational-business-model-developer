@@ -27,6 +27,9 @@ export class Comment implements CommentInit, DatabaseModelPart {
 
   constructor(entry: CommentEntry | undefined, init: CommentInit | undefined) {
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.id = element.id ?? uuidv4();
     this.time = element.time ?? Date.now();
     this.userName = element.userName;

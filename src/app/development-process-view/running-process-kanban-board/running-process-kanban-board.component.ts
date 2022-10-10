@@ -9,7 +9,7 @@ import {
 import { KanbanBoardMethodInfo } from '../kanban-board/kanban-board-method-info';
 import { RunningProcess } from '../../development-process-registry/running-process/running-process';
 import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
-import { Decision } from '../../development-process-registry/bm-process/decision';
+import { MethodDecision } from '../../development-process-registry/bm-process/method-decision';
 
 @Component({
   selector: 'app-running-process-kanban-board',
@@ -17,15 +17,17 @@ import { Decision } from '../../development-process-registry/bm-process/decision
   styleUrls: ['./running-process-kanban-board.component.css'],
 })
 export class RunningProcessKanbanBoardComponent implements OnChanges {
-  @Input() runningProcess: RunningProcess;
+  @Input() runningProcess!: RunningProcess;
 
   @Output() addTodo = new EventEmitter<void>();
+  @Output() editTodo = new EventEmitter<string>(); // emits the execution id
   @Output() removeTodo = new EventEmitter<string>(); // emits the execution id
   @Output() viewNode = new EventEmitter<string>(); // emits the node id
-  @Output() showInfo = new EventEmitter<Decision>();
+  @Output() showInfo = new EventEmitter<MethodDecision>();
   @Output() startNodeExecution = new EventEmitter<string>(); // emits the node id
   @Output() startExecution = new EventEmitter<string>(); // emits the execution id
   @Output() viewExecution = new EventEmitter<string>(); // emits execution id
+  @Output() viewArtifacts = new EventEmitter<string>(); // emits execution id
   @Output() viewComments = new EventEmitter<string>(); // emits execution id
 
   todo: KanbanBoardMethodInfo[] = [];
@@ -41,7 +43,9 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
   }
 
   _showNodeInfo(nodeId: string): void {
-    this.showInfo.emit(this.runningProcess.process.decisions[nodeId]);
+    if (this.runningProcess.hasProcess()) {
+      this.showInfo.emit(this.runningProcess.process.decisions[nodeId]);
+    }
   }
 
   _showExecutionInfo(executionId: string): void {
@@ -73,19 +77,22 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
       ).map((node) => {
         return {
           nodeId: node.id,
-          methodName: runningProcess.process.decisions[node.id].method.name,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          methodName: runningProcess.process!.decisions[node.id].method.name,
         };
       })
     );
     return todo;
   }
 
+  // noinspection JSMethodCanBeStatic
   private getDoingList(
     runningProcess: RunningProcess
   ): KanbanBoardMethodInfo[] {
     return runningProcess.runningMethods;
   }
 
+  // noinspection JSMethodCanBeStatic
   private getDoneList(runningProcess: RunningProcess): KanbanBoardMethodInfo[] {
     return runningProcess.executedMethods.slice().reverse();
   }

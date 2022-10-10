@@ -23,6 +23,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bpmn-js/dist/assets/diagram-js.css",
               "node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn.css",
+              "bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.bubble.css",
               "node_modules/quill/dist/quill.snow.css",
@@ -35,7 +36,12 @@
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
-            "allowedCommonJsDependencies": ["ajv", "fabric", "immediate"]
+            "allowedCommonJsDependencies": [
+              "ajv",
+              "bpmnlint",
+              "fabric",
+              "immediate"
+            ]
           },
           "configurations": {
             "production": {
@@ -101,18 +107,6 @@
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "bmdl-modeler:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
-            "scripts": []
           }
         },
         "lint": {

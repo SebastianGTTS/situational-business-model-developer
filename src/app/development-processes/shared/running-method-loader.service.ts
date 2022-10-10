@@ -6,8 +6,8 @@ import { RunningProcessService } from '../../development-process-registry/runnin
 
 @Injectable()
 export class RunningMethodLoaderService extends RunningProcessLoaderService {
-  runningMethod: RunningMethod;
-  private executionId: string;
+  runningMethod?: RunningMethod;
+  private executionId?: string;
 
   constructor(
     runningProcessService: RunningProcessService,
@@ -18,14 +18,13 @@ export class RunningMethodLoaderService extends RunningProcessLoaderService {
   }
 
   protected initParams(paramMap: ParamMap): void {
-    this.executionId = paramMap.get('executionId');
+    this.executionId = paramMap.get('executionId') ?? undefined;
     super.initParams(paramMap);
   }
 
   private loadRunningMethod(): void {
-    this.runningMethod = this.runningProcess.getRunningMethod(this.executionId);
-    if (this.runningMethod == null) {
-      this.runningMethod = null;
-    }
+    this.runningMethod = this.runningProcess?.getRunningMethod(
+      this.executionId
+    );
   }
 }

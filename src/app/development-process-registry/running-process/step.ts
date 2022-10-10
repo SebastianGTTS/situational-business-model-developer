@@ -12,13 +12,13 @@ export interface StepInit extends DatabaseInit {
 }
 
 export interface StepEntry extends DatabaseEntry {
-  inputArtifacts: StepArtifactEntry[];
-  outputArtifacts: StepArtifactEntry[];
+  inputArtifacts?: StepArtifactEntry[];
+  outputArtifacts?: StepArtifactEntry[];
 }
 
 export class Step implements StepInit, DatabaseModelPart {
-  inputArtifacts: StepArtifact[] = null;
-  outputArtifacts: StepArtifact[] = null;
+  inputArtifacts?: StepArtifact[];
+  outputArtifacts?: StepArtifact[];
 
   constructor(entry: StepEntry | undefined, init: StepInit | undefined) {
     if (entry != null) {
@@ -52,10 +52,10 @@ export class Step implements StepInit, DatabaseModelPart {
     return {
       inputArtifacts: this.inputArtifacts
         ? this.inputArtifacts.map((artifact) => artifact.toDb())
-        : null,
+        : undefined,
       outputArtifacts: this.outputArtifacts
         ? this.outputArtifacts.map((artifact) => artifact.toDb())
-        : null,
+        : undefined,
     };
   }
 }

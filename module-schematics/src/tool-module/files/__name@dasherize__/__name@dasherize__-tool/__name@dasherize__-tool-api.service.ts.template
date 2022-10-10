@@ -1,0 +1,16 @@
+import { Injectable } from '@angular/core';
+import { ModuleApiService } from '../../../development-process-registry/module-api/module-api-service';
+import { MethodExecutionInput } from '../../../development-process-registry/module-api/method-execution-input';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class <%= classify(name) %>ToolApiService implements ModuleApiService {
+  executeMethod(methodName: string, input: MethodExecutionInput): void {
+    switch (methodName) {
+      // Call correct methods
+      default:
+        throw new Error('Not implemented');
+    }
+  }
+}

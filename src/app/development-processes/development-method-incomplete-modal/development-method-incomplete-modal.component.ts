@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./development-method-incomplete-modal.component.css'],
 })
 export class DevelopmentMethodIncompleteModalComponent {
-  @Input() developmentMethod: DevelopmentMethod;
+  @Input() developmentMethod?: DevelopmentMethod;
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -22,11 +22,13 @@ export class DevelopmentMethodIncompleteModalComponent {
   }
 
   async check(): Promise<void> {
-    this.modalService.dismissAll();
-    await this.router.navigate([
-      'methods',
-      'methodview',
-      this.developmentMethod._id,
-    ]);
+    if (this.developmentMethod != null) {
+      this.modalService.dismissAll();
+      await this.router.navigate([
+        'methods',
+        'methodview',
+        this.developmentMethod._id,
+      ]);
+    }
   }
 }

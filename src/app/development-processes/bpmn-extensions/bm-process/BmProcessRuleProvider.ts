@@ -3,7 +3,7 @@ import RuleProvider from 'diagram-js/lib/features/rules/RuleProvider';
 export default class BmProcessRuleProvider extends RuleProvider {
   private static readonly PRIORITY = 1500;
 
-  init() {
+  init(): void {
     this.addRule('connection.reconnect', (context): false | undefined => {
       const currentSource = context.connection.businessObject.sourceRef;
       const currentTarget = context.connection.businessObject.targetRef;
@@ -25,7 +25,14 @@ export default class BmProcessRuleProvider extends RuleProvider {
     });
   }
 
-  addRule(actions, fn) {
-    super.addRule(actions, BmProcessRuleProvider.PRIORITY, fn);
+  addRule(
+    actions: string,
+    fn: ((context: any) => false | undefined) | number // eslint-disable-line @typescript-eslint/no-explicit-any
+  ): void {
+    super.addRule(
+      actions,
+      BmProcessRuleProvider.PRIORITY,
+      fn as (context: any) => false | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
+    );
   }
 }

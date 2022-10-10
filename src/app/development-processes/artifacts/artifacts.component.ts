@@ -2,10 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ArtifactService } from '../../development-process-registry/method-elements/artifact/artifact.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import {
-  Artifact,
-  ArtifactEntry,
-} from '../../development-process-registry/method-elements/artifact/artifact';
+import { ArtifactEntry } from '../../development-process-registry/method-elements/artifact/artifact';
 
 @Component({
   selector: 'app-artifacts',
@@ -13,11 +10,11 @@ import {
   styleUrls: ['./artifacts.component.css'],
 })
 export class ArtifactsComponent implements OnInit {
-  elementLists: { listName: string; elements: ArtifactEntry[] }[] = null;
+  elementLists?: { listName: string; elements: ArtifactEntry[] }[];
   listNames: string[] = [];
 
-  modalArtifact: Artifact;
-  private modalReference: NgbModalRef;
+  modalArtifact?: ArtifactEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteArtifactModal', { static: true })
   deleteArtifactModal: unknown;
@@ -36,7 +33,7 @@ export class ArtifactsComponent implements OnInit {
     this.listNames = this.elementLists.map((list) => list.listName);
   }
 
-  openDeleteArtifactModal(artifact: Artifact): void {
+  openDeleteArtifactModal(artifact: ArtifactEntry): void {
     this.modalArtifact = artifact;
     this.modalReference = this.modalService.open(this.deleteArtifactModal, {
       size: 'lg',

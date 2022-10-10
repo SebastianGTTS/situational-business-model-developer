@@ -1,6 +1,8 @@
 <ng-template #manageTypesModal let-d="dismiss">
   <div class="modal-header">
-    <h4 class="modal-title">Manage types of activity {{ modalTask.name }}</h4>
+    <h4 class="modal-title" *ngIf="modalTask != null">
+      Manage types of activity {{ modalTask.name }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -8,6 +10,7 @@
   <div class="modal-body">
     <div class="text-muted pt-3">
       <app-process-pattern-types-form
+        *ngIf="modalTask != null"
         [types]="modalTask"
         (submitTypesForm)="updateTypes($event)"
       ></app-process-pattern-types-form>
@@ -75,6 +78,9 @@
 
   <div class="my-3 p-3 bg-white rounded shadow-sm">
     <h6 class="border-bottom border-gray pb-2">Controls</h6>
+    <button class="btn btn-primary mr-1" (click)="toggleLinter()">
+      Toggle Linter
+    </button>
     <button class="btn btn-primary" (click)="saveDiagram()">
       Save Diagram
     </button>

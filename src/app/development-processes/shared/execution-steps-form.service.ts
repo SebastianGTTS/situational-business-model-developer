@@ -1,22 +1,61 @@
 import { Injectable } from '@angular/core';
 import { Module } from '../../development-process-registry/module-api/module';
-import { ExecutionStep } from '../../development-process-registry/development-method/execution-step';
+import { MethodExecutionStep } from '../../development-process-registry/development-method/method-execution-step';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { ArtifactMapping } from '../../development-process-registry/development-method/artifact-mapping';
 import {
   ArtifactMappingFormService,
   MappingsFormValue,
+  MappingsFormValueValid,
 } from './artifact-mapping-form.service';
-import { ModuleMethod } from '../../development-process-registry/module-api/module-method';
+import {
+  ModuleMethod,
+  PredefinedInput,
+} from '../../development-process-registry/module-api/module-method';
+import {
+  ExecutionStep,
+  isMethodExecutionStep,
+} from '../../development-process-registry/development-method/execution-step';
+import { EmptyExecutionStep } from '../../development-process-registry/development-method/empty-execution-step';
 
 export type ExecutionStepsFormValue = ExecutionStepFormValue[];
+export type ExecutionStepsFormValueValid = ExecutionStepFormValueValid[];
 
-export interface ExecutionStepFormValue {
+export type ExecutionStepFormValue =
+  | EmptyExecutionStepFormValue
+  | MethodExecutionStepFormValue;
+
+export type ExecutionStepFormValueValid =
+  | EmptyExecutionStepFormValueValid
+  | MethodExecutionStepFormValueValid;
+
+export interface EmptyExecutionStepFormValue {
+  isMethod: false;
+  name?: string;
+  description?: string;
+}
+
+export interface EmptyExecutionStepFormValueValid
+  extends EmptyExecutionStepFormValue {
+  name: string;
+  description: string;
+}
+
+export interface MethodExecutionStepFormValue {
+  isMethod: true;
+  module?: Module;
+  method?: ModuleMethod;
+  outputMappings?: MappingsFormValue[];
+  predefinedInput?: PredefinedInput;
+}
+
+export interface MethodExecutionStepFormValueValid
+  extends MethodExecutionStepFormValue {
   module: Module;
   method: ModuleMethod;
-  outputMappings: MappingsFormValue[];
-  predefinedInput: any;
+  outputMappings: MappingsFormValueValid[];
+  predefinedInput: PredefinedInput;
 }
 
 @Injectable({
@@ -35,35 +74,56 @@ export class ExecutionStepsFormService {
     );
   }
 
-  createExecutionStepForm(executionStep: ExecutionStep = null): FormGroup {
-    let module: Module = null;
-    let method = null;
-    if (executionStep) {
-      module = this.moduleService.getModule(executionStep.module);
-      method = module.methods[executionStep.method];
+  createExecutionStepForm(executionStep?: ExecutionStep): FormGroup {
+    if (executionStep == null || isMethodExecutionStep(executionStep)) {
+      return this.createMethodExecutionStepForm(executionStep);
+    } else {
+      return this.createEmptyExecutionStepForm(executionStep);
+    }
+  }
+
+  private createMethodExecutionStepForm(
+    methodExecutionStep?: MethodExecutionStep
+  ): FormGroup {
+    let module: Module | undefined;
+    let method: ModuleMethod | undefined;
+    if (methodExecutionStep != null) {
+      module = this.moduleService.getModule(methodExecutionStep.module);
+      method = module?.methods[methodExecutionStep.method];
     }
     return this.fb.group({
-      module: this.fb.control(module, Validators.required),
-      method: this.fb.control(method, Validators.required),
+      isMethod: [true, Validators.required],
+      module: [module, Validators.required],
+      method: [method, Validators.required],
       outputMappings: this.createMappingsForm(
         method,
-        executionStep ? executionStep.outputMappings : null
+        methodExecutionStep?.outputMappings
       ),
       predefinedInput: this.createPredefinedInputForm(
         method,
-        executionStep ? executionStep.predefinedInput : null
+        methodExecutionStep?.predefinedInput
       ),
     });
   }
 
+  private createEmptyExecutionStepForm(
+    emptyExecutionStep?: EmptyExecutionStep
+  ): FormGroup {
+    return this.fb.group({
+      isMethod: [false, Validators.required],
+      name: [emptyExecutionStep?.name, Validators.required],
+      description: [emptyExecutionStep?.description ?? ''],
+    });
+  }
+
   createMappingsForm(
-    method: ModuleMethod,
-    outputMappings: ArtifactMapping[][]
+    method?: ModuleMethod,
+    outputMappings?: ArtifactMapping[][]
   ): FormArray {
-    let outputs = [];
-    if (method) {
+    let outputs: FormArray[] = [];
+    if (method != null) {
       outputs = method.output.map((output, index) => {
-        let mappings = [];
+        let mappings: ArtifactMapping[] = [];
         if (outputMappings && index < outputMappings.length) {
           mappings = outputMappings[index];
         }
@@ -74,9 +134,9 @@ export class ExecutionStepsFormService {
   }
 
   createPredefinedInputForm(
-    method: ModuleMethod,
-    predefinedInput: any
-  ): FormGroup {
+    method?: ModuleMethod,
+    predefinedInput?: PredefinedInput
+  ): FormGroup | undefined {
     if (method != null && method.createConfigurationForm != null) {
       return method.createConfigurationForm(predefinedInput);
     }
@@ -99,12 +159,38 @@ export class ExecutionStepsFormService {
    * @param step the index of the step to remove
    */
   executionStepMethodChange(executionStepForm: FormArray, step: number): void {
-    executionStepForm.controls.forEach((control) => {
-      const outputMappings = control.get('outputMappings') as FormArray;
-      outputMappings.controls.forEach((control: FormArray) => {
-        this.artifactMappingService.resetMappingTo(control, step);
+    executionStepForm.controls.forEach((executionStepControl) => {
+      const outputMappings = executionStepControl.get('outputMappings') as
+        | FormArray
+        | undefined;
+      outputMappings?.controls.forEach((mappingControl) => {
+        this.artifactMappingService.resetMappingTo(
+          mappingControl as FormArray,
+          step
+        );
       });
     });
+  }
+
+  /**
+   * Called if the type of execution step changed
+   *
+   * @param executionStepForm
+   * @param step
+   * @param isMethod
+   */
+  executionStepTypeChange(
+    executionStepForm: FormArray,
+    step: number,
+    isMethod: boolean
+  ): void {
+    this.executionStepMethodChange(executionStepForm, step);
+    executionStepForm.setControl(
+      step,
+      isMethod
+        ? this.createMethodExecutionStepForm()
+        : this.createEmptyExecutionStepForm()
+    );
   }
 
   /**
@@ -114,26 +200,43 @@ export class ExecutionStepsFormService {
    * @param step the index of the step to remove
    */
   removeExecutionStep(executionStepForm: FormArray, step: number): void {
-    executionStepForm.controls.forEach((control) => {
-      const outputMappings = control.get('outputMappings') as FormArray;
-      outputMappings.controls.forEach((control: FormArray) => {
-        this.artifactMappingService.removeMappingTo(control, step);
-      });
+    executionStepForm.controls.forEach((executionStepControl) => {
+      if (executionStepControl.get('isMethod')?.value === true) {
+        const outputMappings = executionStepControl.get(
+          'outputMappings'
+        ) as FormArray;
+        outputMappings.controls.forEach((mappingControl) => {
+          this.artifactMappingService.removeMappingTo(
+            mappingControl as FormArray,
+            step
+          );
+        });
+      }
     });
     executionStepForm.removeAt(step);
   }
 
-  getExecutionSteps(form: ExecutionStepsFormValue): ExecutionStep[] {
-    return form.map(
-      (step) =>
-        new ExecutionStep(undefined, {
-          module: step.module ? step.module.name : null,
-          method: step.method ? step.method.name : null,
-          outputMappings: step.outputMappings.map((output) =>
-            this.artifactMappingService.getMappings(output)
-          ),
-          predefinedInput: step.predefinedInput,
-        })
+  getExecutionSteps(form: ExecutionStepsFormValueValid): ExecutionStep[] {
+    return form.map((step) =>
+      this.isMethodExecutionStepFormValue(step)
+        ? new MethodExecutionStep(undefined, {
+            module: step.module.name,
+            method: step.method.name,
+            outputMappings: step.outputMappings.map((output) =>
+              this.artifactMappingService.getMappings(output)
+            ),
+            predefinedInput: step.predefinedInput,
+          })
+        : new EmptyExecutionStep(undefined, {
+            name: step.name,
+            description: step.description,
+          })
     );
+  }
+
+  isMethodExecutionStepFormValue(
+    step: ExecutionStepFormValue
+  ): step is MethodExecutionStepFormValue {
+    return step.isMethod;
   }
 }

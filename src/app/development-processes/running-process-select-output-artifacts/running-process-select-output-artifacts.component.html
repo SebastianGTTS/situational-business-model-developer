@@ -10,9 +10,9 @@
 >
   <div formArrayName="outputArtifacts">
     <app-running-process-select-output-artifact
-      *ngFor="let artifact of outputArtifacts; let index = index"
+      *ngFor="let artifactOptional of outputArtifacts; let index = index"
       formGroupName="{{ index }}"
-      [artifact]="artifact"
+      [artifactOptional]="artifactOptional"
       [internalArtifact]="internalOutputArtifacts[index]"
       [processArtifacts]="runningProcess.artifacts"
     ></app-running-process-select-output-artifact>

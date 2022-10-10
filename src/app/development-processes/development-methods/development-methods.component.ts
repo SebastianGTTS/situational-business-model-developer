@@ -7,14 +7,22 @@ import {
 } from '../../development-process-registry/development-method/development-method';
 import { DevelopmentMethodService } from '../../development-process-registry/development-method/development-method.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
+import { ELEMENT_SERVICE } from '../../shared/list.service';
+import {
+  defaultSearchFunction,
+  SEARCH_FUNCTION,
+  SearchService,
+} from '../../shared/search.service';
+import { ListSearchService } from '../../shared/list-search.service';
 
 @Component({
   selector: 'app-development-methods',
   templateUrl: './development-methods.component.html',
   styleUrls: ['./development-methods.component.css'],
   providers: [
-    ListService,
+    SearchService,
+    { provide: SEARCH_FUNCTION, useValue: defaultSearchFunction },
+    ListSearchService,
     { provide: ELEMENT_SERVICE, useExisting: DevelopmentMethodService },
   ],
 })
@@ -23,14 +31,17 @@ export class DevelopmentMethodsComponent {
     name: this.fb.control('', Validators.required),
   });
 
-  modalDevelopmentMethod: DevelopmentMethodEntry;
-  private modalReference: NgbModalRef;
+  modalDevelopmentMethod?: DevelopmentMethodEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteDevelopmentMethodModal', { static: true })
   deleteDevelopmentMethodModal: unknown;
 
   constructor(
-    private listService: ListService<DevelopmentMethod, DevelopmentMethodInit>,
+    private listService: ListSearchService<
+      DevelopmentMethod,
+      DevelopmentMethodInit
+    >,
     private fb: FormBuilder,
     private modalService: NgbModal
   ) {}
@@ -59,8 +70,16 @@ export class DevelopmentMethodsComponent {
     this.developmentMethodForm.reset();
   }
 
-  get developmentMethodsList(): DevelopmentMethodEntry[] {
+  get developmentMethodsList(): DevelopmentMethodEntry[] | undefined {
     return this.listService.elements;
+  }
+
+  get developmentMethodsListFiltered(): DevelopmentMethodEntry[] | undefined {
+    return this.listService.filteredElements;
+  }
+
+  get searchValue(): string | undefined {
+    return this.listService.searchValue;
   }
 
   get noResults(): boolean {

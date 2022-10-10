@@ -26,6 +26,7 @@ import { AuthGuard } from '../database/auth.guard';
 import { MethodElementsComponent } from './method-elements/method-elements.component';
 import { ConcreteArtifactsComponent } from './concrete-artifacts/concrete-artifacts.component';
 import { ConcreteArtifactComponent } from './concrete-artifact/concrete-artifact.component';
+import { RunningProcessContextComponent } from './running-process-context/running-process-context.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,11 @@ const routes: Routes = [
       {
         path: 'bmprocessview/:id',
         component: BmProcessComponent,
+        canDeactivate: [DiagramChangeGuard],
+      },
+      {
+        path: 'contextchange/:id',
+        component: RunningProcessContextComponent,
         canDeactivate: [DiagramChangeGuard],
       },
     ],

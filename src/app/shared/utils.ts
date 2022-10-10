@@ -2,7 +2,12 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Equality } from './equality';
 
-export function getTypeaheadInputPipe(input: Observable<string>) {
+export type OptionalOmit<T, S extends keyof T> = Omit<T, S> &
+  Partial<Pick<T, S>>;
+
+export function getTypeaheadInputPipe(
+  input: Observable<string>
+): Observable<string> {
   return input.pipe(debounceTime(150), distinctUntilChanged());
 }
 
@@ -53,8 +58,8 @@ export function equalsListString(listA: string[], listB: string[]): boolean {
  * @return true if the lists are both null/undefined or have the same amount of elements and all elements are equal at the same index
  */
 export function equalsListGeneric<T, S>(
-  listA: T[],
-  listB: S[],
+  listA: T[] | undefined,
+  listB: S[] | undefined,
   compare: (a: T, b: S) => boolean
 ): boolean {
   if (listA == null && listB == null) {
@@ -77,3 +82,19 @@ export function equalsListGeneric<T, S>(
     })
   );
 }
+
+// Mixin utilities
+
+export interface MixinOnLoaded {
+  onLoaded?(): void;
+}
+
+/**
+ * An empty class
+ */
+export abstract class EmptyClass {}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Constructor<T> = abstract new (...args: any[]) => T;
+
+export type AnyConstructor = Constructor<EmptyClass>;

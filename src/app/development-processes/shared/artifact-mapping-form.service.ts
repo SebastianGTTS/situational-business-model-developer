@@ -6,11 +6,16 @@ import {
 } from '../../development-process-registry/development-method/artifact-mapping';
 
 export type MappingsFormValue = MappingFormValue[];
+export type MappingsFormValueValid = MappingFormValueValid[];
 
 export interface MappingFormValue {
   output: boolean;
   step?: number;
   group?: number;
+  artifact?: number;
+}
+
+export interface MappingFormValueValid extends MappingFormValue {
   artifact: number;
 }
 
@@ -26,8 +31,8 @@ export class ArtifactMappingFormService {
     );
   }
 
-  createMappingForm(mapping: ArtifactMapping = null): FormGroup {
-    if (!mapping) {
+  createMappingForm(mapping?: ArtifactMapping): FormGroup {
+    if (mapping == null) {
       return this.fb.group({
         output: this.fb.control(false, Validators.required),
         step: this.fb.control(null, Validators.required),
@@ -49,7 +54,7 @@ export class ArtifactMappingFormService {
   }
 
   convertMappingForm(mappingForm: FormGroup): void {
-    if (mappingForm.get('output').value) {
+    if (mappingForm.get('output')?.value) {
       mappingForm.removeControl('step');
       mappingForm.addControl(
         'group',
@@ -62,23 +67,31 @@ export class ArtifactMappingFormService {
         this.fb.control(null, Validators.required)
       );
     }
-    mappingForm.get('artifact').reset();
+    mappingForm.get('artifact')?.reset();
   }
 
   /**
-   * Resets the step and artifact.
+   * Resets the step and artifact. Additionally, update step value if
+   * number changes due to removal.
    *
    * @param mappingsForm the mappings in which to search
    * @param step the step to which a mapping should point to reset it
    */
   removeMappingTo(mappingsForm: FormArray, step: number): void {
-    mappingsForm.controls.forEach((mappingForm: FormGroup) => {
+    mappingsForm.controls.forEach((mappingForm) => {
       if (
-        mappingForm.get('output').value === false &&
-        mappingForm.get('step').value === step
+        mappingForm.get('output')?.value === false &&
+        mappingForm.get('step')?.value === step
       ) {
-        mappingForm.get('step').reset();
-        mappingForm.get('artifact').reset();
+        mappingForm.get('step')?.reset();
+        mappingForm.get('artifact')?.reset();
+      } else if (
+        mappingForm.get('output')?.value === false &&
+        mappingForm.get('step')?.value > step
+      ) {
+        mappingForm
+          .get('step')
+          ?.setValue(mappingForm.get('step')?.value - 1, { emitEvent: false });
       }
     });
   }
@@ -90,21 +103,21 @@ export class ArtifactMappingFormService {
    * @param step the step to which a mapping should point to reset it
    */
   resetMappingTo(mappingsForm: FormArray, step: number): void {
-    mappingsForm.controls.forEach((mappingForm: FormGroup) => {
+    mappingsForm.controls.forEach((mappingForm) => {
       if (
-        mappingForm.get('output').value === false &&
-        mappingForm.get('step').value === step
+        mappingForm.get('output')?.value === false &&
+        mappingForm.get('step')?.value === step
       ) {
-        mappingForm.get('artifact').reset();
+        mappingForm.get('artifact')?.reset();
       }
     });
   }
 
-  getMappings(mappings: MappingsFormValue): ArtifactMappingInit[] {
+  getMappings(mappings: MappingsFormValueValid): ArtifactMappingInit[] {
     return mappings.map((mapping) => this.getMapping(mapping));
   }
 
-  getMapping(mapping: MappingFormValue): ArtifactMappingInit {
+  getMapping(mapping: MappingFormValueValid): ArtifactMappingInit {
     if (mapping.output) {
       return {
         output: mapping.output,

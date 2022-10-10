@@ -25,11 +25,13 @@ export class ArtifactComponent {
     private artifactService: ArtifactService
   ) {}
 
-  async updateValue(value: any): Promise<void> {
-    await this.artifactService.update(this.artifact._id, value);
+  async updateValue(value: ArtifactInit): Promise<void> {
+    if (this.artifact != null) {
+      await this.artifactService.update(this.artifact._id, value);
+    }
   }
 
-  get artifact(): Artifact {
+  get artifact(): Artifact | undefined {
     return this.artifactLoaderService.methodElement;
   }
 

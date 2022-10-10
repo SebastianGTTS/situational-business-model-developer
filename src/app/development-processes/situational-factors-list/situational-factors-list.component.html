@@ -1,0 +1,32 @@
+<div class="mt-3 p-3 bg-white rounded shadow-sm">
+  <h6 class="border-bottom border-gray pb-2">Situational Factors</h6>
+  <ul class="list-group" *ngIf="combinedList != null">
+    <li class="list-group-item" *ngFor="let item of combinedList">
+      <span *ngIf="item.status === status.REMOVED" class="text-danger"
+        ><del
+          >{{ item.factorName }}: {{ item.factorValue
+          }}<span class="sr-only"> (removed)</span></del
+        ></span
+      >
+      <span *ngIf="item.status === status.ADDED" class="text-success"
+        ><ins
+          >{{ item.factorName }}: {{ item.factorValue
+          }}<span class="sr-only"> (added)</span></ins
+        ></span
+      >
+      <span *ngIf="item.status === status.CHANGED"
+        >{{ item.factorName }}:
+        <del class="text-danger">
+          {{ item.factorValue }}<span class="sr-only"> (removed)</span>
+        </del>
+        <span>&rightarrow;</span>
+        <ins class="text-success"
+          >{{ item.newFactorValue }}<span class="sr-only"> (added)</span></ins
+        >
+      </span>
+      <span *ngIf="item.status == null"
+        >{{ item.factorName }}: {{ item.factorValue }}</span
+      >
+    </li>
+  </ul>
+</div>

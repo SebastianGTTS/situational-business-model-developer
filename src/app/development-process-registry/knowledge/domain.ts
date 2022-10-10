@@ -23,6 +23,9 @@ export class Domain extends DatabaseModel implements DomainInit {
   constructor(entry: DomainEntry | undefined, init: DomainInit | undefined) {
     super(entry, init, Domain.typeName);
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.name = element.name;
     this.description = element.description;
   }

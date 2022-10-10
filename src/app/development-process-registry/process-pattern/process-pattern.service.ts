@@ -7,6 +7,10 @@ import {
 import { Type } from '../method-elements/type/type';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { DefaultElementService } from '../../database/default-element.service';
+import { PouchdbService } from '../../database/pouchdb.service';
+import { SituationalFactorService } from '../method-elements/situational-factor/situational-factor.service';
+import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
+import { ProcessPatternDiagramService } from './process-pattern-diagram.service';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
@@ -19,6 +23,14 @@ export class ProcessPatternService extends DefaultElementService<
 
   protected readonly elementConstructor = ProcessPattern;
 
+  constructor(
+    pouchdbService: PouchdbService,
+    private processPatternDiagramService: ProcessPatternDiagramService,
+    private situationalFactorService: SituationalFactorService
+  ) {
+    super(pouchdbService);
+  }
+
   /**
    * Get a list of process patterns that have the needed types, but not the forbidden ones.
    *
@@ -26,8 +38,8 @@ export class ProcessPatternService extends DefaultElementService<
    * @param forbidden forbidden types
    */
   async getValidProcessPatterns(
-    needed: { list: string; element: { _id: string; name: string } }[],
-    forbidden: { list: string; element: { _id: string; name: string } }[]
+    needed: { list: string; element?: { _id: string; name: string } }[],
+    forbidden: { list: string; element?: { _id: string; name: string } }[]
   ): Promise<ProcessPatternEntry[]> {
     return (
       await this.pouchdbService.find<ProcessPatternEntry>(
@@ -37,6 +49,26 @@ export class ProcessPatternService extends DefaultElementService<
         }
       )
     ).filter((pattern) => Type.validTypes(pattern.types, needed, forbidden));
+  }
+
+  /**
+   * Get a list of process patterns that have the needed types, but not the forbidden ones.
+   * Additionally, sorted by the distance to the situational factors.
+   *
+   * @param needed needed types
+   * @param forbidden forbidden types
+   * @param situationalFactors
+   */
+  async getSortedValidProcessPatterns(
+    needed: { list: string; element?: { _id: string; name: string } }[],
+    forbidden: { list: string; element?: { _id: string; name: string } }[],
+    situationalFactors: SituationalFactor[]
+  ): Promise<ProcessPatternEntry[]> {
+    const list = await this.getValidProcessPatterns(needed, forbidden);
+    return this.situationalFactorService.sortByDistance(
+      situationalFactors,
+      list
+    );
   }
 
   /**
@@ -72,5 +104,16 @@ export class ProcessPatternService extends DefaultElementService<
         }
       )
     ).map((pattern) => new ProcessPattern(pattern, undefined));
+  }
+
+  /**
+   * Checks whether the process pattern is correctly defined
+   *
+   * @param processPattern the process pattern to check
+   * @return true if the process pattern is correctly defined and can
+   * be used in processes
+   */
+  async isCorrectlyDefined(processPattern: ProcessPattern): Promise<boolean> {
+    return this.processPatternDiagramService.isCorrectlyDefined(processPattern);
   }
 }

@@ -1,0 +1,180 @@
+<ng-template #methodArtifactsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Artifacts of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalRunningMethodInfoArtifacts != null && runningProcess != null"
+  >
+    <app-running-process-artifacts
+      [runningProcess]="runningProcess"
+      [artifactVersions]="modalRunningMethodInfoArtifacts"
+      [allowChanges]="false"
+      (focusNode)="focus($event); d()"
+      (editArtifact)="editArtifact($event); d()"
+      (viewArtifactVersion)="viewArtifactVersion($event); d()"
+    ></app-running-process-artifacts>
+  </div>
+</ng-template>
+
+<ng-template #commentsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Comments of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-method-comments
+      *ngIf="modalRunningMethodInfo != null"
+      [comments]="modalRunningMethodInfo.comments"
+      [editable]="false"
+    ></app-running-process-method-comments>
+  </div>
+</ng-template>
+
+<ng-template #removeExecutedMethodModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalRunningMethodInfo != null"
+    (dismiss)="d()"
+    (delete)="removeExecutedMethod(modalRunningMethodInfo.executionId); c()"
+  >
+    <div modalTitle>Remove development step's execution</div>
+    This will remove this execution of the development step
+    {{ modalRunningMethodInfo.methodName }} and map all affected artifacts to be
+    manually added.
+  </app-delete-modal>
+</ng-template>
+
+<app-running-process-viewer
+  [runningProcess]="runningProcess"
+  [unreachable]="unreachableNodeIds"
+  [missingArtifacts]="missingArtifactsNodeIds"
+  (startExecution)="startExecution($event)"
+  (fakeExecution)="openFakeExecuteModal($event)"
+  (skipExecution)="skipExecution($event)"
+></app-running-process-viewer>
+
+<div class="container">
+  <div class="p-3 bg-white rounded shadow-sm">
+    <div class="row">
+      <div class="col-4"><strong>Legend:</strong></div>
+      <div class="col-4">
+        <i class="far fa-square bpmn-legend-icon text-success"></i> Executed
+        node
+      </div>
+      <div class="col-4">
+        <i class="far fa-square bpmn-legend-icon text-danger"></i> Currently
+        executing node
+      </div>
+    </div>
+    <div class="row">
+      <div class="offset-4 col-4">
+        <i class="far fa-square bpmn-legend-icon text-warning"></i> Unreachable
+        node
+      </div>
+      <div class="col-4">
+        <i class="far fa-square bpmn-legend-icon text-muted"></i> Missing
+        artifacts for node
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="fas fa-play-circle bpmn-legend-icon"></i> Start execution here
+      </div>
+      <div class="col-4">
+        <i class="fas fa-plus-circle bpmn-legend-icon"></i> Fake execution of
+        development step
+      </div>
+      <div class="col-4">
+        <i class="fas fa-arrow-circle-right bpmn-legend-icon"></i> Skip
+        execution of development step
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Executed development steps</h6>
+    <div *ngIf="runningProcess.executedMethods.length === 0">
+      No executed development steps.
+    </div>
+    <ul
+      class="list-group mb-0"
+      *ngIf="runningProcess.executedMethods.length > 0"
+    >
+      <li
+        class="list-group-item"
+        *ngFor="let executedMethod of runningProcess.executedMethods"
+      >
+        <div class="d-flex align-items-baseline">
+          {{ executedMethod.methodName }}
+          <div class="ml-auto">
+            <button
+              *ngIf="executedMethod.nodeId != null"
+              class="btn btn-xs btn-dark mr-1"
+              (click)="focus(executedMethod.nodeId)"
+            >
+              Show
+            </button>
+            <button
+              class="btn btn-xs btn-dark mr-1"
+              (click)="viewArtifacts(executedMethod.executionId)"
+            >
+              View artifacts
+            </button>
+            <button
+              class="btn btn-xs btn-dark mr-1"
+              (click)="openCommentsModal(executedMethod.executionId)"
+            >
+              View comments
+            </button>
+            <button
+              class="btn btn-xs btn-dark"
+              (click)="openRemoveExecutionModal(executedMethod.executionId)"
+            >
+              Remove execution
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <app-running-process-artifacts
+    [runningProcess]="runningProcess"
+    (focusNode)="focus($event)"
+    (addArtifact)="addArtifact($event.artifact, $event.output)"
+    (importArtifact)="importArtifact($event)"
+    (createArtifact)="createArtifact($event)"
+    (exportArtifact)="exportArtifact($event.identifier, $event.artifact)"
+    (renameArtifact)="renameArtifact($event.identifier, $event.artifact)"
+    (editArtifact)="editArtifact($event)"
+    (viewArtifactVersion)="viewArtifactVersion($event)"
+    (removeArtifact)="removeArtifact($event)"
+  ></app-running-process-artifacts>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Missing Artifacts</h6>
+    <ul *ngIf="missingArtifacts.length > 0">
+      <li *ngFor="let warning of missingArtifacts">
+        Method
+        <a [routerLink]="[]" (click)="focus(warning.elementId)">{{
+          warning.name
+        }}</a>
+        may be missing the following Artifacts
+        <ul>
+          <li *ngFor="let artifact of warning.artifacts">
+            {{ artifact.name }}
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>

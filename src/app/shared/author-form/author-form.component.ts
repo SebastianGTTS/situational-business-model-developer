@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
@@ -11,14 +12,23 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Author } from '../../model/author';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
+import { Updatable, UPDATABLE } from '../updatable';
 
 @Component({
   selector: 'app-author-form',
   templateUrl: './author-form.component.html',
   styleUrls: ['./author-form.component.css'],
+  providers: [
+    {
+      provide: UPDATABLE,
+      useExisting: AuthorFormComponent,
+    },
+  ],
 })
-export class AuthorFormComponent implements OnInit, OnChanges {
-  @Input() author: Author = null;
+export class AuthorFormComponent
+  implements OnInit, OnChanges, OnDestroy, Updatable
+{
+  @Input() author?: Author;
 
   @Output() submitAuthorForm = new EventEmitter<FormGroup>();
 
@@ -30,12 +40,12 @@ export class AuthorFormComponent implements OnInit, OnChanges {
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    if (this.author === null) {
+    if (this.author == null) {
       this.loadForm();
     }
     this.changeSubscription = this.authorForm.valueChanges
@@ -59,8 +69,20 @@ export class AuthorFormComponent implements OnInit, OnChanges {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.changeSubscription != null) {
+      this.changeSubscription.unsubscribe();
+    }
+  }
+
   submitForm(): void {
     this.submitAuthorForm.emit(this.authorForm);
+  }
+
+  update(): void {
+    if (this.changed && this.authorForm.valid) {
+      this.submitForm();
+    }
   }
 
   private loadForm(author: Author = new Author(undefined, {})): void {

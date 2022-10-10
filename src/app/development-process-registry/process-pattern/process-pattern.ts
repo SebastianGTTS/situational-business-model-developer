@@ -16,12 +16,14 @@ import {
   DatabaseRootInit,
 } from '../../database/database-entry';
 
+export type PatternDiagram = string;
+
 export interface ProcessPatternInit extends DatabaseRootInit {
   name: string;
   description?: string;
   author?: AuthorInit;
 
-  pattern?: string;
+  pattern: PatternDiagram;
 
   types?: SelectionInit<TypeInit>[];
   situationalFactors?: SelectionInit<SituationalFactorInit>[];
@@ -32,7 +34,7 @@ export interface ProcessPatternEntry extends DatabaseRootEntry {
   description: string;
   author: AuthorEntry;
 
-  pattern: string;
+  pattern: PatternDiagram;
 
   types: SelectionEntry<TypeEntry>[];
   situationalFactors: SelectionEntry<SituationalFactorEntry>[];
@@ -45,10 +47,10 @@ export class ProcessPattern
   static readonly typeName = 'ProcessPattern';
 
   name: string;
-  description: string;
+  description = '';
   author: Author;
 
-  pattern: string;
+  pattern: PatternDiagram;
 
   types: Selection<Type>[] = [];
   situationalFactors: Selection<SituationalFactor>[] = [];
@@ -58,12 +60,9 @@ export class ProcessPattern
     init: ProcessPatternInit | undefined
   ) {
     super(entry, init, ProcessPattern.typeName);
-    const element = entry ?? init;
-    this.name = element.name;
-    this.description = element.description;
-    this.pattern = element.pattern;
-
+    let element;
     if (entry != null) {
+      element = entry;
       this.author = new Author(entry.author, undefined);
       this.types =
         entry.types?.map(
@@ -78,7 +77,8 @@ export class ProcessPattern
               SituationalFactor
             )
         ) ?? this.situationalFactors;
-    } else {
+    } else if (init != null) {
+      element = init;
       this.author = new Author(undefined, init.author ?? {});
       this.types =
         init.types?.map(
@@ -93,7 +93,12 @@ export class ProcessPattern
               SituationalFactor
             )
         ) ?? this.situationalFactors;
+    } else {
+      throw new Error('Either entry or init must be provided.');
     }
+    this.name = element.name;
+    this.description = element.description ?? this.description;
+    this.pattern = element.pattern;
   }
 
   /**

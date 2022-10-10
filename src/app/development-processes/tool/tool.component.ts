@@ -22,11 +22,13 @@ export class ToolComponent {
     private toolService: ToolService
   ) {}
 
-  async updateValue(value: any): Promise<void> {
-    await this.toolService.update(this.tool._id, value);
+  async updateValue(value: ToolInit): Promise<void> {
+    if (this.tool != null) {
+      await this.toolService.update(this.tool._id, value);
+    }
   }
 
-  get tool(): Tool {
+  get tool(): Tool | undefined {
     return this.toolLoaderService.methodElement;
   }
 

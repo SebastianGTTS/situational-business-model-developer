@@ -1,31 +1,23 @@
 # Situational Business Model Developer
 
-The Situational Business Model Developer allows the development of business models by taking the context of the company
-and the product/service into account.
-
-**Important**: This tool is not yet complete. It can contain bugs and some features are missing. This will be fixed
-until camera ready.
+The Situational Business Model Developer (SMDB) is a software tool for a novel approach to support the situation-specific business model development. That development aims to adjust the business model development methods as well as the business models to the actual situation of the developing organization. 
 
 ## Introduction
 
-The Situational Business Model Developer that allows the enaction of situation-specific Business Model Development
-Methods. It uses the Method Modeler together with the Feature Modeler to support the business modeler in the enaction.
-The business modeler is guided through the method in a kanban board and also sees the enacted method.
+The development of new business models is essential for startups to become successful, as well as for established companies to explore new business opportunities. However, developing such business models is a challenging activity. On the one hand, various tasks (e.g., conducting customer interviews) of business model development methods (BMDMs) need to be performed. On the other hand, different decisions (e.g., advertisements as a revenue stream) for the business models (BMs) need to be made. Both have to fit the changeable situation of the organization (e.g., availability of financial resources, mobile apps as application domain) in which the business model is developed to reduce the risk of developing ineffective business models with low market penetration. Therefore, the BMDMs and the BMs must be developed situation-specific. This situation-specific adaptation has already proven its value in Situational Method Engineering (SME), in which situation-specific software development methods are constructed from fragments of a method repository.
 
-Additionally, the Situational Business Model Developer redirects the business developer to the correct locations in the
-Feature Modeler to support the creation of different canvases, e.g., business model canvas and value proposition canvas.
-The tools is based on the [Angular framework](https://angular.io/), the [PouchDB database](https://pouchdb.com/)
-and [bpmn-js](https://bpmn.io/toolkit/bpmn-js/) to run directly in the webbrowser.
+Our solution is a novel approach for the situation-specific development of business models with three stages. In the first stage, we create a method repository with method fragments for the BMDMs and a canvas model repository with modeling fragments for the BMs. Both repositories are filled by the knowledge of domain experts. Out of these repositories, in the second stage, situation-specific BMDMs for developing situation-specific BMs are composed by a method engineer based on the changeable situation of the organization and enacted by a business developer. The business developer collaborates with other stakeholders (e.g., software developer) during the enaction to create artifacts. Moreover, in the third stage, he receives IT support (e.g., design suggestions for the business model) provided by development support engineers in different development steps. For all stages, our SBMD can be used and extended with own modules.
 
-## Screenshots
+A more detailed introduction to the different stages is provided [here](STAGES.md).
+## Tool Overview
+The usage of our tool can be discovered in a small demonstration video. However, the video currently is based on an older version of the tool and covers just the first and the second stage of our approach. A new video will be available soon.
 
-| Create Running Method                                                                                                  | Kanban board to enact method                                                                                       |
-| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Create Running Method](images/create_running_method.png 'Create Running Method')](images/create_running_method.png) | [![Kanban board to enact method](images/kanban_board.png 'Kanban board to enact method')](images/kanban_board.png) |
+[![Video for the Situational Business Model Developer](https://img.youtube.com/vi/1VszYMIb4xo/0.jpg)](https://www.youtube.com/watch?v=1VszYMIb4xo)
 
-| Execute Building Block                                                                                     |
-| ---------------------------------------------------------------------------------------------------------- |
-| [![Execute Building Block](images/execute_method.png 'Execute Building Block')](images/execute_method.png) |
+
+A live demonstration of our tool is provided [here](https://sebastiangtts.github.io/situational-business-model-developer).
+
+
 
 ## Installation
 
@@ -43,11 +35,24 @@ and [bpmn-js](https://bpmn.io/toolkit/bpmn-js/) to run directly in the webbrowse
    5.2. External database: Run the web application with `npm start` to use the proxy for the external database
 6. Have fun with the tool :)
 
+Moreover, you probaly want to also develop your own modules. A description to develop you own modules is provided [here](MODULES.md).
+
 ## Further Information
 
-- **Live Demonstration:** http://sebastiangtts.github.io/situational-business-model-developer/
-- **Research Paper:** Situation- and Domain-Specific Composition and Enactment of Business Model Development Methods [(Access Paper)](https://link.springer.com/chapter/10.1007/978-3-030-91452-3_7)
+- **Live Demonstration:** 
+  - GH-Pages: http://sebastiangtts.github.io/situational-business-model-developer/
+- **Modularized Solution:** 
+  - Continuous situation-specific development of business models: knowledge provision, method composition, and method enactment [(Access Preprint)](https://www.researchgate.net/publication/361844967_Continuous_situation-specific_development_of_business_models_knowledge_provision_method_composition_and_method_enactment)
+  - Situation-Specific Business Model Development Methods for Mobile App Developers [(Access Preprint)](https://www.researchgate.net/publication/352476162_Situation-Specific_Business_Model_Development_Methods_for_Mobile_App_Developers)
+  - Situation- and Domain-Specific Composition and Enactment of Business Model Development Methods [(Access Preprint)](https://www.researchgate.net/publication/355368661_Situation-and_Domain-specific_Composition_and_Enactment_of_Business_Model_Development_Methods)
+  - Situational Business Model Developer: A Tool-support for Situation-specific Business Model Development [(Access Preprint)](https://www.researchgate.net/publication/356860356_Situational_Business_Model_Developer_A_Tool-support_for_Situation-specific_Business_Model_Development)
+- **Modules:**
+  - Canvas Module: Extending Business Model Development Tools with Consolidated Expert Knowledge [(Access Preprint)](https://www.researchgate.net/publication/352905879_Extending_Business_Model_Development_Tools_with_Consolidated_Expert_Knowledge)
+  - HypoMoMap Module: Model-Based Hypothesis Engineering for Supporting Adaptation to Uncertain Customer Needs [(Access Preprint)](https://www.researchgate.net/publication/342710605_Model-Based_Hypothesis_Engineering_for_Supporting_Adaptation_to_Uncertain_Customer_Needs)
+  - Template Module: Towards Software Support for Situation-specific Cross-organizational Design Thinking Processes [(Access Preprint)](https://www.researchgate.net/publication/364226156_Towards_Software_Support_for_Situation-specific_Cross-organizational_Design_Thinking_Processes)
+
+A full list for related publications is provided [here](https://www.researchgate.net/project/Situation-specific-Business-Model-Development).
 
 ## License
 
-The Situational Business Model Developer is released under the MIT license.
+The Situational Business Model Developer is released under the [MIT license](LICENSE.md).

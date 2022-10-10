@@ -3,14 +3,15 @@ import { RunningProcess } from '../../development-process-registry/running-proce
 import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
 import { ElementLoaderService } from '../../database/element-loader.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import PouchDB from 'pouchdb-browser';
 
 @Injectable()
 export class RunningProcessLoaderService extends ElementLoaderService {
-  runningProcess: RunningProcess;
+  runningProcess?: RunningProcess;
 
-  error: boolean;
-  errorStatus: number;
-  errorReason: string;
+  error = false;
+  errorStatus?: number;
+  errorReason?: string;
 
   constructor(
     private runningProcessService: RunningProcessService,
@@ -21,10 +22,14 @@ export class RunningProcessLoaderService extends ElementLoaderService {
 
   protected initParams(paramMap: ParamMap): void {
     const runningProcessId = paramMap.get('id');
-    this.changesFeed = this.runningProcessService
-      .getChangesFeed(runningProcessId)
-      .subscribe(() => this.loadRunningProcess(runningProcessId));
-    void this.loadRunningProcess(runningProcessId);
+    if (runningProcessId != null) {
+      this.changesFeed = this.runningProcessService
+        .getChangesFeed(runningProcessId)
+        .subscribe(() => this.loadRunningProcess(runningProcessId));
+      void this.loadRunningProcess(runningProcessId);
+    } else {
+      this.runningProcess = undefined;
+    }
   }
 
   private async loadRunningProcess(runningProcessId: string): Promise<void> {
@@ -33,10 +38,11 @@ export class RunningProcessLoaderService extends ElementLoaderService {
         runningProcessId
       );
     } catch (error) {
-      this.runningProcess = null;
+      const pouchDbError = error as PouchDB.Core.Error;
+      this.runningProcess = undefined;
       this.error = true;
-      this.errorStatus = error.status;
-      this.errorReason = error.reason;
+      this.errorStatus = pouchDbError.status;
+      this.errorReason = pouchDbError.reason;
       console.error(error);
       return;
     }

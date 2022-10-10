@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { Module } from './module';
 import { ModuleMethod } from './module-method';
+import { NavItem } from './nav-item';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
@@ -13,8 +14,15 @@ export class ModuleService {
     this.modules.push(module);
   }
 
-  getModule(module: string): Module {
+  getModule(module: string): Module | undefined {
     return this.modules.find((m) => m.name === module);
+  }
+
+  /**
+   * Get all navigation items from all modules.
+   */
+  getNavigationItems(): NavItem[] {
+    return this.modules.map((module) => module.navigation).flat();
   }
 
   /**
@@ -29,17 +37,17 @@ export class ModuleService {
         moduleListMap[module.list] = [module];
       }
     });
-    const moduleLists = [];
+    const moduleLists: { listName: string; elements: Module[] }[] = [];
     Object.entries(moduleListMap).forEach(([listName, elements]) => {
       moduleLists.push({ listName, elements });
     });
     return moduleLists;
   }
 
-  getModuleMethod(module: string, method: string): ModuleMethod {
+  getModuleMethod(module: string, method: string): ModuleMethod | undefined {
     const realModule = this.modules.find((m) => m.name === module);
     if (!realModule) {
-      return null;
+      return undefined;
     }
     return realModule.methods[method];
   }

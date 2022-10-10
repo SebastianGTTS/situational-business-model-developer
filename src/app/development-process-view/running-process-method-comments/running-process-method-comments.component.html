@@ -1,6 +1,8 @@
 <ng-template #editCommentModal let-d="dismiss" let-c="close">
   <div class="modal-header">
-    <h4 class="modal-title">Edit comment {{ modalComment.title }}</h4>
+    <h4 class="modal-title" *ngIf="modalComment != null">
+      Edit comment {{ modalComment.title }}
+    </h4>
     <button type="button" class="close" aria-label="Close" (click)="d()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -8,6 +10,7 @@
   <div class="modal-body">
     <div class="text-muted">
       <app-running-process-method-comment-form
+        *ngIf="modalComment != null"
         [comment]="modalComment"
         (submitCommentForm)="_updateComment($event)"
       ></app-running-process-method-comment-form>

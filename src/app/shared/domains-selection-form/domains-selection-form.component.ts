@@ -17,16 +17,20 @@ import { DomainService } from '../../development-process-registry/knowledge/doma
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { equalsList } from '../utils';
+import { UPDATABLE, Updatable } from '../updatable';
 
 @Component({
   selector: 'app-domains-selection-form',
   templateUrl: './domains-selection-form.component.html',
   styleUrls: ['./domains-selection-form.component.css'],
+  providers: [
+    { provide: UPDATABLE, useExisting: DomainsSelectionFormComponent },
+  ],
 })
 export class DomainsSelectionFormComponent
-  implements OnInit, OnChanges, OnDestroy
+  implements OnInit, OnChanges, OnDestroy, Updatable
 {
-  @Input() domains: Domain[];
+  @Input() domains!: Domain[];
 
   /**
    * Emits a form array containing of real domains,
@@ -41,7 +45,7 @@ export class DomainsSelectionFormComponent
 
   domainDefinitions: DomainEntry[] = [];
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private domainService: DomainService, private fb: FormBuilder) {}
 
@@ -68,7 +72,7 @@ export class DomainsSelectionFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.changeSubscription) {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
@@ -90,6 +94,12 @@ export class DomainsSelectionFormComponent
 
   submitForm(): void {
     this.submitDomainsForm.emit(this.domainsFormArray);
+  }
+
+  update(): void {
+    if (this.changed && this.domainsForm.valid) {
+      this.submitForm();
+    }
   }
 
   get domainsFormArray(): FormArray {

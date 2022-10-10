@@ -1,0 +1,52 @@
+<div>
+  <div *ngIf="showEvidence">
+    <ngb-rating
+      title="Evidence Score"
+      [max]="5"
+      [readonly]="true"
+      [rate]="hypothesis.evidenceScore!"
+    ></ngb-rating>
+  </div>
+  <div class="d-flex">
+    <div class="mr-1">
+      <ng-container *ngIf="hypothesis.state === 'validated'">
+        <i class="fa fa-check" aria-hidden="true" title="validated"></i>
+        <span class="sr-only">validated</span>
+      </ng-container>
+      <ng-container *ngIf="hypothesis.state === 'disapproved'">
+        <i class="fa fa-times" aria-hidden="true" title="disapproved"></i>
+        <span class="sr-only">disapproved</span>
+      </ng-container>
+      <ng-container *ngIf="hypothesis.state === 'untested'">
+        <i class="fa fa-question" aria-hidden="true" title="untested"></i>
+        <span class="sr-only">untested</span>
+      </ng-container>
+    </div>
+    <div class="mr-1">
+      {{ hypothesis.name }}
+    </div>
+    <div>
+      <ng-container *ngIf="hypothesis.subhypothesesConnections === 'and'">
+        <i class="fas fa-chevron-circle-up" aria-hidden="true" title="and"></i>
+        <span class="sr-only">and</span>
+      </ng-container>
+      <ng-container *ngIf="hypothesis.subhypothesesConnections === 'or'">
+        <i class="fas fa-chevron-up" aria-hidden="true" title="or"></i>
+        <span class="sr-only">or</span>
+      </ng-container>
+    </div>
+  </div>
+  <div>
+    <ng-template #priorityIcon let-fill="fill">
+      <i class="fa fa-square" *ngIf="fill === 100"></i>
+      <i class="far fa-square" *ngIf="fill !== 100"></i>
+    </ng-template>
+    <ngb-rating
+      title="Priority"
+      [starTemplate]="priorityIcon"
+      [max]="5"
+      [readonly]="true"
+      [rate]="hypothesis.priority"
+    ></ngb-rating>
+  </div>
+</div>

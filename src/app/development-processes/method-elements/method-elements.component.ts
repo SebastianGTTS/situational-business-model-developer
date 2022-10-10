@@ -17,5 +17,6 @@ export class MethodElementsComponent {
     { name: 'Stakeholders', route: ['/', 'stakeholders'] },
     { name: 'Tools', route: ['/', 'tools'] },
     { name: 'Types', route: ['/', 'types'] },
+    { name: 'Domains', route: ['/', 'domains'] },
   ];
 }

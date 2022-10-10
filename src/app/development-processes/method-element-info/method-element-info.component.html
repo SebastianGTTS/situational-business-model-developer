@@ -1,50 +1,36 @@
 <div class="form-row">
   <div class="form-group col">
-    <label for="listInput">List</label>
+    <label [for]="listInput.id">List</label>
     <input
+      #listInput
       readonly
       type="text"
-      [value]="element.list | multiple: element.multiple"
+      [value]="
+        element.list | multiple: element.multiple | optional: element.optional
+      "
       class="form-control-plaintext"
       id="listInput"
     />
   </div>
-  <div class="form-group col" *ngIf="element.element == null">
-    <label for="elementInput">{{ methodElementName }}</label>
-    <div class="input-group" *ngIf="formArray && formArray.length > 0">
-      <input
-        *ngIf="formArray.length > 0"
-        #input
-        type="text"
-        [formControl]="$any(formArray.controls[0])"
-        class="form-control"
-        id="elementInput"
-        [ngbTypeahead]="searchElements(input)"
-        [editable]="false"
-        [resultFormatter]="formatter"
-        [inputFormatter]="formatter"
-        (click)="openElementInput.next([input, $any($event.target).value])"
-        (focus)="openElementInput.next([input, $any($event.target).value])"
-      />
-      <div class="input-group-append" *ngIf="element.multiple">
-        <button
-          (click)="add(1)"
-          class="btn btn-outline-secondary align-self-baseline"
-          type="button"
-        >
-          +
-        </button>
-        <button
-          *ngIf="formArray.length > 0"
-          (click)="remove(0)"
-          class="btn btn-outline-secondary align-self-baseline"
-          type="button"
-        >
-          -
-        </button>
-      </div>
-    </div>
-    <div *ngIf="formArray && formArray.length === 0">
+  <div
+    class="form-group col"
+    *ngIf="element.element == null && formGroup != null"
+  >
+    <label *ngIf="formArray != null && formArray.length === 0">{{
+      methodElementName
+    }}</label>
+    <app-method-element-info-selection
+      *ngIf="formElement != null || formArray!.length > 0"
+      [control]="$any(formElement ?? formArray!.at(0))"
+      [methodElements]="methodElements"
+      [methodElementName]="methodElementName"
+      [index]="0"
+      [multiple]="element.multiple"
+      [list]="element.list"
+      (add)="add(1)"
+      (remove)="remove(0)"
+    ></app-method-element-info-selection>
+    <div *ngIf="formArray != null && formArray.length === 0">
       <button
         (click)="add()"
         class="btn btn-outline-secondary align-self-baseline"
@@ -55,57 +41,35 @@
     </div>
   </div>
   <div class="form-group col" *ngIf="element.element != null">
-    <label for="elementInputStatic">{{ methodElementName }}</label>
+    <label for="{{ methodElementName }}elementInputStatic">{{
+      methodElementName
+    }}</label>
     <input
       readonly
       type="text"
-      [value]="element.element.name | multiple: element.multipleElements"
+      [value]="element.element.name"
       class="form-control-plaintext"
-      id="elementInputStatic"
+      id="{{ methodElementName }}elementInputStatic"
     />
   </div>
 </div>
-<ng-container *ngIf="formArray && element.multiple">
+<ng-container *ngIf="formArray != null">
   <div
     *ngFor="let control of formArray.controls.slice(1); let index = index"
     class="form-row"
   >
     <div class="form-group col"></div>
     <div class="form-group col">
-      <label for="elementMultipleInput" class="sr-only">{{
-        methodElementName
-      }}</label>
-      <div class="input-group">
-        <input
-          #input
-          type="text"
-          [formControl]="$any(control)"
-          class="form-control"
-          id="elementMultipleInput"
-          [ngbTypeahead]="searchElements(input)"
-          [editable]="false"
-          [resultFormatter]="formatter"
-          [inputFormatter]="formatter"
-          (click)="openElementInput.next([input, $any($event.target).value])"
-          (focus)="openElementInput.next([input, $any($event.target).value])"
-        />
-        <div class="input-group-append" *ngIf="element.multiple">
-          <button
-            (click)="add(index + 2)"
-            class="btn btn-outline-secondary align-self-baseline"
-            type="button"
-          >
-            +
-          </button>
-          <button
-            (click)="remove(index + 1)"
-            class="btn btn-outline-secondary align-self-baseline"
-            type="button"
-          >
-            -
-          </button>
-        </div>
-      </div>
+      <app-method-element-info-selection
+        [control]="$any(control)"
+        [methodElements]="methodElements"
+        [methodElementName]="methodElementName"
+        [index]="index + 1"
+        [multiple]="element.multiple"
+        [list]="element.list"
+        (add)="add(index + 2)"
+        (remove)="remove(index + 1)"
+      ></app-method-element-info-selection>
     </div>
   </div>
 </ng-container>

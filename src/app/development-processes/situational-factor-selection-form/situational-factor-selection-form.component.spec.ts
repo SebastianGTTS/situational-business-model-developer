@@ -71,20 +71,20 @@ describe('Situational Factor Selection Form Component', () => {
   });
 
   it('should select real situational factor definitions', () => {
-    const listField: HTMLInputElement = spectator.query('#listInput');
-    const inputField: HTMLInputElement = spectator.query('#elementInput');
+    const listField = spectator.query('#listInput') as HTMLInputElement;
+    const inputField = spectator.query('#elementInput') as HTMLInputElement;
     spectator.typeInElement('Test', inputField);
     spectator.click(byText('Test Factor'));
     expect(inputField.value).toBe('Test Factor');
     expect(listField.value).toBe('Test List');
-    const factorValue = formGroup.get('element').get('factor').value;
+    const factorValue = formGroup.get('element')?.get('factor')?.value;
     expect(factorValue).toBeTruthy();
     expect(factorValue).toBeInstanceOf(SituationalFactorDefinition);
   });
 
   it('should be possible to select values', () => {
-    const inputField: HTMLInputElement = spectator.query('#elementInput');
-    const valueField: HTMLSelectElement = spectator.query('#factorValue');
+    const inputField = spectator.query('#elementInput') as HTMLInputElement;
+    const valueField = spectator.query('#factorValue') as HTMLSelectElement;
     spectator.typeInElement('Test', inputField);
     spectator.click(byText('Test Factor'));
     const option = spectator.query(

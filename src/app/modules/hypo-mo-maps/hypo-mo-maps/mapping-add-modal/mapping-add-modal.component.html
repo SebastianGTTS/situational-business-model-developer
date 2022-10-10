@@ -1,0 +1,16 @@
+<div class="modal-header">
+  <h4 class="modal-title">Add mapping</h4>
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" *ngIf="hypoMoMap != null && hypothesisList != null">
+  <div class="text-muted pt-3">
+    <app-mapping-form
+      [mapping]="mapping"
+      [experimentList]="hypoMoMap.usedExperiments"
+      [hypothesisList]="hypothesisList"
+      (submitMappingForm)="addMapping.emit($event)"
+    ></app-mapping-form>
+  </div>
+</div>

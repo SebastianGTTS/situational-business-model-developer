@@ -2,112 +2,58 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
-  OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToolService } from '../../development-process-registry/method-elements/tool/tool.service';
 import {
   Tool,
   ToolEntry,
 } from '../../development-process-registry/method-elements/tool/tool';
-import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
-import { Subscription } from 'rxjs';
-import { debounceTime, tap } from 'rxjs/operators';
-import { equalsListOfLists } from '../../shared/utils';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
+import {
+  ELEMENT_CONSTRUCTOR,
+  GroupsFormService,
+} from '../shared/groups-form.service';
+import { Groups } from '../../development-process-registry/development-method/groups';
+import { Updatable, UPDATABLE } from '../../shared/updatable';
+import { GroupsFormComponent } from '../groups-form/groups-form.component';
 
 @Component({
   selector: 'app-tools-selection-form',
   templateUrl: './tools-selection-form.component.html',
   styleUrls: ['./tools-selection-form.component.css'],
+  providers: [
+    GroupsFormService,
+    { provide: ELEMENT_CONSTRUCTOR, useValue: Tool },
+    {
+      provide: UPDATABLE,
+      useExisting: ToolsSelectionFormComponent,
+    },
+  ],
 })
-export class ToolsSelectionFormComponent
-  implements OnInit, OnChanges, OnDestroy
-{
-  @Input() tools: MultipleSelection<Tool>[][];
+export class ToolsSelectionFormComponent implements OnInit, Updatable {
+  @Input() tools!: Groups<Tool>;
 
-  @Output() submitToolsForm = new EventEmitter<FormArray>();
-
-  toolsForm: FormGroup = this.fb.group({
-    tools: this.fb.array([]),
-  });
-  changed = false;
+  @Output() submitToolsForm = new EventEmitter<Groups<Tool>>();
 
   methodElements: ToolEntry[] = [];
   listNames: string[] = [];
 
-  private changeSubscription: Subscription;
+  @ViewChild(GroupsFormComponent) groupsFormComponent!: Updatable;
 
   constructor(
-    private fb: FormBuilder,
     private moduleService: ModuleService,
     private toolService: ToolService
   ) {}
 
   ngOnInit(): void {
     void this.loadTools();
-    this.changeSubscription = this.toolsForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        tap(
-          (value) =>
-            (this.changed = !equalsListOfLists(this.tools, value.tools))
-        )
-      )
-      .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.tools) {
-      const oldToolGroups: MultipleSelection<Tool>[][] =
-        changes.tools.previousValue;
-      const newToolGroups: MultipleSelection<Tool>[][] =
-        changes.tools.currentValue;
-      if (!equalsListOfLists(oldToolGroups, newToolGroups)) {
-        this.loadForm(newToolGroups);
-      }
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.changeSubscription) {
-      this.changeSubscription.unsubscribe();
-    }
-  }
-
-  add(): void {
-    this.formArray.push(this.fb.array([]));
-  }
-
-  remove(index: number): void {
-    this.formArray.removeAt(index);
-  }
-
-  submitForm(): void {
-    this.submitToolsForm.emit(this.toolsForm.get('tools') as FormArray);
-  }
-
-  private loadForm(tools: MultipleSelection<Tool>[][]): void {
-    const formArrays = tools.map((group) =>
-      this.fb.array(
-        group.map((element) =>
-          this.fb.group({
-            list: [element.list, Validators.required],
-            element: { value: element.element, disabled: element.multiple },
-            multiple: element.multiple,
-            multipleElements: {
-              value: element.multipleElements,
-              disabled: element.multiple,
-            },
-          })
-        )
-      )
-    );
-    this.toolsForm.setControl('tools', this.fb.array(formArrays));
+  update(): void {
+    this.groupsFormComponent.update();
   }
 
   private async loadTools(): Promise<void> {
@@ -128,16 +74,4 @@ export class ToolsSelectionFormComponent
       ),
     ];
   }
-
-  get formArray(): FormArray {
-    return this.toolsForm.get('tools') as FormArray;
-  }
-
-  createFormGroupFactory = (): FormGroup =>
-    this.fb.group({
-      list: ['', Validators.required],
-      element: null,
-      multiple: false,
-      multipleElements: false,
-    });
 }

@@ -1,5 +1,6 @@
 <ng-template #deleteArtifactModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalArtifact != null"
     (dismiss)="d()"
     (delete)="deleteArtifact(modalArtifact); c()"
   >

@@ -1,32 +1,11 @@
 <ng-template #showArtifactVersionModal let-d="dismiss">
-  <div class="modal-header">
-    <h4 class="modal-title">
-      Version #{{ artifact.versions.indexOf(modalVersion) + 1 }}
-    </h4>
-    <button type="button" class="close" aria-label="Close" (click)="d()">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <ng-container
-      *ngIf="getArtifactDataTypeString() === modalVersion.data.type"
-    >
-      <h5>Note</h5>
-      <quill-view [content]="modalVersion.data.data"></quill-view>
-    </ng-container>
-    <ng-container
-      *ngIf="getArtifactDataTypeReference() === modalVersion.data.type"
-    >
-      <h5>Reference</h5>
-      This version points on another object in the database.
-      <button
-        class="btn btn-xs btn-primary"
-        (click)="viewArtifactReference(modalVersion.data.data)"
-      >
-        View
-      </button>
-    </ng-container>
-  </div>
+  <app-concrete-artifact-show-version-modal
+    [artifact]="artifact"
+    [version]="modalVersion"
+    (viewArtifactVersion)="viewArtifactVersion()"
+    (editArtifactVersion)="editArtifactVersion()"
+    (dismiss)="d()"
+  ></app-concrete-artifact-show-version-modal>
 </ng-template>
 
 <div class="nav-scroller bg-white shadow-sm">

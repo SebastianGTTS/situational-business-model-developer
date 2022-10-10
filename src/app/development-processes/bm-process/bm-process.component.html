@@ -1,6 +1,11 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="bmProcess">
-    <a class="nav-link active" [routerLink]="[]">{{ bmProcess.name }}</a>
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'bmprocess']"
+      >Business Model Development Methods</a
+    >
+    <a class="nav-link active" *ngIf="bmProcess" [routerLink]="[]">{{
+      bmProcess.name
+    }}</a>
   </nav>
 </div>
 
@@ -35,57 +40,35 @@
     </p>
   </div>
 
-  <app-bm-process-diagram
+  <app-bm-process-edit-diagram
     *ngIf="!bmProcess.initial"
     [bmProcess]="bmProcess"
     (saveBmProcess)="saveBmProcess($event.processDiagram, $event.decisions)"
-  ></app-bm-process-diagram>
+    (appendProcessPattern)="
+      appendProcessPattern($event.nodeId, $event.processPattern)
+    "
+    (insertProcessPattern)="
+      insertProcessPattern($event.nodeId, $event.processPattern)
+    "
+    (deleteProcessPattern)="deleteProcessPattern($event)"
+    (insertDevelopmentMethod)="
+      insertDevelopmentMethod($event.nodeId, $event.developmentMethod)
+    "
+    (removeDevelopmentMethod)="removeDevelopmentMethod($event)"
+  ></app-bm-process-edit-diagram>
 
   <div class="container">
     <div class="my-3 alert alert-info" *ngIf="bmProcess.initial">
       Start by defining the context of your business model.
     </div>
 
-    <div class="my-3 p-3 bg-white rounded shadow-sm">
-      <h6 class="border-bottom border-gray pb-2 mb-0">Context</h6>
-      <div class="my-3 p-3 bg-white rounded shadow-sm">
-        <h6 class="border-bottom border-gray pb-2">Domain</h6>
-        <div class="alert alert-info">
-          Select the domains that are related to your business model. They are
-          later used to select fitting canvas building blocks.
-        </div>
-        <div class="text-muted">
-          <app-domains-selection-form
-            [domains]="bmProcess.domains"
-            (submitDomainsForm)="updateDomains($event.value)"
-          ></app-domains-selection-form>
-        </div>
-      </div>
-      <div class="mt-3 p-3 bg-white rounded shadow-sm">
-        <h6 class="border-bottom border-gray pb-2">Situational Factors</h6>
-        <div class="alert alert-info">
-          Select situational factors to describe the current situation of your
-          company, problem, market, etc. They are later used to help you to
-          select fitting method patterns and building blocks.
-        </div>
-        <div class="text-muted">
-          <app-situational-factors-selection-form
-            [situationalFactors]="bmProcess.situationalFactors"
-            (submitSituationalFactorsForm)="
-              updateSituationalFactors($event.value)
-            "
-          ></app-situational-factors-selection-form>
-        </div>
-      </div>
-
-      <button
-        *ngIf="bmProcess.initial"
-        (click)="finishInitialization()"
-        type="submit"
-        class="btn btn-sm btn-block btn-primary mt-3"
-      >
-        Finish definition of the context
-      </button>
-    </div>
+    <app-context-edit
+      [finishAllowed]="bmProcess.initial"
+      [domains]="bmProcess.domains"
+      [situationalFactors]="bmProcess.situationalFactors"
+      (updateDomains)="updateDomains($event)"
+      (updateSituationalFactors)="updateSituationalFactors($event)"
+      (finishInitialization)="finishInitialization()"
+    ></app-context-edit>
   </div>
 </main>

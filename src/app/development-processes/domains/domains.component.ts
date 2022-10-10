@@ -23,8 +23,8 @@ export class DomainsComponent {
     name: ['', Validators.required],
   });
 
-  modalDomain: DomainEntry;
-  private modalReference: NgbModalRef;
+  modalDomain?: DomainEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteDomainModal', { static: true })
   deleteDomainModal: unknown;
@@ -55,7 +55,7 @@ export class DomainsComponent {
     return ['/', 'domains', 'detail', domain._id];
   }
 
-  get domains(): DomainEntry[] {
+  get domains(): DomainEntry[] | undefined {
     return this.listService.elements;
   }
 

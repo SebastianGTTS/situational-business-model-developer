@@ -16,6 +16,17 @@ export interface ArtifactMappingEntry extends DatabaseEntry {
   artifact: number;
 }
 
+export type ArtifactStepMapping = ArtifactMapping & {
+  output: false;
+  step: number;
+  group: undefined;
+};
+export type ArtifactOutputMapping = ArtifactMapping & {
+  output: true;
+  step: undefined;
+  group: number;
+};
+
 export class ArtifactMapping
   implements ArtifactMappingInit, Equality<ArtifactMapping>, DatabaseModelPart
 {
@@ -29,10 +40,21 @@ export class ArtifactMapping
     init: ArtifactMappingInit | undefined
   ) {
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.output = element.output;
     this.step = element.step;
     this.group = element.group;
     this.artifact = element.artifact;
+  }
+
+  isStepMapping(): this is ArtifactStepMapping {
+    return !this.output && this.step != null;
+  }
+
+  isOutputMapping(): this is ArtifactOutputMapping {
+    return this.output && this.group != null;
   }
 
   toDb(): ArtifactMappingEntry {

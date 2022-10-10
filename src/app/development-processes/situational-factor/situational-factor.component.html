@@ -1,6 +1,9 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="situationalFactor">
-    <a class="nav-link active" [routerLink]="[]">{{
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'situationalFactors']"
+      >Situational Factors</a
+    >
+    <a class="nav-link active" *ngIf="situationalFactor" [routerLink]="[]">{{
       situationalFactor.name
     }}</a>
   </nav>

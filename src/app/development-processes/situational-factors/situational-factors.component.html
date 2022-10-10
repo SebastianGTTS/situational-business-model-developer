@@ -1,5 +1,6 @@
 <ng-template #deleteSituationalFactorModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalSituationalFactor != null"
     (dismiss)="d()"
     (delete)="deleteSituationalFactor(modalSituationalFactor._id); c()"
   >

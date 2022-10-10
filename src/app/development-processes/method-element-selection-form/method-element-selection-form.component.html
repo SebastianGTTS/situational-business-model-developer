@@ -49,12 +49,13 @@
         *ngIf="multipleAllowed"
       >
         <label class="btn-outline-secondary" ngbButtonLabel>
-          <input type="checkbox" formControlName="multipleElements" ngbButton />
-          Multiple
+          <input type="checkbox" formControlName="optional" ngbButton />
+          Optional
         </label>
       </div>
       <div class="input-group-append">
         <button
+          *ngIf="removeAllowed"
           (click)="remove.emit()"
           class="btn btn-secondary align-self-baseline"
           type="button"

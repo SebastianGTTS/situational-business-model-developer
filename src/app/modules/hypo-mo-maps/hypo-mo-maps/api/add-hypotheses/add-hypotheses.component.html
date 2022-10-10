@@ -1,0 +1,58 @@
+<app-api-navigation apiName="Add Hypotheses"></app-api-navigation>
+
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="hypoMoMap != null && runningMethod != null && isCorrectStep()"
+  role="main"
+  class="container"
+>
+  <div class="my-3 alert alert-info">
+    Create the Hypotheses Lake by creating hypotheses.
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <div
+      class="
+        d-flex
+        align-items-baseline
+        justify-content-between
+        border-bottom border-gray
+        mb-2
+      "
+    >
+      <h6 class="pb-2 mb-0">Hypothesis Tree</h6>
+      <button class="btn btn-primary btn-sm" (click)="openAddHypothesisModal()">
+        Add Hypothesis
+      </button>
+    </div>
+    <div class="mt-1">
+      <app-hypothesis-tree
+        [hypotheses]="hypoMoMap.hypotheses"
+        [processPhase]="'stepInit'"
+        (addHypothesis)="openAddHypothesisModal($event)"
+        (updateHypothesis)="openUpdateHypothesisModal($event)"
+        (deleteHypothesis)="openDeleteHypothesisModal($event)"
+      ></app-hypothesis-tree>
+    </div>
+    <div class="mt-1">
+      <app-hypothesis-tree-legend></app-hypothesis-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Finish editing</h6>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">
+      Finish editing
+    </button>
+  </div>
+</main>

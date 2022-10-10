@@ -22,7 +22,7 @@ import { debounceTime, map, tap } from 'rxjs/operators';
 export class MethodElementFormComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  @Input() methodElement: MethodElement = null;
+  @Input() methodElement?: MethodElement;
   @Input() listNames: string[] = [];
 
   @Output() submitMethodElementForm = new EventEmitter<FormGroup>();
@@ -36,25 +36,25 @@ export class MethodElementFormComponent
 
   openListInput = new Subject<string>();
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changeSubscription = this.methodElementForm.valueChanges
       .pipe(
         debounceTime(300),
         tap(
           (value) =>
             (this.changed =
-              this.methodElement !== null &&
+              this.methodElement != null &&
               !this.equals(this.methodElement, value))
         )
       )
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.methodElement) {
       const oldMethodElement: MethodElement =
         changes.methodElement.previousValue;
@@ -66,17 +66,18 @@ export class MethodElementFormComponent
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.changeSubscription) {
       this.changeSubscription.unsubscribe();
     }
     this.openListInput.complete();
   }
 
-  private loadForm(methodElement: MethodElement) {
+  private loadForm(methodElement: MethodElement): void {
     this.methodElementForm.patchValue(methodElement);
   }
 
+  // noinspection JSMethodCanBeStatic
   private equals(
     methodElementA: MethodElement,
     methodElementB: MethodElement
@@ -93,14 +94,14 @@ export class MethodElementFormComponent
     );
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitMethodElementForm.emit(this.methodElementForm);
-    if (this.methodElement === null) {
+    if (this.methodElement == null) {
       this.methodElementForm.reset();
     }
   }
 
-  searchLists = (input: Observable<string>) => {
+  searchLists = (input: Observable<string>): Observable<string[]> => {
     return merge(getTypeaheadInputPipe(input), this.openListInput).pipe(
       map((term) =>
         this.listNames

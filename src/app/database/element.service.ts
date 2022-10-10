@@ -17,7 +17,7 @@ export interface ElementService<
    *
    * @param element the element to add
    */
-  add(element: S): Promise<void>;
+  add(element: S): Promise<T>;
 
   /**
    * Update an element in the database
@@ -34,6 +34,22 @@ export interface ElementService<
    * @return the element from the database
    */
   get(id: DbId): Promise<T>;
+
+  /**
+   * Get an element for write access. Call free after done with writing.
+   * All other clients calling getWrite will be delayed until free is called.
+   *
+   * @param id the id of the element to get
+   * @return the element from the database
+   */
+  getWrite?(id: DbId): Promise<T>;
+
+  /**
+   * Give the lock on an element back.
+   *
+   * @param id
+   */
+  freeWrite?(id: DbId): void;
 
   /**
    * Get the changes of an element

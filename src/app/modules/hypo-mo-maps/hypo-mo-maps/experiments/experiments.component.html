@@ -1,0 +1,90 @@
+<ng-template #deleteExperimentModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalExperiment != null"
+    (dismiss)="d()"
+    (delete)="deleteExperiment(modalExperiment._id); c()"
+  >
+    <div modalTitle>Delete Experiment {{ modalExperiment.name }}</div>
+    You are deleting the experiment
+    {{ modalExperiment.name }}. This can not be undone. This action will not
+    delete the experiment from HypoMoMaps that are using it.
+  </app-delete-modal>
+</ng-template>
+
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Experiments</a>
+    <a
+      *ngFor="let experiment of experimentsList"
+      class="nav-link"
+      [routerLink]="[experiment._id]"
+      >{{ experiment.experiment.name }}</a
+    >
+  </nav>
+</div>
+
+<main role="main" class="container">
+  <div class="my-3 alert alert-info" role="alert">
+    Create experiments to use them later in HypoMoMaps
+  </div>
+
+  <app-list-wrapper
+    listTitle="Experiments"
+    [reloading]="reloading"
+    [loading]="loading"
+    [noResults]="noResults"
+  >
+    <div noResults>No experiments defined.</div>
+    <ul results class="list-group">
+      <li class="list-group-item" *ngFor="let experiment of experimentsList">
+        <app-results-list-item
+          [viewLink]="[experiment._id]"
+          (delete)="openDeleteExperimentModal(experiment)"
+        >
+          <ng-container itemTitle>
+            {{ experiment.experiment.name }}
+          </ng-container>
+          <ng-container itemDescription>
+            {{ experiment.experiment.description }}
+          </ng-container>
+          <app-author-info [author]="experiment.author"></app-author-info>
+        </app-results-list-item>
+      </li>
+    </ul>
+  </app-list-wrapper>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Add Experiment</h6>
+    <div class="text-muted pt-3">
+      <form
+        [formGroup]="experimentForm"
+        (ngSubmit)="addExperiment(experimentForm)"
+      >
+        <div class="form-group row">
+          <label for="name" class="col-sm-4 col-form-label"
+            >Experiment Name</label
+          >
+          <div class="col-sm-8">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              id="name"
+            />
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <button
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!experimentForm.valid"
+            >
+              Add Experiment
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

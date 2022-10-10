@@ -8,7 +8,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { RunningProcess } from '../../development-process-registry/running-process/running-process';
-import { Decision } from '../../development-process-registry/bm-process/decision';
 import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import {
@@ -22,6 +21,8 @@ import { OutputArtifactMapping } from '../../development-process-registry/runnin
 import { equalsListGeneric } from '../../shared/utils';
 import { ArtifactDataType } from '../../development-process-registry/running-process/artifact-data';
 import { StepArtifact } from '../../development-process-registry/running-process/step-artifact';
+import { MethodDecision } from '../../development-process-registry/bm-process/method-decision';
+import { SelectedElementOptional } from '../../development-process-registry/bm-process/element-decision';
 
 @Component({
   selector: 'app-running-process-select-output-artifacts',
@@ -31,16 +32,16 @@ import { StepArtifact } from '../../development-process-registry/running-process
 export class RunningProcessSelectOutputArtifactsComponent
   implements OnChanges, OnDestroy
 {
-  @Input() runningProcess: RunningProcess;
-  @Input() runningMethod: RunningMethod;
-  @Input() decision: Decision;
+  @Input() runningProcess!: RunningProcess;
+  @Input() runningMethod!: RunningMethod;
+  @Input() decision!: MethodDecision;
 
   @Output() updateOutputArtifacts = new EventEmitter<FormArray>();
 
-  outputArtifacts: Artifact[];
-  internalOutputArtifacts: StepArtifact[];
+  outputArtifacts: SelectedElementOptional<Artifact>[] = [];
+  internalOutputArtifacts: (StepArtifact | undefined)[] = [];
 
-  form: FormGroup;
+  form!: FormGroup;
   changed = false;
 
   private changeSubscription?: Subscription;
@@ -68,14 +69,11 @@ export class RunningProcessSelectOutputArtifactsComponent
       }
     }
     if (changes.decision || reload) {
-      const decision: Decision = changes.decision.currentValue;
-      const artifacts = [];
-      decision.outputArtifacts
-        .getList(decision.method.outputArtifacts)
-        .elements.forEach((element) => artifacts.push(...element.elements));
-      this.outputArtifacts = artifacts;
+      const decision: MethodDecision = changes.decision.currentValue;
+      this.outputArtifacts =
+        decision.outputArtifacts.getSelectedElementsOptional();
       this.internalOutputArtifacts = this.runningMethod.getOutputArtifacts();
-      this.loadForm(artifacts, this.runningMethod.outputArtifacts);
+      this.loadForm(this.outputArtifacts, this.runningMethod.outputArtifacts);
     }
   }
 
@@ -87,8 +85,8 @@ export class RunningProcessSelectOutputArtifactsComponent
   }
 
   loadForm(
-    artifacts: Artifact[],
-    outputArtifacts: OutputArtifactMapping[]
+    artifacts: SelectedElementOptional<Artifact>[],
+    outputArtifacts: (OutputArtifactMapping | undefined)[] | undefined
   ): void {
     if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
@@ -98,7 +96,7 @@ export class RunningProcessSelectOutputArtifactsComponent
       artifacts,
       outputArtifacts
     );
-    this.changed = false;
+    this.changed = outputArtifacts == null;
     this.changeSubscription = this.formArray.valueChanges
       .pipe(
         debounceTime(300),
@@ -134,13 +132,19 @@ export class RunningProcessSelectOutputArtifactsComponent
   }
 
   private equals(
-    outputArtifactsA: OutputArtifactMapping[],
-    outputArtifactsB: OutputArtifactMapping[]
+    outputArtifactsA: (OutputArtifactMapping | undefined)[] | undefined,
+    outputArtifactsB: (OutputArtifactMapping | undefined)[] | undefined
   ): boolean {
     return equalsListGeneric(
       outputArtifactsA,
       outputArtifactsB,
       (mappingA, mappingB): boolean => {
+        if (mappingA == null && mappingB == null) {
+          return true;
+        }
+        if (mappingA == null || mappingB == null) {
+          return false;
+        }
         if (
           mappingA.isDefinition !== mappingB.isDefinition ||
           mappingA.data.type !== mappingB.data.type

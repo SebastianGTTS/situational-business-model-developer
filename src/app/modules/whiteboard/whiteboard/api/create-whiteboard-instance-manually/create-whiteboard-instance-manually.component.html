@@ -1,0 +1,73 @@
+<app-api-navigation apiName="Create Place"></app-api-navigation>
+
+<main role="main" class="container">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Create Place</h6>
+    <div class="text-muted pt-3">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group form-row">
+          <label for="templateSelector" class="col-sm-4 col-form-label"
+            >Whiteboard Template</label
+          >
+          <div class="col-sm-8">
+            <label class="col-form-label" *ngIf="whiteboardTemplates == null"
+              >Loading...</label
+            >
+            <select
+              *ngIf="whiteboardTemplates != null"
+              id="templateSelector"
+              formControlName="whiteboardTemplate"
+              class="form-control"
+              [class.is-invalid]="
+                whiteboardTemplateControl.invalid &&
+                whiteboardTemplateControl.touched
+              "
+            >
+              <option
+                *ngFor="let template of whiteboardTemplates"
+                [ngValue]="template"
+              >
+                {{ template.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <label for="name" class="col-sm-4 col-form-label">Name</label>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="nameControl.invalid && nameControl.touched"
+              id="name"
+            />
+          </div>
+        </div>
+        <div class="form-group form-row">
+          <div class="col-sm-12">
+            <button
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!form.valid"
+            >
+              Create Place
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div
+    *ngIf="whiteboardTemplate != null"
+    class="my-3 p-3 bg-white rounded shadow-sm"
+  >
+    <h6 class="border-bottom border-gray pb-2">
+      Preview {{ whiteboardTemplate.name }}
+    </h6>
+    <app-whiteboard-canvas-view
+      [whiteboardCanvas]="whiteboardTemplate.whiteboard"
+    ></app-whiteboard-canvas-view>
+  </div>
+</main>

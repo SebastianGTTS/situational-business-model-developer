@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ feature.name }}</h4>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <ul class="list-group inner" style="margin: 5px">
+    <li class="list-group-item justify-content-between align-items-center">
+      Connected to:
+      <ul class="list-group inner" style="margin: 5px">
+        <li class="list-group-item justify-content-between align-items-center">
+          {{ tracedFeature.name }}
+          <button
+            (click)="deleteTrace.emit()"
+            *ngIf="feature.parent != null"
+            type="button"
+            class="btn btn-danger btn-xs bottom-right"
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

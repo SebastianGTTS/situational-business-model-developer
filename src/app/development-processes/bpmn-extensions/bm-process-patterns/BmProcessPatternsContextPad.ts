@@ -1,13 +1,21 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { BpmnElement, ContextPad, EventBus } from 'bpmn-js';
 
 export default class BmProcessPatternsContextPad {
   static $inject = ['contextPad', 'eventBus'];
 
-  constructor(contextPad, private eventBus) {
+  constructor(contextPad: ContextPad, private eventBus: EventBus) {
     contextPad.registerProvider(this);
   }
 
-  getContextPadEntries(element) {
+  getContextPadEntries(element: BpmnElement): {
+    [id: string]: {
+      group: string;
+      className: string;
+      title: string;
+      action: { click: () => void };
+    };
+  } {
     if (is(element, 'bpmn:Activity')) {
       return {
         'bmdl.types': {
@@ -20,7 +28,7 @@ export default class BmProcessPatternsContextPad {
               : 'text-danger'),
           title: 'Manage types',
           action: {
-            click: () =>
+            click: (): void =>
               this.eventBus.fire('bmdl.types', element.businessObject),
           },
         },

@@ -1,0 +1,9 @@
+<app-delete-modal
+  *ngIf="hypothesis != null"
+  (dismiss)="dismiss()"
+  (delete)="removeHypothesis.emit(hypothesis.id)"
+>
+  <div modalTitle>{{ hypothesis.name }}</div>
+  You are trying to remove the hypothesis "{{ hypothesis.name }}". Please keep
+  in mind that you are also removing all subhypotheses.
+</app-delete-modal>

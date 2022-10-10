@@ -1,6 +1,9 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="type">
-    <a class="nav-link active" [routerLink]="[]">{{ type.name }}</a>
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'types']">Types</a>
+    <a class="nav-link active" *ngIf="type" [routerLink]="[]">{{
+      type.name
+    }}</a>
   </nav>
 </div>
 

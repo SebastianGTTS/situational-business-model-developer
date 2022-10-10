@@ -1,0 +1,42 @@
+<app-api-navigation apiName="View Example"></app-api-navigation>
+
+<main *ngIf="example != null" role="main" class="container">
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Edit Example</h6>
+    <div class="text-muted pt-3">
+      <form [formGroup]="form">
+        <div class="form-group row">
+          <label for="name" class="col-sm-4 col-form-label">Name</label>
+          <div class="col-sm-8">
+            <input
+              readonly
+              type="text"
+              formControlName="name"
+              class="form-control-plaintext"
+              id="name"
+            />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="name" class="col-sm-4 col-form-label">Description</label>
+          <div class="col-sm-8">
+            <input
+              readonly
+              type="text"
+              formControlName="description"
+              class="form-control-plaintext"
+              id="description"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="isCorrectStep()">
+    <h6 class="border-bottom border-gray pb-2">Finish viewing</h6>
+    <button class="btn btn-sm btn-primary btn-block" (click)="finish()">
+      Finish viewing
+    </button>
+  </div>
+</main>

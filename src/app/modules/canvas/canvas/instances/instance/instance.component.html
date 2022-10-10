@@ -1,0 +1,141 @@
+<ng-template #deleteModal>
+  <app-delete-decision-modal
+    *ngIf="modalFeature != null"
+    [feature]="modalFeature"
+    (closeModal)="closeModal()"
+    (deleteBusinessModelDecision)="deleteDecision($event)"
+  ></app-delete-decision-modal>
+</ng-template>
+
+<ng-template #addModal>
+  <app-add-decision-modal
+    *ngIf="modalFeature != null"
+    [feature]="modalFeature"
+    [instance]="instance"
+    (closeModal)="closeModal()"
+    (addBusinessModelDecision)="addDecision($event)"
+    (addFeature)="addFeature($event)"
+  ></app-add-decision-modal>
+</ng-template>
+
+<app-instance-info-box
+  [featureModel]="featureModel"
+  [instance]="instance"
+></app-instance-info-box>
+
+<div class="my-3 p-3 bg-white rounded shadow-sm">
+  <h6 class="border-bottom border-gray pb-2">
+    {{ instance.name }} of {{ featureModel.name }}
+  </h6>
+
+  <!-- Build Business Model Canvas -->
+  <app-canvas
+    [patternInstance]="patternInstance"
+    [percentages]="percentages"
+    [compareInstance]="compareInstance"
+    [featureModel]="featureModel"
+    [conformance]="conformance"
+    [conformanceOptions]="conformanceOptions"
+    [instance]="instance"
+    [editable]="editable"
+    (addFeatureModal)="openAddDecisionModal($event)"
+    (deleteFeatureModal)="openDeleteDecisionModal($event)"
+  ></app-canvas>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-2"><strong>Legend:</strong></div>
+      <div class="col-2">Modification:</div>
+      <div class="col-4">
+        <i class="fas fa-plus-square"></i> Add Business Model Decision
+      </div>
+      <div class="col-4">
+        <i class="fas fa-minus-square"></i> Delete Business Model Decision
+      </div>
+    </div>
+    <ng-container *ngIf="conformanceIsChecked">
+      <div class="row">
+        <div class="col-2">&nbsp;</div>
+        <div class="col-2">Conformance:</div>
+        <div class="col-4">
+          <span class="text-danger">Conformance Error (see below)</span>
+        </div>
+        <div class="col-4" *ngIf="conformanceOptions.showWarnings">
+          <span class="text-warning">Weakness (see below)</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2">&nbsp;</div>
+        <div class="col-2">&nbsp;</div>
+        <div class="col-4">
+          <em class="text-danger">Missing Mandatory Decision</em>
+        </div>
+        <div class="col-4" *ngIf="conformanceOptions.showStrengths">
+          <span class="text-success">Strength (see below)</span>
+        </div>
+      </div>
+      <div class="row" *ngIf="conformanceOptions.showHints">
+        <div class="col-2">&nbsp;</div>
+        <div class="col-2">&nbsp;</div>
+        <div class="col-4">&nbsp;</div>
+        <div class="col-4">
+          <em class="text-success">Hint (see below)</em>
+        </div>
+      </div>
+      <div class="row" *ngIf="conformanceOptions.showPatternHints">
+        <div class="col-2">&nbsp;</div>
+        <div class="col-2">&nbsp;</div>
+        <div class="col-4">&nbsp;</div>
+        <div class="col-4">
+          <em class="text-muted">Pattern Hint (see below)</em>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="compareInstance">
+      <div class="row">
+        <div class="col-2">&nbsp;</div>
+        <div class="col-2">Compare:</div>
+        <div class="col-4">
+          <em class="text-danger">Feature only in other model</em>
+        </div>
+        <div class="col-4">
+          <span class="text-success">Feature only in this model</span>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="patternInstance">
+      <div class="row">
+        <div class="col-2">&nbsp;</div>
+        <div class="col-2">Pattern:</div>
+        <div class="col-4"><em class="text-danger">Feature missing</em></div>
+        <div class="col-4"><span class="text-success">Feature used</span></div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="adaptable">
+  <h6 class="border-bottom border-gray pb-2 mb-0">Adapt Instance</h6>
+  <div class="container">
+    <div class="row" style="margin-top: 20px">
+      <button
+        type="button"
+        (click)="createAdaptation.emit()"
+        class="btn btn-dark btn-sm btn-block"
+      >
+        Create New Instance Adaptation
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="updatable">
+  <h6 class="border-bottom border-gray pb-2 mb-0">Update Instance</h6>
+
+  <div class="text-muted pt-3">
+    <app-instance-form
+      [instance]="instance"
+      (submitInstanceForm)="update($event.value)"
+    ></app-instance-form>
+  </div>
+</div>

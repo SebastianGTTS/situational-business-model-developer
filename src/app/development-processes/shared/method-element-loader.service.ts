@@ -12,7 +12,7 @@ export class MethodElementLoaderService<
   T extends MethodElement,
   S extends MethodElementInit
 > extends ElementLoaderService {
-  methodElement: T = null;
+  methodElement?: T;
   listNames: string[] = [];
 
   constructor(
@@ -24,10 +24,15 @@ export class MethodElementLoaderService<
 
   protected initParams(paramMap: ParamMap): void {
     const methodElementId = paramMap.get('id');
-    this.changesFeed = this.methodElementService
-      .getChangesFeed(methodElementId)
-      .subscribe(() => this.loadMethodElement(methodElementId));
-    void this.loadMethodElement(methodElementId);
+    if (methodElementId != null) {
+      this.changesFeed = this.methodElementService
+        .getChangesFeed(methodElementId)
+        .subscribe(() => this.loadMethodElement(methodElementId));
+      void this.loadMethodElement(methodElementId);
+    } else {
+      this.methodElement = undefined;
+      this.listNames = [];
+    }
   }
 
   private async loadMethodElement(methodElementId: string): Promise<void> {

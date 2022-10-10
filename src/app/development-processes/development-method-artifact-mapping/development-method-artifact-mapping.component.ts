@@ -13,9 +13,23 @@ import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ArtifactMappingFormService } from '../shared/artifact-mapping-form.service';
 import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
-import { ExecutionStepsFormValue } from '../shared/execution-steps-form.service';
+import {
+  ExecutionStepsFormService,
+  ExecutionStepsFormValue,
+} from '../shared/execution-steps-form.service';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { MetaModelIdentifier } from '../../development-process-registry/meta-model-definition';
+import { isMethodExecutionStep } from '../../development-process-registry/development-method/execution-step';
+import {
+  Artifact,
+  MetaModelData,
+} from '../../development-process-registry/method-elements/artifact/artifact';
+import { MetaModelService } from '../../development-process-registry/meta-model.service';
+
+interface ArtifactInfo {
+  compatible: boolean;
+  name: string;
+}
 
 @Component({
   selector: 'app-development-method-artifact-mapping',
@@ -26,21 +40,24 @@ export class DevelopmentMethodArtifactMappingComponent
   implements OnInit, OnChanges, OnDestroy
 {
   @Input() executionStepsFormValue?: ExecutionStepsFormValue;
-  @Input() developmentMethod: DevelopmentMethod;
-  @Input() metaModel: MetaModelIdentifier;
-  @Input() stepNumber: number = null;
+  @Input() developmentMethod!: DevelopmentMethod;
+  @Input() metaModel!: Readonly<MetaModelIdentifier>;
+  @Input() metaModelData?: MetaModelData;
+  @Input() stepNumber?: number;
 
   @Output() remove = new EventEmitter<void>();
 
-  artifacts: MetaModelIdentifier[] = [];
+  artifacts: ArtifactInfo[] = [];
 
-  private outputChangeSubscription: Subscription;
-  private stepChangeSubscription: Subscription;
-  private groupChangeSubscription: Subscription;
+  private outputChangeSubscription?: Subscription;
+  private stepChangeSubscription?: Subscription;
+  private groupChangeSubscription?: Subscription;
 
   constructor(
     private artifactMappingService: ArtifactMappingFormService,
+    private executionStepsFormService: ExecutionStepsFormService,
     private formGroupDirective: FormGroupDirective,
+    private metaModelService: MetaModelService,
     private moduleService: ModuleService
   ) {}
 
@@ -70,13 +87,13 @@ export class DevelopmentMethodArtifactMappingComponent
   }
 
   ngOnDestroy(): void {
-    if (this.outputChangeSubscription) {
+    if (this.outputChangeSubscription != null) {
       this.outputChangeSubscription.unsubscribe();
     }
-    if (this.stepChangeSubscription) {
+    if (this.stepChangeSubscription != null) {
       this.stepChangeSubscription.unsubscribe();
     }
-    if (this.groupChangeSubscription) {
+    if (this.groupChangeSubscription != null) {
       this.groupChangeSubscription.unsubscribe();
     }
   }
@@ -84,11 +101,11 @@ export class DevelopmentMethodArtifactMappingComponent
   updateSubscriptions(): void {
     if (this.stepChangeSubscription) {
       this.stepChangeSubscription.unsubscribe();
-      this.stepChangeSubscription = null;
+      this.stepChangeSubscription = undefined;
     }
     if (this.groupChangeSubscription) {
       this.groupChangeSubscription.unsubscribe();
-      this.groupChangeSubscription = null;
+      this.groupChangeSubscription = undefined;
     }
     if (this.outputControl.value) {
       if (this.groupControl.value != null) {
@@ -117,36 +134,72 @@ export class DevelopmentMethodArtifactMappingComponent
   }
 
   updateGroupArtifacts(groupNumber: number): void {
-    const group = this.developmentMethod.outputArtifacts[groupNumber];
-    this.artifacts = group.map((artifact) => {
-      if (!artifact.element || !artifact.element.metaModel) {
-        return {
-          name: 'Placeholer',
-          type: null,
-        };
+    const group = this.developmentMethod.outputArtifacts.groups[groupNumber];
+    if (group == null) {
+      this.artifacts = [];
+    } else {
+      this.artifacts = group.items
+        .filter(
+          (artifact) =>
+            artifact.element != null && artifact.element.metaModel != null
+        )
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .map((artifact) => artifact.element!)
+        .map((artifact) => {
+          return {
+            compatible: this.isArtifactCompatible(artifact),
+            name: artifact.name,
+          };
+        });
+    }
+  }
+
+  private isArtifactCompatible(artifact: Artifact): boolean {
+    if (artifact.metaModel?.type !== this.metaModel.type) {
+      return false;
+    }
+    if (this.metaModelData != null) {
+      const api = this.metaModelService.getMetaModelDefinition(
+        this.metaModel.type
+      )?.api;
+      if (api != null && api.compatibleMetaModelData != null) {
+        return api.compatibleMetaModelData(
+          this.metaModelData,
+          artifact.metaModelData
+        );
       }
-      return {
-        name: artifact.element.name,
-        type: artifact.element.metaModel.type,
-      };
-    });
+    }
+    return true;
   }
 
   updateStepArtifacts(stepNumber: number): void {
+    let artifacts: MetaModelIdentifier[] = [];
     if (this.executionStepsFormValue != null) {
-      const method = this.executionStepsFormValue[stepNumber].method;
-      if (method != null) {
-        this.artifacts = method.input;
-      } else {
-        this.artifacts = [];
+      const step = this.executionStepsFormValue[stepNumber];
+      if (this.executionStepsFormService.isMethodExecutionStepFormValue(step)) {
+        const method = step.method;
+        if (method != null) {
+          artifacts = method.input;
+        }
       }
     } else {
       const step = this.developmentMethod.executionSteps[stepNumber];
-      this.artifacts = this.moduleService.getModuleMethod(
-        step.module,
-        step.method
-      ).input;
+      if (isMethodExecutionStep(step)) {
+        const method = this.moduleService.getModuleMethod(
+          step.module,
+          step.method
+        );
+        if (method != null) {
+          artifacts = method.input;
+        }
+      }
     }
+    this.artifacts = artifacts.map((metaModelIdentifier) => {
+      return {
+        compatible: metaModelIdentifier.type === this.metaModel.type,
+        name: metaModelIdentifier.name,
+      };
+    });
   }
 
   get formGroup(): FormGroup {
@@ -167,9 +220,5 @@ export class DevelopmentMethodArtifactMappingComponent
 
   get artifactControl(): FormControl {
     return this.formGroup.get('artifact') as FormControl;
-  }
-
-  artifactConformsToMetaModel(artifact: MetaModelIdentifier): boolean {
-    return artifact.type === this.metaModel.type;
   }
 }

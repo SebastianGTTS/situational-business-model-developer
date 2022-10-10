@@ -1,3 +1,3 @@
 import 'jest-preset-angular/setup-jest';
 
-window.fetch = undefined;
+(window.fetch as unknown) = undefined;

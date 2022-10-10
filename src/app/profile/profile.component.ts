@@ -19,6 +19,6 @@ export class ProfileComponent {
   }
 
   isLocalDatabase(): boolean {
-    return environment.localDatabase === true;
+    return environment.localDatabase;
   }
 }

@@ -15,10 +15,10 @@ import { FormGroup } from '@angular/forms';
   providers: [SearchService],
 })
 export class SearchComponent<T> implements OnChanges {
-  @Input() heading: string;
-  @Input() itemName: string;
-  @Input() content: TemplateRef<unknown>;
-  @Input() items: T[];
+  @Input() heading!: string;
+  @Input() itemName!: string;
+  @Input() content!: TemplateRef<unknown>;
+  @Input() items?: T[];
 
   constructor(private searchService: SearchService<T>) {}
 
@@ -33,7 +33,7 @@ export class SearchComponent<T> implements OnChanges {
     return this.searchService.searchForm;
   }
 
-  get filteredResults(): T[] {
+  get filteredResults(): T[] | undefined {
     return this.searchService.filteredResults;
   }
 }

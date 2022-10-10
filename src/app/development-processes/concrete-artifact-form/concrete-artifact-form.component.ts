@@ -21,7 +21,7 @@ import { debounceTime, tap } from 'rxjs/operators';
 export class ConcreteArtifactFormComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  @Input() artifact: RunningArtifact;
+  @Input() artifact!: RunningArtifact;
 
   @Output() submitArtifactForm = new EventEmitter<FormGroup>();
 
@@ -30,7 +30,7 @@ export class ConcreteArtifactFormComponent
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
@@ -57,7 +57,7 @@ export class ConcreteArtifactFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.changeSubscription) {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
@@ -74,6 +74,7 @@ export class ConcreteArtifactFormComponent
     }
   }
 
+  // noinspection JSMethodCanBeStatic
   private equalArtifacts(
     artifactA: RunningArtifact,
     artifactB: RunningArtifact

@@ -1,0 +1,17 @@
+import { Injectable } from '@angular/core';
+import { RunningProcessService } from '../../../development-process-registry/running-process/running-process.service';
+import { StepInfo } from '../../../development-process-registry/module-api/step-info';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class <%= classify(name) %>ToolResolveService {
+  constructor(private runningProcessService: RunningProcessService) {}
+
+  resolve(stepInfo: StepInfo): void {
+    void this.runningProcessService.finishExecuteStep(stepInfo, {
+      // Add output artifact data if needed
+      outputArtifactData: [],
+    });
+  }
+}

@@ -30,6 +30,7 @@ export type DbRev = string;
 /**
  * Used to initialize database models
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DatabaseInit {}
 
 /**

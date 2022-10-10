@@ -3,14 +3,7 @@ import { ConcreteArtifactLoaderService } from '../shared/concrete-artifact-loade
 import { ConcreteArtifactService } from '../../development-process-registry/running-process/concrete-artifact.service';
 import { RunningArtifact } from '../../development-process-registry/running-process/running-artifact';
 import { ArtifactVersion } from '../../development-process-registry/running-process/artifact-version';
-import {
-  ArtifactDataReference,
-  ArtifactDataType,
-} from '../../development-process-registry/running-process/artifact-data';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { MetaModelService } from '../../development-process-registry/meta-model.service';
-import { Router } from '@angular/router';
-import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 
 @Component({
   selector: 'app-concrete-artifact',
@@ -19,8 +12,8 @@ import { Artifact } from '../../development-process-registry/method-elements/art
   providers: [ConcreteArtifactLoaderService],
 })
 export class ConcreteArtifactComponent {
-  modalVersion: ArtifactVersion;
-  private modalReference: NgbModalRef;
+  modalVersion?: ArtifactVersion;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('showArtifactVersionModal', { static: true })
   showArtifactVersionModal: unknown;
@@ -28,16 +21,16 @@ export class ConcreteArtifactComponent {
   constructor(
     private concreteArtifactLoaderService: ConcreteArtifactLoaderService,
     private concreteArtifactService: ConcreteArtifactService,
-    private metaModelService: MetaModelService,
-    private modalService: NgbModal,
-    private router: Router
+    private modalService: NgbModal
   ) {}
 
   async updateIdentifier(identifier: string): Promise<void> {
-    await this.concreteArtifactService.updateIdentifier(
-      this.artifact._id,
-      identifier
-    );
+    if (this.artifact != null) {
+      await this.concreteArtifactService.updateIdentifier(
+        this.artifact._id,
+        identifier
+      );
+    }
   }
 
   openShowArtifactVersionModal(version: ArtifactVersion): void {
@@ -48,26 +41,24 @@ export class ConcreteArtifactComponent {
     );
   }
 
-  viewArtifactReference(reference: ArtifactDataReference): void {
-    this.modalReference.close();
-    this.metaModelService
-      .getMetaModelApi(reference.type)
-      .view(reference, this.router, {
-        referenceType: 'Artifact',
-        artifactId: this.artifact._id,
-        versionId: this.artifact.versions.indexOf(this.modalVersion),
-      });
+  async viewArtifactVersion(): Promise<void> {
+    if (this.modalVersion != null && this.artifact != null) {
+      this.modalReference?.close();
+      await this.concreteArtifactService.view(
+        this.artifact._id,
+        this.modalVersion.id
+      );
+    }
   }
 
-  get artifact(): RunningArtifact {
+  async editArtifactVersion(): Promise<void> {
+    if (this.artifact != null) {
+      this.modalReference?.close();
+      await this.concreteArtifactService.edit(this.artifact._id);
+    }
+  }
+
+  get artifact(): RunningArtifact | undefined {
     return this.concreteArtifactLoaderService.artifact;
-  }
-
-  getArtifactDataTypeString(): ArtifactDataType {
-    return ArtifactDataType.STRING;
-  }
-
-  getArtifactDataTypeReference(): ArtifactDataType {
-    return ArtifactDataType.REFERENCE;
   }
 }

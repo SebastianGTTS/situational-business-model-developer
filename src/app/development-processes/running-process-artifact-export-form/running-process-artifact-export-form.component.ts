@@ -15,15 +15,15 @@ import { RunningArtifact } from '../../development-process-registry/running-proc
   styleUrls: ['./running-process-artifact-export-form.component.css'],
 })
 export class RunningProcessArtifactExportFormComponent implements OnChanges {
-  @Input() artifact: RunningArtifact;
+  @Input() artifact!: RunningArtifact;
 
   @Output() submitArtifactExportForm = new EventEmitter<FormGroup>();
 
-  form: FormGroup;
+  form?: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.artifact) {
       const newArtifact: RunningArtifact = changes.artifact.currentValue;
       const oldArtifact: RunningArtifact = changes.artifact.previousValue;
@@ -38,7 +38,7 @@ export class RunningProcessArtifactExportFormComponent implements OnChanges {
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitArtifactExportForm.emit(this.form);
   }
 }

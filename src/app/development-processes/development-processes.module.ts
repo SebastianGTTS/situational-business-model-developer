@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { BmProcessComponent } from './bm-process/bm-process.component';
-import { BmProcessDiagramComponent } from './bm-process-diagram/bm-process-diagram.component';
+import { BmProcessEditDiagramComponent } from './bm-process-edit-diagram/bm-process-edit-diagram.component';
 import { BmProcessesComponent } from './bm-processes/bm-processes.component';
 import { DevelopmentMethodComponent } from './development-method/development-method.component';
 import { DevelopmentMethodsComponent } from './development-methods/development-methods.component';
@@ -75,82 +75,132 @@ import { RunningProcessSelectOutputArtifactComponent } from './running-process-s
 import { DevelopmentMethodIncompleteModalComponent } from './development-method-incomplete-modal/development-method-incomplete-modal.component';
 import { DevelopmentMethodFormComponent } from './development-method-form/development-method-form.component';
 import { ProcessPatternFormComponent } from './process-pattern-form/process-pattern-form.component';
+import { OptionalPipe } from './pipes/optional.pipe';
+import { ArtifactsMappingSelectionFormComponent } from './artifacts-mapping-selection-form/artifacts-mapping-selection-form.component';
+import { GroupsFormComponent } from './groups-form/groups-form.component';
+import { GroupFormComponent } from './group-form/group-form.component';
+import { MethodElementInfoSelectionComponent } from './method-element-info-selection/method-element-info-selection.component';
+import { RunningProcessesContextListComponent } from './running-processes-context-list/running-processes-context-list.component';
+import { RunningProcessContextComponent } from './running-process-context/running-process-context.component';
+import { RunningProcessContextRunComponent } from './running-process-context-run/running-process-context-run.component';
+import { RunningProcessContextEditComponent } from './running-process-context-edit/running-process-context-edit.component';
+import { RunningProcessArtifactsComponent } from './running-process-artifacts/running-process-artifacts.component';
+import { RunningProcessArtifactAddFormComponent } from './running-process-artifact-add-form/running-process-artifact-add-form.component';
+import { ConcreteArtifactShowVersionModalComponent } from './concrete-artifact-show-version-modal/concrete-artifact-show-version-modal.component';
+import { DevelopmentMethodEmptyExecutionStepComponent } from './development-method-empty-execution-step/development-method-empty-execution-step.component';
+import { ContextEditComponent } from './context-edit/context-edit.component';
+import { SearchFilterTypeComponent } from './search-filter-type/search-filter-type.component';
+import { RunningProcessMethodExecutionStepsComponent } from './running-process-method-execution-steps/running-process-method-execution-steps.component';
+import { RunningProcessContextChangeModalComponent } from './running-process-context-change-modal/running-process-context-change-modal.component';
+import { RunningProcessContextViewComponent } from './running-process-context-view/running-process-context-view.component';
+import { BmProcessModelerComponent } from './bm-process-modeler/bm-process-modeler.component';
+import { RunningProcessContextFinishComponent } from './running-process-context-finish/running-process-context-finish.component';
+import { SituationalFactorsListComponent } from './situational-factors-list/situational-factors-list.component';
+import { DomainsListComponent } from './domains-list/domains-list.component';
+import { RunningProcessContextEditSelectDecisionModalComponent } from './running-process-context-edit-select-decision-modal/running-process-context-edit-select-decision-modal.component';
+import { RunningProcessContextFakeExecuteModalComponent } from './running-process-context-fake-execute-modal/running-process-context-fake-execute-modal.component';
+import { ProcessPatternIncompleteModalComponent } from './process-pattern-incomplete-modal/process-pattern-incomplete-modal.component';
 
 @NgModule({
   declarations: [
-    BmProcessComponent,
-    BmProcessDiagramComponent,
-    BmProcessesComponent,
-    DevelopmentMethodComponent,
-    DevelopmentMethodsComponent,
-    ProcessPatternComponent,
-    ProcessPatternDiagramComponent,
-    ProcessPatternTypesFormComponent,
-    ProcessPatternsComponent,
-    ConfirmLeaveModalComponent,
-    SituationalFactorsComponent,
-    SituationalFactorComponent,
-    MethodElementListComponent,
-    MethodElementFormComponent,
-    ArtifactsComponent,
     ArtifactComponent,
-    StakeholdersComponent,
-    StakeholderComponent,
-    ToolComponent,
-    ToolsComponent,
-    TypesComponent,
-    TypeComponent,
-    MethodElementSelectionFormComponent,
-    MethodElementsSelectionFormComponent,
-    TypesSelectionFormComponent,
-    SituationalFactorsSelectionFormComponent,
-    SituationalFactorSelectionFormComponent,
-    ArtifactsSelectionFormComponent,
-    StakeholdersSelectionFormComponent,
-    ToolsSelectionFormComponent,
-    ExamplesFormComponent,
-    MethodInfoComponent,
-    MethodElementGroupInfoComponent,
-    MethodElementInfoComponent,
+    ArtifactDefinitionFormComponent,
+    ArtifactsComponent,
     ArtifactsGroupInfoComponent,
-    StakeholdersGroupInfoComponent,
-    SituationalFactorsOverviewComponent,
-    PatternInfoComponent,
-    DevelopmentMethodSelectionFormComponent,
-    DevelopmentMethodsSelectionFormComponent,
-    ProcessPatternSelectionFormComponent,
-    ProcessPatternsSelectionFormComponent,
-    DevelopmentMethodSummaryComponent,
-    ToolsGroupInfoComponent,
-    RunningProcessComponent,
-    RunningProcessesComponent,
-    RunningProcessSelectOutputArtifactsComponent,
-    RunningProcessSelectInputArtifactsComponent,
-    DevelopmentMethodSelectExecutionStepsComponent,
-    DevelopmentMethodSelectExecutionStepComponent,
+    ArtifactsMappingSelectionFormComponent,
+    ArtifactsSelectionFormComponent,
+    BmProcessComponent,
+    BmProcessEditDiagramComponent,
+    BmProcessModelerComponent,
+    BmProcessesComponent,
+    ConcreteArtifactComponent,
+    ConcreteArtifactFormComponent,
+    ConcreteArtifactShowVersionModalComponent,
+    ConcreteArtifactsComponent,
+    ConfigurationFormPlaceholderDirective,
+    ConfirmLeaveModalComponent,
+    ContextEditComponent,
     DevelopmentMethodArtifactMappingComponent,
     DevelopmentMethodArtifactMappingsComponent,
-    RunningProcessMethodComponent,
-    ConfigurationFormPlaceholderDirective,
-    MethodInfoStepComponent,
-    MethodInfoStepsComponent,
+    DevelopmentMethodComponent,
+    DevelopmentMethodEmptyExecutionStepComponent,
+    DevelopmentMethodFormComponent,
+    DevelopmentMethodIncompleteModalComponent,
+    DevelopmentMethodSelectExecutionStepComponent,
+    DevelopmentMethodSelectExecutionStepsComponent,
+    DevelopmentMethodSelectionFormComponent,
+    DevelopmentMethodSummaryComponent,
+    DevelopmentMethodsComponent,
+    DevelopmentMethodsSelectionFormComponent,
     DomainComponent,
     DomainsComponent,
-    SituationalFactorFormComponent,
-    ArtifactDefinitionFormComponent,
+    DomainsListComponent,
+    ExamplesFormComponent,
+    GroupFormComponent,
+    GroupsFormComponent,
+    ListPipe,
+    MethodElementFormComponent,
+    MethodElementGroupInfoComponent,
+    MethodElementInfoComponent,
+    MethodElementInfoSelectionComponent,
+    MethodElementListComponent,
+    MethodElementSelectionFormComponent,
     MethodElementsComponent,
-    ConcreteArtifactsComponent,
-    ConcreteArtifactComponent,
+    MethodElementsSelectionFormComponent,
+    MethodInfoComponent,
+    MethodInfoStepComponent,
+    MethodInfoStepsComponent,
+    MultiplePipe,
+    OptionalPipe,
+    PatternInfoComponent,
+    ProcessPatternComponent,
+    ProcessPatternDiagramComponent,
+    ProcessPatternFormComponent,
+    ProcessPatternSelectionFormComponent,
+    ProcessPatternTypesFormComponent,
+    ProcessPatternsComponent,
+    ProcessPatternsSelectionFormComponent,
+    RunningProcessArtifactAddFormComponent,
     RunningProcessArtifactExportFormComponent,
-    ConcreteArtifactFormComponent,
     RunningProcessArtifactImportFormComponent,
     RunningProcessArtifactRenameFormComponent,
-    MultiplePipe,
-    ListPipe,
+    RunningProcessArtifactsComponent,
+    RunningProcessComponent,
+    RunningProcessContextChangeModalComponent,
+    RunningProcessContextComponent,
+    RunningProcessContextEditComponent,
+    RunningProcessContextEditSelectDecisionModalComponent,
+    RunningProcessContextFakeExecuteModalComponent,
+    RunningProcessContextFinishComponent,
+    RunningProcessContextRunComponent,
+    RunningProcessContextViewComponent,
+    RunningProcessMethodComponent,
+    RunningProcessMethodExecutionStepsComponent,
+    RunningProcessSelectInputArtifactsComponent,
     RunningProcessSelectOutputArtifactComponent,
-    DevelopmentMethodIncompleteModalComponent,
-    DevelopmentMethodFormComponent,
-    ProcessPatternFormComponent,
+    RunningProcessSelectOutputArtifactsComponent,
+    RunningProcessesComponent,
+    RunningProcessesContextListComponent,
+    SearchFilterTypeComponent,
+    SituationalFactorComponent,
+    SituationalFactorFormComponent,
+    SituationalFactorSelectionFormComponent,
+    SituationalFactorsComponent,
+    SituationalFactorsListComponent,
+    SituationalFactorsOverviewComponent,
+    SituationalFactorsSelectionFormComponent,
+    StakeholderComponent,
+    StakeholdersComponent,
+    StakeholdersGroupInfoComponent,
+    StakeholdersSelectionFormComponent,
+    ToolComponent,
+    ToolsComponent,
+    ToolsGroupInfoComponent,
+    ToolsSelectionFormComponent,
+    TypeComponent,
+    TypesComponent,
+    TypesSelectionFormComponent,
+    ProcessPatternIncompleteModalComponent,
   ],
   imports: [DevelopmentProcessesRoutingModule, SharedModule, QuillModule],
 })

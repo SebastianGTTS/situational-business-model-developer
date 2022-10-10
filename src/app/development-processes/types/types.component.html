@@ -1,5 +1,9 @@
 <ng-template #deleteTypeModal let-d="dismiss" let-c="close">
-  <app-delete-modal (dismiss)="d()" (delete)="delete(modalType._id); c()">
+  <app-delete-modal
+    *ngIf="modalType != null"
+    (dismiss)="d()"
+    (delete)="delete(modalType._id); c()"
+  >
     <div modalTitle>Delete Type {{ modalType.name }}</div>
     You are deleting the type {{ modalType.name }}. This can not be undone. This
     action will not delete the type from method building blocks that are using

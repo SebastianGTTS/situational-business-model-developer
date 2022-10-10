@@ -8,4 +8,6 @@ module.exports = {
   // coverage
   coverageDirectory: 'coverage',
   coverageReporters: ['cobertura', 'html', 'text'],
+
+  resolver: '<rootDir>/fix-resolver.js',
 };

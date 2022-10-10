@@ -3,56 +3,42 @@ import {
   ArtifactDataEntry,
   ArtifactDataInit,
 } from './artifact-data';
-import {
-  Artifact,
-  ArtifactEntry,
-  ArtifactInit,
-} from '../method-elements/artifact/artifact';
 import { DatabaseModelPart } from '../../database/database-model-part';
 import { MetaModelType } from '../meta-model-definition';
 import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
 
 export interface StepArtifactInit extends DatabaseInit {
-  identifier: string;
-  artifact: ArtifactInit;
+  metaModelType?: MetaModelType;
   data: ArtifactDataInit;
 }
 
 export interface StepArtifactEntry extends DatabaseEntry {
-  identifier: string;
-  artifact: ArtifactEntry;
+  metaModelType?: MetaModelType;
   data: ArtifactDataEntry;
 }
 
 export class StepArtifact implements StepArtifactInit, DatabaseModelPart {
-  identifier: string;
-  artifact: Artifact;
+  metaModelType?: MetaModelType;
   data: ArtifactData;
 
   constructor(
     entry: StepArtifactEntry | undefined,
     init: StepArtifactInit | undefined
   ) {
-    this.identifier = (entry ?? init).identifier;
     if (entry != null) {
-      this.artifact = new Artifact(entry.artifact, undefined);
+      this.metaModelType = entry.metaModelType;
       this.data = new ArtifactData(entry.data, undefined);
     } else if (init != null) {
-      this.artifact = new Artifact(undefined, init.artifact);
+      this.metaModelType = init.metaModelType;
       this.data = new ArtifactData(undefined, init.data);
     } else {
       throw new Error('Either entry or init must be provided.');
     }
   }
 
-  get metaModelType(): MetaModelType {
-    return this.artifact.metaModel.type;
-  }
-
   toDb(): StepArtifactEntry {
     return {
-      identifier: this.identifier,
-      artifact: this.artifact.toDb(),
+      metaModelType: this.metaModelType,
       data: this.data.toDb(),
     };
   }

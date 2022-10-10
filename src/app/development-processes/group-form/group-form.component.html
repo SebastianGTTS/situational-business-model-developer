@@ -1,0 +1,34 @@
+<ng-container [formGroup]="groupFormGroup">
+  <div class="form-group">
+    <div
+      *ngFor="let itemFormGroup of itemFormGroups; let index = index"
+      [formGroup]="itemFormGroup"
+    >
+      <app-method-element-selection-form
+        [listNames]="listNames"
+        [methodElements]="methodElements"
+        [methodElementName]="methodElementName"
+        [multipleAllowed]="true"
+        (remove)="removeItem(index)"
+      ></app-method-element-selection-form>
+      <div
+        class="alert alert-danger"
+        *ngIf="itemFormGroup.hasError('optionalAndMapping')"
+      >
+        An optional artifact can not have mappings.
+      </div>
+      <app-development-method-artifact-mappings
+        *ngIf="developmentMethod != null && isInternalArtifact(itemFormGroup)"
+        [developmentMethod]="developmentMethod"
+        formArrayName="mapping"
+        [metaModel]="getElementValueAsArtifact(itemFormGroup).metaModel!"
+        [metaModelData]="getElementValueAsArtifact(itemFormGroup).metaModelData"
+      ></app-development-method-artifact-mappings>
+    </div>
+  </div>
+  <div class="form-group d-flex">
+    <button (click)="addItem()" type="button" class="btn btn-secondary ml-auto">
+      Add {{ methodElementName }}
+    </button>
+  </div>
+</ng-container>

@@ -4,27 +4,43 @@ import { RunningProcessService } from '../../development-process-registry/runnin
 import { RunningProcessViewerComponent } from '../../development-process-view/running-process-viewer/running-process-viewer.component';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { RunningArtifact } from '../../development-process-registry/running-process/running-artifact';
-import { ArtifactVersion } from '../../development-process-registry/running-process/artifact-version';
 import { OutputArtifactMappingFormService } from '../shared/output-artifact-mapping-form.service';
-import { Decision } from '../../development-process-registry/bm-process/decision';
 import {
   DevelopmentMethod,
   DevelopmentMethodEntry,
 } from '../../development-process-registry/development-method/development-method';
 import { DevelopmentMethodService } from '../../development-process-registry/development-method/development-method.service';
-import { SituationalFactorEntry } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
 import { BmProcessService } from '../../development-process-registry/bm-process/bm-process.service';
 import { ExecutionErrors } from '../../development-process-registry/running-process/process-execution.service';
-import {
-  ArtifactDataReference,
-  ArtifactDataType,
-} from '../../development-process-registry/running-process/artifact-data';
 import { RunningMethodInfo } from '../../development-process-registry/running-process/running-method-info';
 import { MetaModelService } from '../../development-process-registry/meta-model.service';
 import { RunningProcessLoaderService } from '../shared/running-process-loader.service';
-import { RunningProcess } from '../../development-process-registry/running-process/running-process';
+import {
+  FullRunningProcess,
+  RunningProcess,
+} from '../../development-process-registry/running-process/running-process';
 import { ConcreteArtifactService } from '../../development-process-registry/running-process/concrete-artifact.service';
 import { DevelopmentMethodIncompleteModalComponent } from '../development-method-incomplete-modal/development-method-incomplete-modal.component';
+import {
+  MethodDecision,
+  MethodDecisionUpdate,
+} from '../../development-process-registry/bm-process/method-decision';
+import { BpmnFlowNode } from 'bpmn-js';
+import { OutputArtifactMapping } from '../../development-process-registry/running-process/output-artifact-mapping';
+import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
+import { ArtifactVersion } from '../../development-process-registry/running-process/artifact-version';
+import { Domain } from '../../development-process-registry/knowledge/domain';
+import {
+  SituationalFactor,
+  SituationalFactorInit,
+} from '../../development-process-registry/method-elements/situational-factor/situational-factor';
+import {
+  Selection,
+  SelectionInit,
+} from '../../development-process-registry/development-method/selection';
+import { RunningMethod } from '../../development-process-registry/running-process/running-method';
+import { RunningProcessContextChangeModalComponent } from '../running-process-context-change-modal/running-process-context-change-modal.component';
+import { RunningProcessContextChangeModal } from '../running-process-context-change-modal/running-process-context-change-modal';
 
 @Component({
   selector: 'app-running-process',
@@ -33,33 +49,31 @@ import { DevelopmentMethodIncompleteModalComponent } from '../development-method
   providers: [RunningProcessLoaderService],
 })
 export class RunningProcessComponent implements OnInit {
-  decisions: any[];
+  decisions: BpmnFlowNode[] = []; // node decisions
 
-  private modalReference: NgbModalRef;
-  modalDecision: Decision;
-  modalArtifact: RunningArtifact;
-  modalArtifactVersion: ArtifactVersion;
-  modalDevelopmentMethods: DevelopmentMethodEntry[] = null;
-  modalDevelopmentMethod: DevelopmentMethod;
-  modalRunningMethodInfo: RunningMethodInfo;
+  private modalReference?: NgbModalRef;
+  modalDecision?: MethodDecision;
+  modalToDoMethod?: RunningMethod;
+  modalDevelopmentMethods?: DevelopmentMethodEntry[];
+  modalRunningMethodInfo?: RunningMethodInfo;
+  modalRunningMethodInfoArtifacts?: {
+    artifact: RunningArtifact;
+    versions: ArtifactVersion[];
+  }[];
 
   @ViewChild(RunningProcessViewerComponent)
-  runningProcessViewer: RunningProcessViewerComponent;
+  runningProcessViewer!: RunningProcessViewerComponent;
   @ViewChild('infoModal', { static: true }) infoModal: unknown;
   @ViewChild('multipleOptionsInfoModal', { static: true })
   multipleOptionsInfoModal: unknown;
-  @ViewChild('showArtifactVersionModal', { static: true })
-  showArtifactVersionModal: unknown;
+  @ViewChild('notCompletelyDefinedModal', { static: true })
+  notCompletelyDefinedModal: unknown;
   @ViewChild('selectMethodModal', { static: true }) selectMethodModal: unknown;
   @ViewChild('methodConfigurationModal', { static: true })
   methodConfigurationModal: unknown;
+  @ViewChild('methodArtifactsModal', { static: true })
+  methodArtifactsModal: unknown;
   @ViewChild('commentsModal', { static: true }) commentsModal: unknown;
-  @ViewChild('artifactExportModal', { static: true })
-  artifactExportModal: unknown;
-  @ViewChild('artifactImportModal', { static: true })
-  artifactImportModal: unknown;
-  @ViewChild('artifactRenameModal', { static: true })
-  artifactRenameModal: unknown;
 
   constructor(
     private bmProcessService: BmProcessService,
@@ -76,33 +90,30 @@ export class RunningProcessComponent implements OnInit {
 
   ngOnInit(): void {
     this.runningProcessLoaderService.loaded.subscribe(() =>
-      this.afterReload(this.runningProcess)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.afterReload(this.runningProcess!)
     );
   }
 
-  openShowArtifactVersionModal(
-    artifact: RunningArtifact,
-    version: ArtifactVersion
-  ): void {
-    this.modalArtifact = artifact;
-    this.modalArtifactVersion = version;
-    this.modalReference = this.modalService.open(
-      this.showArtifactVersionModal,
-      { size: 'lg' }
-    );
+  async viewArtifactVersion(version: ArtifactVersion): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.runningProcessService.viewInternalArtifact(
+        this.runningProcess._id,
+        version.id
+      );
+    }
   }
 
-  viewArtifactReference(reference: ArtifactDataReference): void {
-    this.modalReference.close();
-    this.metaModelService
-      .getMetaModelApi(reference.type)
-      .view(reference, this.router, {
-        referenceType: 'Process',
-        runningProcessId: this.runningProcess._id,
-      });
+  async editArtifact(artifact: RunningArtifact): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.runningProcessService.editInternalArtifact(
+        this.runningProcess,
+        artifact
+      );
+    }
   }
 
-  openInfoModal(decision: Decision): void {
+  openInfoModal(decision: MethodDecision): void {
     this.modalDecision = decision;
     this.modalReference = this.modalService.open(this.infoModal, {
       size: 'lg',
@@ -110,119 +121,134 @@ export class RunningProcessComponent implements OnInit {
   }
 
   async openSelectMethodModal(): Promise<void> {
-    this.modalReference = this.modalService.open(this.selectMethodModal, {
-      size: 'lg',
-      beforeDismiss: () => {
-        this.modalDevelopmentMethods = null;
-        return true;
-      },
-    });
-    this.modalDevelopmentMethods = this.sortByDistance(
-      await this.developmentMethodService.getList()
-    );
+    if (this.runningProcess != null) {
+      this.modalReference = this.modalService.open(this.selectMethodModal, {
+        size: 'lg',
+        beforeDismiss: () => {
+          this.modalDevelopmentMethods = undefined;
+          return true;
+        },
+      });
+      this.modalDevelopmentMethods =
+        await this.developmentMethodService.getSortedList(
+          this.runningProcess.situationalFactors.map(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            (selection) => selection.element!
+          )
+        );
+    }
   }
 
-  async configureMethod(method: DevelopmentMethodEntry): Promise<void> {
-    const developmentMethod = new DevelopmentMethod(method, undefined);
-    if (!this.developmentMethodService.isCorrectlyDefined(developmentMethod)) {
-      const modal = this.modalService.open(
-        DevelopmentMethodIncompleteModalComponent
+  async addToDoMethod(method: DevelopmentMethodEntry): Promise<void> {
+    if (this.runningProcess != null) {
+      const developmentMethod = new DevelopmentMethod(method, undefined);
+      if (
+        !this.developmentMethodService.isCorrectlyDefined(developmentMethod)
+      ) {
+        const modal = this.modalService.open(
+          DevelopmentMethodIncompleteModalComponent
+        );
+        const component: DevelopmentMethodIncompleteModalComponent =
+          modal.componentInstance;
+        component.developmentMethod = developmentMethod;
+        return;
+      }
+      this.modalDevelopmentMethods = undefined;
+      this.modalReference?.close();
+      await this.modalReference?.result;
+      const decision = new MethodDecision(undefined, {
+        method: developmentMethod,
+      });
+      const executionId = await this.runningProcessService.addMethod(
+        this.runningProcess._id,
+        decision
       );
-      const component: DevelopmentMethodIncompleteModalComponent =
-        modal.componentInstance;
-      component.developmentMethod = developmentMethod;
-      return;
+      const process = await this.runningProcessService.get(
+        this.runningProcess._id
+      );
+      this.modalToDoMethod = process.getTodoMethod(executionId);
+      this.modalReference = this.modalService.open(
+        this.methodConfigurationModal,
+        { size: 'lg' }
+      );
     }
-    this.modalDevelopmentMethods = null;
-    this.modalReference.close();
-    await this.modalReference.result;
-    this.modalDevelopmentMethod = developmentMethod;
-    this.modalDecision = new Decision(undefined, {
-      method: this.modalDevelopmentMethod,
-      stakeholders: {},
-      inputArtifacts: {},
-      outputArtifacts: {},
-      tools: {},
-      stepDecisions: this.modalDevelopmentMethod.executionSteps.map(() => null),
-    });
+  }
+
+  editToDoMethod(executionId: string): void {
+    this.modalToDoMethod = this.runningProcess?.getTodoMethod(executionId);
     this.modalReference = this.modalService.open(
       this.methodConfigurationModal,
       { size: 'lg' }
     );
   }
 
-  updateDecision(updates: any): void {
-    this.modalDecision.update(updates);
+  async updateDecision(updates: MethodDecisionUpdate): Promise<void> {
+    if (this.runningProcess != null && this.modalToDoMethod != null) {
+      await this.runningProcessService.updateMethodDecision(
+        this.runningProcess._id,
+        this.modalToDoMethod.executionId,
+        updates
+      );
+    }
   }
 
   async executeStep(nodeId: string): Promise<void> {
-    const selectedFlow = this.runningProcessViewer.getSelectedFlow();
-    try {
-      await this.runningProcessService.executeStep(
-        this.runningProcess,
-        nodeId,
-        selectedFlow ? selectedFlow.id : null
-      );
-      const process = await this.runningProcessService.get(
-        this.runningProcess._id
-      );
-      await this.runningProcessService.jumpSteps(process);
-    } catch (error) {
-      if (error.message === ExecutionErrors.MULTIPLE_OPTIONS) {
-        this.focus(nodeId);
-        this.modalReference = this.modalService.open(
-          this.multipleOptionsInfoModal,
-          { size: 'lg' }
+    if (this.runningProcess != null && this.runningProcess.hasProcess()) {
+      const selectedFlow = this.runningProcessViewer.getSelectedFlow();
+      try {
+        await this.runningProcessService.executeStep(
+          this.runningProcess,
+          nodeId,
+          selectedFlow ? selectedFlow.id : undefined
         );
-      } else {
-        console.log(error);
+        const process = (await this.runningProcessService.get(
+          this.runningProcess._id
+        )) as FullRunningProcess;
+        await this.runningProcessService.jumpSteps(process);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (error.message === ExecutionErrors.MULTIPLE_OPTIONS) {
+          this.focus(nodeId);
+          this.modalReference = this.modalService.open(
+            this.multipleOptionsInfoModal,
+            { size: 'lg' }
+          );
+        } else {
+          console.log(error);
+        }
       }
     }
   }
 
-  async addMethod(): Promise<void> {
-    this.modalReference.close();
-    await this.runningProcessService.addMethod(
-      this.runningProcess,
-      this.modalDecision
-    );
-  }
-
   async removeMethod(executionId: string): Promise<void> {
-    await this.runningProcessService.removeMethod(
-      this.runningProcess,
-      executionId
-    );
+    if (this.runningProcess != null) {
+      await this.runningProcessService.removeMethod(
+        this.runningProcess,
+        executionId
+      );
+    }
   }
 
-  sortByDistance<
-    T extends {
-      _id: string;
-      situationalFactors: { list: string; element?: SituationalFactorEntry }[];
-    }[]
-  >(elements: T): T {
-    const distanceMap: { [id: string]: number } = {};
-    elements.forEach(
-      (element) =>
-        (distanceMap[element._id] = this.bmProcessService.distanceToContext(
-          this.runningProcess.process,
-          element.situationalFactors.map((factor) => factor.element)
-        ))
-    );
-    return elements.sort(
-      (elementA, elementB) =>
-        distanceMap[elementA._id] - distanceMap[elementB._id]
-    );
+  async viewExecution(executionId: string): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.router.navigate([
+        'runningprocess',
+        'runningprocessview',
+        this.runningProcess._id,
+        'method',
+        executionId,
+      ]);
+    }
   }
 
-  async viewExecution(executionId): Promise<void> {
-    await this.router.navigate([
-      'runningprocess',
-      'runningprocessview',
-      this.runningProcess._id,
-      'method',
-      executionId,
-    ]);
+  viewArtifacts(executionId: string): void {
+    this.modalRunningMethodInfo =
+      this.runningProcess?.getExecutedMethod(executionId);
+    this.modalRunningMethodInfoArtifacts =
+      this.runningProcess?.getArtifactsOfExecutedMethod(executionId);
+    this.modalReference = this.modalService.open(this.methodArtifactsModal, {
+      size: 'lg',
+    });
   }
 
   focus(id: string): void {
@@ -230,89 +256,187 @@ export class RunningProcessComponent implements OnInit {
   }
 
   async startNodeExecution(nodeId: string): Promise<void> {
-    await this.runningProcessService.startMethodExecution(
-      this.runningProcess._id,
-      nodeId
-    );
+    if (this.runningProcess != null) {
+      await this.runningProcessService.startMethodExecution(
+        this.runningProcess._id,
+        nodeId
+      );
+    }
   }
 
   async startExecution(executionId: string): Promise<void> {
-    await this.runningProcessService.startTodoMethodExecution(
-      this.runningProcess._id,
-      executionId
-    );
+    if (this.runningProcess != null) {
+      const toDoMethod = this.runningProcess.getTodoMethod(executionId);
+      if (toDoMethod != null) {
+        if (
+          !toDoMethod.decision.isComplete() ||
+          !this.bmProcessService.checkDecisionStepArtifacts(toDoMethod.decision)
+        ) {
+          this.modalToDoMethod = toDoMethod;
+          this.modalReference = this.modalService.open(
+            this.notCompletelyDefinedModal,
+            {
+              size: 'lg',
+            }
+          );
+          return;
+        }
+        await this.runningProcessService.startTodoMethodExecution(
+          this.runningProcess._id,
+          executionId
+        );
+      }
+    }
   }
 
   openCommentsModal(executionId: string): void {
-    this.modalRunningMethodInfo = this.runningProcess.getMethod(executionId);
-    this.modalReference = this.modalService.open(this.commentsModal, {
-      size: 'lg',
-    });
-  }
-
-  openArtifactExportModal(artifact: RunningArtifact): void {
-    this.modalArtifact = artifact;
-    this.modalReference = this.modalService.open(this.artifactExportModal, {
-      size: 'lg',
-    });
+    if (this.runningProcess != null) {
+      this.modalRunningMethodInfo = this.runningProcess.getMethod(executionId);
+      this.modalReference = this.modalService.open(this.commentsModal, {
+        size: 'lg',
+      });
+    }
   }
 
   async exportArtifact(
     identifier: string,
     artifact: RunningArtifact
   ): Promise<void> {
-    artifact = await this.concreteArtifactService.export(
-      identifier,
-      artifact,
-      this.runningProcess.name
-    );
-    await this.router.navigate([
-      '/',
-      'concreteArtifacts',
-      'detail',
-      artifact._id,
-    ]);
-  }
-
-  openArtifactImportModal(): void {
-    this.modalReference = this.modalService.open(this.artifactImportModal, {
-      size: 'lg',
-    });
+    if (this.runningProcess != null) {
+      artifact = await this.concreteArtifactService.export(
+        identifier,
+        artifact,
+        this.runningProcess.name
+      );
+      await this.router.navigate([
+        '/',
+        'concreteArtifacts',
+        'detail',
+        artifact._id,
+      ]);
+    }
   }
 
   async importArtifact(artifactId: string): Promise<void> {
-    const artifact = await this.concreteArtifactService.get(artifactId);
-    const copiedArtifact = await this.concreteArtifactService.copy(artifact);
-    await this.runningProcessService.importArtifact(
-      this.runningProcess._id,
-      copiedArtifact
-    );
-  }
-
-  openRenameArtifactModal(artifact: RunningArtifact): void {
-    this.modalArtifact = artifact;
-    this.modalReference = this.modalService.open(this.artifactRenameModal, {
-      size: 'lg',
-    });
+    if (this.runningProcess != null) {
+      const artifact = await this.concreteArtifactService.get(artifactId);
+      const copiedArtifact = await this.concreteArtifactService.copy(artifact);
+      await this.runningProcessService.importArtifact(
+        this.runningProcess._id,
+        copiedArtifact
+      );
+    }
   }
 
   async renameArtifact(
     identifier: string,
     artifact: RunningArtifact
   ): Promise<void> {
-    await this.runningProcessService.renameArtifact(
-      this.runningProcess,
-      artifact,
-      identifier
-    );
+    if (this.runningProcess != null) {
+      await this.runningProcessService.renameArtifact(
+        this.runningProcess,
+        artifact,
+        identifier
+      );
+    }
   }
 
-  getArtifactDataTypeString(): ArtifactDataType {
-    return ArtifactDataType.STRING;
+  async removeArtifact(artifact: RunningArtifact): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.runningProcessService.removeArtifact(
+        this.runningProcess._id,
+        artifact._id
+      );
+    }
   }
 
-  getArtifactDataTypeReference(): ArtifactDataType {
-    return ArtifactDataType.REFERENCE;
+  async addArtifact(
+    artifact: Artifact,
+    output: OutputArtifactMapping
+  ): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.runningProcessService.addArtifact(
+        this.runningProcess._id,
+        artifact,
+        output
+      );
+    }
+  }
+
+  createArtifact(artifact: Artifact): void {
+    if (this.runningProcess != null) {
+      this.runningProcessService.createInternalArtifact(
+        this.runningProcess._id,
+        artifact
+      );
+    }
+  }
+
+  async openRequestContextChangeModal(): Promise<void> {
+    if (this.runningProcess != null) {
+      const modalReference = this.modalService.open(
+        RunningProcessContextChangeModalComponent,
+        {
+          size: 'lg',
+        }
+      );
+      this.modalReference = modalReference;
+      const modal: RunningProcessContextChangeModal =
+        modalReference.componentInstance;
+      modal.domains = this.runningProcess.domains;
+      modal.situationalFactors = this.runningProcess.situationalFactors;
+      modal.requestContextChange.subscribe((request) => {
+        void this.requestContextChange(
+          request.comment,
+          request.domains,
+          request.situationalFactors
+        );
+        modalReference.close();
+      });
+    }
+  }
+
+  /**
+   * Requests a context change from the method engineer
+   *
+   * @param comment
+   * @param domains
+   * @param situationalFactors
+   */
+  async requestContextChange(
+    comment: string,
+    domains: Domain[],
+    situationalFactors: Selection<SituationalFactor>[]
+  ): Promise<void> {
+    if (this.runningProcess != null && this.runningProcess.hasProcess()) {
+      await this.runningProcessService.setContextChange(
+        this.runningProcess._id,
+        comment,
+        domains,
+        situationalFactors
+      );
+      await this.router.navigate(['/', 'runningprocess']);
+    }
+  }
+
+  async updateDomains(domains: Domain[]): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.runningProcessService.updateDomains(
+        this.runningProcess._id,
+        domains
+      );
+    }
+  }
+
+  async updateSituationalFactors(
+    situationalFactors: SelectionInit<SituationalFactorInit>[]
+  ): Promise<void> {
+    if (this.runningProcess != null) {
+      await this.runningProcessService.updateSituationalFactors(
+        this.runningProcess._id,
+        situationalFactors
+      );
+    }
   }
 
   private async afterReload(runningProcess: RunningProcess): Promise<void> {
@@ -320,9 +444,14 @@ export class RunningProcessComponent implements OnInit {
       await this.runningProcessService.getExecutableDecisionNodes(
         runningProcess
       );
+    if (this.modalToDoMethod != null) {
+      this.modalToDoMethod = runningProcess.getTodoMethod(
+        this.modalToDoMethod.executionId
+      );
+    }
   }
 
-  get runningProcess(): RunningProcess {
+  get runningProcess(): RunningProcess | undefined {
     return this.runningProcessLoaderService.runningProcess;
   }
 }

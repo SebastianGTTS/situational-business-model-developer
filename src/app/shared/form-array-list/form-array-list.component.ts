@@ -14,11 +14,11 @@ import {
   styleUrls: ['./form-array-list.component.css'],
 })
 export class FormArrayListComponent {
-  @Input() elementName: string;
-  @Input() formArray: FormArray;
-  @Input() validators: ((control: AbstractControl) => ValidationErrors)[] = [
-    Validators.required,
-  ];
+  @Input() elementName!: string;
+  @Input() formArray!: FormArray;
+  @Input() validators: ((
+    control: AbstractControl
+  ) => ValidationErrors | null)[] = [Validators.required];
 
   @Input() ordered = false;
 

@@ -35,7 +35,7 @@ export class ProcessPatternFormComponent
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 

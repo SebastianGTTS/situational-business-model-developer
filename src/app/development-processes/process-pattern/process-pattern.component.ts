@@ -1,8 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProcessPatternService } from '../../development-process-registry/process-pattern/process-pattern.service';
 import { DiagramComponentInterface } from '../shared/diagram-component-interface';
 import { ProcessPatternDiagramComponent } from '../process-pattern-diagram/process-pattern-diagram.component';
 import { ProcessPatternLoaderService } from '../shared/process-pattern-loader.service';
+import { ProcessPattern } from '../../development-process-registry/process-pattern/process-pattern';
 
 @Component({
   selector: 'app-process-pattern',
@@ -10,23 +11,49 @@ import { ProcessPatternLoaderService } from '../shared/process-pattern-loader.se
   styleUrls: ['./process-pattern.component.css'],
   providers: [ProcessPatternLoaderService],
 })
-export class ProcessPatternComponent implements DiagramComponentInterface {
+export class ProcessPatternComponent
+  implements OnInit, DiagramComponentInterface
+{
+  correctlyDefined = true;
+  typesCorrectlyDefined = true;
+
   @ViewChild(ProcessPatternDiagramComponent)
-  diagramComponent: ProcessPatternDiagramComponent;
+  diagramComponent!: ProcessPatternDiagramComponent;
 
   constructor(
     private processPatternLoaderService: ProcessPatternLoaderService,
     private processPatternService: ProcessPatternService
   ) {}
 
-  async save(pattern: string) {
-    await this.processPatternService.update(this.processPattern._id, {
-      pattern,
+  ngOnInit(): void {
+    this.processPatternLoaderService.loaded.subscribe(async () => {
+      if (this.processPattern != null) {
+        this.correctlyDefined =
+          await this.processPatternService.isCorrectlyDefined(
+            this.processPattern
+          );
+        this.typesCorrectlyDefined = this.processPattern.types.length > 0;
+      } else {
+        this.correctlyDefined = true;
+        this.typesCorrectlyDefined = true;
+      }
     });
   }
 
-  async updateProcessPatternValue(value: any) {
-    await this.processPatternService.update(this.processPattern._id, value);
+  async save(pattern: string): Promise<void> {
+    if (this.processPattern != null) {
+      await this.processPatternService.update(this.processPattern._id, {
+        pattern,
+      });
+    }
+  }
+
+  async updateProcessPatternValue(
+    value: Partial<ProcessPattern>
+  ): Promise<void> {
+    if (this.processPattern != null) {
+      await this.processPatternService.update(this.processPattern._id, value);
+    }
   }
 
   diagramChanged(): Promise<boolean> {
@@ -37,7 +64,7 @@ export class ProcessPatternComponent implements DiagramComponentInterface {
     return this.diagramComponent.saveDiagram();
   }
 
-  get processPattern() {
+  get processPattern(): ProcessPattern | undefined {
     return this.processPatternLoaderService.processPattern;
   }
 }

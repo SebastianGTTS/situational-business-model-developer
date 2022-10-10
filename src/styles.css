@@ -214,3 +214,7 @@ td.canvas-table-cell {
 .ql-container {
   height: auto;
 }
+
+.quill-lg-box > .ql-editor {
+  min-height: 250px;
+}

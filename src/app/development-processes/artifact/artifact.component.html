@@ -1,6 +1,9 @@
 <div class="nav-scroller bg-white shadow-sm">
-  <nav class="nav nav-underline" *ngIf="artifact">
-    <a class="nav-link active" [routerLink]="[]">{{ artifact.name }}</a>
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'artifacts']">Artifacts</a>
+    <a class="nav-link active" *ngIf="artifact" [routerLink]="[]">{{
+      artifact.name
+    }}</a>
   </nav>
 </div>
 

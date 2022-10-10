@@ -1,5 +1,6 @@
 <ng-template #deleteStakeholderModal let-d="dismiss" let-c="close">
   <app-delete-modal
+    *ngIf="modalStakeholder != null"
     (dismiss)="d()"
     (delete)="delete(modalStakeholder._id); c()"
   >

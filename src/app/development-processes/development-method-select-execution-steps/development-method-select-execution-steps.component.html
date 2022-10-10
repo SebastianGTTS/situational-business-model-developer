@@ -1,11 +1,51 @@
 <form [formGroup]="executionStepsSelectionForm" (ngSubmit)="submitForm()">
-  <ul *ngIf="formArray.controls.length > 0" class="list-group mb-3">
+  <ul
+    *ngIf="formArray.controls.length > 0"
+    formArrayName="steps"
+    class="list-group mb-3"
+  >
     <li
       *ngFor="let control of formArray.controls; let index = index"
+      [formGroupName]="index"
       class="list-group-item"
     >
-      <h5>Step #{{ index + 1 }}</h5>
+      <div class="d-flex align-items-baseline">
+        <h5>Step #{{ index + 1 }}</h5>
+        <div
+          class="ml-auto btn-group btn-group-toggle"
+          role="group"
+          ngbRadioGroup
+          name="textualOrMethod"
+          formControlName="isMethod"
+        >
+          <label ngbButtonLabel class="btn-primary">
+            <input
+              ngbButton
+              type="radio"
+              [value]="false"
+              (click)="changeStep(index, false)"
+            />
+            Text
+          </label>
+          <label ngbButtonLabel class="btn-primary">
+            <input
+              ngbButton
+              type="radio"
+              [value]="true"
+              (click)="changeStep(index, true)"
+            />
+            Method
+          </label>
+        </div>
+      </div>
+      <app-development-method-empty-execution-step
+        *ngIf="!control.get('isMethod')?.value"
+        [formGroup]="$any(control)"
+        [stepNumber]="index"
+        (remove)="removeStep(index)"
+      ></app-development-method-empty-execution-step>
       <app-development-method-select-execution-step
+        *ngIf="control.get('isMethod')?.value"
         [executionStepsFormValue]="formArray.value"
         [formGroup]="$any(control)"
         [developmentMethod]="developmentMethod"

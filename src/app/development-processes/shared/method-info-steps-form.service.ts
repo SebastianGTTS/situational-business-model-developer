@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { ExecutionStep } from '../../development-process-registry/development-method/execution-step';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
+import { StepDecision } from '../../development-process-registry/module-api/module-method';
+import {
+  ExecutionStep,
+  isMethodExecutionStep,
+} from '../../development-process-registry/development-method/execution-step';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +13,10 @@ import { ModuleService } from '../../development-process-registry/module-api/mod
 export class MethodInfoStepsFormService {
   constructor(private fb: FormBuilder, private moduleService: ModuleService) {}
 
-  createForm(executionSteps: ExecutionStep[], stepDecisions: any[]): FormArray {
+  createForm(
+    executionSteps: ExecutionStep[],
+    stepDecisions: (StepDecision | undefined)[]
+  ): FormArray {
     return this.fb.array(
       stepDecisions.map((step, index) =>
         this.createStepDecisionForm(executionSteps[index], step)
@@ -19,8 +26,11 @@ export class MethodInfoStepsFormService {
 
   createStepDecisionForm(
     executionStep: ExecutionStep,
-    stepDecision: any
-  ): FormGroup {
+    stepDecision: StepDecision | undefined
+  ): FormGroup | undefined {
+    if (!isMethodExecutionStep(executionStep)) {
+      return undefined;
+    }
     const method = this.moduleService.getModuleMethod(
       executionStep.module,
       executionStep.method
@@ -31,7 +41,7 @@ export class MethodInfoStepsFormService {
     return undefined;
   }
 
-  getStepDecisions(form: any[]): any[] {
+  getStepDecisions(form: StepDecision[]): StepDecision[] {
     return form;
   }
 }

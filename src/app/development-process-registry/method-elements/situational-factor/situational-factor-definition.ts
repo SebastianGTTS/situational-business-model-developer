@@ -29,6 +29,9 @@ export class SituationalFactorDefinition
   ) {
     super(entry, init, SituationalFactorDefinition.typeName);
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.values = element.values ?? this.values;
     this.ordered = element.ordered ?? this.ordered;
   }

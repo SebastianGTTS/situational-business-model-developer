@@ -23,7 +23,7 @@ export class SituationalFactorComponent implements OnInit, OnDestroy {
     ordered: [false, Validators.required],
   });
 
-  private orderedSubscription: Subscription;
+  private orderedSubscription?: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +36,10 @@ export class SituationalFactorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.situationalFactorLoaderService.loaded.subscribe(() => {
-      this.orderedForm.patchValue(this.situationalFactor, { emitEvent: false });
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.orderedForm.patchValue(this.situationalFactor!, {
+        emitEvent: false,
+      });
     });
     this.orderedSubscription = this.orderedForm.valueChanges.subscribe(
       (formValue) => this.updateSituationalFactorValue(formValue)
@@ -44,7 +47,7 @@ export class SituationalFactorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.orderedSubscription) {
+    if (this.orderedSubscription != null) {
       this.orderedSubscription.unsubscribe();
     }
   }
@@ -53,14 +56,18 @@ export class SituationalFactorComponent implements OnInit, OnDestroy {
     await this.updateSituationalFactorValue(form.value);
   }
 
-  async updateSituationalFactorValue(value: any): Promise<void> {
-    await this.situationalFactorService.update(
-      this.situationalFactor._id,
-      value
-    );
+  async updateSituationalFactorValue(
+    value: SituationalFactorDefinitionInit
+  ): Promise<void> {
+    if (this.situationalFactor != null) {
+      await this.situationalFactorService.update(
+        this.situationalFactor._id,
+        value
+      );
+    }
   }
 
-  get situationalFactor(): SituationalFactorDefinition {
+  get situationalFactor(): SituationalFactorDefinition | undefined {
     return this.situationalFactorLoaderService.methodElement;
   }
 

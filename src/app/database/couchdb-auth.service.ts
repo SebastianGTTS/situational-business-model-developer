@@ -52,6 +52,7 @@ export class CouchdbAuthService implements AuthService {
         },
       })
       .pipe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tap((response: any) =>
           this.initUser(response.userCtx.name, response.userCtx.roles)
         ),
@@ -74,6 +75,7 @@ export class CouchdbAuthService implements AuthService {
         password,
       })
       .pipe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tap((response: any) => this.initUser(response.name, response.roles)),
         this.checkAndLogin(),
         tap(() => this.redirect()),
@@ -116,6 +118,7 @@ export class CouchdbAuthService implements AuthService {
         },
       })
       .pipe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         switchMap((user: any) => {
           const newUser = {
             _id: user._id,
@@ -199,6 +202,7 @@ export class CouchdbAuthService implements AuthService {
       }),
       tap(() => {
         this.pouchdbService.init(
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           this.group!,
           () => this.sessionExpired(),
           () => this.dbError()
@@ -247,6 +251,7 @@ export class CouchdbAuthService implements AuthService {
     this.loggedIn = false;
   }
 
+  // noinspection JSMethodCanBeStatic
   /**
    * Get the group of this user from the roles array
    *
@@ -263,6 +268,7 @@ export class CouchdbAuthService implements AuthService {
    * @return whether the database is available
    */
   private checkDatabaseAvailable(): Observable<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.http.head(this.databaseUrl!).pipe(
       mapTo(true),
       catchError((error: HttpErrorResponse) => {

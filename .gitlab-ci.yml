@@ -1,4 +1,4 @@
-image: node:14
+image: node:16
 
 stages:
   - build
@@ -62,7 +62,9 @@ unittest:
       - 'coverage/'
       - 'junit.xml'
     reports:
-      cobertura: 'coverage/cobertura-coverage.xml'
+      coverage_report:
+        coverage_format: cobertura
+        path: 'coverage/cobertura-coverage.xml'
       junit: 'junit.xml'
     expire_in: 1 week
   dependencies: []
@@ -82,20 +84,6 @@ unittest:
 #      junit: 'reports/e2e-report.xml'
 #    expire_in: 1 day
 #  dependencies: []
-
-pages:
-  stage: deploy
-  before_script: []
-  script: mv dist/bmdl-modeler/ public/
-  cache: {}
-  artifacts:
-    paths:
-      - public
-  dependencies:
-    - build
-  only:
-    - master
-  when: manual
 
 # See: https://git.cs.uni-paderborn.de/help/ci/docker/using_kaniko.md
 buildcontainer:

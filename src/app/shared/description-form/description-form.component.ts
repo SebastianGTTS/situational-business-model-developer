@@ -11,14 +11,18 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
+import { Updatable, UPDATABLE } from '../updatable';
 
 @Component({
   selector: 'app-description-form',
   templateUrl: './description-form.component.html',
   styleUrls: ['./description-form.component.css'],
+  providers: [{ provide: UPDATABLE, useExisting: DescriptionFormComponent }],
 })
-export class DescriptionFormComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() description: string;
+export class DescriptionFormComponent
+  implements OnInit, OnChanges, OnDestroy, Updatable
+{
+  @Input() description?: string;
 
   @Output() submitDescriptionForm = new EventEmitter<FormGroup>();
 
@@ -27,11 +31,11 @@ export class DescriptionFormComponent implements OnInit, OnChanges, OnDestroy {
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.changeSubscription = this.descriptionForm.valueChanges
       .pipe(
         debounceTime(300),
@@ -40,23 +44,29 @@ export class DescriptionFormComponent implements OnInit, OnChanges, OnDestroy {
       .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.description) {
       this.loadForm(changes.description.currentValue);
     }
   }
 
-  ngOnDestroy() {
-    if (this.changeSubscription) {
+  ngOnDestroy(): void {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
 
-  submitForm() {
+  submitForm(): void {
     this.submitDescriptionForm.emit(this.descriptionForm);
   }
 
-  private loadForm(description: string) {
+  update(): void {
+    if (this.changed && this.descriptionForm.valid) {
+      this.submitForm();
+    }
+  }
+
+  private loadForm(description: string): void {
     if (description) {
       this.descriptionForm.setValue({ description });
     } else {

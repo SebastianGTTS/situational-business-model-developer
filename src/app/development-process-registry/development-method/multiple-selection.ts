@@ -16,7 +16,7 @@ export interface MultipleSelectionInit<T extends DatabaseInit>
   list: string;
   element?: T;
   multiple?: boolean;
-  multipleElements?: boolean;
+  optional?: boolean;
 }
 
 export interface MultipleSelectionEntry<T extends MethodElementEntry>
@@ -24,9 +24,13 @@ export interface MultipleSelectionEntry<T extends MethodElementEntry>
   list: string;
   element?: T;
   multiple: boolean;
-  multipleElements: boolean;
+  optional: boolean;
 }
 
+/**
+ * Represents a selection of a method element, which is later used for the
+ * method (Stakeholder, Tool, Artifact).
+ */
 export class MultipleSelection<T extends MethodElement>
   implements
     MultipleSelectionInit<T>,
@@ -35,8 +39,17 @@ export class MultipleSelection<T extends MethodElement>
 {
   list: string;
   element?: T;
+  /**
+   * If multiple is true, element must be undefined. Later multiple elements
+   * can be selected.
+   */
   multiple = false;
-  multipleElements = false;
+  /**
+   * Specifies whether the element later must be selected or can be undefined.
+   * If true element can be undefined or defined. Whether it is used is decided in the enaction.
+   * If multiple is true, it decides whether the method engineer must select at least one element or not.
+   */
+  optional = false;
 
   constructor(
     entry: MultipleSelectionEntry<EntryType<T>> | undefined,
@@ -44,9 +57,12 @@ export class MultipleSelection<T extends MethodElement>
     databaseConstructor: DatabaseConstructor<T>
   ) {
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.list = element.list;
     this.multiple = element.multiple ?? this.multiple;
-    this.multipleElements = element.multipleElements ?? this.multipleElements;
+    this.optional = element.optional ?? this.optional;
     if (entry != null) {
       this.element =
         entry.element != null
@@ -57,17 +73,21 @@ export class MultipleSelection<T extends MethodElement>
         init.element != null
           ? new databaseConstructor(undefined, init.element)
           : undefined;
-    } else {
-      throw new Error('Either entry or init must be provided.');
     }
   }
 
+  /**
+   * @deprecated
+   *
+   * @param selection
+   * @param createElement
+   */
   update(
     selection: MultipleSelection<T>,
     createElement: (element: Partial<T>) => T
   ): void {
     Object.assign(this, selection);
-    this.element = this.element ? createElement(this.element) : null;
+    this.element = this.element ? createElement(this.element) : undefined;
   }
 
   toDb(): MultipleSelectionEntry<ReturnType<T['toDb']>> {
@@ -75,14 +95,19 @@ export class MultipleSelection<T extends MethodElement>
       list: this.list,
       element: this.element
         ? (this.element.toDb() as ReturnType<T['toDb']>)
-        : null,
+        : undefined,
       multiple: this.multiple,
-      multipleElements: this.multipleElements,
+      optional: this.optional,
     };
   }
 
-  equals(other: MultipleSelection<T>): boolean {
-    if (other == null || this.list !== other.list) {
+  equals(other: MultipleSelection<T> | undefined): boolean {
+    if (
+      other == null ||
+      this.list !== other.list ||
+      this.multiple !== other.multiple ||
+      this.optional !== other.optional
+    ) {
       return false;
     }
     if (this.element == null && other.element == null) {
@@ -91,10 +116,6 @@ export class MultipleSelection<T extends MethodElement>
     if (this.element == null || other.element == null) {
       return false;
     }
-    return (
-      this.element.equals(other.element) &&
-      this.multiple === other.multiple &&
-      this.multipleElements === other.multipleElements
-    );
+    return this.element.equals(other.element);
   }
 }

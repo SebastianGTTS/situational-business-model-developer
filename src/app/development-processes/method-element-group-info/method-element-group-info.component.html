@@ -1,18 +1,32 @@
 <form [formGroup]="form" (ngSubmit)="submitForm()">
-  <ul
-    class="form-group list-group"
-    ngbRadioGroup
-    formControlName="selectedGroup"
-  >
-    <li *ngFor="let group of groups; let index = index" class="list-group-item">
+  <ul class="form-group list-group" ngbRadioGroup formControlName="groupIndex">
+    <li *ngIf="groupDecision.groups.allowNone" class="list-group-item">
+      <ul class="list-group shadow-sm">
+        <li
+          [class.list-group-item-secondary]="selectedGroup != null"
+          [class.list-group-item-primary]="selectedGroup == null"
+          class="list-group-item d-flex align-items-baseline"
+        >
+          <h5 class="mb-0">None</h5>
+          <div class="ml-auto btn-group btn-group-toggle">
+            <label ngbButtonLabel class="btn-primary">
+              <input ngbButton type="radio" [value]="null" /> Select
+            </label>
+          </div>
+        </li>
+      </ul>
+    </li>
+    <li
+      *ngFor="let group of groupDecision.groups.groups; let index = index"
+      class="list-group-item"
+    >
       <ul class="list-group shadow-sm">
         <li
           [class.list-group-item-secondary]="selectedGroup !== index"
           [class.list-group-item-primary]="selectedGroup === index"
           class="list-group-item d-flex align-items-baseline"
         >
-          <h5 class="mb-0" *ngIf="group.length > 0">Group</h5>
-          <h5 class="mb-0" *ngIf="group.length === 0">None</h5>
+          <h5 class="mb-0">Group</h5>
           <div class="ml-auto btn-group btn-group-toggle">
             <label ngbButtonLabel class="btn-primary">
               <input ngbButton type="radio" [value]="index" /> Select
@@ -20,7 +34,7 @@
           </div>
         </li>
         <ng-container *ngIf="selectedGroup !== index">
-          <li *ngFor="let element of group" class="list-group-item">
+          <li *ngFor="let element of group.items" class="list-group-item">
             <app-method-element-info
               [element]="element"
               [methodElementName]="methodElementName"
@@ -29,12 +43,12 @@
         </ng-container>
         <ng-container *ngIf="selectedGroup === index">
           <li
-            *ngFor="let element of group; let elementIndex = index"
+            *ngFor="let element of group.items; let elementIndex = index"
             class="list-group-item"
-            formArrayName="elements"
+            formArrayName="elementDecisions"
           >
             <app-method-element-info
-              [formArrayName]="elementIndex.toString()"
+              [formGroupName]="elementIndex.toString()"
               [element]="element"
               [methodElements]="methodElements"
               [methodElementName]="methodElementName"
@@ -44,7 +58,10 @@
       </ul>
     </li>
   </ul>
-  <div *ngIf="groups.length > 0" class="form-group row mt-3">
+  <div
+    *ngIf="groupDecision.groups.groups.length > 0"
+    class="form-group row mt-3"
+  >
     <div class="col-sm-12">
       <button
         type="submit"

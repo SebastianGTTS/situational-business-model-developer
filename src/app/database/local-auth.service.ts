@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 export class LocalAuthService implements AuthService {
   constructor(private pouchdbService: PouchdbService) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   set redirectTo(redirectTo: string) {}
 
   get username(): undefined {
@@ -31,7 +32,7 @@ export class LocalAuthService implements AuthService {
     return true;
   }
 
-  login(username: string, password: string): Observable<void> {
+  login(): Observable<void> {
     return of();
   }
 
@@ -39,7 +40,7 @@ export class LocalAuthService implements AuthService {
     return of();
   }
 
-  changePassword(newPassword: string): Observable<void> {
+  changePassword(): Observable<void> {
     throw new Error('Not implemented');
   }
 }

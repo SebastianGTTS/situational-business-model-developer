@@ -22,11 +22,13 @@ export class TypeComponent {
     private typeService: TypeService
   ) {}
 
-  async updateValue(value: any): Promise<void> {
-    await this.typeService.update(this.type._id, value);
+  async updateValue(value: TypeInit): Promise<void> {
+    if (this.type != null) {
+      await this.typeService.update(this.type._id, value);
+    }
   }
 
-  get type(): Type {
+  get type(): Type | undefined {
     return this.typeLoaderService.methodElement;
   }
 

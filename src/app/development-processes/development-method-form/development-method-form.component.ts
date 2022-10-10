@@ -17,14 +17,18 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
+import { UPDATABLE, Updatable } from '../../shared/updatable';
 
 @Component({
   selector: 'app-development-method-form',
   templateUrl: './development-method-form.component.html',
   styleUrls: ['./development-method-form.component.css'],
+  providers: [
+    { provide: UPDATABLE, useExisting: DevelopmentMethodFormComponent },
+  ],
 })
 export class DevelopmentMethodFormComponent
-  implements OnInit, OnChanges, OnDestroy
+  implements OnInit, OnChanges, OnDestroy, Updatable
 {
   @Input() developmentMethod!: DevelopmentMethod;
 
@@ -35,7 +39,7 @@ export class DevelopmentMethodFormComponent
   });
   changed = false;
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder) {}
 
@@ -71,6 +75,12 @@ export class DevelopmentMethodFormComponent
 
   submitForm(): void {
     this.submitDevelopmentMethodForm.emit(this.form);
+  }
+
+  update(): void {
+    if (this.changed && this.form.valid) {
+      this.submitForm();
+    }
   }
 
   get nameControl(): FormControl {

@@ -32,12 +32,15 @@ export abstract class MethodElement
   ) {
     super(entry, init, type);
     const element = entry ?? init;
+    if (element == null) {
+      throw new Error('Either entry or init must be provided.');
+    }
     this.list = element.list;
     this.name = element.name;
     this.description = element.description;
   }
 
-  abstract update(element: MethodElementInit);
+  abstract update(element: MethodElementInit): void;
 
   toDb(): MethodElementEntry {
     return {

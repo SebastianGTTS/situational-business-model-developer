@@ -9,7 +9,7 @@
         runningProcess._id
       ]"
     >
-      {{ runningProcess.process.name }} &ndash; {{ runningProcess.name }}
+      {{ runningProcess | runningProcessName }}
     </a>
     <a *ngIf="runningMethod" class="nav-link active" [routerLink]="[]">
       {{ runningMethod.methodName }}
@@ -28,7 +28,7 @@
   </div>
 </main>
 
-<main *ngIf="runningMethod === null" role="main">
+<main *ngIf="runningProcess != null && runningMethod == null" role="main">
   <div class="alert alert-info container my-3">
     <p>This development step does not exist or is not executed.</p>
     <p class="mb-0">
@@ -132,42 +132,15 @@
         "
       ></app-development-method-summary>
     </div>
-    <div
+    <app-running-process-method-execution-steps
       *ngIf="getStateExecution() <= getState() && runningMethod.hasSteps()"
-      class="my-3 p-3 bg-white rounded shadow-sm"
-    >
-      <h6 class="border-bottom border-gray pb-2">Execution Steps</h6>
-      <ol>
-        <li
-          *ngFor="
-            let step of runningMethod.decision.method.executionSteps;
-            let index = index
-          "
-          [class.text-success]="index < runningMethod.currentStepNumber"
-          [class.text-warning]="index === runningMethod.currentStepNumber"
-        >
-          {{ step.module }} &ndash; {{ step.method }}
-          <span *ngIf="index < runningMethod.currentStepNumber" class="sr-only">
-            (step already executed)</span
-          >
-          <span
-            *ngIf="index === runningMethod.currentStepNumber"
-            class="sr-only"
-          >
-            (step to execute)</span
-          >
-        </li>
-      </ol>
-      <button
-        *ngIf="runningMethod.hasStepsLeft()"
-        class="btn btn-block btn-primary"
-        (click)="executeMethodStep()"
-      >
-        Execute next step
-      </button>
-    </div>
+      [executionSteps]="runningMethod.decision.method.executionSteps"
+      [currentStepNumber]="runningMethod.currentStepNumber"
+      [hasStepsLeft]="runningMethod.hasStepsLeft()"
+      (executeStep)="executeMethodStep()"
+    ></app-running-process-method-execution-steps>
     <div
-      *ngIf="getStateOutputSelection() === getState()"
+      *ngIf="getStateExecution() <= getState()"
       class="my-3 p-3 bg-white rounded shadow-sm"
     >
       <h6 class="border-bottom border-gray pb-2">Output Mapping</h6>

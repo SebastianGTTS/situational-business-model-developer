@@ -2,161 +2,58 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
-  OnDestroy,
   OnInit,
   Output,
-  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   Artifact,
   ArtifactEntry,
 } from '../../development-process-registry/method-elements/artifact/artifact';
 import { ArtifactService } from '../../development-process-registry/method-elements/artifact/artifact.service';
-import { MultipleSelection } from '../../development-process-registry/development-method/multiple-selection';
-import { DevelopmentMethod } from '../../development-process-registry/development-method/development-method';
-import { MultipleMappingSelection } from '../../development-process-registry/development-method/multiple-mapping-selection';
 import { ArtifactMappingFormService } from '../shared/artifact-mapping-form.service';
-import { Subscription } from 'rxjs';
-import { debounceTime, tap } from 'rxjs/operators';
-import { equalsListOfLists } from '../../shared/utils';
+import { Groups } from '../../development-process-registry/development-method/groups';
+import {
+  ELEMENT_CONSTRUCTOR,
+  GroupsFormService,
+} from '../shared/groups-form.service';
+import { Updatable, UPDATABLE } from '../../shared/updatable';
+import { GroupsFormComponent } from '../groups-form/groups-form.component';
 
 @Component({
   selector: 'app-artifacts-selection-form',
   templateUrl: './artifacts-selection-form.component.html',
   styleUrls: ['./artifacts-selection-form.component.css'],
+  providers: [
+    GroupsFormService,
+    { provide: ELEMENT_CONSTRUCTOR, useValue: Artifact },
+    {
+      provide: UPDATABLE,
+      useExisting: ArtifactsSelectionFormComponent,
+    },
+  ],
 })
-export class ArtifactsSelectionFormComponent
-  implements OnInit, OnChanges, OnDestroy
-{
-  @Input() artifacts: MultipleSelection<Artifact>[][];
-  @Input() developmentMethod: DevelopmentMethod = null;
+export class ArtifactsSelectionFormComponent implements OnInit, Updatable {
+  @Input() artifacts!: Groups<Artifact>;
 
-  @Output() submitArtifactsForm = new EventEmitter<FormArray>();
-
-  artifactsForm: FormGroup = this.fb.group({
-    allowNone: this.fb.control(false),
-    artifacts: this.fb.array([]),
-  });
-  changed = false;
+  @Output() submitArtifactsForm = new EventEmitter<Groups<Artifact>>();
 
   methodElements: ArtifactEntry[] = [];
   listNames: string[] = [];
 
-  private allowNoneSubscription: Subscription;
-  private changeSubscription: Subscription;
+  @ViewChild(GroupsFormComponent) groupsFormComponent!: Updatable;
 
   constructor(
-    private fb: FormBuilder,
     private artifactMappingFormService: ArtifactMappingFormService,
     private artifactService: ArtifactService
   ) {}
 
   ngOnInit(): void {
     void this.loadMethodElements();
-
-    this.allowNoneSubscription = this.artifactsForm
-      .get('allowNone')
-      .valueChanges.subscribe((value) => {
-        if (value) {
-          if (this.formArray.controls.length > 0) {
-            if ((this.formArray.at(0) as FormArray).controls.length > 0) {
-              this.formArray.insert(0, this.fb.array([]));
-            }
-          }
-        } else {
-          if (this.formArray.controls.length > 0) {
-            if ((this.formArray.at(0) as FormArray).controls.length === 0) {
-              this.formArray.removeAt(0);
-            }
-          }
-        }
-      });
-    this.changeSubscription = this.artifactsForm.valueChanges
-      .pipe(
-        debounceTime(300),
-        tap(
-          (value) =>
-            (this.changed = !equalsListOfLists(this.artifacts, value.artifacts))
-        )
-      )
-      .subscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.artifacts) {
-      const oldArtifactGroups: MultipleSelection<Artifact>[][] =
-        changes.artifacts.previousValue;
-      const newArtifactGroups: MultipleSelection<Artifact>[][] =
-        changes.artifacts.currentValue;
-      if (!equalsListOfLists(oldArtifactGroups, newArtifactGroups)) {
-        this.loadForm(newArtifactGroups);
-      }
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.allowNoneSubscription) {
-      this.allowNoneSubscription.unsubscribe();
-    }
-    if (this.changeSubscription) {
-      this.changeSubscription.unsubscribe();
-    }
-  }
-
-  add(): void {
-    this.formArray.push(this.fb.array([]));
-  }
-
-  remove(index: number): void {
-    this.formArray.removeAt(index);
-  }
-
-  submitForm(): void {
-    this.submitArtifactsForm.emit(
-      this.artifactsForm.get('artifacts') as FormArray
-    );
-  }
-
-  private loadForm(artifacts: MultipleSelection<Artifact>[][]): void {
-    const formArrays = artifacts.map((group) =>
-      this.fb.array(
-        group.map((element) => {
-          if (element instanceof MultipleMappingSelection) {
-            return this.fb.group({
-              list: [element.list, Validators.required],
-              element: { value: element.element, disabled: element.multiple },
-              multiple: element.multiple,
-              multipleElements: {
-                value: element.multipleElements,
-                disabled: element.multiple,
-              },
-              mapping: this.artifactMappingFormService.createMappingsForm(
-                element.mapping
-              ),
-            });
-          } else {
-            return this.fb.group({
-              list: [element.list, Validators.required],
-              element: { value: element.element, disabled: element.multiple },
-              multiple: element.multiple,
-              multipleElements: {
-                value: element.multipleElements,
-                disabled: element.multiple,
-              },
-              mapping: this.fb.array([]),
-            });
-          }
-        })
-      )
-    );
-    this.artifactsForm.setControl('artifacts', this.fb.array(formArrays));
-    if (artifacts.length > 0) {
-      this.artifactsForm.get('allowNone').setValue(artifacts[0].length === 0);
-    } else {
-      this.artifactsForm.get('allowNone').setValue(false);
-    }
+  update(): void {
+    this.groupsFormComponent.update();
   }
 
   private async loadMethodElements(): Promise<void> {
@@ -165,17 +62,4 @@ export class ArtifactsSelectionFormComponent
       ...new Set(this.methodElements.map((element) => element.list)),
     ];
   }
-
-  get formArray(): FormArray {
-    return this.artifactsForm.get('artifacts') as FormArray;
-  }
-
-  createFormGroupFactory = (): FormGroup =>
-    this.fb.group({
-      list: ['', Validators.required],
-      element: null,
-      multiple: false,
-      multipleElements: false,
-      mapping: this.fb.array([]),
-    });
 }

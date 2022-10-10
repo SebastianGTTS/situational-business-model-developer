@@ -1,0 +1,30 @@
+<table class="table table-bordered" style="table-layout: fixed">
+  <tbody>
+    <tr *ngFor="let row of canvasDefinitionCells">
+      <ng-container *ngFor="let cell of row">
+        <td
+          *ngIf="!cell.isSpacer"
+          [colSpan]="cell.colspan"
+          [rowSpan]="cell.rowspan"
+        >
+          <b>{{ cell.name }}</b>
+          <ul *ngIf="cell.guidingQuestions.length > 0">
+            <li *ngFor="let guidingQuestion of cell.guidingQuestions">
+              {{ guidingQuestion }}
+            </li>
+          </ul>
+          <ul *ngIf="cell.examples.length > 0">
+            <li *ngFor="let example of cell.examples">
+              {{ example }}
+            </li>
+          </ul>
+        </td>
+        <td
+          *ngIf="cell.isSpacer"
+          [colSpan]="cell.colspan"
+          [rowSpan]="cell.rowspan"
+        ></td>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>

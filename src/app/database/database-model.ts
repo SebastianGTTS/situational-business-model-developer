@@ -22,6 +22,7 @@ export class DatabaseModel
       this.type = entry.type;
     } else if (init != null) {
       this._id = init._id ?? DatabaseModel.getId();
+      this._rev = init._rev;
       this.type = type;
     } else {
       throw new Error('Either entry or init must be provided.');

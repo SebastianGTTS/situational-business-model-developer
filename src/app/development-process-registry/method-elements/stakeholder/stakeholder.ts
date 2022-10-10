@@ -4,9 +4,9 @@ import {
   MethodElementInit,
 } from '../method-element';
 
-export interface StakeholderInit extends MethodElementInit {}
+export type StakeholderInit = MethodElementInit;
 
-export interface StakeholderEntry extends MethodElementEntry {}
+export type StakeholderEntry = MethodElementEntry;
 
 export class Stakeholder extends MethodElement implements StakeholderInit {
   static readonly typeName = 'Stakeholder';

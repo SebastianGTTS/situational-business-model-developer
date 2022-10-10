@@ -7,8 +7,16 @@
 </ng-template>
 
 <app-search
+  *ngIf="!allowTypeFilter"
   heading="Building Blocks"
   itemName="Method Building Blocks"
   [content]="ref"
   [items]="developmentMethods"
 ></app-search>
+<app-search-filter-type
+  *ngIf="allowTypeFilter"
+  heading="Building Blocks"
+  itemName="Method Building Blocks"
+  [content]="ref"
+  [items]="developmentMethods"
+></app-search-filter-type>

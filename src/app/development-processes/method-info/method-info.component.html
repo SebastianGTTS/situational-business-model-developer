@@ -33,56 +33,97 @@
       </td>
     </tr>
     <tr>
-      <th scope="row">Input Artifacts</th>
+      <th scope="row">
+        Input Artifacts
+        <ng-container *ngIf="!inputArtifactsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger fas fa-exclamation-circle"
+          ></i>
+          <span class="sr-only">(This part is incomplete)</span>
+        </ng-container>
+      </th>
       <td>
         <app-artifacts-group-info
-          [selection]="decision.inputArtifacts"
-          [groups]="developmentMethod.inputArtifacts"
-          (submitGroupsForm)="
-            updateDecisions.emit({ inputArtifacts: $event.value })
-          "
+          [groupDecision]="decision.inputArtifacts"
+          (submitGroupsForm)="updateDecisions.emit({ inputArtifacts: $event })"
         ></app-artifacts-group-info>
       </td>
     </tr>
     <tr>
-      <th scope="row">Output Artifacts</th>
+      <th scope="row">
+        Output Artifacts
+        <ng-container *ngIf="!outputArtifactsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger fas fa-exclamation-circle"
+          ></i>
+          <span class="sr-only">(This part is incomplete)</span>
+        </ng-container>
+      </th>
       <td>
         <app-artifacts-group-info
-          [selection]="decision.outputArtifacts"
-          [groups]="developmentMethod.outputArtifacts"
-          (submitGroupsForm)="
-            updateDecisions.emit({ outputArtifacts: $event.value })
-          "
+          [groupDecision]="decision.outputArtifacts"
+          (submitGroupsForm)="updateDecisions.emit({ outputArtifacts: $event })"
         ></app-artifacts-group-info>
       </td>
     </tr>
     <tr>
-      <th scope="row">Involved Stakeholders</th>
+      <th scope="row">
+        Involved Stakeholders
+        <ng-container *ngIf="!stakeholdersComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger fas fa-exclamation-circle"
+          ></i>
+          <span class="sr-only">(This part is incomplete)</span>
+        </ng-container>
+      </th>
       <td>
         <app-stakeholders-group-info
-          [selection]="decision.stakeholders"
-          [groups]="developmentMethod.stakeholders"
-          (submitGroupsForm)="
-            updateDecisions.emit({ stakeholders: $event.value })
-          "
+          [groupDecision]="decision.stakeholders"
+          (submitGroupsForm)="updateDecisions.emit({ stakeholders: $event })"
         ></app-stakeholders-group-info>
       </td>
     </tr>
     <tr>
-      <th scope="row">Tools</th>
+      <th scope="row">
+        Tools
+        <ng-container *ngIf="!toolsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger fas fa-exclamation-circle"
+          ></i>
+          <span class="sr-only">(This part is incomplete)</span>
+        </ng-container>
+      </th>
       <td>
         <app-tools-group-info
-          [selection]="decision.tools"
-          [groups]="developmentMethod.tools"
-          (submitGroupsForm)="updateDecisions.emit({ tools: $event.value })"
+          [groupDecision]="decision.tools"
+          (submitGroupsForm)="updateDecisions.emit({ tools: $event })"
         ></app-tools-group-info>
       </td>
     </tr>
     <tr>
-      <th scope="row">Steps</th>
+      <th scope="row">
+        Steps
+        <ng-container *ngIf="!stepsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger fas fa-exclamation-circle"
+          ></i>
+          <span class="sr-only">(This part is incomplete)</span>
+        </ng-container>
+      </th>
       <td>
         <app-method-info-steps
           [bmProcess]="bmProcess"
+          [runningProcess]="runningProcess"
           [contextDomains]="contextDomains"
           [steps]="decision.method.executionSteps"
           [stepDecisions]="decision.stepDecisions"

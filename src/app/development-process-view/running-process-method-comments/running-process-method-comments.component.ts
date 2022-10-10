@@ -15,15 +15,15 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./running-process-method-comments.component.css'],
 })
 export class RunningProcessMethodCommentsComponent {
-  @Input() comments: Comment[];
+  @Input() comments!: Comment[];
   @Input() editable = true;
 
   @Output() addComment = new EventEmitter<Comment>();
   @Output() updateComment = new EventEmitter<Comment>();
   @Output() removeComment = new EventEmitter<string>();
 
-  modalComment: Comment;
-  private modalReference: NgbModalRef;
+  modalComment?: Comment;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('editCommentModal', { static: true }) editCommentModal: unknown;
 
@@ -42,8 +42,8 @@ export class RunningProcessMethodCommentsComponent {
   }
 
   _updateComment(formGroup: FormGroup): void {
-    this.modalComment.update(formGroup.value);
+    this.modalComment?.update(formGroup.value);
     this.updateComment.emit(this.modalComment);
-    this.modalReference.close();
+    this.modalReference?.close();
   }
 }

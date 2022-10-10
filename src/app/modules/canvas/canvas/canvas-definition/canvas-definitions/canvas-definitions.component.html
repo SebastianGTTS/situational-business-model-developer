@@ -1,0 +1,98 @@
+<ng-template #deleteCanvasDefinitionModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalCanvas != null"
+    (delete)="deleteCanvasDefinition(modalCanvas._id); c()"
+    (dismiss)="d()"
+  >
+    <div modalTitle>Delete Canvas Model {{ modalCanvas.name }}</div>
+    You are deleting the canvas model {{ modalCanvas.name }}. The deletion can
+    not be undone. The canvas building blocks that are using it will still be
+    available after the deletion.
+  </app-delete-modal>
+</ng-template>
+
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Canvas Models</a>
+  </nav>
+</div>
+
+<main role="main" class="container">
+  <div class="my-3 alert alert-info" role="alert">
+    Canvas models are used to define different types of canvases, e.g., business
+    model canvas and value proposition canvas.
+  </div>
+
+  <app-list-wrapper
+    listTitle="Canvas Models"
+    [reloading]="reloading"
+    [loading]="loading"
+    [noResults]="noResults"
+  >
+    <div noResults>No canvas models available.</div>
+    <ul results class="list-group">
+      <li
+        class="
+          d-flex
+          list-group-item
+          justify-content-between
+          align-items-baseline
+        "
+        *ngFor="let canvasDefinition of canvasDefinitions"
+      >
+        <div>
+          <span>{{ canvasDefinition.name }}</span>
+        </div>
+        <div>
+          <a
+            [routerLink]="[canvasDefinition._id]"
+            type="button"
+            class="btn btn-dark btn-xs mr-1"
+            >View</a
+          >
+          <button
+            (click)="openDeleteCanvasDefinitionModal(canvasDefinition)"
+            type="button"
+            class="btn btn-danger btn-xs"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </app-list-wrapper>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Add Canvas Model</h6>
+    <div class="text-muted pt-3">
+      <form
+        [formGroup]="addCanvasDefinitionForm"
+        (ngSubmit)="addCanvasDefinition()"
+      >
+        <div class="form-group form-row">
+          <label for="name" class="col-sm-4 col-form-label">Name</label>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="nameControl.invalid && nameControl.touched"
+              id="name"
+            />
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <button
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+              [disabled]="!addCanvasDefinitionForm.valid"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

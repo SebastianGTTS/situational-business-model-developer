@@ -18,21 +18,28 @@ import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { equalsList } from '../../shared/utils';
 import { Selection } from '../../development-process-registry/development-method/selection';
+import { Updatable, UPDATABLE } from '../../shared/updatable';
 
 @Component({
   selector: 'app-types-selection-form',
   templateUrl: './types-selection-form.component.html',
   styleUrls: ['./types-selection-form.component.css'],
+  providers: [
+    {
+      provide: UPDATABLE,
+      useExisting: TypesSelectionFormComponent,
+    },
+  ],
 })
 export class TypesSelectionFormComponent
-  implements OnInit, OnChanges, OnDestroy
+  implements OnInit, OnChanges, OnDestroy, Updatable
 {
-  @Input() types: Selection<Type>[];
+  @Input() types!: Selection<Type>[];
   /**
    * Whether the internal types 'initialisation' and 'generic' should be
    * displayed in auto complete.
    */
-  @Input() internalTypes: boolean = false;
+  @Input() internalTypes = false;
 
   @Output() submitTypesForm = new EventEmitter<FormArray>();
 
@@ -44,7 +51,7 @@ export class TypesSelectionFormComponent
   methodElements: TypeEntry[] = [];
   listNames: string[] = [];
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(private fb: FormBuilder, private typeService: TypeService) {}
 
@@ -69,13 +76,19 @@ export class TypesSelectionFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.changeSubscription) {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
 
   submitForm(): void {
     this.submitTypesForm.emit(this.typesForm.get('types') as FormArray);
+  }
+
+  update(): void {
+    if (this.changed && this.typesForm.valid) {
+      this.submitForm();
+    }
   }
 
   private loadForm(types: Selection<Type>[]): void {

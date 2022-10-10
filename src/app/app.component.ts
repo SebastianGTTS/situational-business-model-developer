@@ -3,10 +3,10 @@ import { BmProcessService } from './development-process-registry/bm-process/bm-p
 import { BmProcess } from './development-process-registry/bm-process/bm-process';
 import { DevelopmentMethodService } from './development-process-registry/development-method/development-method.service';
 import { DevelopmentMethod } from './development-process-registry/development-method/development-method';
-import { CompanyModelService } from './canvas-meta-model/company-model.service';
-import { CompanyModel } from './canvas-meta-model/company-model';
-import { ExpertModelService } from './canvas-meta-model/expert-model.service';
-import { ExpertModel } from './canvas-meta-model/expert-model';
+import { CompanyModelService } from './modules/canvas/canvas-meta-model/company-model.service';
+import { CompanyModel } from './modules/canvas/canvas-meta-model/company-model';
+import { ExpertModelService } from './modules/canvas/canvas-meta-model/expert-model.service';
+import { ExpertModel } from './modules/canvas/canvas-meta-model/expert-model';
 import { RunningProcessService } from './development-process-registry/running-process/running-process.service';
 import { RunningProcess } from './development-process-registry/running-process/running-process';
 import { DomainService } from './development-process-registry/knowledge/domain.service';
@@ -16,8 +16,8 @@ import { PouchdbService } from './database/pouchdb.service';
 import { AuthService } from './database/auth.service';
 import { version } from '../environments/app.version';
 import { environment } from '../environments/environment';
-import { CanvasDefinitionService } from './canvas-meta-model/canvas-definition.service';
-import { CanvasDefinition } from './canvas-meta-model/canvas-definition';
+import { CanvasDefinitionService } from './modules/canvas/canvas-meta-model/canvas-definition.service';
+import { CanvasDefinition } from './modules/canvas/canvas-meta-model/canvas-definition';
 import { DatabaseMeta } from './database/database-entry';
 
 @Component({

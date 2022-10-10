@@ -7,11 +7,12 @@ import { KanbanBoardMethodInfo } from './kanban-board-method-info';
   styleUrls: ['./kanban-board.component.css'],
 })
 export class KanbanBoardComponent {
-  @Input() todo: KanbanBoardMethodInfo[];
-  @Input() doing: KanbanBoardMethodInfo[];
-  @Input() done: KanbanBoardMethodInfo[];
+  @Input() todo!: KanbanBoardMethodInfo[];
+  @Input() doing!: KanbanBoardMethodInfo[];
+  @Input() done!: KanbanBoardMethodInfo[];
 
   @Output() addTodo = new EventEmitter<void>();
+  @Output() editTodo = new EventEmitter<string>(); // emits the execution id
   @Output() removeTodo = new EventEmitter<string>(); // emits the execution id
   @Output() viewNode = new EventEmitter<string>(); // emits the node id
   @Output() showNodeInfo = new EventEmitter<string>(); // emits the node id
@@ -19,10 +20,17 @@ export class KanbanBoardComponent {
   @Output() startNodeExecution = new EventEmitter<string>(); // emits the node id
   @Output() startExecution = new EventEmitter<string>(); // emits the execution id
   @Output() viewExecution = new EventEmitter<string>(); // emits execution id
+  @Output() viewArtifacts = new EventEmitter<string>(); // emits execution id
   @Output() viewComments = new EventEmitter<string>(); // emits execution id
 
-  donePage: number = 1;
-  donePageSize: number = 4;
+  todoPage = 1;
+  todoPageSize = 4;
+
+  doingPage = 1;
+  doingPageSize = 4;
+
+  donePage = 1;
+  donePageSize = 4;
 
   _showInfo(info: KanbanBoardMethodInfo): void {
     if (info.executionId) {

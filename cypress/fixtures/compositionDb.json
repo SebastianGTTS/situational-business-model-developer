@@ -96,24 +96,38 @@
         }
       ],
       "situationalFactors": [],
-      "inputArtifacts": [],
-      "outputArtifacts": [],
-      "stakeholders": [],
-      "tools": [
-        [
+      "inputArtifacts": {
+        "allowNone": false,
+        "groups": []
+      },
+      "outputArtifacts": {
+        "allowNone": false,
+        "groups": []
+      },
+      "stakeholders": {
+        "allowNone": false,
+        "groups": []
+      },
+      "tools": {
+        "allowNone": false,
+        "groups": [
           {
-            "list": "Canvas Tools",
-            "element": {
-              "type": "Tool",
-              "_id": "1635786357380",
-              "list": "Canvas Tools",
-              "name": "Canvas Module"
-            },
-            "multiple": false,
-            "multipleElements": false
+            "items": [
+              {
+                "list": "Canvas Tools",
+                "element": {
+                  "type": "Tool",
+                  "_id": "1635786357380",
+                  "list": "Canvas Tools",
+                  "name": "Canvas Module"
+                },
+                "multiple": false,
+                "optional": false
+              }
+            ]
           }
         ]
-      ],
+      },
       "executionSteps": [
         {
           "module": "Canvas Module",
@@ -126,12 +140,12 @@
     {
       "type": "ProcessPattern",
       "name": "Test Pattern",
+      "description": "",
       "author": {},
-      "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1atngv9</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz\" name=\"&#60;&#60;Test&#62;&#62;\"><bpmn:incoming>Flow_1atngv9</bpmn:incoming><bpmn:outgoing>Flow_02e30wy</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_1atngv9\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0n9oedz\" /><bpmn:endEvent id=\"Event_1qmn2f6\"><bpmn:incoming>Flow_02e30wy</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_02e30wy\" sourceRef=\"Activity_0n9oedz\" targetRef=\"Event_1qmn2f6\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_02e30wy_di\" bpmnElement=\"Flow_02e30wy\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_di\" bpmnElement=\"Flow_1atngv9\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_di\" bpmnElement=\"Activity_0n9oedz\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_di\" bpmnElement=\"Event_1qmn2f6\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+      "pattern": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1atngv9</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz\" name=\"&#60;&#60;Test&#62;&#62;\" bmdl:inherit=\"false\"><bpmn:incoming>Flow_1atngv9</bpmn:incoming><bpmn:outgoing>Flow_02e30wy</bpmn:outgoing><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:sequenceFlow id=\"Flow_1atngv9\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_0n9oedz\" /><bpmn:endEvent id=\"Event_1qmn2f6\"><bpmn:incoming>Flow_02e30wy</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_02e30wy\" sourceRef=\"Activity_0n9oedz\" targetRef=\"Event_1qmn2f6\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_02e30wy_di\" bpmnElement=\"Flow_02e30wy\"><di:waypoint x=\"360\" y=\"120\" /><di:waypoint x=\"412\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_di\" bpmnElement=\"Flow_1atngv9\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"260\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_di\" bpmnElement=\"Activity_0n9oedz\"><dc:Bounds x=\"260\" y=\"80\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_di\" bpmnElement=\"Event_1qmn2f6\"><dc:Bounds x=\"412\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
       "types": [
         {
-          "list": "initialisation",
-          "element": null
+          "list": "initialisation"
         }
       ],
       "situationalFactors": [],
@@ -148,7 +162,7 @@
       "type": "BmProcess",
       "initial": false,
       "name": "Test Method",
-      "processDiagram": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_0d2ovd0</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id=\"Activity_1gi6djm\" name=\"Test Pattern\"><bpmn:incoming>Flow_0d2ovd0</bpmn:incoming><bpmn:startEvent id=\"StartEvent_1_1635786528694\"><bpmn:outgoing>Flow_1atngv9_1635786528694</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz_1635786528694\" name=\"&#60;&#60;Test&#62;&#62;\"><bpmn:incoming>Flow_1atngv9_1635786528694</bpmn:incoming><bpmn:outgoing>Flow_02e30wy_1635786528694</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:endEvent id=\"Event_1qmn2f6_1635786528694\"><bpmn:incoming>Flow_02e30wy_1635786528694</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1atngv9_1635786528694\" sourceRef=\"StartEvent_1_1635786528694\" targetRef=\"Activity_0n9oedz_1635786528694\" /><bpmn:sequenceFlow id=\"Flow_02e30wy_1635786528694\" sourceRef=\"Activity_0n9oedz_1635786528694\" targetRef=\"Event_1qmn2f6_1635786528694\" /><bmdl:processPatternId>1635786424077</bmdl:processPatternId></bpmn:subProcess><bpmn:sequenceFlow id=\"Flow_0d2ovd0\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1gi6djm\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0d2ovd0_di\" bpmnElement=\"Flow_0d2ovd0\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"259\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1gi6djm_di\" bpmnElement=\"Activity_1gi6djm\" isExpanded=\"true\"><dc:Bounds x=\"259\" y=\"55\" width=\"315\" height=\"130\" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id=\"Flow_02e30wy_1635786528694_di\" bpmnElement=\"Flow_02e30wy_1635786528694\"><di:waypoint x=\"466\" y=\"125\" /><di:waypoint x=\"518\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_1635786528694_di\" bpmnElement=\"Flow_1atngv9_1635786528694\"><di:waypoint x=\"315\" y=\"125\" /><di:waypoint x=\"366\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"StartEvent_1_1635786528694_di\" bpmnElement=\"StartEvent_1_1635786528694\"><dc:Bounds x=\"279\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_1635786528694_di\" bpmnElement=\"Activity_0n9oedz_1635786528694\"><dc:Bounds x=\"366\" y=\"85\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_1635786528694_di\" bpmnElement=\"Event_1qmn2f6_1635786528694\"><dc:Bounds x=\"518\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+      "processDiagram": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\"><bpmn:outgoing>Flow_1wsy584</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id=\"Activity_1se33i9\" name=\"Test Pattern\"><bpmn:incoming>Flow_1wsy584</bpmn:incoming><bpmn:startEvent id=\"StartEvent_1_1663342523323\"><bpmn:outgoing>Flow_1atngv9_1663342523323</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz_1663342523323\" name=\"&#60;&#60;Test&#62;&#62;\" bmdl:inherit=\"false\"><bpmn:incoming>Flow_1atngv9_1663342523323</bpmn:incoming><bpmn:outgoing>Flow_02e30wy_1663342523323</bpmn:outgoing><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:endEvent id=\"Event_1qmn2f6_1663342523323\"><bpmn:incoming>Flow_02e30wy_1663342523323</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1atngv9_1663342523323\" sourceRef=\"StartEvent_1_1663342523323\" targetRef=\"Activity_0n9oedz_1663342523323\" /><bpmn:sequenceFlow id=\"Flow_02e30wy_1663342523323\" sourceRef=\"Activity_0n9oedz_1663342523323\" targetRef=\"Event_1qmn2f6_1663342523323\" /><bmdl:processPatternId>1635786424077</bmdl:processPatternId></bpmn:subProcess><bpmn:sequenceFlow id=\"Flow_1wsy584\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1se33i9\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1wsy584_di\" bpmnElement=\"Flow_1wsy584\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"259\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1se33i9_di\" bpmnElement=\"Activity_1se33i9\" isExpanded=\"true\"><dc:Bounds x=\"259\" y=\"55\" width=\"315\" height=\"130\" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id=\"Flow_02e30wy_1663342523323_di\" bpmnElement=\"Flow_02e30wy_1663342523323\"><di:waypoint x=\"466\" y=\"125\" /><di:waypoint x=\"518\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_1663342523323_di\" bpmnElement=\"Flow_1atngv9_1663342523323\"><di:waypoint x=\"315\" y=\"125\" /><di:waypoint x=\"366\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"StartEvent_1_1663342523323_di\" bpmnElement=\"StartEvent_1_1663342523323\"><dc:Bounds x=\"279\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_1663342523323_di\" bpmnElement=\"Activity_0n9oedz_1663342523323\"><dc:Bounds x=\"366\" y=\"85\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_1663342523323_di\" bpmnElement=\"Event_1qmn2f6_1663342523323\"><dc:Bounds x=\"518\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
       "domains": [],
       "situationalFactors": [],
       "decisions": {},
@@ -160,14 +174,18 @@
       "process": {
         "type": "BmProcess",
         "_id": "1635786513910",
-        "_rev": "4-8c3cf6a0561f465a720cd9cf76029451",
+        "_rev": "6-9378e0730f9218ac301da37d59b42742",
         "initial": false,
         "name": "Test Method",
-        "processDiagram": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:rbmp=\"http://localhost/schema/rbmp\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\"><bpmn:startEvent id=\"StartEvent_1\" rbmp:executed=\"true\"><bpmn:outgoing>Flow_0d2ovd0</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id=\"Activity_1gi6djm\" name=\"Test Pattern\"><bpmn:incoming>Flow_0d2ovd0</bpmn:incoming><bpmn:startEvent id=\"StartEvent_1_1635786528694\" rbmp:executed=\"true\"><bpmn:outgoing>Flow_1atngv9_1635786528694</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz_1635786528694\" name=\"&#60;&#60;Test&#62;&#62;\" rbmp:executed=\"true\"><bpmn:incoming>Flow_1atngv9_1635786528694</bpmn:incoming><bpmn:outgoing>Flow_02e30wy_1635786528694</bpmn:outgoing><bmdl:inherit>false</bmdl:inherit><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:endEvent id=\"Event_1qmn2f6_1635786528694\" rbmp:executed=\"true\"><bpmn:incoming>Flow_02e30wy_1635786528694</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1atngv9_1635786528694\" sourceRef=\"StartEvent_1_1635786528694\" targetRef=\"Activity_0n9oedz_1635786528694\" rbmp:used=\"true\" /><bpmn:sequenceFlow id=\"Flow_02e30wy_1635786528694\" sourceRef=\"Activity_0n9oedz_1635786528694\" targetRef=\"Event_1qmn2f6_1635786528694\" rbmp:used=\"true\" /><bmdl:processPatternId>1635786424077</bmdl:processPatternId></bpmn:subProcess><bpmn:sequenceFlow id=\"Flow_0d2ovd0\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1gi6djm\" rbmp:used=\"true\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_0d2ovd0_di\" bpmnElement=\"Flow_0d2ovd0\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"259\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1gi6djm_di\" bpmnElement=\"Activity_1gi6djm\" isExpanded=\"true\"><dc:Bounds x=\"259\" y=\"55\" width=\"315\" height=\"130\" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id=\"Flow_02e30wy_1635786528694_di\" bpmnElement=\"Flow_02e30wy_1635786528694\"><di:waypoint x=\"466\" y=\"125\" /><di:waypoint x=\"518\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_1635786528694_di\" bpmnElement=\"Flow_1atngv9_1635786528694\"><di:waypoint x=\"315\" y=\"125\" /><di:waypoint x=\"366\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"StartEvent_1_1635786528694_di\" bpmnElement=\"StartEvent_1_1635786528694\"><dc:Bounds x=\"279\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_1635786528694_di\" bpmnElement=\"Activity_0n9oedz_1635786528694\"><dc:Bounds x=\"366\" y=\"85\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_1635786528694_di\" bpmnElement=\"Event_1qmn2f6_1635786528694\"><dc:Bounds x=\"518\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
+        "processDiagram": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:bmdl=\"http://localhost/schema/bmdl\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:rbmp=\"http://localhost/schema/rbmp\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\"><bpmn:process id=\"Process_1\" isExecutable=\"false\" tokens=\"NaN1-11-11-1-1\"><bpmn:startEvent id=\"StartEvent_1\" rbmp:executed=\"true\"><bpmn:outgoing>Flow_1wsy584</bpmn:outgoing></bpmn:startEvent><bpmn:subProcess id=\"Activity_1se33i9\" name=\"Test Pattern\"><bpmn:incoming>Flow_1wsy584</bpmn:incoming><bpmn:startEvent id=\"StartEvent_1_1663342523323\" rbmp:executed=\"true\"><bpmn:outgoing>Flow_1atngv9_1663342523323</bpmn:outgoing></bpmn:startEvent><bpmn:task id=\"Activity_0n9oedz_1663342523323\" name=\"&#60;&#60;Test&#62;&#62;\" rbmp:executed=\"true\" bmdl:inherit=\"false\"><bpmn:incoming>Flow_1atngv9_1663342523323</bpmn:incoming><bpmn:outgoing>Flow_02e30wy_1663342523323</bpmn:outgoing><bmdl:neededType><bmdl:list>Test List</bmdl:list><bmdl:methodElement><bmdl:_id>1635786440495</bmdl:_id><bmdl:name>Test Type</bmdl:name></bmdl:methodElement></bmdl:neededType></bpmn:task><bpmn:endEvent id=\"Event_1qmn2f6_1663342523323\" rbmp:executed=\"true\"><bpmn:incoming>Flow_02e30wy_1663342523323</bpmn:incoming></bpmn:endEvent><bpmn:sequenceFlow id=\"Flow_1atngv9_1663342523323\" sourceRef=\"StartEvent_1_1663342523323\" targetRef=\"Activity_0n9oedz_1663342523323\" rbmp:used=\"true\" /><bpmn:sequenceFlow id=\"Flow_02e30wy_1663342523323\" sourceRef=\"Activity_0n9oedz_1663342523323\" targetRef=\"Event_1qmn2f6_1663342523323\" rbmp:used=\"true\" /><bmdl:processPatternId>1635786424077</bmdl:processPatternId></bpmn:subProcess><bpmn:sequenceFlow id=\"Flow_1wsy584\" sourceRef=\"StartEvent_1\" targetRef=\"Activity_1se33i9\" rbmp:used=\"true\" /></bpmn:process><bpmndi:BPMNDiagram id=\"BPMNDiagram_1\"><bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\"><bpmndi:BPMNEdge id=\"Flow_1wsy584_di\" bpmnElement=\"Flow_1wsy584\"><di:waypoint x=\"209\" y=\"120\" /><di:waypoint x=\"259\" y=\"120\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\"><dc:Bounds x=\"173\" y=\"102\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_1se33i9_di\" bpmnElement=\"Activity_1se33i9\" isExpanded=\"true\"><dc:Bounds x=\"259\" y=\"55\" width=\"315\" height=\"130\" /></bpmndi:BPMNShape><bpmndi:BPMNEdge id=\"Flow_02e30wy_1663342523323_di\" bpmnElement=\"Flow_02e30wy_1663342523323\"><di:waypoint x=\"466\" y=\"125\" /><di:waypoint x=\"518\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNEdge id=\"Flow_1atngv9_1663342523323_di\" bpmnElement=\"Flow_1atngv9_1663342523323\"><di:waypoint x=\"315\" y=\"125\" /><di:waypoint x=\"366\" y=\"125\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"StartEvent_1_1663342523323_di\" bpmnElement=\"StartEvent_1_1663342523323\"><dc:Bounds x=\"279\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Activity_0n9oedz_1663342523323_di\" bpmnElement=\"Activity_0n9oedz_1663342523323\"><dc:Bounds x=\"366\" y=\"85\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape><bpmndi:BPMNShape id=\"Event_1qmn2f6_1663342523323_di\" bpmnElement=\"Event_1qmn2f6_1663342523323\"><dc:Bounds x=\"518\" y=\"107\" width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>",
         "domains": [],
         "situationalFactors": [],
         "decisions": {}
       },
+      "domains": [],
+      "situationalFactors": [],
+      "contextChange": false,
+      "previousContextChanges": [],
       "todoMethods": [],
       "runningMethods": [],
       "executedMethods": [],
@@ -193,24 +211,38 @@
         }
       ],
       "situationalFactors": [],
-      "inputArtifacts": [],
-      "outputArtifacts": [],
-      "stakeholders": [],
-      "tools": [
-        [
+      "inputArtifacts": {
+        "allowNone": false,
+        "groups": []
+      },
+      "outputArtifacts": {
+        "allowNone": false,
+        "groups": []
+      },
+      "stakeholders": {
+        "allowNone": false,
+        "groups": []
+      },
+      "tools": {
+        "allowNone": false,
+        "groups": [
           {
-            "list": "Canvas Tools",
-            "element": {
-              "type": "Tool",
-              "_id": "1635787433228",
-              "list": "Canvas Tools",
-              "name": "Canvas Module"
-            },
-            "multiple": false,
-            "multipleElements": false
+            "items": [
+              {
+                "list": "Canvas Tools",
+                "element": {
+                  "type": "Tool",
+                  "_id": "1635787433228",
+                  "list": "Canvas Tools",
+                  "name": "Canvas Module"
+                },
+                "multiple": false,
+                "optional": false
+              }
+            ]
           }
         ]
-      ],
+      },
       "executionSteps": [
         {
           "module": "Canvas Module",

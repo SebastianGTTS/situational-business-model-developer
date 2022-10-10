@@ -1,0 +1,131 @@
+{
+  "docs": [
+    {
+      "type": "Artifact",
+      "list": "Canvas",
+      "name": "Business Model Canvas",
+      "description": "",
+      "internalArtifact": true,
+      "metaModel": {
+        "name": "Canvas",
+        "type": "CompanyModel"
+      },
+      "metaModelData": {
+        "definitionId": "1660315503510d70fe96c-14f0-4fc0-9752-af260ead2ec7"
+      },
+      "_id": "1660315485431fb84a376-ae2b-47a2-a3cb-8864d1aa21ff"
+    },
+    {
+      "type": "CanvasDefinition",
+      "name": "Business Model Canvas",
+      "rows": [
+        [
+          {
+            "isSpacer": false,
+            "id": "key-partners",
+            "name": "Key Partners",
+            "rowspan": 2,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          },
+          {
+            "isSpacer": false,
+            "id": "key-activites",
+            "name": "Key Activites",
+            "rowspan": 1,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          },
+          {
+            "isSpacer": false,
+            "id": "value-propositions",
+            "name": "Value Propositions",
+            "rowspan": 2,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          },
+          {
+            "isSpacer": false,
+            "id": "customer-relationships",
+            "name": "Customer Relationships",
+            "rowspan": 1,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          },
+          {
+            "isSpacer": false,
+            "id": "customer-segments",
+            "name": "Customer Segments",
+            "rowspan": 2,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "id": "key-resources",
+            "name": "Key Resources",
+            "rowspan": 1,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          },
+          {
+            "isSpacer": false,
+            "id": "channels",
+            "name": "Channels",
+            "rowspan": 1,
+            "colspan": 2,
+            "guidingQuestions": [],
+            "examples": []
+          }
+        ],
+        [
+          {
+            "isSpacer": false,
+            "id": "cost-structure",
+            "name": "Cost Structure",
+            "rowspan": 1,
+            "colspan": 5,
+            "guidingQuestions": [],
+            "examples": []
+          },
+          {
+            "isSpacer": false,
+            "id": "revenue-streams",
+            "name": "Revenue Streams",
+            "rowspan": 1,
+            "colspan": 5,
+            "guidingQuestions": [],
+            "examples": []
+          }
+        ]
+      ],
+      "relationshipTypes": [],
+      "_id": "1660315503510d70fe96c-14f0-4fc0-9752-af260ead2ec7"
+    },
+    {
+      "type": "Type",
+      "list": "design",
+      "name": "bmDesign",
+      "description": "",
+      "_id": "1660315973608062522c5-1076-44cb-8ba7-c17651cd9b6b"
+    },
+    {
+      "type": "SituationalFactorDefinition",
+      "list": "Company",
+      "name": "businessModelingSkills",
+      "description": "",
+      "values": ["high", "medium", "low"],
+      "ordered": true,
+      "_id": "166031670386529113307-17f0-408b-b49f-a9cf5ffa6385"
+    }
+  ],
+  "identifier": "SBMD-v1"
+}

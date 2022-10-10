@@ -1,0 +1,37 @@
+import { Injectable } from '@angular/core';
+import { ModuleService } from '../../../development-process-registry/module-api/module.service';
+import { Module } from '../../../development-process-registry/module-api/module';
+import { <%= classify(name) %>ToolApiService } from './<%= dasherize(name) %>-tool-api.service';
+import { FormBuilder } from '@angular/forms';
+import { ModuleMethod } from '../../../development-process-registry/module-api/module-method';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class <%= classify(name) %>ToolService {
+  constructor(
+    private <%= camelize(name) %>ToolApiService: <%= classify(name) %>ToolApiService,
+    private fb: FormBuilder,
+    private moduleService: ModuleService
+  ) {}
+
+  init(): void {
+    const module = new Module(
+      '<%= classify(name) %> Tools',
+      '<%= classify(name) %> Module',
+      this.getMethods(),
+      this.<%= camelize(name) %>ToolApiService,
+      [
+        // Define the navigation
+      ]
+    );
+    this.moduleService.registerModule(module);
+    console.log('Registered <%= classify(name) %> Tool Module');
+  }
+
+  private getMethods(): ModuleMethod[] {
+    return [
+      // Define the methods
+    ];
+  }
+}

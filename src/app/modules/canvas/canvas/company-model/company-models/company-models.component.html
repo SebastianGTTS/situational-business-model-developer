@@ -1,0 +1,34 @@
+<ng-template #deleteCompanyModelModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalCompanyModel != null"
+    (dismiss)="d()"
+    (delete)="deleteCompanyModel(modalCompanyModel._id); c()"
+  >
+    <div modalTitle>Delete Composed Model {{ modalCompanyModel.name }}</div>
+    You are deleting the composed model {{ modalCompanyModel.name }}. This can
+    not be undone.
+  </app-delete-modal>
+</ng-template>
+
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link active" [routerLink]="[]">Composed Models</a>
+  </nav>
+</div>
+
+<main role="main" class="container">
+  <div class="my-3 alert alert-info">
+    Composed Models are used to represent merged canvas building blocks.
+  </div>
+
+  <app-model-list
+    modelListTitle="Composed Models"
+    modelFormTitle="Add Composed Model"
+    (viewModel)="viewCompanyModel($event)"
+    (editModel)="editCompanyModel($event)"
+    (deleteModel)="openDeleteCompanyModelModal($event)"
+    (addModel)="
+      addCompanyModel($event.definition, $event.name, $event.description)
+    "
+  ></app-model-list>
+</main>

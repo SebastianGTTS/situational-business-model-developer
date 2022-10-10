@@ -1,0 +1,150 @@
+<div class="nav-scroller bg-white shadow-sm">
+  <nav class="nav nav-underline">
+    <a class="nav-link" [routerLink]="['/', 'expertModels']">
+      Canvas Building Blocks
+    </a>
+    <a *ngIf="expertModel" class="nav-link active" [routerLink]="[]">
+      {{ expertModel.name }}
+    </a>
+    <a
+      *ngIf="expertModel"
+      class="nav-link"
+      [routerLink]="['/', 'expertModels', expertModel._id, 'edit']"
+    >
+      Edit
+    </a>
+  </nav>
+</div>
+
+<main *ngIf="expertModel != null" role="main" class="container">
+  <app-model-info-box [featureModel]="expertModel"></app-model-info-box>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Canvas Building Block {{ expertModel.name }}
+    </h6>
+    <app-feature-model [featureModel]="expertModel"></app-feature-model>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Export Canvas Building Block
+    </h6>
+    <div class="text-muted pt-3">
+      <div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <button
+              (click)="exportModel()"
+              type="submit"
+              class="btn btn-sm btn-dark btn-block"
+            >
+              Export Canvas Building Block
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Steps</h6>
+    <ul ngbNav #nav="ngbNav" class="nav-pills nav-justified">
+      <li ngbNavItem="stepDescribe" #stepDescribe="ngbNavItem">
+        <a ngbNavLink>1. Describe</a>
+        <ng-template ngbNavContent>
+          Describe the canvas building block
+        </ng-template>
+      </li>
+      <li ngbNavItem="stepEdit" #stepEdit="ngbNavItem">
+        <a ngbNavLink>2. Edit</a>
+        <ng-template ngbNavContent>
+          Edit the canvas building block
+        </ng-template>
+      </li>
+      <li ngbNavItem="stepCreateInstances">
+        <a ngbNavLink>3. Create Patterns and Examples</a>
+        <ng-template ngbNavContent>
+          <p>
+            Create business model patterns and example instances of this canvas
+            building block.
+          </p>
+          <p class="mb-0">
+            Business model patterns will be used to give users hints about
+            possible patterns and will be shown to the user if used in their
+            business model. Users can use examples to compare them with their
+            own business model.
+          </p>
+        </ng-template>
+      </li>
+    </ul>
+    <div class="mt-1" [ngbNavOutlet]="nav"></div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="stepDescribe.active">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Domains</h6>
+    <div class="text-muted pt-3">
+      <app-domains-selection-form
+        [domains]="expertModel.domains"
+        (submitDomainsForm)="updateDomains($event.value)"
+      ></app-domains-selection-form>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="stepDescribe.active">
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Edit Canvas Building Block
+    </h6>
+    <div class="text-muted pt-3">
+      <app-feature-model-form
+        [featureModel]="expertModel"
+        (submitFeatureModelForm)="update($event.value)"
+      ></app-feature-model-form>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="stepDescribe.active">
+    <h6 class="border-bottom border-gray pb-2 mb-0">Edit Author Information</h6>
+    <div class="text-muted pt-3">
+      <app-author-form
+        [author]="expertModel.author"
+        (submitAuthorForm)="updateFeatureModelAuthor($event.value)"
+      ></app-author-form>
+    </div>
+  </div>
+
+  <div class="my-3 p-3 bg-white rounded shadow-sm" *ngIf="stepEdit.active">
+    <h6 class="border-bottom border-gray pb-2 mb-0">
+      Edit canvas building block
+    </h6>
+    <div class="text-muted pt-3">
+      <button
+        type="button"
+        [routerLink]="['/expertModels', expertModel._id, 'edit']"
+        class="btn btn-sm btn-dark btn-lg btn-block"
+      >
+        Edit Canvas Building Block
+      </button>
+    </div>
+  </div>
+
+  <app-instance-list
+    *ngIf="nav.activeId === 'stepCreateInstances'"
+    formTitle="Add Pattern Instance"
+    listTitle="Pattern Instances"
+    [instances]="getPatternInstances()"
+    [viewInstanceLink]="viewPattern"
+    (addInstance)="addInstance($event, getPatternInstanceType())"
+    (deleteInstance)="deleteInstance($event)"
+  ></app-instance-list>
+
+  <app-instance-list
+    *ngIf="nav.activeId === 'stepCreateInstances'"
+    formTitle="Add Example Instance"
+    listTitle="Example Instances"
+    [instances]="getExampleInstances()"
+    [viewInstanceLink]="viewExample"
+    (addInstance)="addInstance($event)"
+    (deleteInstance)="deleteInstance($event)"
+  ></app-instance-list>
+</main>

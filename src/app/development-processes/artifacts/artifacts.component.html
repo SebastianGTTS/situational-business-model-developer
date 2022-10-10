@@ -1,5 +1,9 @@
 <ng-template #deleteArtifactModal let-d="dismiss" let-c="close">
-  <app-delete-modal (dismiss)="d()" (delete)="delete(modalArtifact._id); c()">
+  <app-delete-modal
+    *ngIf="modalArtifact != null"
+    (dismiss)="d()"
+    (delete)="delete(modalArtifact._id); c()"
+  >
     <div modalTitle>Delete Artifact {{ modalArtifact.name }}</div>
     You are deleting the artifact {{ modalArtifact.name }}. This can not be
     undone. This action will not delete the artifact from method building blocks

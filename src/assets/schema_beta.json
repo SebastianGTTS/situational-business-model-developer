@@ -85,6 +85,20 @@
                 "colspan": {
                   "description": "The colspan of the block",
                   "type": "number"
+                },
+                "guidingQuestions": {
+                  "description": "Questions to help the business model developer",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "examples": {
+                  "description": "Examples to help the business model developer",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               },
               "required": ["isSpacer", "rowspan", "colspan"]
@@ -163,6 +177,20 @@
                 }
               }
             }
+          }
+        },
+        "guidingQuestions": {
+          "description": "Questions to help the business model developer",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "examples": {
+          "description": "Examples to help the business model developer",
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       },

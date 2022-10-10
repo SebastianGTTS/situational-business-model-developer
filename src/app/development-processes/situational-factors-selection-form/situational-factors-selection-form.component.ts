@@ -16,16 +16,23 @@ import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { Selection } from '../../development-process-registry/development-method/selection';
 import { equalsList } from '../../shared/utils';
+import { UPDATABLE, Updatable } from '../../shared/updatable';
 
 @Component({
   selector: 'app-situational-factors-selection-form',
   templateUrl: './situational-factors-selection-form.component.html',
   styleUrls: ['./situational-factors-selection-form.component.css'],
+  providers: [
+    {
+      provide: UPDATABLE,
+      useExisting: SituationalFactorsSelectionFormComponent,
+    },
+  ],
 })
 export class SituationalFactorsSelectionFormComponent
-  implements OnInit, OnChanges, OnDestroy
+  implements OnInit, OnChanges, OnDestroy, Updatable
 {
-  @Input() situationalFactors: Selection<SituationalFactor>[];
+  @Input() situationalFactors!: Selection<SituationalFactor>[];
 
   @Output() submitSituationalFactorsForm = new EventEmitter<FormArray>();
 
@@ -37,7 +44,7 @@ export class SituationalFactorsSelectionFormComponent
   methodElements: SituationalFactorDefinitionEntry[] = [];
   listNames: string[] = [];
 
-  private changeSubscription: Subscription;
+  private changeSubscription?: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -73,7 +80,7 @@ export class SituationalFactorsSelectionFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.changeSubscription) {
+    if (this.changeSubscription != null) {
       this.changeSubscription.unsubscribe();
     }
   }
@@ -84,13 +91,19 @@ export class SituationalFactorsSelectionFormComponent
     );
   }
 
+  update(): void {
+    if (this.changed && this.situationalFactorsForm.valid) {
+      this.submitForm();
+    }
+  }
+
   private loadForm(situationalFactors: Selection<SituationalFactor>[]): void {
     const formGroups = situationalFactors.map((factor) =>
       this.fb.group({
         list: [factor.list, Validators.required],
         element: this.fb.group({
-          factor: [factor.element.factor, Validators.required],
-          value: [factor.element.value, Validators.required],
+          factor: [factor.element?.factor, Validators.required],
+          value: [factor.element?.value, Validators.required],
         }),
       })
     );

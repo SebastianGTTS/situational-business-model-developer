@@ -1,6 +1,10 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { SituationalFactor } from '../../development-process-registry/method-elements/situational-factor/situational-factor';
+import {
+  SituationalFactor,
+  SituationalFactorEntry,
+} from '../../development-process-registry/method-elements/situational-factor/situational-factor';
 import { SituationalFactorDefinition } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import { SituationalFactorService } from '../../development-process-registry/method-elements/situational-factor/situational-factor.service';
 
 @Component({
   selector: 'app-situational-factors-overview',
@@ -8,8 +12,8 @@ import { SituationalFactorDefinition } from '../../development-process-registry/
   styleUrls: ['./situational-factors-overview.component.css'],
 })
 export class SituationalFactorsOverviewComponent implements OnChanges {
-  @Input() needed: SituationalFactor[];
-  @Input() provided: SituationalFactor[];
+  @Input() needed!: SituationalFactor[];
+  @Input() provided!: SituationalFactorEntry[];
 
   factors: {
     list: string;
@@ -18,9 +22,11 @@ export class SituationalFactorsOverviewComponent implements OnChanges {
     provided: string;
     fulfills: boolean | undefined;
   }[] = [];
-  factorsMap: { [list: string]: { [name: string]: string } };
+  factorsMap?: { [list: string]: { [name: string]: string } };
 
-  ngOnChanges(changes: SimpleChanges) {
+  constructor(private situationalFactorService: SituationalFactorService) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes.provided) {
       this.createFactorsMap();
     }
@@ -29,10 +35,10 @@ export class SituationalFactorsOverviewComponent implements OnChanges {
     }
   }
 
-  calculateFactors() {
+  calculateFactors(): void {
     this.factors = this.needed.map((factor) => {
       const provided = this.getProvidedValue(factor.factor);
-      let fulfills: boolean;
+      let fulfills: boolean | undefined;
       if (provided) {
         if (provided === factor.value) {
           fulfills = true;
@@ -58,17 +64,22 @@ export class SituationalFactorsOverviewComponent implements OnChanges {
     });
   }
 
-  private createFactorsMap() {
-    this.factorsMap = SituationalFactor.createMap(this.provided);
+  private createFactorsMap(): void {
+    this.factorsMap = this.situationalFactorService.createMap(this.provided);
   }
 
-  private getProvidedValue(factor: SituationalFactorDefinition) {
+  private getProvidedValue(
+    factor: SituationalFactorDefinition
+  ): string | undefined {
+    if (this.factorsMap == null) {
+      return undefined;
+    }
     if (factor.list in this.factorsMap) {
       const provided = this.factorsMap[factor.list][factor.name];
       if (provided) {
         return provided;
       }
     }
-    return null;
+    return undefined;
   }
 }

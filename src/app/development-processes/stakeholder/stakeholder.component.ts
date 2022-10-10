@@ -25,11 +25,13 @@ export class StakeholderComponent {
     private stakeholderService: StakeholderService
   ) {}
 
-  async updateValue(value: any): Promise<void> {
-    await this.stakeholderService.update(this.stakeholder._id, value);
+  async updateValue(value: StakeholderInit): Promise<void> {
+    if (this.stakeholder != null) {
+      await this.stakeholderService.update(this.stakeholder._id, value);
+    }
   }
 
-  get stakeholder(): Stakeholder {
+  get stakeholder(): Stakeholder | undefined {
     return this.stakeholderLoaderService.methodElement;
   }
 

@@ -18,8 +18,8 @@ import { ELEMENT_SERVICE, ListService } from '../../shared/list.service';
   ],
 })
 export class ConcreteArtifactsComponent {
-  modalArtifact: RunningArtifactEntry;
-  private modalReference: NgbModalRef;
+  modalArtifact?: RunningArtifactEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteArtifactModal', { static: true })
   deleteArtifactModal: unknown;
@@ -44,7 +44,7 @@ export class ConcreteArtifactsComponent {
     return ['detail', artifact._id];
   }
 
-  get artifacts(): RunningArtifactEntry[] {
+  get artifacts(): RunningArtifactEntry[] | undefined {
     return this.listService.elements;
   }
 

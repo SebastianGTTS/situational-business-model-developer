@@ -22,15 +22,15 @@ describe('Selection', () => {
     expect(selection).toBeTruthy();
     expect(selection.list).toBe('Test List');
     expect(selection.element).toBeTruthy();
-    expect(selection.element.list).toBe('Test List');
-    expect(selection.element.name).toBe('Test Name');
+    expect(selection.element?.list).toBe('Test List');
+    expect(selection.element?.name).toBe('Test Name');
   });
 
   it('should export to db', () => {
     const entry = selection.toDb();
     expect(entry.list).toBe('Test List');
     expect(entry.element).toBeTruthy();
-    expect(entry.element.list).toBe('Test List');
-    expect(entry.element.name).toBe('Test Name');
+    expect(entry.element?.list).toBe('Test List');
+    expect(entry.element?.name).toBe('Test Name');
   });
 });

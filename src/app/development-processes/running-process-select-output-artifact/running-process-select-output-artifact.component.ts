@@ -6,7 +6,11 @@ import { OutputArtifactMappingFormValue } from '../shared/output-artifact-mappin
 import { Subscription } from 'rxjs';
 import { StepArtifact } from '../../development-process-registry/running-process/step-artifact';
 import { MetaModelService } from '../../development-process-registry/meta-model.service';
-import { ArtifactDataType } from '../../development-process-registry/running-process/artifact-data';
+import {
+  ArtifactDataReference,
+  ArtifactDataType,
+} from '../../development-process-registry/running-process/artifact-data';
+import { SelectedElementOptional } from '../../development-process-registry/bm-process/element-decision';
 
 @Component({
   selector: 'app-running-process-select-output-artifact',
@@ -16,7 +20,7 @@ import { ArtifactDataType } from '../../development-process-registry/running-pro
 export class RunningProcessSelectOutputArtifactComponent
   implements OnInit, OnDestroy
 {
-  @Input() artifact!: Artifact;
+  @Input() artifactOptional!: SelectedElementOptional<Artifact>;
   @Input() internalArtifact?: StepArtifact;
   @Input() processArtifacts!: RunningArtifact[];
 
@@ -70,11 +74,11 @@ export class RunningProcessSelectOutputArtifactComponent
       const api = this.metaModelService.getMetaModelApi(
         this.internalArtifact.metaModelType
       );
-      if (api != null) {
-        const name = await api.getName(this.internalArtifact.data.data);
-        if (name != null) {
-          this.artifactNameControl.setValue(name);
-        }
+      const name = await api.getName(
+        this.internalArtifact.data.data as ArtifactDataReference
+      );
+      if (name != null) {
+        this.artifactNameControl.setValue(name);
       }
     }
   }
@@ -84,19 +88,19 @@ export class RunningProcessSelectOutputArtifactComponent
   }
 
   get definitionControl(): AbstractControl {
-    return this.formGroup.get('isDefinition');
+    return this.formGroup.get('isDefinition') as AbstractControl;
   }
 
   get artifactNameControl(): AbstractControl {
-    return this.formGroup.get('artifactName');
+    return this.formGroup.get('artifactName') as AbstractControl;
   }
 
   get artifactControl(): AbstractControl {
-    return this.formGroup.get('artifact');
+    return this.formGroup.get('artifact') as AbstractControl;
   }
 
   get dataControl(): AbstractControl {
-    return this.formGroup.get('data');
+    return this.formGroup.get('data') as AbstractControl;
   }
 
   get showNotes(): boolean {
@@ -104,9 +108,20 @@ export class RunningProcessSelectOutputArtifactComponent
       return false;
     }
     const formValue: OutputArtifactMappingFormValue = this.formGroup.value;
+    if (formValue.isDefinition == null) {
+      return false;
+    }
     if (formValue.isDefinition) {
       return true;
     }
     return formValue.artifact != null;
+  }
+
+  get artifact(): Artifact {
+    return this.artifactOptional.element;
+  }
+
+  get isOptional(): boolean {
+    return this.artifactOptional.optional;
   }
 }

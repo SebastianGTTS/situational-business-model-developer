@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SituationalFactorService } from '../../development-process-registry/method-elements/situational-factor/situational-factor.service';
 import { FormGroup } from '@angular/forms';
-import {
-  SituationalFactorDefinition,
-  SituationalFactorDefinitionEntry,
-} from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
+import { SituationalFactorDefinitionEntry } from '../../development-process-registry/method-elements/situational-factor/situational-factor-definition';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -13,14 +10,14 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./situational-factors.component.css'],
 })
 export class SituationalFactorsComponent implements OnInit {
-  elementLists: {
+  elementLists?: {
     listName: string;
     elements: SituationalFactorDefinitionEntry[];
-  }[] = null;
+  }[];
   listNames: string[] = [];
 
-  modalSituationalFactor: SituationalFactorDefinition;
-  private modalReference: NgbModalRef;
+  modalSituationalFactor?: SituationalFactorDefinitionEntry;
+  private modalReference?: NgbModalRef;
 
   @ViewChild('deleteSituationalFactorModal', { static: true })
   deleteSituationalFactorModal: unknown;
@@ -40,7 +37,7 @@ export class SituationalFactorsComponent implements OnInit {
   }
 
   openDeleteSituationalFactorModal(
-    situationalFactor: SituationalFactorDefinition
+    situationalFactor: SituationalFactorDefinitionEntry
   ): void {
     this.modalSituationalFactor = situationalFactor;
     this.modalReference = this.modalService.open(

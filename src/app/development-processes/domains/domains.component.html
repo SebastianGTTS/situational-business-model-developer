@@ -1,5 +1,9 @@
 <ng-template #deleteDomainModal let-d="dismiss" let-c="close">
-  <app-delete-modal (dismiss)="d()" (delete)="deleteDomain(modalDomain); c()">
+  <app-delete-modal
+    *ngIf="modalDomain != null"
+    (dismiss)="d()"
+    (delete)="deleteDomain(modalDomain); c()"
+  >
     <div modalTitle>Delete Domain {{ modalDomain.name }}</div>
     You are deleting the domain {{ modalDomain.name }}. This can not be undone.
     This action will not delete the domain from models that are using it.

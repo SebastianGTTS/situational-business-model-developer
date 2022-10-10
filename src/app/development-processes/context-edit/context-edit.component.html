@@ -1,0 +1,44 @@
+<div class="my-3 p-3 bg-white rounded shadow-sm">
+  <div class="d-flex align-items-baseline border-bottom border-gray mb-2">
+    <h6 class="pb-2 mb-0">Context</h6>
+    <ng-content></ng-content>
+  </div>
+  <div class="my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Domain</h6>
+    <div class="alert alert-info">
+      Select the domains that are related to your business model. They are later
+      used to select fitting canvas building blocks.
+    </div>
+    <div class="text-muted">
+      <app-domains-selection-form
+        [domains]="domains"
+        (submitDomainsForm)="updateDomains.emit($event.value)"
+      ></app-domains-selection-form>
+    </div>
+  </div>
+  <div class="mt-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom border-gray pb-2">Situational Factors</h6>
+    <div class="alert alert-info">
+      Select situational factors to describe the current situation of your
+      company, problem, market, etc. They are later used to help you to select
+      fitting method patterns and building blocks.
+    </div>
+    <div class="text-muted">
+      <app-situational-factors-selection-form
+        [situationalFactors]="situationalFactors"
+        (submitSituationalFactorsForm)="
+          updateSituationalFactors.emit($event.value)
+        "
+      ></app-situational-factors-selection-form>
+    </div>
+  </div>
+
+  <button
+    *ngIf="finishAllowed"
+    (click)="finishInitialization.emit()"
+    type="button"
+    class="btn btn-sm btn-block btn-primary mt-3"
+  >
+    Finish definition of the context
+  </button>
+</div>
