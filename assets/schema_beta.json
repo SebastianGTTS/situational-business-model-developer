@@ -1,0 +1,226 @@
+{
+  "$id": "http://github.com/...",
+  "title": "Business Knowledge Model Schema Definition",
+  "description": "This schema defines the supported JSON files für the Business Knowledge Models",
+  "type": "object",
+  "properties": {
+    "$definition": {
+      "description": "The definition of the canvas",
+      "$ref": "#/definitions/canvasDefinition"
+    },
+    "name": {
+      "description": "Name of the Business Knowledge Model",
+      "type": "string"
+    },
+    "description": {
+      "description": "Description of the Business Knowledge Model",
+      "type": "string"
+    },
+    "version": {
+      "description": "Version of the Business Knowledge Model as number",
+      "type": "string"
+    },
+    "copyright": {
+      "description": "Copyright of the Business Knowledge Model",
+      "type": "string"
+    },
+    "author": {
+      "description": "Author of the Business Knowledge Model",
+      "$ref": "#/definitions/author"
+    },
+    "features": {
+      "description": "The list of features that is used in the Business Knowledge Model",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/feature"
+      }
+    },
+    "instances": {
+      "description": "The list of patterns and business model examples that is derived from the Business Knowledge Model",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/instance"
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": ["$definition", "name", "features"],
+  "definitions": {
+    "canvasDefinition": {
+      "description": "The definition of the canvas",
+      "properties": {
+        "name": {
+          "description": "The name of the canvas definition",
+          "type": "string"
+        },
+        "description": {
+          "description": "The description of the canvas definition",
+          "type": "string"
+        },
+        "rows": {
+          "description": "The rows of the canvas",
+          "type": "array",
+          "items": {
+            "description": "A row of a canvas",
+            "type": "array",
+            "items": {
+              "description": "A block of a canvas",
+              "properties": {
+                "isSpacer": {
+                  "description": "Whether the block is a real element or only a spacer",
+                  "type": "boolean"
+                },
+                "id": {
+                  "description": "The id of the feature",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "The name of the feature",
+                  "type": "string"
+                },
+                "rowspan": {
+                  "description": "The rowspan of the block",
+                  "type": "number"
+                },
+                "colspan": {
+                  "description": "The colspan of the block",
+                  "type": "number"
+                },
+                "guidingQuestions": {
+                  "description": "Questions to help the business model developer",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "examples": {
+                  "description": "Examples to help the business model developer",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["isSpacer", "rowspan", "colspan"]
+            }
+          }
+        },
+        "relationshipTypes": {
+          "description": "The cross tree relationships of the canvas",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "rows"]
+    },
+    "author": {
+      "description": "Author of the Business Knowledge Model",
+      "properties": {
+        "name": {
+          "description": "Name of the author",
+          "type": "string"
+        },
+        "company": {
+          "description": "Company of the author",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email of the author",
+          "type": "string"
+        },
+        "website": {
+          "description": "Website of the author",
+          "type": "string"
+        }
+      }
+    },
+    "feature": {
+      "description": "Single feature that is used in the Business Knowledge Model",
+      "properties": {
+        "name": {
+          "description": "The name of the feature",
+          "type": "string"
+        },
+        "description": {
+          "description": "An optional description of the feature",
+          "type": "string"
+        },
+        "type": {
+          "description": "The decision is the feature should be 'mandatory' or 'optional' (default: optional)",
+          "enum": ["optional", "mandatory"],
+          "default": "optional"
+        },
+        "subfeatures": {
+          "description": "The subfeatures of the current feature",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/feature"
+          }
+        },
+        "subfeatureConnections": {
+          "description": "The decision if the connections to the subfeatures should be 'or', 'xor' or 'null' (default: null) ",
+          "type": ["string", "null"],
+          "enum": [null, "or", "xor"],
+          "default": null
+        },
+        "relationships": {
+          "description": "The relationships of the current feature",
+          "properties": {
+            "relationships": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "guidingQuestions": {
+          "description": "Questions to help the business model developer",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "examples": {
+          "description": "Examples to help the business model developer",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name"]
+    },
+    "instance": {
+      "description": "Single pattern and business model example that is derived from the Business Knowledge Model",
+      "properties": {
+        "name": {
+          "description": "Name of the pattern or business model example",
+          "type": "string"
+        },
+        "type": {
+          "enum": ["pattern", "example"]
+        },
+        "description": {
+          "description": "Description of the patterns or business model examples",
+          "type": "string"
+        },
+        "usedFeatures": {
+          "description": "Features that are used by the patterns or business model examples",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": ["name", "type", "usedFeatures"]
+    }
+  }
+}
