@@ -1,9 +1,9 @@
 import { Inject, Injectable, InjectionToken, OnDestroy } from '@angular/core';
 import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { DatabaseConstructor } from '../../database/database-model-part';
@@ -34,7 +34,7 @@ export interface GroupDecisionFormValue<T extends MethodElement> {
 export class GroupDecisionFormService<T extends MethodElement>
   implements OnDestroy
 {
-  form: FormGroup = this.fb.group({
+  form: UntypedFormGroup = this.fb.group({
     groupIndex: [undefined, Validators.required],
     elementDecisions: this.fb.array([]),
   });
@@ -44,7 +44,7 @@ export class GroupDecisionFormService<T extends MethodElement>
   private groupChangeSubscription: Subscription;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ELEMENT_CONSTRUCTOR)
     private elementConstructor: DatabaseConstructor<T>
   ) {
@@ -67,7 +67,7 @@ export class GroupDecisionFormService<T extends MethodElement>
     this.groupChangeSubscription.unsubscribe();
   }
 
-  addElement(elementDecisionFormGroup: FormGroup, index?: number): void {
+  addElement(elementDecisionFormGroup: UntypedFormGroup, index?: number): void {
     const formArray = this.getElementsFormArray(elementDecisionFormGroup);
     if (formArray == null) {
       return;
@@ -78,7 +78,10 @@ export class GroupDecisionFormService<T extends MethodElement>
     formArray.insert(index, this.fb.control(undefined, Validators.required));
   }
 
-  removeElement(elementDecisionFormGroup: FormGroup, index: number): void {
+  removeElement(
+    elementDecisionFormGroup: UntypedFormGroup,
+    index: number
+  ): void {
     const formArray = this.getElementsFormArray(elementDecisionFormGroup);
     if (formArray == null) {
       return;
@@ -115,12 +118,13 @@ export class GroupDecisionFormService<T extends MethodElement>
   private createElementDecisionsFormArray(
     group?: Readonly<Group<T>> | null,
     elementDecisions?: ElementDecision<T>[]
-  ): FormArray | undefined {
+  ): UntypedFormArray | undefined {
     if (group == null) {
       return undefined;
     }
-    const decisionFormGroups: FormGroup[] = group.items.map((element, index) =>
-      this.createElementDecisionFormGroup(element, elementDecisions?.[index])
+    const decisionFormGroups: UntypedFormGroup[] = group.items.map(
+      (element, index) =>
+        this.createElementDecisionFormGroup(element, elementDecisions?.[index])
     );
     return this.fb.array(decisionFormGroups);
   }
@@ -128,7 +132,7 @@ export class GroupDecisionFormService<T extends MethodElement>
   private createElementDecisionFormGroup(
     selection: MultipleSelection<T>,
     elementDecision?: ElementDecision<T>
-  ): FormGroup {
+  ): UntypedFormGroup {
     if (selection.multiple) {
       if (elementDecision != null) {
         return this.fb.group({
@@ -162,13 +166,15 @@ export class GroupDecisionFormService<T extends MethodElement>
     );
   }
 
-  get groupIndexControl(): FormControl {
-    return this.form.get('groupIndex') as FormControl;
+  get groupIndexControl(): UntypedFormControl {
+    return this.form.get('groupIndex') as UntypedFormControl;
   }
 
   getElementsFormArray(
-    elementDecisionFormGroup: FormGroup
-  ): FormArray | undefined {
-    return elementDecisionFormGroup.get('elements') as FormArray | undefined;
+    elementDecisionFormGroup: UntypedFormGroup
+  ): UntypedFormArray | undefined {
+    return elementDecisionFormGroup.get('elements') as
+      | UntypedFormArray
+      | undefined;
   }
 }

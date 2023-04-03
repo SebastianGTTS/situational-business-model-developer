@@ -1,0 +1,93 @@
+<form [formGroup]="featureForm" (ngSubmit)="submitForm()">
+  <div class="mb-3 row">
+    <label for="name" class="col-sm-4 col-form-label">Feature Name</label>
+    <div class="col-sm-8">
+      <input
+        type="text"
+        [readonly]="feature && feature.parent == null"
+        formControlName="name"
+        class="form-control"
+        id="name"
+      />
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="description" class="col-sm-4 col-form-label"
+      >Feature Description</label
+    >
+    <div class="col-sm-8">
+      <input
+        type="text"
+        [readonly]="feature && feature.parent == null"
+        formControlName="description"
+        class="form-control"
+        id="description"
+      />
+    </div>
+  </div>
+
+  <div *ngIf="feature == null || feature.parent != null" class="mb-3 row">
+    <label for="subfeatureOf" class="col-sm-4 col-form-label"
+      >Subfeature of</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="subfeatureOf"
+        formControlName="subfeatureOf"
+        class="form-select"
+      >
+        <option
+          *ngFor="let fl of featureList"
+          [disabled]="
+            disabledSubfeatures.includes(fl.id) ||
+            (enabledSubfeatures && !enabledSubfeatures.includes(fl.id))
+          "
+          [ngValue]="fl.id"
+        >
+          {{ fl.levelname }}
+        </option>
+      </select>
+      <div class="mt-1" *ngIf="featureForm.get('subfeatureOf')?.disabled">
+        Disabled, because this feature has a trace to a canvas building block
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="type" class="col-sm-4 col-form-label">Mandatory Feature</label>
+    <div class="col-sm-8">
+      <select id="type" formControlName="type" class="form-select">
+        <option [ngValue]="'mandatory'">Yes</option>
+        <option [ngValue]="'optional'">No</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="subfeatureConnections" class="col-sm-4 col-form-label"
+      >Subfeature Connections</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="subfeatureConnections"
+        formControlName="subfeatureConnections"
+        class="form-select"
+      >
+        <option [ngValue]="null">None</option>
+        <option [ngValue]="'xor'">XOR</option>
+        <option [ngValue]="'or'">OR</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm btn-primary"
+      [disabled]="!featureForm.valid"
+    >
+      {{ submitButtonText }}
+    </button>
+  </div>
+</form>

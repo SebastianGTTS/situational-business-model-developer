@@ -18,11 +18,12 @@ import {
   ArtifactOutputMapping,
   ArtifactStepMapping,
 } from './artifact-mapping';
-import { MetaModelService } from '../meta-model.service';
+import { MetaArtifactService } from '../meta-artifact.service';
 import { ModuleMethod } from '../module-api/module-method';
-import { MetaModelType } from '../meta-model-definition';
+import { MetaArtifactType } from '../meta-artifact-definition';
 import { Artifact } from '../method-elements/artifact/artifact';
 import { Groups } from './groups';
+import { IconInit } from '../../model/icon';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
@@ -36,7 +37,7 @@ export class DevelopmentMethodService extends DefaultElementService<
   protected readonly elementConstructor = DevelopmentMethod;
 
   constructor(
-    private metaModelService: MetaModelService,
+    private metaArtifactService: MetaArtifactService,
     private moduleService: ModuleService,
     pouchdbService: PouchdbService,
     private situationalFactorService: SituationalFactorService
@@ -100,6 +101,26 @@ export class DevelopmentMethodService extends DefaultElementService<
   }
 
   /**
+   * Get a list of development methods that have the desired phase.
+   * Additionally, sorted by the distance to the situational factors.
+   *
+   * @param phaseId
+   * @param situationalFactors
+   */
+  async getValidPhaseDevelopmentMethods(
+    phaseId: string,
+    situationalFactors: SituationalFactor[]
+  ): Promise<DevelopmentMethodEntry[]> {
+    const list = (await this.getList()).filter(
+      (method) => method.phases?.some((phase) => phase.id === phaseId) ?? false
+    );
+    return this.situationalFactorService.sortByDistance(
+      situationalFactors,
+      list
+    );
+  }
+
+  /**
    * Update the development method.
    *
    * @param id id of the development method
@@ -119,6 +140,22 @@ export class DevelopmentMethodService extends DefaultElementService<
   }
 
   /**
+   * Update the icon of a development method
+   *
+   * @param id
+   * @param icon
+   */
+  async updateIcon(id: string, icon: IconInit): Promise<void> {
+    try {
+      const method = await this.getWrite(id);
+      method.updateIcon(icon);
+      await this.save(method);
+    } finally {
+      this.freeWrite(id);
+    }
+  }
+
+  /**
    * Checks whether the development method is correctly defined
    *
    * @param developmentMethod the development method to check
@@ -127,6 +164,7 @@ export class DevelopmentMethodService extends DefaultElementService<
    */
   isCorrectlyDefined(developmentMethod: DevelopmentMethod): boolean {
     return (
+      developmentMethod.isComplete() &&
       this.isInputArtifactsCorrectlyDefined(developmentMethod) &&
       this.isExecutionStepsCorrectlyDefined(developmentMethod)
     );
@@ -161,7 +199,7 @@ export class DevelopmentMethodService extends DefaultElementService<
   ): boolean {
     if (
       artifactSelection.element == null ||
-      artifactSelection.element.metaModel == null ||
+      artifactSelection.element.metaArtifact == null ||
       artifactSelection.optional
     ) {
       return artifactSelection.mapping.length === 0;
@@ -192,7 +230,7 @@ export class DevelopmentMethodService extends DefaultElementService<
       if (
         !this.mappingPointsToDefinedOutput(
           developmentMethod.outputArtifacts,
-          artifactSelection.element?.metaModel?.type,
+          artifactSelection.element?.metaArtifact?.type,
           mapping
         )
       ) {
@@ -202,20 +240,20 @@ export class DevelopmentMethodService extends DefaultElementService<
         developmentMethod.outputArtifacts.groups[mapping.group].items[
           mapping.artifact
         ];
-      const api = this.metaModelService.getMetaModelDefinition(
-        outputArtifact.element?.metaModel?.type
+      const api = this.metaArtifactService.getMetaArtifactDefinition(
+        outputArtifact.element?.metaArtifact?.type
       )?.api;
-      if (api != null && api.compatibleMetaModelData != null) {
-        return api.compatibleMetaModelData(
-          artifactSelection.element?.metaModelData,
-          outputArtifact.element?.metaModelData
+      if (api != null && api.compatibleMetaArtifactData != null) {
+        return api.compatibleMetaArtifactData(
+          artifactSelection.element?.metaArtifactData,
+          outputArtifact.element?.metaArtifactData
         );
       }
       return true;
     } else if (mapping.isStepMapping()) {
       return this.mappingPointsToDefinedStepInput(
         developmentMethod.executionSteps,
-        artifactSelection.element?.metaModel?.type,
+        artifactSelection.element?.metaArtifact?.type,
         mapping
       );
     } else {
@@ -483,15 +521,15 @@ export class DevelopmentMethodService extends DefaultElementService<
 
   /**
    * Checks whether a mapping points to an existing output artifact and the
-   * metamodel types match.
+   * meta artifact types match.
    *
    * @param outputArtifacts
-   * @param metaModelType
+   * @param metaArtifactType
    * @param mapping
    */
   private mappingPointsToDefinedOutput(
     outputArtifacts: Groups<Artifact>,
-    metaModelType: MetaModelType | undefined,
+    metaArtifactType: MetaArtifactType | undefined,
     mapping: ArtifactOutputMapping
   ): boolean {
     if (
@@ -504,24 +542,24 @@ export class DevelopmentMethodService extends DefaultElementService<
       outputArtifacts.groups[mapping.group].items[mapping.artifact];
     if (
       outputArtifact.element == null ||
-      outputArtifact.element.metaModel == null
+      outputArtifact.element.metaArtifact == null
     ) {
       return false;
     }
-    return outputArtifact.element.metaModel.type === metaModelType;
+    return outputArtifact.element.metaArtifact.type === metaArtifactType;
   }
 
   /**
    * Checks whether a mapping points to an existing step input and the
-   * metamodel types match.
+   * meta artifact types match.
    *
    * @param executionSteps
-   * @param metaModelType
+   * @param metaArtifactType
    * @param mapping
    */
   private mappingPointsToDefinedStepInput(
     executionSteps: ExecutionStep[],
-    metaModelType: MetaModelType | undefined,
+    metaArtifactType: MetaArtifactType | undefined,
     mapping: ArtifactStepMapping
   ): boolean {
     if (executionSteps.length <= mapping.step) {
@@ -536,6 +574,6 @@ export class DevelopmentMethodService extends DefaultElementService<
       return false;
     }
     const input = method.input[mapping.artifact];
-    return input.type === metaModelType;
+    return input.type === metaArtifactType;
   }
 }

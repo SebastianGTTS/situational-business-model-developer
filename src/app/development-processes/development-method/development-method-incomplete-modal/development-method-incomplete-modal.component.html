@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <h4 class="modal-title">Building Block incomplete</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="alert alert-warning">
+    The provided building block is incomplete. Please check it in the building
+    block overview.
+  </div>
+</div>
+<div class="modal-footer d-flex">
+  <button type="button" class="btn btn-dark" (click)="dismiss()">Close</button>
+  <button
+    *ngIf="developmentMethod != null"
+    type="button"
+    class="btn btn-primary ms-auto"
+    (click)="check()"
+  >
+    Check
+  </button>
+</div>

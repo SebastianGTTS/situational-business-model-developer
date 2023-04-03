@@ -20,6 +20,7 @@ export abstract class ElementLoaderService implements OnDestroy {
   private readonly routeSubscription: Subscription;
   private _changesFeed?: Subscription;
   protected set changesFeed(changesFeed: Subscription) {
+    this._changesFeed?.unsubscribe();
     this._changesFeed = changesFeed;
   }
 

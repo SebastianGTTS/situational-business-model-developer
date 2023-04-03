@@ -1,0 +1,62 @@
+import { Injectable } from '@angular/core';
+import { ArtifactDataReference } from '../../../development-process-registry/running-process/artifact-data';
+import {
+  MetaArtifactApi,
+  Reference,
+} from '../../../development-process-registry/meta-artifact-definition';
+import { Router } from '@angular/router';
+import { DbId } from '../../../database/database-entry';
+
+@Injectable()
+export class <%= classify(name) %>MetaArtifactApiService implements MetaArtifactApi {
+  createMethod?: MetaArtifactApi['create'];
+  editMethod?: MetaArtifactApi['edit'];
+  viewMethod?: MetaArtifactApi['view'];
+
+  create(router: Router, reference: Reference, artifactId: DbId): void {
+    if (this.createMethod == null) {
+      console.warn('No module for the creation added');
+    } else {
+      this.createMethod(router, reference, artifactId);
+    }
+  }
+
+  edit(
+    model: ArtifactDataReference,
+    router: Router,
+    reference: Reference
+  ): void {
+    if (this.editMethod == null) {
+      console.warn('No module for editing added');
+    } else {
+      this.editMethod(model, router, reference);
+    }
+  }
+
+  view(
+    model: ArtifactDataReference,
+    router: Router,
+    reference: Reference
+  ): void {
+    if (this.viewMethod == null) {
+      console.warn('No module for viewing added');
+    } else {
+      this.viewMethod(model, router, reference);
+    }
+  }
+
+  async getName(model: ArtifactDataReference): Promise<string | undefined> {
+    // TODO implement
+    throw new Error('Not implemented');
+  }
+
+  async copy(model: ArtifactDataReference): Promise<ArtifactDataReference> {
+    // TODO implement
+    throw new Error('Not implemented');
+  }
+
+  async remove(model: ArtifactDataReference): Promise<void> {
+    // TODO implement
+    throw new Error('Not implemented');
+  }
+}

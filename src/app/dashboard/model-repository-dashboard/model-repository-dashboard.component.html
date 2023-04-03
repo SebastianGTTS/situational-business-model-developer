@@ -1,0 +1,47 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Dashboard of the Canvas Model Repository
+    </h1>
+    <p>
+      The dashboard provides statistics for the different Canvas Elements,
+      Canvas Building Blocks, and Canvas Models of the Canvas Model Repository.
+    </p>
+  </div>
+
+  <div class="my-3">
+    <div class="my-3">
+      <div class="row">
+        <div class="col-md-12">
+          <app-dashboard-item
+            [elementName]="domainsElement.name"
+            [elementDescription]="domainsElement.description"
+            [elementIcon]="domainsElement.icon"
+            [elementLink]="domainsElement.route"
+            [numberOfElements]="numberOfDomains"
+          ></app-dashboard-item>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="expertModelsElement.name"
+          [elementDescription]="expertModelsElement.description"
+          [elementIcon]="expertModelsElement.icon"
+          [elementLink]="expertModelsElement.route"
+          [numberOfElements]="numberOfExpertModels"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="canvasModelsElement.name"
+          [elementDescription]="canvasModelsElement.description"
+          [elementIcon]="canvasModelsElement.icon"
+          [elementLink]="canvasModelsElement.route"
+          [numberOfElements]="numberOfCanvasModels"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+</main>

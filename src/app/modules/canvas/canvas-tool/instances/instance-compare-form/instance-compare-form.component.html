@@ -1,0 +1,80 @@
+<form [formGroup]="selectOtherInstanceForm" (ngSubmit)="submit()">
+  <div class="mb-3 row">
+    <label for="featureModel" class="col-sm-4 col-form-label"
+      >Compare with</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="featureModel"
+        formControlName="featureModel"
+        class="form-select"
+      >
+        <option [ngValue]="companyModel._id">Competitors</option>
+        <option
+          *ngFor="let expertModel of expertModels"
+          [ngValue]="expertModel._id"
+        >
+          Examples of {{ expertModel.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="mb-3 row" *ngIf="featureModelControl.value === companyModel._id">
+    <label for="instance" class="col-sm-4 col-form-label">Competitor</label>
+    <div class="col-sm-8">
+      <select id="instance" formControlName="instance" class="form-select">
+        <option></option>
+        <ng-container *ngFor="let instance of competitors">
+          <option [ngValue]="instance.id">
+            {{ instance.name }}
+          </option>
+        </ng-container>
+      </select>
+    </div>
+  </div>
+  <div
+    class="mb-3 row"
+    *ngIf="
+      featureModelControl.value != null &&
+      featureModelControl.value !== companyModel._id &&
+      currentExpertModel != null
+    "
+  >
+    <label for="instanceExpertModel" class="col-sm-4 col-form-label"
+      >Example</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="instanceExpertModel"
+        formControlName="instance"
+        class="form-select"
+      >
+        <option></option>
+        <option
+          *ngFor="let example of currentExpertModel.getExamples()"
+          [ngValue]="example.id"
+        >
+          {{ example.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="d-grid">
+    <button
+      *ngIf="!currentlyComparing"
+      type="submit"
+      class="btn btn-sm btn-dark"
+      [disabled]="!selectOtherInstanceForm.valid"
+    >
+      Compare
+    </button>
+    <button
+      *ngIf="currentlyComparing"
+      type="button"
+      class="btn btn-sm btn-dark"
+      (click)="clearCompare.emit()"
+    >
+      Clear Compare
+    </button>
+  </div>
+</form>

@@ -1,0 +1,40 @@
+<form *ngIf="form != null" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="mb-3" [formGroup]="artifactFormGroup">
+    <app-method-element-selection-form
+      [listNames]="listNames"
+      [methodElements]="methodElements"
+      [removeAllowed]="false"
+      methodElementName="Artifact"
+    ></app-method-element-selection-form>
+  </div>
+  <div
+    *ngIf="
+      selectedArtifact != null &&
+      artifactOptional != null &&
+      !selectedArtifact.internalArtifact
+    "
+    formGroupName="data"
+  >
+    <app-running-process-select-output-artifact
+      [processArtifacts]="processArtifacts"
+      [artifactOptional]="artifactOptional"
+    ></app-running-process-select-output-artifact>
+  </div>
+  <div
+    class="mb-3 d-grid"
+    *ngIf="selectedArtifact != null && selectedArtifact.internalArtifact"
+  >
+    <button
+      type="button"
+      class="btn btn-sm btn-primary"
+      (click)="createArtifact.emit(selectedArtifact)"
+    >
+      Create Artifact
+    </button>
+  </div>
+  <div class="d-grid">
+    <button type="submit" class="btn btn-sm btn-dark" [disabled]="!form.valid">
+      Add Artifact
+    </button>
+  </div>
+</form>

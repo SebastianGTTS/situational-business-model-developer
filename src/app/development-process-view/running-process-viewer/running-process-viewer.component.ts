@@ -12,11 +12,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import BpmnViewer from 'bpmn-js/lib/NavigatedViewer';
-import { FullRunningProcess } from '../../development-process-registry/running-process/running-process';
 import { RunningProcessViewerService } from '../shared/running-process-viewer.service';
 import { BpmnFlowNode, BpmnSequenceFlow } from 'bpmn-js';
 import * as BpmnUtils from '../../development-process-registry/bpmn/bpmn-utils';
 import RunningProcessViewRenderer from '../bpmn-extensions/running-process-view/RunningProcessViewRenderer';
+import { RunningPatternProcess } from '../../development-process-registry/running-process/running-pattern-process';
 
 @Component({
   selector: 'app-running-process-viewer',
@@ -26,7 +26,7 @@ import RunningProcessViewRenderer from '../bpmn-extensions/running-process-view/
 export class RunningProcessViewerComponent
   implements OnInit, OnChanges, AfterContentInit, OnDestroy
 {
-  @Input() runningProcess?: FullRunningProcess;
+  @Input() runningProcess?: RunningPatternProcess;
   @Input() unreachable?: Set<string>;
   @Input() missingArtifacts?: Set<string>;
 
@@ -53,35 +53,28 @@ export class RunningProcessViewerComponent
     eventBus.on('bmp.skipExecution', (event, node) =>
       this.skipExecution.emit(node.id)
     );
-    if (this.runningProcess != null) {
-      this.setUnreachable();
-      this.setMissingArtifacts();
-      void this.loadBmProcess(this.runningProcess, true);
-    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.viewer != null) {
-      if (changes.runningProcess) {
-        void this.loadBmProcess(
-          changes.runningProcess.currentValue,
-          changes.runningProcess.firstChange
-        );
-      }
-      if (changes.unreachable) {
-        this.setUnreachable();
-      }
-      if (changes.missingArtifacts) {
-        this.setMissingArtifacts();
-      }
-      if (changes.missingArtifacts || changes.unreachable) {
-        const changedElements = this.viewer
-          .get('elementRegistry')
-          .filter((element) => BpmnUtils.isFlowNode(element));
-        this.viewer
-          .get('eventBus')
-          .fire('elements.changed', { elements: changedElements });
-      }
+    if (changes.runningProcess) {
+      void this.loadBmProcess(
+        changes.runningProcess.currentValue,
+        changes.runningProcess.firstChange
+      );
+    }
+    if (changes.unreachable) {
+      this.setUnreachable();
+    }
+    if (changes.missingArtifacts) {
+      this.setMissingArtifacts();
+    }
+    if (changes.missingArtifacts || changes.unreachable) {
+      const changedElements = this.viewer
+        .get('elementRegistry')
+        .filter((element) => BpmnUtils.isFlowNode(element));
+      this.viewer
+        .get('eventBus')
+        .fire('elements.changed', { elements: changedElements });
     }
   }
 
@@ -115,7 +108,7 @@ export class RunningProcessViewerComponent
   }
 
   private async loadBmProcess(
-    runningProcess: FullRunningProcess,
+    runningProcess: RunningPatternProcess,
     firstLoad: boolean
   ): Promise<void> {
     await this.viewer.importXML(runningProcess.process.processDiagram);

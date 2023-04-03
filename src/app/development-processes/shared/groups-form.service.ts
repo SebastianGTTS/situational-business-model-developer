@@ -1,10 +1,10 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { MethodElement } from '../../development-process-registry/method-elements/method-element';
 import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Groups } from '../../development-process-registry/development-method/groups';
@@ -35,14 +35,14 @@ export interface GroupsFormValue<T extends MethodElement> {
 
 @Injectable()
 export class GroupsFormService<T extends MethodElement> {
-  form: FormGroup = this.fb.group({
+  form: UntypedFormGroup = this.fb.group({
     allowNone: this.fb.control(false),
     groups: this.fb.array([]),
     defaultGroup: this.fb.control(undefined),
   });
 
   constructor(
-    protected fb: FormBuilder,
+    protected fb: UntypedFormBuilder,
     @Inject(ELEMENT_CONSTRUCTOR)
     private elementConstructor: DatabaseConstructor<T>
   ) {}
@@ -78,21 +78,21 @@ export class GroupsFormService<T extends MethodElement> {
     this.defaultGroupControl.setValue(undefined);
   }
 
-  addItem(group: FormGroup): void {
+  addItem(group: UntypedFormGroup): void {
     this.getItemsFormArray(group).push(this.createItemForm());
   }
 
-  removeItem(group: FormGroup, index: number): void {
+  removeItem(group: UntypedFormGroup, index: number): void {
     this.getItemsFormArray(group).removeAt(index);
   }
 
-  private createGroupsFormArray(groups: Groups<T>): FormArray {
+  private createGroupsFormArray(groups: Groups<T>): UntypedFormArray {
     return this.fb.array(
       groups.groups.map((group) => this.createGroupForm(group))
     );
   }
 
-  private createGroupForm(group?: Group<T>): FormGroup {
+  private createGroupForm(group?: Group<T>): UntypedFormGroup {
     if (group == null) {
       return this.fb.group({
         items: this.fb.array([]),
@@ -106,7 +106,7 @@ export class GroupsFormService<T extends MethodElement> {
     }
   }
 
-  createItemForm(item?: MultipleSelection<T>): FormGroup {
+  createItemForm(item?: MultipleSelection<T>): UntypedFormGroup {
     if (item == null) {
       return this.fb.group({
         list: ['', Validators.required],
@@ -166,23 +166,23 @@ export class GroupsFormService<T extends MethodElement> {
     );
   }
 
-  get groupsControl(): FormArray {
-    return this.form.get('groups') as FormArray;
+  get groupsControl(): UntypedFormArray {
+    return this.form.get('groups') as UntypedFormArray;
   }
 
-  get defaultGroupControl(): FormControl {
-    return this.form.get('defaultGroup') as FormControl;
+  get defaultGroupControl(): UntypedFormControl {
+    return this.form.get('defaultGroup') as UntypedFormControl;
   }
 
-  get allowNoneControl(): FormControl {
-    return this.form.get('allowNone') as FormControl;
+  get allowNoneControl(): UntypedFormControl {
+    return this.form.get('allowNone') as UntypedFormControl;
   }
 
-  getItemsFormArray(group: FormGroup): FormArray {
-    return group.get('items') as FormArray;
+  getItemsFormArray(group: UntypedFormGroup): UntypedFormArray {
+    return group.get('items') as UntypedFormArray;
   }
 
-  getElementControl(item: FormGroup): FormControl {
-    return item.get('element') as FormControl;
+  getElementControl(item: UntypedFormGroup): UntypedFormControl {
+    return item.get('element') as UntypedFormControl;
   }
 }

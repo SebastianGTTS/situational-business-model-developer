@@ -1,0 +1,104 @@
+<div [formGroup]="formGroup" class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">
+    {{ artifact.name | optional: isOptional }} ({{ artifact.list | list }})
+  </h6>
+  <div class="mb-3">
+    <div
+      class="btn-group"
+      role="group"
+      [attr.aria-label]="
+        'Create new artifact or merge artifact' +
+        (isOptional ? ' or do not create the artifact' : '')
+      "
+    >
+      <ng-container *ngIf="isOptional">
+        <input
+          type="radio"
+          class="btn-check"
+          id="optional-option-{{ id }}"
+          autocomplete="off"
+          [value]="null"
+          formControlName="isDefinition"
+        />
+        <label class="btn btn-outline-primary" for="optional-option-{{ id }}"
+          >Optional</label
+        >
+      </ng-container>
+      <input
+        type="radio"
+        class="btn-check"
+        id="merge-option-{{ id }}"
+        autocomplete="off"
+        [value]="false"
+        formControlName="isDefinition"
+      />
+      <label class="btn btn-outline-primary" for="merge-option-{{ id }}"
+        >Merge</label
+      >
+      <input
+        type="radio"
+        class="btn-check"
+        id="new-artifact-option-{{ id }}"
+        autocomplete="off"
+        [value]="true"
+        formControlName="isDefinition"
+      />
+      <label class="btn btn-outline-primary" for="new-artifact-option-{{ id }}"
+        >New Artifact</label
+      >
+    </div>
+  </div>
+  <div
+    *ngIf="definitionControl.value != null && !definitionControl.value"
+    class="mb-3"
+  >
+    <label class="form-label" for="artifact">Artifact</label>
+    <div class="input-group">
+      <select class="form-select" id="artifact" formControlName="artifact">
+        <ng-container *ngFor="let a of processArtifacts; let index = index">
+          <option *ngIf="a.artifact._id === artifact._id" [ngValue]="index">
+            {{ a.name }}
+          </option>
+        </ng-container>
+      </select>
+      <button
+        *ngIf="!artifact.internalArtifact"
+        [disabled]="artifactControl.value == null"
+        class="btn btn-outline-primary"
+        type="button"
+        (click)="loadData(artifactControl.value)"
+      >
+        Load
+      </button>
+    </div>
+  </div>
+  <div
+    class="mb-3"
+    *ngIf="definitionControl.value != null && definitionControl.value"
+  >
+    <label class="form-label" for="name">Name</label>
+    <div class="input-group">
+      <input class="form-control" id="name" formControlName="artifactName" />
+      <button
+        *ngIf="artifact.internalArtifact"
+        class="btn btn-outline-primary"
+        type="button"
+        (click)="setDefaultName()"
+      >
+        Set default name
+      </button>
+    </div>
+  </div>
+  <div class="mb-3" *ngIf="showNotes">
+    <label class="form-label" for="externalOutputArtifactData-{{ id }}"
+      >Note</label
+    >
+    <div class="d-grid">
+      <quill-editor
+        [classes]="'quill-lg-box'"
+        id="externalOutputArtifactData-{{ id }}"
+        formControlName="data"
+      ></quill-editor>
+    </div>
+  </div>
+</div>

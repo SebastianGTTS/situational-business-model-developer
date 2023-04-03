@@ -1,0 +1,18 @@
+<form [formGroup]="manageArtifactsForm" (ngSubmit)="submitForm()">
+  <div class="mb-3" formArrayName="artifacts">
+    <app-form-array-list
+      elementName="Artifact"
+      [formArray]="artifacts"
+    ></app-form-array-list>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!manageArtifactsForm.valid"
+    >
+      Update Artifacts
+    </button>
+  </div>
+</form>

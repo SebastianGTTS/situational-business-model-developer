@@ -1,0 +1,27 @@
+<div class="mb-1">
+  <app-list-item
+    [item]="processPattern"
+    [showView]="false"
+    [showDelete]="false"
+  >
+    <ng-container extraButtons>
+      <button
+        [id]="
+          index != null ? 'process-pattern-selection-form-select-' + index : ''
+        "
+        (click)="selectProcessPattern.emit(processPattern)"
+        type="button"
+        class="btn btn-primary btn-sm"
+      >
+        Select
+      </button>
+    </ng-container>
+  </app-list-item>
+</div>
+<div>
+  <app-situational-factors-overview
+    *ngIf="needed && needed.length > 0"
+    [provided]="provided"
+    [needed]="needed"
+  ></app-situational-factors-overview>
+</div>

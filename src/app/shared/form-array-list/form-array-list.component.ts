@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import {
   AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
@@ -15,14 +15,14 @@ import {
 })
 export class FormArrayListComponent {
   @Input() elementName!: string;
-  @Input() formArray!: FormArray;
+  @Input() formArray!: UntypedFormArray;
   @Input() validators: ((
     control: AbstractControl
   ) => ValidationErrors | null)[] = [Validators.required];
 
   @Input() ordered = false;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   add(): void {
     this.formArray.push(this.fb.control('', this.validators));
@@ -47,7 +47,7 @@ export class FormArrayListComponent {
     this.formArray.removeAt(index);
   }
 
-  asFormControl(control: AbstractControl): FormControl {
-    return control as FormControl;
+  asFormControl(control: AbstractControl): UntypedFormControl {
+    return control as UntypedFormControl;
   }
 }

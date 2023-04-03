@@ -1,9 +1,9 @@
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 /**
  * Used to show configuration forms at the selection of
- * execution steps and artifact metamodels.
+ * execution steps and meta artifacts.
  */
 export interface ConfigurationFormComponent {
-  formGroup: FormGroup;
+  formGroup: UntypedFormGroup;
 }

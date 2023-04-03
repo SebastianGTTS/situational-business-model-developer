@@ -1,0 +1,8 @@
+<app-groups-form
+  [idPrefix]="idPrefix"
+  [listNames]="listNames"
+  [methodElements]="methodElements"
+  methodElementName="Tool"
+  [groups]="tools"
+  (submitGroupsForm)="submitToolsForm.emit($event)"
+></app-groups-form>

@@ -1,0 +1,42 @@
+<form [formGroup]="form" (ngSubmit)="select()">
+  <div class="modal-header">
+    <h4 class="modal-title">Select Image</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    Select the image to add to the whiteboard.
+    <div class="sbmd-form-wrapper">
+      <div class="row mb-0">
+        <label for="file" class="col-sm-4 col-form-label">File</label>
+        <div class="col-sm-8">
+          <input
+            type="file"
+            accept="image/*"
+            class="form-control"
+            [class.is-invalid]="imageLoadingError != null"
+            id="file"
+            aria-describedby="fileErrorDescription"
+            formControlName="file"
+            (change)="fileChange($event)"
+          />
+          <div id="fileErrorDescription" class="invalid-feedback">
+            {{ imageLoadingError }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="dismiss()">
+      Dismiss
+    </button>
+    <button [disabled]="!form.valid" type="submit" class="btn btn-primary">
+      Select
+    </button>
+  </div>
+</form>

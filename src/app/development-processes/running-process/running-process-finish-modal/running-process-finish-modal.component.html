@@ -1,0 +1,35 @@
+<form [formGroup]="conclusionForm" (ngSubmit)="finishMethod()">
+  <div class="modal-header">
+    <h4 class="modal-title">Finish Running Method</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="dismiss()"
+    ></button>
+  </div>
+  <div class="modal-body" *ngIf="runningProcess != null">
+    <p>
+      You are about to finish the enaction of the method
+      {{ runningProcess.name }}. After this it is not possible to do any changes
+      to the method. All development steps in the doing phase will be aborted
+      and the related artifacts will be removed.
+    </p>
+    <p>You can also fill out this form for a conclusion</p>
+    <div>
+      <label for="conclusionTextarea" class="form-label">Conclusion</label>
+      <textarea
+        class="form-control"
+        id="conclusionTextarea"
+        formControlName="conclusion"
+        rows="3"
+      ></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="dismiss()">
+      Close
+    </button>
+    <button type="submit" class="btn btn-primary ms-auto">Finish Method</button>
+  </div>
+</form>

@@ -1,40 +1,54 @@
-<app-navbar *ngIf="showNavbar"></app-navbar>
-
-<div id="wrapper" class="min-vh-100 d-flex flex-column align-content-center">
-  <div class="flex-1">
-    <router-outlet></router-outlet>
-  </div>
-
-  <footer
+<app-tutorial-popover-wrapper></app-tutorial-popover-wrapper>
+<div class="vh-100 d-flex flex-column">
+  <app-navbar
     *ngIf="showNavbar"
-    class="
-      text-muted
-      container
-      text-center
-      mb-3
-      d-flex
-      align-items-baseline
-      justify-content-center
-    "
+    [sidenavEnabled]="sidenavEnabled"
+    [sidenavExpanded]="showSidenav"
+    (navbarToggle)="toggleSidenav()"
+  ></app-navbar>
+
+  <div
+    id="screen"
+    [@sidenav]="showSidenav"
+    class="flex-fill d-flex overflow-hidden"
   >
-    <button
-      *ngIf="!isLocalDatabase()"
-      type="button"
-      class="btn btn-link"
-      (click)="logout()"
+    <aside
+      id="navbarToggleExternalContent"
+      *ngIf="showSidenav"
+      class="overflow-auto"
     >
-      Logout
-    </button>
-    <div *ngIf="!isLocalDatabase()">&ndash;</div>
-    <a
-      class="btn btn-link"
-      routerLinkActive="active"
-      [routerLink]="['/', 'options']"
-      >Options</a
+      <app-nav-side></app-nav-side>
+    </aside>
+    <div
+      #content
+      id="content"
+      class="flex-fill d-flex flex-column align-content-center"
     >
-    <div>&ndash;</div>
-    <div class="btn btn-link" routerLinkActive="active" [routerLink]="['/']">
-      SBMD v{{ VERSION }}
+      <app-tutorial-button></app-tutorial-button>
+      <div class="flex-fill">
+        <router-outlet></router-outlet>
+      </div>
+
+      <footer
+        *ngIf="showNavbar"
+        class="
+          text-muted
+          container
+          text-center
+          mb-3
+          d-flex
+          align-items-baseline
+          justify-content-center
+        "
+      >
+        <div
+          class="btn btn-link"
+          routerLinkActive="active"
+          [routerLink]="['/']"
+        >
+          SBMD v{{ VERSION }}
+        </div>
+      </footer>
     </div>
-  </footer>
+  </div>
 </div>

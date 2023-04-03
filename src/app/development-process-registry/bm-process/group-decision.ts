@@ -28,7 +28,7 @@ export interface GroupDecisionInit<T extends MethodElement>
 
 export interface GroupDecisionEntry<T extends MethodElementEntry>
   extends DatabaseEntry {
-  group?: number;
+  group?: number | null;
   elementDecisions?: ElementDecisionEntry<T>[];
 }
 
@@ -80,6 +80,10 @@ export class GroupDecision<T extends MethodElement>
         } else {
           throw new Error('Group Decision Entry is broken');
         }
+      } else if (entry.group === null && this.groups.allowNone) {
+        this.group = null;
+      } else {
+        this.group = undefined;
       }
     } else if (init != null) {
       if (
@@ -234,7 +238,7 @@ export class GroupDecision<T extends MethodElement>
       group:
         this.group != null
           ? this.groups.groups.indexOf(this.group as Group<T>)
-          : undefined,
+          : this.group,
       elementDecisions: this.elementDecisions?.map((decision) =>
         decision.toDb()
       ),

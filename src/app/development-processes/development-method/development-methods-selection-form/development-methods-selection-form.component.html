@@ -1,0 +1,32 @@
+<ng-template #ref let-item let-index="index">
+  <app-development-method-selection-form
+    [index]="index"
+    [contextSituationalFactors]="contextSituationalFactors"
+    [developmentMethod]="item"
+    (selectDevelopmentMethod)="selectDevelopmentMethod.emit($event)"
+  ></app-development-method-selection-form>
+</ng-template>
+
+<app-search
+  heading="Building Blocks"
+  itemName="Method Building Blocks"
+  [content]="ref"
+  [items]="developmentMethods"
+>
+  <div *ngIf="allowTypeFilter" class="row" filter>
+    <div class="col-sm-6">
+      <app-type-filter></app-type-filter>
+    </div>
+    <div class="col-sm-3">
+      <app-phase-filter></app-phase-filter>
+    </div>
+    <div class="col-sm-3">
+      <app-author-filter [authorNames]="authorNames"></app-author-filter>
+    </div>
+  </div>
+  <div *ngIf="!allowTypeFilter" class="row" filter>
+    <div class="offset-sm-6 col-sm-6">
+      <app-author-filter [authorNames]="authorNames"></app-author-filter>
+    </div>
+  </div>
+</app-search>

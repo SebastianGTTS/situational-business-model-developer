@@ -1,0 +1,197 @@
+<ng-template #deleteModal>
+  <app-delete-feature-confirm
+    *ngIf="modalFeature != null"
+    [feature]="modalFeature"
+    (deletionResult)="deleteFeature($event)"
+    (closeModal)="closeModal()"
+  ></app-delete-feature-confirm>
+</ng-template>
+
+<ng-template #dependencyModal>
+  <app-cross-tree-relationship-modal
+    *ngIf="modalFeature != null"
+    [featureModel]="featureModel"
+    [feature]="modalFeature"
+    (closeModal)="closeModal()"
+    (removeRelationship)="
+      removeRelationship($event.type, $event.fromFeatureId, $event.toFeatureId)
+    "
+  ></app-cross-tree-relationship-modal>
+</ng-template>
+
+<ng-template #updateModal>
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalFeature != null" id="modal-basic-title">
+      {{ modalFeature.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="text-muted pt-3">
+      <app-feature-form
+        *ngIf="modalFeature != null"
+        [feature]="modalFeature"
+        [disabledSubfeatures]="modalSubfeatureIds ?? []"
+        [featureList]="featureList"
+        (submitFeatureForm)="updateFeature($event)"
+      ></app-feature-form>
+    </div>
+  </div>
+</ng-template>
+
+<section class="my-3 sbmd-info-block" role="alert">
+  <h6 class="sbmd-panel-small-title">Help text</h6>
+  <p>View and edit the feature tree. You can:</p>
+  <ul>
+    <li>
+      at the bottom of the page
+      <ul>
+        <li>Check for problems (e.g. inconsistencies)</li>
+        <li>Add new features</li>
+        <li>Add Cross-Tree Relationships</li>
+      </ul>
+    </li>
+    <li>
+      in the feature tree
+      <ul>
+        <li>List and remove Cross-Tree Relationships</li>
+        <li>
+          Update features (e.g. change name/description, Tree relationship (XOR,
+          OR), &hellip;)
+        </li>
+        <li>Remove features</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<!-- List of Features -->
+<section class="my-3 sbmd-panel">
+  <div class="sbmd-panel-header">
+    <h6 class="sbmd-panel-header-title">Feature tree</h6>
+    <button (click)="expandFeatureTree()" class="ms-auto btn btn-sm btn-dark">
+      Expand all
+    </button>
+    <button (click)="collapseFeatureTree()" class="ms-1 btn btn-sm btn-dark">
+      Collapse all
+    </button>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <app-feature-tree
+        *ngIf="featureModel != null"
+        (openDependenciesEmitter)="openDependenciesModal($event)"
+        (updateFeatureEmitter)="updateFeatureModal($event)"
+        (deleteFeatureEmitter)="deleteFeatureModal($event)"
+        [features]="featureModel.features"
+        [problemFeatureIds]="problemFeatureIds"
+        [supportsHurtsProblemFeatureIds]="supportsHurtsProblemFeatureIds"
+      >
+      </app-feature-tree>
+    </div>
+  </div>
+
+  <div class="mt-3 row">
+    <div class="col-4"><strong>Legend:</strong></div>
+    <div class="col-4">
+      <i class="bi bi-circle-fill" aria-hidden="true"></i
+      ><span class="visually-hidden">mandatory</span>
+      Mandatory Feature
+    </div>
+    <div class="col-4">
+      <i class="bi bi-circle" aria-hidden="true"></i
+      ><span class="visually-hidden">optional</span>
+      Optional Feature
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">&nbsp;</div>
+    <div class="col-4">
+      <i class="bi bi-chevron-up" aria-hidden="true"></i
+      ><span class="visually-hidden">xor subfeatures</span>
+      Alternative (Xor)
+    </div>
+    <div class="col-4">
+      <i class="bi bi-caret-up-fill" aria-hidden="true"></i
+      ><span class="visually-hidden">or subfeatures</span>
+      Or
+    </div>
+  </div>
+  <div class="row" *ngIf="problems">
+    <div class="col-4">&nbsp;</div>
+    <div class="col-4">
+      <span class="text-warning">Supports/Hurts error (see below)</span>
+    </div>
+    <div class="col-4">
+      <span class="text-danger">Instantiation errors (see below)</span>
+    </div>
+  </div>
+</section>
+
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Check for problems</h6>
+  <div class="d-grid">
+    <button
+      class="btn btn-sm btn-dark"
+      *ngIf="!problems"
+      (click)="checkInstantiationPossible()"
+    >
+      Activate check
+    </button>
+    <button
+      class="btn btn-sm btn-dark"
+      *ngIf="problems"
+      (click)="deactivateInstantiationCheck()"
+    >
+      Deactivate check
+    </button>
+  </div>
+  <div class="mt-4" *ngIf="problems">
+    <h6>Instantiation problems:</h6>
+    <p *ngIf="problems.length === 0">No problems detected.</p>
+    <ul *ngIf="problems.length > 0">
+      <li *ngFor="let problem of problems">
+        {{ problem }}
+      </li>
+    </ul>
+  </div>
+  <div class="mt-4" *ngIf="supportsHurtsProblems">
+    <h6>Supports/Hurts problems:</h6>
+    <p *ngIf="supportsHurtsProblems.length === 0">No problems detected.</p>
+    <ul *ngIf="supportsHurtsProblems.length > 0">
+      <li *ngFor="let problem of supportsHurtsProblems">
+        {{ problem }}
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Add a Feature-->
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Add Feature</h6>
+  <div class="sbmd-form-wrapper">
+    <app-feature-form
+      submitButtonText="Add Feature"
+      [featureList]="featureList"
+      (submitFeatureForm)="insertFeature($event)"
+    ></app-feature-form>
+  </div>
+</div>
+
+<!-- Add a Relationship-->
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Add Cross-Tree Relationship</h6>
+  <div class="sbmd-form-wrapper">
+    <app-cross-tree-relationship-form
+      [featureList]="featureList"
+      [relationshipTypes]="featureModel.definition.relationshipTypes"
+      (submitRelationshipForm)="addRelationship($event)"
+    ></app-cross-tree-relationship-form>
+  </div>
+</div>

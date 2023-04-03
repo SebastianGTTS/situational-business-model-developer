@@ -1,6 +1,6 @@
 # Situational Business Model Developer
 
-The Situational Business Model Developer (SMDB) is a software tool for a novel approach to support the situation-specific business model development. That development aims to adjust the business model development methods as well as the business models to the actual situation of the developing organization. 
+The Situational Business Model Developer (SBMD) is a software tool for a novel approach to support the situation-specific business model development. That development aims to adjust the business model development methods as well as the business models to the actual situation of the developing organization. 
 
 ## Introduction
 
@@ -15,7 +15,7 @@ The usage of our tool can be discovered in a small demonstration video. However,
 [![Video for the Situational Business Model Developer](https://img.youtube.com/vi/1VszYMIb4xo/0.jpg)](https://www.youtube.com/watch?v=1VszYMIb4xo)
 
 
-A live demonstration of our tool is provided [here](https://sebastiangtts.github.io/situational-business-model-developer).
+A live demonstration of our tool is provided [here](https://sebastiangtts.github.io/situational-business-model-developer). Moreover, we provide a tutorial mode inside the tool for guidance in the most important features.
 
 
 

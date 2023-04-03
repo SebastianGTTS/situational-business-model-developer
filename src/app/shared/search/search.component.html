@@ -1,13 +1,14 @@
-<form [formGroup]="searchForm" class="form-inline">
-  <label class="sr-only" for="search">Search</label>
+<form class="mb-3" [formGroup]="searchForm">
+  <label class="visually-hidden" for="search">Search</label>
   <input
     formControlName="search"
     type="text"
-    class="form-control mb-2 mr-sm-2"
+    class="form-control"
     id="search"
     placeholder="Search"
   />
 </form>
+<ng-content select="[filter]"></ng-content>
 <h5>{{ heading }}</h5>
 <div *ngIf="items == null" class="alert alert-info">Loading...</div>
 <div *ngIf="items && items.length === 0" class="alert alert-info">
@@ -18,16 +19,23 @@
     items && items.length > 0 && filteredResults && filteredResults.length === 0
   "
 >
-  No fitting {{ itemName }} for search {{ searchForm.value.search }}.
+  No fitting {{ itemName }} found<span *ngIf="searchForm.value.search !== ''">
+    for search: {{ searchForm.value.search }}</span
+  ><span *ngIf="searchForm.value.search === ''">
+    for current filter settings</span
+  >.
 </div>
 <ul
   *ngIf="filteredResults && filteredResults.length > 0"
   class="list-group shadow-sm"
 >
-  <li *ngFor="let item of filteredResults" class="list-group-item">
+  <li
+    *ngFor="let item of filteredResults; let index = index"
+    class="list-group-item"
+  >
     <ng-container
       [ngTemplateOutlet]="content"
-      [ngTemplateOutletContext]="{ $implicit: item }"
+      [ngTemplateOutletContext]="{ $implicit: item, index: index }"
     ></ng-container>
   </li>
 </ul>

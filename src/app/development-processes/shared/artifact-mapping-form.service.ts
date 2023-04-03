@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import {
   ArtifactMapping,
   ArtifactMappingInit,
@@ -23,15 +28,15 @@ export interface MappingFormValueValid extends MappingFormValue {
   providedIn: 'root',
 })
 export class ArtifactMappingFormService {
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
-  createMappingsForm(mappings: ArtifactMapping[]): FormArray {
+  createMappingsForm(mappings: ArtifactMapping[]): UntypedFormArray {
     return this.fb.array(
       mappings.map((mapping) => this.createMappingForm(mapping))
     );
   }
 
-  createMappingForm(mapping?: ArtifactMapping): FormGroup {
+  createMappingForm(mapping?: ArtifactMapping): UntypedFormGroup {
     if (mapping == null) {
       return this.fb.group({
         output: this.fb.control(false, Validators.required),
@@ -53,7 +58,7 @@ export class ArtifactMappingFormService {
     }
   }
 
-  convertMappingForm(mappingForm: FormGroup): void {
+  convertMappingForm(mappingForm: UntypedFormGroup): void {
     if (mappingForm.get('output')?.value) {
       mappingForm.removeControl('step');
       mappingForm.addControl(
@@ -77,7 +82,7 @@ export class ArtifactMappingFormService {
    * @param mappingsForm the mappings in which to search
    * @param step the step to which a mapping should point to reset it
    */
-  removeMappingTo(mappingsForm: FormArray, step: number): void {
+  removeMappingTo(mappingsForm: UntypedFormArray, step: number): void {
     mappingsForm.controls.forEach((mappingForm) => {
       if (
         mappingForm.get('output')?.value === false &&
@@ -102,7 +107,7 @@ export class ArtifactMappingFormService {
    * @param mappingsForm the mappings in which to search
    * @param step the step to which a mapping should point to reset it
    */
-  resetMappingTo(mappingsForm: FormArray, step: number): void {
+  resetMappingTo(mappingsForm: UntypedFormArray, step: number): void {
     mappingsForm.controls.forEach((mappingForm) => {
       if (
         mappingForm.get('output')?.value === false &&

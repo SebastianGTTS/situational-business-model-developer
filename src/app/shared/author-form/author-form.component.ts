@@ -32,7 +32,7 @@ export class AuthorFormComponent
 
   @Output() submitAuthorForm = new EventEmitter<FormGroup>();
 
-  authorForm: FormGroup = this.fb.group({
+  authorForm = this.fb.group({
     name: '',
     company: '',
     email: ['', Validators.email],
@@ -53,7 +53,14 @@ export class AuthorFormComponent
         debounceTime(300),
         tap(
           (value) =>
-            (this.changed = this.author != null && !this.author.equals(value))
+            (this.changed =
+              this.author != null &&
+              !this.author.equals({
+                name: value.name ?? undefined,
+                company: value.company ?? undefined,
+                email: value.email ?? undefined,
+                website: value.website ?? undefined,
+              }))
         )
       )
       .subscribe();
@@ -70,9 +77,7 @@ export class AuthorFormComponent
   }
 
   ngOnDestroy(): void {
-    if (this.changeSubscription != null) {
-      this.changeSubscription.unsubscribe();
-    }
+    this.changeSubscription?.unsubscribe();
   }
 
   submitForm(): void {

@@ -1,0 +1,13 @@
+<app-list-panel
+  elementName="Pattern-based Running Method that requires a context change"
+  elementNamePlural="Pattern-based Running Methods that require a context change"
+  [viewLinkFunction]="viewLinkFunction"
+  [showView]="editable"
+  [showDelete]="editable"
+>
+  <div deleteMessage>
+    You are deleting a running method that requires a context change. All
+    artifacts in the method will be deleted. The method is then also
+    inaccessible by the business developer. This cannot be undone.
+  </div>
+</app-list-panel>

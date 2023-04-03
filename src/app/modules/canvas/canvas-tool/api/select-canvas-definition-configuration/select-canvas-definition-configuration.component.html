@@ -1,0 +1,26 @@
+<ng-container [formGroup]="formGroup">
+  <div class="mb-3 row">
+    <label for="definitionSelector" class="col-sm-6 col-form-label"
+      >Canvas Model</label
+    >
+    <div class="col-sm-6">
+      <select
+        id="definitionSelector"
+        formControlName="definitionId"
+        class="form-select"
+        [class.is-invalid]="
+          definitionControl.invalid && definitionControl.touched
+        "
+      >
+        <option *ngIf="canvasDefinitions == null">Loading...</option>
+        <option></option>
+        <option
+          *ngFor="let definition of canvasDefinitions"
+          [ngValue]="definition._id"
+        >
+          {{ definition.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+</ng-container>

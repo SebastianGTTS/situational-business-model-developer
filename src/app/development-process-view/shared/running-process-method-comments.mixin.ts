@@ -1,7 +1,10 @@
 import { Comment } from '../../development-process-registry/running-process/comment';
-import { RunningProcess } from '../../development-process-registry/running-process/running-process';
+import {
+  RunningProcess,
+  RunningProcessInit,
+} from '../../development-process-registry/running-process/running-process';
 import { RunningMethod } from '../../development-process-registry/running-process/running-method';
-import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
+import { RunningProcessServiceBase } from '../../development-process-registry/running-process/running-process.service';
 import { AnyConstructor } from '../../shared/utils';
 
 export interface RunningProcessMethodCommentsMixin {
@@ -24,7 +27,10 @@ export function RunningProcessMethodCommentsMixin<T extends AnyConstructor>(
 
     abstract get runningMethod(): RunningMethod | undefined;
 
-    protected abstract get runningProcessService(): RunningProcessService;
+    protected abstract get runningProcessService(): RunningProcessServiceBase<
+      RunningProcess,
+      RunningProcessInit
+    >;
 
     async addComment(comment: Comment): Promise<void> {
       if (this.runningProcess != null && this.runningMethod != null) {

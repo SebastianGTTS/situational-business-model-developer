@@ -1,0 +1,24 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Domains</h1>
+    The Domains define the application areas in which supporting models like the
+    Canvas Model should the applicable during the composition of the development
+    method.
+  </div>
+  <app-list-panel
+    elementName="Domain"
+    elementNamePlural="Domains"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a domain. This cannot be undone. This action will not
+      delete the domain from models that are using it.
+    </div>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Domain"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+</main>

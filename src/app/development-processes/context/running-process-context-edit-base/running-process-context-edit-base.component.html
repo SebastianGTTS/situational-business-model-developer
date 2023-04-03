@@ -1,0 +1,42 @@
+<ng-content select="[editView]"></ng-content>
+
+<div class="container">
+  <div class="my-3 sbmd-panel">
+    <div class="d-flex align-items-baseline border-bottom border-gray mb-2">
+      <h6 class="pb-2 mb-0">Removed Methods</h6>
+    </div>
+    <ng-container
+      *ngIf="runningProcess.contextChangeInfo.removedMethods.length === 0"
+    >
+      No removed Methods.
+    </ng-container>
+    <ul
+      class="list-group"
+      *ngIf="runningProcess.contextChangeInfo.removedMethods.length > 0"
+    >
+      <li
+        class="list-group-item"
+        *ngFor="
+          let removedMethod of runningProcess.contextChangeInfo.removedMethods
+        "
+      >
+        <div class="d-flex justify-content-between align-items-baseline">
+          {{ removedMethod.decision.method.name }}
+          <button
+            class="btn btn-dark btn-sm"
+            (click)="removeRemovedMethod(removedMethod.id)"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <app-context-edit
+    [domains]="runningProcess.process.domains"
+    [situationalFactors]="runningProcess.process.situationalFactors"
+    (updateDomains)="updateDomains($event)"
+    (updateSituationalFactors)="updateSituationalFactors($event)"
+  ></app-context-edit>
+</div>

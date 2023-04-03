@@ -1,0 +1,62 @@
+<ul class="list-group">
+  <li
+    *ngFor="let experiment of experiments"
+    class="
+      d-flex
+      flex-wrap
+      list-group-item
+      justify-content-between
+      align-items-center
+    "
+  >
+    <div>
+      {{ experiment.name }}
+      <small class="text-muted" *ngIf="experiment.description">
+        {{ experiment.description }}</small
+      >
+    </div>
+
+    <div *ngIf="!viewOnly">
+      <button
+        (click)="manageArtifacts.emit(experiment.id)"
+        type="button"
+        class="btn btn-dark btn-sm me-1"
+      >
+        Manage Artifacts
+      </button>
+      <button
+        (click)="addExperiment.emit(experiment.id)"
+        type="button"
+        class="btn btn-primary btn-sm me-1"
+      >
+        Add
+      </button>
+      <button
+        (click)="updateExperiment.emit(experiment.id)"
+        type="button"
+        class="btn btn-warning btn-sm me-1"
+      >
+        Update
+      </button>
+      <button
+        [class.invisible]="experiment.parent == null"
+        (click)="deleteExperiment.emit(experiment.id)"
+        type="button"
+        class="btn btn-secondary btn-sm"
+      >
+        Delete
+      </button>
+    </div>
+
+    <app-experiment-tree
+      class="mt-2 w-100"
+      *ngIf="experiment.subexperiments.length > 0"
+      [experiments]="experiment.subexperiments"
+      [viewOnly]="viewOnly"
+      (manageArtifacts)="manageArtifacts.emit($event)"
+      (addExperiment)="addExperiment.emit($event)"
+      (updateExperiment)="updateExperiment.emit($event)"
+      (deleteExperiment)="deleteExperiment.emit($event)"
+    ></app-experiment-tree>
+  </li>
+</ul>

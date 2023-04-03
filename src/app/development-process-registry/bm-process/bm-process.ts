@@ -1,54 +1,44 @@
-import { DatabaseModel } from '../../database/database-model';
-import {
-  SituationalFactor,
-  SituationalFactorEntry,
-} from '../method-elements/situational-factor/situational-factor';
-import { DevelopmentMethod } from '../development-method/development-method';
-import { Domain, DomainEntry, DomainInit } from '../knowledge/domain';
-import { Selection, SelectionEntry } from '../development-method/selection';
+import { Icon, IconEntry, IconInit } from '../../model/icon';
 import {
   DatabaseRootEntry,
   DatabaseRootInit,
 } from '../../database/database-entry';
+import { DatabaseModel } from '../../database/database-model';
+import { Selection, SelectionEntry } from '../development-method/selection';
+import { Domain, DomainEntry, DomainInit } from '../knowledge/domain';
 import {
-  MethodDecision,
-  MethodDecisionEntry,
-  MethodDecisionInit,
-} from './method-decision';
-
-export type BmProcessDiagram = string;
+  SituationalFactor,
+  SituationalFactorEntry,
+} from '../method-elements/situational-factor/situational-factor';
 
 export interface BmProcessInit extends DatabaseRootInit {
   initial?: boolean;
   name: string;
-  processDiagram: BmProcessDiagram;
+  description?: string;
+  icon?: IconInit;
   domains?: DomainInit[];
   situationalFactors?: Selection<SituationalFactor>[];
-  decisions?: { [elementId: string]: MethodDecisionInit };
 }
 
 export interface BmProcessEntry extends DatabaseRootEntry {
   initial: boolean;
   name: string;
-  processDiagram: BmProcessDiagram;
+  description: string;
+  icon: IconEntry;
   domains: DomainEntry[];
   situationalFactors: SelectionEntry<SituationalFactorEntry>[];
-  decisions: { [elementId: string]: MethodDecisionEntry };
 }
 
 export class BmProcess extends DatabaseModel {
   static readonly typeName = 'BmProcess';
 
   initial = true;
-
   name: string;
-
-  processDiagram: BmProcessDiagram;
+  description = '';
+  icon: Icon;
 
   domains: Domain[] = [];
   situationalFactors: Selection<SituationalFactor>[] = [];
-
-  decisions: { [elementId: string]: MethodDecision } = {};
 
   constructor(
     entry: BmProcessEntry | undefined,
@@ -58,6 +48,7 @@ export class BmProcess extends DatabaseModel {
     let element;
     if (entry != null) {
       element = entry;
+      this.icon = new Icon(entry.icon ?? {}, undefined);
       this.domains =
         entry.domains?.map((domain) => new Domain(domain, undefined)) ??
         this.domains;
@@ -70,17 +61,9 @@ export class BmProcess extends DatabaseModel {
               SituationalFactor
             )
         ) ?? this.situationalFactors;
-      if (entry.decisions) {
-        Object.entries(entry.decisions).forEach(
-          ([elementId, decision]) =>
-            (this.decisions[elementId] = new MethodDecision(
-              decision,
-              undefined
-            ))
-        );
-      }
     } else if (init != null) {
       element = init;
+      this.icon = new Icon(undefined, init.icon ?? {});
       this.domains =
         init.domains?.map((domain) => new Domain(undefined, domain)) ??
         this.domains;
@@ -93,31 +76,12 @@ export class BmProcess extends DatabaseModel {
               SituationalFactor
             )
         ) ?? this.situationalFactors;
-      if (init.decisions) {
-        Object.entries(init.decisions).forEach(
-          ([elementId, decision]) =>
-            (this.decisions[elementId] = new MethodDecision(
-              undefined,
-              decision
-            ))
-        );
-      }
     } else {
       throw new Error('Either entry or init must be provided.');
     }
     this.initial = element.initial ?? this.initial;
     this.name = element.name;
-    this.processDiagram = element.processDiagram;
-  }
-
-  addDecision(id: string, method: DevelopmentMethod): void {
-    this.decisions[id] = new MethodDecision(undefined, {
-      method: method,
-    });
-  }
-
-  removeDecision(id: string): void {
-    delete this.decisions[id];
+    this.description = element.description ?? this.description;
   }
 
   /**
@@ -129,44 +93,43 @@ export class BmProcess extends DatabaseModel {
   }
 
   /**
-   * Update the decisions of this bm process.
+   * Update the name and description of this bm process
    *
-   * @param decisions the new decisions
+   * @param name
+   * @param description
    */
-  updateDecisions(decisions: {
-    [elementId: string]: MethodDecisionInit;
-  }): void {
-    this.decisions = {};
-    Object.entries(decisions).forEach(
-      ([elementId, decision]) =>
-        (this.decisions[elementId] = new MethodDecision(undefined, decision))
-    );
+  updateInfo(name: string, description: string): void {
+    this.name = name;
+    this.description = description;
+  }
+
+  /**
+   * Update the icon of this bm process
+   *
+   * @param icon
+   */
+  updateIcon(icon: IconInit): void {
+    this.icon.update(icon);
   }
 
   /**
    * Checks whether all method decisions are correctly filled out, except for the step decisions.
    */
   isComplete(): boolean {
-    return Object.values(this.decisions).every((decision) =>
-      decision.isComplete()
-    );
+    throw new Error('Not implemented');
   }
 
   toDb(): BmProcessEntry {
-    const decisions: { [elementId: string]: MethodDecisionEntry } = {};
-    Object.entries(this.decisions).forEach(([id, decision]) => {
-      decisions[id] = decision.toDb();
-    });
     return {
       ...super.toDb(),
       initial: this.initial,
       name: this.name,
-      processDiagram: this.processDiagram,
+      description: this.description,
+      icon: this.icon.toDb(),
       domains: this.domains.map((domain) => domain.toDb()),
       situationalFactors: this.situationalFactors.map((selection) =>
         selection.toDb()
       ),
-      decisions,
     };
   }
 }

@@ -1,0 +1,18 @@
+<app-delete-modal
+  (dismiss)="closeModal.emit()"
+  (delete)="deletionResult.emit(feature.id)"
+>
+  <ng-container modalTitle>
+    {{ feature.name }}
+  </ng-container>
+  <p>
+    You are trying to remove the feature "{{ feature.name }}". Please keep in
+    mind that you are removing also all subfeatures together with the
+    corresponding dependencies.
+  </p>
+  <p>Moreover, the feature is also removed from all business canvases.</p>
+  <p class="mb-0">
+    Additionally all traces to canvas building blocks of this feature will be
+    deleted.
+  </p>
+</app-delete-modal>

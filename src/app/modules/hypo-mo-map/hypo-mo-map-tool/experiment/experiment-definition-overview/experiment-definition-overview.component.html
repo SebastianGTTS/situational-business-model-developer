@@ -1,0 +1,39 @@
+<main *ngIf="experimentDefinition != null" role="main" class="container">
+  <div class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="experimentDefinition.experiment"
+    ></app-element-overview>
+  </div>
+
+  <div class="my-3">
+    <section class="sbmd-panel">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">Experiment Tree Overview</h6>
+        <div class="ms-auto">
+          <a
+            class="btn btn-primary btn-sm rounded-circle mb-1"
+            [routerLink]="['..', 'edit']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+      <app-experiment-tree
+        [experiments]="[experimentDefinition.experiment]"
+        [viewOnly]="true"
+      ></app-experiment-tree>
+    </section>
+  </div>
+
+  <div class="my-3 row">
+    <div class="offset-md-6 col-md-6">
+      <app-author-overview
+        [author]="experimentDefinition.author"
+        [editLink]="['..', 'general']"
+        fragment="author"
+      ></app-author-overview>
+    </div>
+  </div>
+</main>

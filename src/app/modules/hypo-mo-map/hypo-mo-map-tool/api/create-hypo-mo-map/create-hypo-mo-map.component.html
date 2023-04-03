@@ -1,0 +1,36 @@
+<app-step-errors *ngIf="!isManually()"></app-step-errors>
+
+<main
+  *ngIf="isManually() || (runningMethod != null && isCorrectStep())"
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Create HypoMoMap</h6>
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-4 col-form-label">Name</label>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="nameControl.invalid"
+              id="name"
+            />
+          </div>
+        </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-primary"
+            [disabled]="!form.valid"
+          >
+            Create HypoMoMap
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

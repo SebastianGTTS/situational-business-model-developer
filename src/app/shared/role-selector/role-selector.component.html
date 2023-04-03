@@ -1,0 +1,40 @@
+<section class="sbmd-panel">
+  <h6 class="sbmd-panel-title">Role</h6>
+  <p>Select your role:</p>
+  <form [formGroup]="form" (ngSubmit)="selectRole()">
+    <div class="text-center">
+      <div class="btn-group" role="group" aria-label="Select role">
+        <ng-container *ngFor="let role of roles">
+          <input
+            type="radio"
+            class="btn-check"
+            id="{{ role.id }}-option"
+            autocomplete="off"
+            [value]="role"
+            formControlName="role"
+          />
+          <label class="btn btn-outline-primary" for="{{ role.id }}-option"
+            ><i
+              aria-hidden="true"
+              class="bi {{ role.icon.icon }} sbmd-icon-xl"
+            ></i
+            ><br />
+            {{ role.name }}</label
+          >
+        </ng-container>
+      </div>
+    </div>
+    <div class="my-3" *ngIf="selectedRole != null">
+      <span class="sbmd-show-new-lines">{{ selectedRole.description }}</span>
+    </div>
+    <div class="d-grid mt-3">
+      <button
+        [disabled]="!form.valid"
+        type="submit"
+        class="btn btn-sm btn-primary"
+      >
+        Select role
+      </button>
+    </div>
+  </form>
+</section>

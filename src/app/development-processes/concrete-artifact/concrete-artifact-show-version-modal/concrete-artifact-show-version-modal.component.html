@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="artifact != null && version != null">
+    Version #{{ versionNumber }} of {{ artifact.name }} &ndash;
+    {{ artifact.artifact.name }}
+  </h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  <ng-container *ngIf="version != null && isStringType">
+    <h5>Note</h5>
+    <quill-view [content]="version.data.data"></quill-view>
+    <button
+      *ngIf="showEdit && isLatestVersion"
+      class="ms-2 btn btn-sm btn-secondary"
+      (click)="editArtifactVersion.emit()"
+    >
+      Edit
+    </button>
+  </ng-container>
+  <ng-container *ngIf="version != null && isReferenceType">
+    <h5>Reference</h5>
+    This version points on another object in the database.
+    <button class="btn btn-sm btn-primary" (click)="viewArtifactVersion.emit()">
+      View
+    </button>
+    <button
+      *ngIf="showEdit && (version.editing || isLatestVersion)"
+      class="ms-2 btn btn-sm btn-secondary"
+      (click)="editArtifactVersion.emit()"
+    >
+      Edit
+    </button>
+  </ng-container>
+</div>

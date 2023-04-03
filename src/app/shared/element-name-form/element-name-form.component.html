@@ -1,0 +1,29 @@
+<div class="my-3 sbmd-panel">
+  <h6 class="border-bottom pb-2 mb-0">Add {{ elementName }}</h6>
+  <div class="text-muted pt-3">
+    <form [formGroup]="nameForm" (ngSubmit)="addElement()">
+      <div class="row g-3">
+        <label for="name" class="col-sm-4 col-form-label"
+          >{{ elementName }} Name</label
+        >
+        <div class="col-sm-8">
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control"
+            id="name"
+          />
+        </div>
+        <div class="col-sm-12 d-grid">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm"
+            [disabled]="!nameForm.valid"
+          >
+            Add {{ elementName }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

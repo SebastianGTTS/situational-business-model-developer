@@ -1,0 +1,21 @@
+<ng-template #ref let-item let-index="index">
+  <app-process-pattern-selection-form
+    [index]="index"
+    [contextSituationalFactors]="contextSituationalFactors"
+    [processPattern]="item"
+    (selectProcessPattern)="selectProcessPattern.emit($event)"
+  ></app-process-pattern-selection-form>
+</ng-template>
+
+<app-search
+  heading="Method Patterns"
+  itemName="Method Pattern"
+  [content]="ref"
+  [items]="processPatterns"
+>
+  <div class="row" filter>
+    <div class="offset-sm-6 col-sm-6">
+      <app-author-filter [authorNames]="authorNames"></app-author-filter>
+    </div>
+  </div>
+</app-search>

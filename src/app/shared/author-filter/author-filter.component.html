@@ -1,0 +1,13 @@
+<form class="mb-3" [formGroup]="form">
+  <label for="select-author" class="form-label">Author</label>
+  <input
+    type="text"
+    formControlName="author"
+    class="form-control"
+    id="select-author"
+    [class.is-valid]="isValid"
+    [ngbTypeahead]="searchAuthors"
+    (click)="openAuthorInput.next($any($event.target).value)"
+    (focus)="openAuthorInput.next($any($event.target).value)"
+  />
+</form>

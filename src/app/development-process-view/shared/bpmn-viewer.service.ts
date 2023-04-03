@@ -27,6 +27,31 @@ export abstract class BpmnViewerService {
   }
 
   /**
+   * Resize the view to view the full diagram in the viewer
+   *
+   * @param modeler the modeler that currently displays the process
+   * @param viewWidth
+   * @param viewHeight
+   */
+  fitView(modeler: BpmnViewer, viewWidth: number, viewHeight: number): void {
+    const bbox = getBBox(
+      modeler
+        .get('elementRegistry')
+        .filter((element) => !is(element, 'bpmn:Process'))
+    );
+    const width = Math.max(bbox.width + 20, 200);
+    const height = Math.max(bbox.height + 20, 200);
+    const canvas = modeler.get('canvas');
+    const scale = Math.min(viewWidth / width, viewHeight / height);
+    canvas.viewbox({
+      x: bbox.x - (viewWidth / scale - bbox.width) / 2,
+      y: bbox.y - (viewHeight / scale - bbox.height) / 2,
+      width: width,
+      height: height,
+    });
+  }
+
+  /**
    * Focus a specific element
    *
    * @param modeler the modeler that currently displays the process

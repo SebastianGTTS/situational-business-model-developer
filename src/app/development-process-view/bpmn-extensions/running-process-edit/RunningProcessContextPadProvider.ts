@@ -27,7 +27,7 @@ export default class BmProcessContextPadProvider {
     if (is(element, 'bpmn:FlowNode') && !is(element, 'bpmn:SubProcess')) {
       controls['bmp.startExecution'] = {
         group: 'edit',
-        className: 'fas fa-play-circle font-bpmn-adaption',
+        className: 'bi bi-play-circle font-bpmn-adaption',
         title: 'Start execution here',
         action: {
           click: (): void => this.eventBus.fire('bmp.startExecution', element),
@@ -40,7 +40,7 @@ export default class BmProcessContextPadProvider {
     ) {
       controls['bmp.fakeExecution'] = {
         group: 'edit',
-        className: 'fas fa-plus-circle font-bpmn-adaption',
+        className: 'bi bi-plus-circle font-bpmn-adaption',
         title: 'Fake execution of development step',
         action: {
           click: (): void => this.eventBus.fire('bmp.fakeExecution', element),
@@ -49,7 +49,7 @@ export default class BmProcessContextPadProvider {
       if (element.businessObject.get('tokens') > 0) {
         controls['bmp.skipExecution'] = {
           group: 'edit',
-          className: 'fas fa-arrow-circle-right font-bpmn-adaption',
+          className: 'bi bi-arrow-right-circle font-bpmn-adaption',
           title: 'Skip execution of development step',
           action: {
             click: (): void => this.eventBus.fire('bmp.skipExecution', element),

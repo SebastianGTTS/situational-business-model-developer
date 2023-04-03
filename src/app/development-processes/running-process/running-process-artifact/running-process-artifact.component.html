@@ -1,0 +1,15 @@
+<main *ngIf="runningProcess != null" class="container" role="main">
+  <app-running-process-artifacts
+    [allowChanges]="!runningProcess.completed"
+    [allowEdit]="!runningProcess.completed"
+    [runningProcess]="runningProcess"
+    (importArtifact)="importArtifact($event)"
+    (exportArtifact)="exportArtifact($event.identifier, $event.artifact)"
+    (renameArtifact)="renameArtifact($event.identifier, $event.artifact)"
+    (viewArtifactVersion)="viewArtifactVersion($event)"
+    (editArtifact)="editArtifact($event)"
+    (addArtifact)="addArtifact($event.artifact, $event.output)"
+    (createArtifact)="createArtifact($event)"
+    (removeArtifact)="removeArtifact($event)"
+  ></app-running-process-artifacts>
+</main>

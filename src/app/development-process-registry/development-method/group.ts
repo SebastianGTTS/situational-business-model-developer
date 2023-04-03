@@ -55,6 +55,13 @@ export class Group<T extends MethodElement>
     }
   }
 
+  /**
+   * Checks whether this group has at least one item.
+   */
+  isComplete(): boolean {
+    return this.items.length > 0;
+  }
+
   toDb(): GroupEntry<EntryType<T>> {
     return {
       items: this.items.map((item) => item.toDb()),

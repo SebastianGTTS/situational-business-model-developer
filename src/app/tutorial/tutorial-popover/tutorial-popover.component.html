@@ -1,0 +1,63 @@
+<ng-template #titleTemplate>
+  <ng-container *ngIf="currentTutorialStep != null">
+    <div class="d-flex align-items-center">
+      <div>{{ currentTutorialStep.title }}</div>
+      <div class="ms-auto">
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="close()"
+        ></button>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
+<ng-template #contentTemplate>
+  <ng-container *ngIf="currentTutorialStep != null">
+    <p>
+      {{ currentTutorialStep.content }}
+    </p>
+    <div class="d-flex">
+      <button
+        *ngIf="currentTutorialStep.showPrevious"
+        (click)="previousStep()"
+        type="button"
+        class="btn btn-secondary btn-sm"
+      >
+        Previous
+      </button>
+      <button
+        *ngIf="currentTutorialStep.showNext"
+        (click)="nextStep()"
+        type="button"
+        class="btn btn-primary btn-sm ms-auto"
+      >
+        Next
+      </button>
+      <button
+        *ngIf="currentTutorialStep.showRestart ?? false"
+        (click)="restartTutorial()"
+        type="button"
+        class="btn btn-secondary btn-sm ms-auto"
+      >
+        Restart
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-container
+  *ngIf="currentTutorialStep != null && currentTargetElement != null"
+  [ngbPopover]="contentTemplate"
+  [popoverTitle]="titleTemplate"
+  [positionTarget]="currentTargetElement"
+  [popoverClass]="
+    currentTutorialStep.modal ? '' : 'sbmd-tutorial-popover-behind-modal'
+  "
+  [popperOptions]="popperOptions"
+  [autoClose]="false"
+  (hidden)="hidden()"
+  container="body"
+  triggers="manual"
+></ng-container>

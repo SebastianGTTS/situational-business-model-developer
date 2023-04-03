@@ -1,0 +1,127 @@
+<div class="d-flex flex-column align-items-center">
+  <div
+    *ngFor="
+      let phaseMethodDecision of phaseMethodDecisions
+        | slice: (page - 1) * pageSize:page * pageSize;
+      let methodIndex = index;
+      trackBy: trackBy
+    "
+    id="bm-phase-process-board-column-{{ index }}-card-{{ methodIndex }}"
+    class="card text-center w-75 my-2 border-2"
+    [class.border-success]="
+      decisionStatuses[phaseMethodDecision.id] === decisionStatus.COMPLETE
+    "
+    [class.border-secondary]="
+      decisionStatuses[phaseMethodDecision.id] === decisionStatus.INCOMPLETE ||
+      decisionStatuses[phaseMethodDecision.id] === decisionStatus.MISSING_NUMBER
+    "
+    [class.border-warning]="
+      decisionStatuses[phaseMethodDecision.id] ===
+      decisionStatus.MISSING_STEP_CONFIGURATION
+    "
+  >
+    <ng-template #changeEnactionNumberPopoverTitle>
+      <div class="d-flex align-items-center">
+        <div>Change enaction number</div>
+        <div class="ms-auto">
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="popover.close()"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #changeEnactionNumberPopover>
+      <app-bm-phase-process-board-number-form
+        [number]="phaseMethodDecision.number"
+        (submitNumberForm)="
+          editDecisionNumber.emit({
+            decisionId: phaseMethodDecision.id,
+            number: $event
+          });
+          popover.close()
+        "
+      ></app-bm-phase-process-board-number-form>
+    </ng-template>
+    <div
+      class="position-absolute border-bottom border-start px-2 enaction-number"
+      [ngbPopover]="changeEnactionNumberPopover"
+      [popoverTitle]="changeEnactionNumberPopoverTitle"
+      [autoClose]="'outside'"
+      #popover="ngbPopover"
+      [class.text-danger]="phaseMethodDecision.number == null"
+    >
+      {{ phaseMethodDecision.number ?? '&ndash;' }}
+    </div>
+    <div class="card-body">
+      <div class="card-title font-weight-bold">
+        {{ phaseMethodDecision.decision.method.name }}
+      </div>
+      <button
+        class="btn btn-sm btn-info me-1 mb-1"
+        (click)="infoDecision.emit(phaseMethodDecision.id)"
+      >
+        Info
+      </button>
+      <button
+        id="bm-phase-process-board-column-{{ index }}-card-{{
+          methodIndex
+        }}-edit"
+        class="btn btn-sm btn-warning me-1 mb-1"
+        (click)="editDecision.emit(phaseMethodDecision.id)"
+      >
+        Edit
+      </button>
+      <button class="btn btn-sm btn-warning me-1 mb-1" (click)="popover.open()">
+        Edit Number
+      </button>
+      <button
+        class="btn btn-sm btn-secondary mb-1"
+        (click)="removeDecision.emit(phaseMethodDecision.id)"
+      >
+        Remove
+      </button>
+    </div>
+    <div class="card-footer">
+      <small
+        *ngIf="
+          decisionStatuses[phaseMethodDecision.id] === decisionStatus.COMPLETE
+        "
+        class="text-muted"
+        >Completely defined</small
+      >
+      <small
+        *ngIf="
+          decisionStatuses[phaseMethodDecision.id] === decisionStatus.INCOMPLETE
+        "
+        class="text-muted"
+        >Incomplete</small
+      >
+      <small
+        *ngIf="
+          decisionStatuses[phaseMethodDecision.id] ===
+          decisionStatus.MISSING_NUMBER
+        "
+        class="text-muted"
+        >Missing number</small
+      >
+      <small
+        *ngIf="
+          decisionStatuses[phaseMethodDecision.id] ===
+          decisionStatus.MISSING_STEP_CONFIGURATION
+        "
+        class="text-muted"
+        >Missing step configurations</small
+      >
+    </div>
+  </div>
+  <ngb-pagination
+    *ngIf="phaseMethodDecisions.length > pageSize"
+    [collectionSize]="phaseMethodDecisions.length"
+    [(page)]="page"
+    [pageSize]="pageSize"
+    class="mt-3"
+  ></ngb-pagination>
+</div>

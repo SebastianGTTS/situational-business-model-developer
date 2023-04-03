@@ -1,0 +1,38 @@
+<main *ngIf="whiteboardTemplate != null" role="main" class="container">
+  <div class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="whiteboardTemplate"
+    ></app-element-overview>
+  </div>
+
+  <div class="my-3">
+    <div class="sbmd-panel">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">Template Overview</h6>
+        <div class="ms-auto">
+          <a
+            class="btn btn-primary btn-sm rounded-circle mb-1"
+            [routerLink]="['..', 'edit']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+      <app-whiteboard-canvas-view
+        [whiteboardCanvas]="whiteboardTemplate.whiteboard"
+      ></app-whiteboard-canvas-view>
+    </div>
+  </div>
+
+  <div class="my-3 row">
+    <div class="offset-md-6 col-md-6">
+      <app-author-overview
+        [author]="whiteboardTemplate.author"
+        [editLink]="['..', 'general']"
+        fragment="author"
+      ></app-author-overview>
+    </div>
+  </div>
+</main>

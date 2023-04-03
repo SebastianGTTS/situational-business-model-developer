@@ -1,0 +1,36 @@
+<main *ngIf="bmProcess != null" role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Domain</h6>
+    <div class="alert alert-info">
+      Select the domains that are related to your business model. They are later
+      used to select fitting canvas building blocks.
+    </div>
+    <div class="sbmd-form-wrapper">
+      <app-domains-selection-form
+        [domains]="bmProcess.domains"
+        (submitDomainsForm)="updateDomains($event.value)"
+      ></app-domains-selection-form>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Situational Factors</h6>
+    <div class="alert alert-info">
+      Select situational factors to describe the current situation of your
+      company, problem, market, etc. They are later used to help you to select
+      fitting method patterns and building blocks.
+    </div>
+    <div class="sbmd-form-wrapper">
+      <app-situational-factors-selection-form
+        [situationalFactors]="bmProcess.situationalFactors"
+        (submitSituationalFactorsForm)="updateSituationalFactors($event.value)"
+      ></app-situational-factors-selection-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

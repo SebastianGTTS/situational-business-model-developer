@@ -1,0 +1,16 @@
+<app-running-process-context-run-base
+  [runningProcess]="runningProcess"
+  [missingArtifacts]="missingArtifacts"
+  [isComplexModel]="true"
+  (focusNode)="focus($event)"
+>
+  <app-running-process-viewer
+    processView
+    [runningProcess]="runningProcess"
+    [unreachable]="unreachableNodeIds"
+    [missingArtifacts]="missingArtifactsNodeIds"
+    (startExecution)="startExecution($event)"
+    (fakeExecution)="openFakeExecuteModal($event)"
+    (skipExecution)="skipExecution($event)"
+  ></app-running-process-viewer>
+</app-running-process-context-run-base>

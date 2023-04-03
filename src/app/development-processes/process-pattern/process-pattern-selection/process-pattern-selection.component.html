@@ -1,0 +1,40 @@
+<main *ngIf="processPattern != null" role="main" class="container">
+  <div id="types" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Types</h6>
+      <i
+        *ngIf="!typesCorrectlyDefined"
+        ngbTooltip="You cannot use this method pattern without specifying types"
+        triggers="hover focus click"
+        class="ms-auto text-warning bi bi-exclamation-circle-fill"
+        aria-label="Warning in this part: You cannot use this method pattern without
+            specifying types"
+      ></i>
+    </div>
+    <div class="text-muted pt-3">
+      <app-types-selection-form
+        [internalTypes]="true"
+        [types]="processPattern.types"
+        (submitTypesForm)="updateProcessPatternValue({ types: $event.value })"
+      ></app-types-selection-form>
+    </div>
+  </div>
+
+  <div id="situational-factors" class="my-3 sbmd-panel">
+    <h6 class="border-bottom pb-2 mb-0">Situational Factors</h6>
+    <div class="text-muted pt-3">
+      <app-situational-factors-selection-form
+        [situationalFactors]="processPattern.situationalFactors"
+        (submitSituationalFactorsForm)="
+          updateProcessPatternValue({ situationalFactors: $event.value })
+        "
+      ></app-situational-factors-selection-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

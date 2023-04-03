@@ -1,0 +1,8 @@
+<app-groups-form
+  [idPrefix]="idPrefix"
+  [listNames]="listNames"
+  [methodElements]="methodElements"
+  methodElementName="Artifact"
+  [groups]="artifacts"
+  (submitGroupsForm)="submitArtifactsForm.emit($event)"
+></app-groups-form>

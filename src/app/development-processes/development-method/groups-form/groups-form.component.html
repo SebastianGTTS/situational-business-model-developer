@@ -1,0 +1,93 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="form-check" *ngIf="groupFormGroups.length > 0">
+    <input
+      #allowNoneInput
+      class="form-check-input"
+      type="checkbox"
+      formControlName="allowNone"
+      id="checkboxAllowNone{{ methodElementName }}-{{
+        developmentMethod != null ? 1 : 0
+      }}"
+    />
+    <label class="form-check-label" [for]="allowNoneInput.id">
+      Allow None
+    </label>
+  </div>
+  <div class="mb-3" formGroupName="groups">
+    <div
+      *ngFor="let groupFormGroup of groupFormGroups; let index = index"
+      [id]="getId('or-group-' + index)"
+      [formGroup]="groupFormGroup"
+      class="my-3 sbmd-panel"
+    >
+      <div class="sbmd-panel-header">
+        <h6 class="sbmd-panel-header-title">
+          Group<span *ngIf="isDefaultGroup(index)"> (default group)</span>
+        </h6>
+        <i
+          *ngIf="isEmpty(groupFormGroup)"
+          ngbTooltip="You must specify at least one item"
+          triggers="hover focus click"
+          aria-label="You must specify at least one item"
+          class="text-danger bi bi-exclamation-circle-fill ms-2"
+        ></i>
+        <button
+          *ngIf="!isDefaultGroup(index)"
+          class="btn btn-sm btn-dark ms-auto"
+          (click)="setDefaultGroup(index)"
+          type="button"
+        >
+          Set Default
+        </button>
+        <button
+          *ngIf="isDefaultGroup(index)"
+          class="btn btn-sm btn-dark ms-auto"
+          (click)="unsetDefaultGroup()"
+          type="button"
+        >
+          Unset Default
+        </button>
+      </div>
+      <app-group-form
+        class="mb-3"
+        [idPrefix]="idPrefix"
+        [index]="index"
+        [listNames]="listNames"
+        [methodElementName]="methodElementName"
+        [developmentMethod]="developmentMethod"
+        [methodElements]="methodElements"
+      ></app-group-form>
+      <div class="d-flex">
+        <button
+          (click)="removeGroup(index)"
+          type="button"
+          class="btn btn-secondary ms-auto"
+        >
+          Remove OR Group
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex mb-3">
+    <button
+      [id]="getId('add-or-group')"
+      (click)="addGroup()"
+      type="button"
+      class="btn btn-secondary ms-auto"
+    >
+      Add OR Group
+    </button>
+  </div>
+  <div class="d-grid">
+    <button
+      [id]="getId('update')"
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!form.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

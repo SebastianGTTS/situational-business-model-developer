@@ -1,0 +1,64 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="
+    companyModel != null &&
+    instance != null &&
+    runningMethod != null &&
+    isCorrectStep()
+  "
+  role="main"
+  class="container"
+>
+  <app-instance
+    [conformanceIsChecked]="conformanceIsChecked"
+    [conformance]="conformance"
+    [conformanceOptions]="conformanceOptionsForm.getRawValue()"
+    [featureModel]="companyModel"
+    [instance]="instance"
+    [patternInstance]="patternInstance"
+    (addDecision)="addDecision($event)"
+    (addFeature)="addFeature($event.parentId, $event.feature)"
+    (removeDecision)="removeDecision($event)"
+  ></app-instance>
+
+  <div class="my-3">
+    <app-instance-hints
+      [conformanceIsChecked]="conformanceIsChecked"
+      [conformanceOptionsForm]="conformanceOptionsForm"
+      [conformance]="conformance"
+      (checkConformance)="checkConformance()"
+      (uncheckConformance)="uncheckConformance()"
+    ></app-instance-hints>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Show pattern</h6>
+    <div class="text-muted pt-3">
+      <app-instance-select-pattern-form
+        [expertModels]="expertModels"
+        [showsPattern]="patternInstance != null"
+        (showPattern)="showPattern($event.instance)"
+        (clearPattern)="clearPattern()"
+      ></app-instance-select-pattern-form>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish refinement</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">
+        Finish refinement
+      </button>
+    </div>
+  </div>
+</main>

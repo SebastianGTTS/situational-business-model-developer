@@ -1,0 +1,211 @@
+<form [formGroup]="form" (ngSubmit)="emitSubmitForm()">
+  <div class="mb-3 d-grid">
+    <button type="button" class="btn btn-sm btn-primary" (click)="addRow()">
+      Add row
+    </button>
+  </div>
+  <ul formArrayName="rows" class="list-group shadow-sm">
+    <li
+      class="list-group-item"
+      *ngFor="let row of rowsFormArray.controls; let rowIndex = index"
+      [formArrayName]="rowIndex.toString()"
+    >
+      <div class="d-flex">
+        <b>{{ rowIndex + 1 }}. Row</b>
+        <button
+          type="button"
+          class="btn btn-sm btn-primary ms-auto"
+          (click)="addBlock(rowIndex)"
+        >
+          Add Block
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-secondary ms-3"
+          (click)="addRow(rowIndex)"
+        >
+          Add Row above
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-dark ms-3"
+          (click)="removeRow(rowIndex)"
+        >
+          Remove
+        </button>
+      </div>
+      <div *ngIf="asFormArray(row).length > 0" class="mb-3 mt-2">
+        <ul class="list-group shadow-sm">
+          <li
+            class="list-group-item"
+            *ngFor="
+              let block of asFormArray(row).controls;
+              let blockIndex = index
+            "
+            [formGroupName]="blockIndex.toString()"
+          >
+            <b>{{ blockIndex + 1 }}. Block: {{ block.value.name }}</b>
+            <div class="row">
+              <div class="mb-3 col-md-3">
+                <label class="form-label" for="selectSpacer{{ blockIndex }}"
+                  >Element or Spacer</label
+                >
+                <select
+                  id="selectSpacer{{ blockIndex }}"
+                  class="form-select"
+                  formControlName="isSpacer"
+                  (change)="spacerChange(rowIndex, blockIndex)"
+                >
+                  <option [ngValue]="false">Element</option>
+                  <option [ngValue]="true">Spacer</option>
+                </select>
+              </div>
+              <div class="col-md-3" *ngIf="block.value.isSpacer"></div>
+              <div class="mb-3 col-md-3" *ngIf="!block.value.isSpacer">
+                <label class="form-label" for="inputName{{ blockIndex }}"
+                  >Name</label
+                >
+                <input
+                  class="form-control"
+                  id="inputName{{ blockIndex }}"
+                  formControlName="name"
+                />
+              </div>
+              <div class="mb-3 col-md-3">
+                <label class="form-label" for="inputRowspan{{ blockIndex }}"
+                  >Rowspan</label
+                >
+                <input
+                  type="number"
+                  [min]="1"
+                  class="form-control"
+                  id="inputRowspan{{ blockIndex }}"
+                  formControlName="rowspan"
+                />
+              </div>
+              <div class="mb-3 col-md-3">
+                <label class="form-label" for="inputColspan{{ blockIndex }}"
+                  >Colspan</label
+                >
+                <div class="input-group">
+                  <input
+                    type="number"
+                    [min]="1"
+                    class="form-control"
+                    id="inputColspan{{ blockIndex }}"
+                    formControlName="colspan"
+                  />
+                  <button
+                    type="button"
+                    class="btn btn-dark"
+                    (click)="removeBlock(rowIndex, blockIndex)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+            <ng-container formArrayName="guidingQuestions">
+              <div
+                *ngFor="
+                  let question of asFormArray(block.get('guidingQuestions')!)
+                    .controls;
+                  let questionIndex = index
+                "
+                class="row"
+              >
+                <div class="mb-3 col-md-12">
+                  <label
+                    class="form-label"
+                    for="inputQuestion{{ questionIndex }}"
+                    >Guiding Question</label
+                  >
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      id="inputQuestion{{ questionIndex }}"
+                      formControlName="{{ questionIndex }}"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-dark"
+                      (click)="
+                        removeGuidingQuestion(
+                          rowIndex,
+                          blockIndex,
+                          questionIndex
+                        )
+                      "
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <div class="d-flex mb-3">
+              <button
+                type="button"
+                class="btn btn-sm btn-secondary ms-auto"
+                (click)="addGuidingQuestion(rowIndex, blockIndex)"
+              >
+                Add guiding Question
+              </button>
+            </div>
+            <ng-container formArrayName="examples">
+              <div
+                *ngFor="
+                  let example of asFormArray(block.get('examples')!).controls;
+                  let exampleIndex = index
+                "
+                class="row"
+              >
+                <div class="mb-3 col-md-12">
+                  <label class="form-label" for="inputExample{{ exampleIndex }}"
+                    >Example</label
+                  >
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      id="inputExample{{ exampleIndex }}"
+                      formControlName="{{ exampleIndex }}"
+                    />
+                    <button
+                      type="button"
+                      class="btn btn-dark"
+                      (click)="
+                        removeExample(rowIndex, blockIndex, exampleIndex)
+                      "
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <div class="d-flex">
+              <button
+                type="button"
+                class="btn btn-sm btn-secondary ms-auto"
+                (click)="addExample(rowIndex, blockIndex)"
+              >
+                Add example
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+  <div class="mt-3 d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!form.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

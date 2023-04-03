@@ -1,0 +1,42 @@
+<div *ngIf="stakeholder == null" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<main class="container" *ngIf="stakeholder != null">
+  <div class="my-3">
+    <app-element-overview [item]="stakeholder"></app-element-overview>
+  </div>
+
+  <div class="my-3 sbmd-info-block">
+    Update the Stakeholder and define its values.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Stakeholder</h6>
+    <div class="sbmd-form-wrapper">
+      <app-method-element-form
+        [methodElement]="stakeholder"
+        [listNames]="listNames"
+        (submitMethodElementForm)="updateValue($event.value)"
+      ></app-method-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="stakeholder.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

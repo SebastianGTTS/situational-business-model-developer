@@ -1,0 +1,34 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Method Patterns
+    </h1>
+    The Method Patterns are used to structure the Method Building Blocks in the
+    development method.
+  </div>
+  <app-list-panel
+    elementName="Method Pattern"
+    elementNamePlural="Method Patterns"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a Method Pattern. This cannot be undone. This action will
+      not delete the Method Pattern from business model development methods that
+      are using it.
+    </div>
+    <div class="row" filter>
+      <div class="col-sm-8">
+        <app-type-filter [internalTypes]="true"></app-type-filter>
+      </div>
+      <div class="col-sm-4">
+        <app-author-filter></app-author-filter>
+      </div>
+    </div>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Method Pattern"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+</main>

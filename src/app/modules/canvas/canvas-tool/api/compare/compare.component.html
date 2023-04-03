@@ -1,0 +1,53 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="
+    companyModel != null &&
+    instance != null &&
+    runningMethod != null &&
+    isCorrectStep()
+  "
+  role="main"
+  class="container"
+>
+  <app-instance
+    [compareInstance]="compareInstance"
+    [percentages]="percentages"
+    [featureModel]="companyModel"
+    [instance]="instance"
+    (addDecision)="addDecision($event)"
+    (addFeature)="addFeature($event.parentId, $event.feature)"
+    (removeDecision)="removeDecision($event)"
+  ></app-instance>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Compare</h6>
+    <div class="sbmd-form-wrapper">
+      <app-instance-compare-form
+        [companyModel]="companyModel"
+        [currentlyComparing]="compareInstance != null"
+        [competitors]="competitors"
+        (compare)="compare($event.instance, $event.featureModelId)"
+        (clearCompare)="clearCompare()"
+      ></app-instance-compare-form>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish comparison</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">
+        Finish comparison
+      </button>
+    </div>
+  </div>
+</main>

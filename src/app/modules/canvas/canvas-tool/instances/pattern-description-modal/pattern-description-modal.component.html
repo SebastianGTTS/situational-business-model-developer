@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h4 class="modal-title">Description of pattern {{ pattern.name }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  {{ pattern.description }}
+</div>
+<div class="modal-footer d-flex">
+  <button type="button" class="btn btn-dark ms-auto" (click)="dismiss()">
+    Close
+  </button>
+</div>

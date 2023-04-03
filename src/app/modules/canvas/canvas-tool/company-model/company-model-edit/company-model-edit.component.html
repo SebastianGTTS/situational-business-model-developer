@@ -1,0 +1,6 @@
+<main *ngIf="companyModel != null" role="main" class="container">
+  <app-feature-model-edit
+    [featureModel]="companyModel"
+    (updateFeatureModel)="updateCompanyModel()"
+  ></app-feature-model-edit>
+</main>

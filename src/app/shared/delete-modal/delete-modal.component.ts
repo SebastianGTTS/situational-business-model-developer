@@ -6,6 +6,6 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./delete-modal.component.css'],
 })
 export class DeleteModalComponent {
-  @Output() delete = new EventEmitter();
-  @Output() dismiss = new EventEmitter();
+  @Output() delete = new EventEmitter<void>();
+  @Output() dismiss = new EventEmitter<void>();
 }

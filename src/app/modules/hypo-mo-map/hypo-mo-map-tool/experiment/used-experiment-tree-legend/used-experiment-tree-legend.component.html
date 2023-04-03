@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-3"><strong>Legend:</strong></div>
+  <div class="offset-3 col-3">
+    <ngb-rating [max]="5" [readonly]="true" [rate]="3"></ngb-rating>
+    Maximum evidence
+  </div>
+  <div class="col-3">
+    <ng-template #costsIcon let-fill="fill">
+      <i class="bi bi-circle-fill" *ngIf="fill === 100"></i>
+      <i class="bi bi-circle" *ngIf="fill !== 100"></i>
+    </ng-template>
+    <ngb-rating
+      [starTemplate]="costsIcon"
+      [max]="5"
+      [readonly]="true"
+      [rate]="3"
+    ></ngb-rating>
+    Costs
+  </div>
+</div>

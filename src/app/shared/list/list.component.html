@@ -1,0 +1,79 @@
+<ng-template #deleteItemModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalItem != null"
+    (dismiss)="d()"
+    (delete)="delete(modalItem); c()"
+  >
+    <div modalTitle>Delete {{ elementName }} {{ modalItem.name }}</div>
+    <ng-content select="[deleteMessage]"></ng-content>
+  </app-delete-modal>
+</ng-template>
+
+<div *ngIf="noResults">No {{ elementNamePlural }} defined.</div>
+<div *ngIf="!noResults">
+  <div class="d-flex">
+    <form class="mb-3" [formGroup]="searchForm">
+      <label class="visually-hidden" for="search">Search</label>
+      <input
+        formControlName="search"
+        type="text"
+        class="form-control"
+        id="search"
+        placeholder="Search"
+      />
+    </form>
+    <ngb-pagination
+      class="ms-auto"
+      [collectionSize]="size"
+      [(page)]="page"
+      [pageSize]="pageSize"
+      aria-label="List pagination"
+    ></ngb-pagination>
+    <form class="ms-3 mb-3 d-flex" [formGroup]="pageSizeForm">
+      <label for="pageSizeSelection" class="col-form-label me-1 text-nowrap"
+        >Page Size</label
+      >
+      <select
+        id="pageSizeSelection"
+        formControlName="pageSize"
+        class="form-select"
+      >
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+        <option [ngValue]="30">30</option>
+      </select>
+    </form>
+  </div>
+  <ng-content select="[filter]"></ng-content>
+  <div *ngIf="filtering">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!filtering && filteredItems.length === 0">
+    No {{ elementNamePlural }} found<span *ngIf="searchValue !== ''">
+      for search: {{ searchValue }}</span
+    ><span *ngIf="searchValue === ''"> for current filter settings</span>.
+  </div>
+  <ul *ngIf="!filtering && filteredItems.length > 0" class="list-group">
+    <li
+      class="list-group-item"
+      *ngFor="
+        let item of filteredItems
+          | slice: (page - 1) * pageSize:page * pageSize;
+        trackBy: trackBy
+      "
+    >
+      <app-list-item
+        [showView]="showView"
+        [showDelete]="showDelete"
+        [item]="item"
+        [mapFunction]="mapFunction"
+        [viewLink]="viewLinkFunction(item)"
+        (delete)="openDeleteItemModal(item)"
+      ></app-list-item>
+    </li>
+  </ul>
+</div>

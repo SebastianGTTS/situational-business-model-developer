@@ -1,0 +1,65 @@
+<form
+  *ngIf="relationshipForm != null"
+  [formGroup]="relationshipForm"
+  (ngSubmit)="submitForm()"
+>
+  <div class="mb-3 row">
+    <label for="relationshipType" class="col-sm-4 col-form-label"
+      >Type of Relationship</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="relationshipType"
+        formControlName="relationshipType"
+        class="form-select"
+      >
+        <option
+          *ngFor="let relationshipType of relationshipTypes"
+          [ngValue]="relationshipType"
+        >
+          A {{ relationshipType }} B
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="fromFeatureId" class="col-sm-4 col-form-label">Feature A</label>
+    <div class="col-sm-8">
+      <select
+        id="fromFeatureId"
+        formControlName="fromFeatureId"
+        class="form-select"
+      >
+        <option *ngFor="let fl of featureList; let i = index" [ngValue]="fl.id">
+          {{ fl.levelname }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="toFeatureId" class="col-sm-4 col-form-label">Feature B</label>
+    <div class="col-sm-8">
+      <select
+        id="toFeatureId"
+        formControlName="toFeatureId"
+        class="form-select"
+      >
+        <option *ngFor="let fl of featureList; let i = index" [ngValue]="fl.id">
+          {{ fl.levelname }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm btn-primary"
+      [disabled]="!relationshipForm.valid"
+    >
+      Add Cross-Tree Relationship
+    </button>
+  </div>
+</form>

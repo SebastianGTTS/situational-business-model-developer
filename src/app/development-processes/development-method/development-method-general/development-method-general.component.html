@@ -1,0 +1,39 @@
+<main *ngIf="developmentMethod != null" role="main" class="container">
+  <div id="block" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Method Building Block</h6>
+    <div class="sbmd-form-wrapper">
+      <app-element-form
+        [element]="developmentMethod"
+        (submitElementForm)="updateDevelopmentMethodValue($event.value)"
+      ></app-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="developmentMethod.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div id="author" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Author</h6>
+    <div class="sbmd-form-wrapper">
+      <app-author-form
+        [author]="developmentMethod.author"
+        (submitAuthorForm)="
+          updateDevelopmentMethodValue({ author: $event.value })
+        "
+      ></app-author-form>
+    </div>
+  </div>
+
+  <div id="development-method-general-update-all" class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

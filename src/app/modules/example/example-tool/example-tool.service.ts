@@ -4,9 +4,9 @@ import { Module } from '../../../development-process-registry/module-api/module'
 import { ExampleToolApiService } from './example-tool-api.service';
 import { FormBuilder } from '@angular/forms';
 import { ModuleMethod } from '../../../development-process-registry/module-api/module-method';
-import { ExampleArtifactService } from '../example-artifact/example-artifact.service';
+import { ExampleMetaArtifactService } from '../example-meta-artifact/example-meta-artifact.service';
 import { Router } from '@angular/router';
-import { Reference } from '../../../development-process-registry/meta-model-definition';
+import { Reference } from '../../../development-process-registry/meta-artifact-definition';
 import { DbId } from '../../../database/database-entry';
 import { referenceToApiQueryParams } from '../../../development-process-registry/module-api/api-query-params';
 import { ArtifactDataReference } from '../../../development-process-registry/running-process/artifact-data';
@@ -16,7 +16,7 @@ import { ArtifactDataReference } from '../../../development-process-registry/run
 })
 export class ExampleToolService {
   constructor(
-    private exampleArtifactService: ExampleArtifactService,
+    private exampleArtifactService: ExampleMetaArtifactService,
     private exampleToolApiService: ExampleToolApiService,
     private fb: FormBuilder,
     private moduleService: ModuleService
@@ -48,19 +48,19 @@ export class ExampleToolService {
         name: 'createExample',
         description: 'Creates an example',
         input: [],
-        output: [this.exampleArtifactService.exampleArtifactIdentifier],
+        output: [this.exampleArtifactService.exampleMetaArtifactIdentifier],
       },
       {
         name: 'editExample',
         description: 'Edit an example',
-        input: [this.exampleArtifactService.exampleArtifactIdentifier],
-        output: [this.exampleArtifactService.exampleArtifactIdentifier],
+        input: [this.exampleArtifactService.exampleMetaArtifactIdentifier],
+        output: [this.exampleArtifactService.exampleMetaArtifactIdentifier],
       },
       {
         name: 'viewExample',
         description: 'View an example',
-        input: [this.exampleArtifactService.exampleArtifactIdentifier],
-        output: [this.exampleArtifactService.exampleArtifactIdentifier],
+        input: [this.exampleArtifactService.exampleMetaArtifactIdentifier],
+        output: [this.exampleArtifactService.exampleMetaArtifactIdentifier],
       },
     ];
   }

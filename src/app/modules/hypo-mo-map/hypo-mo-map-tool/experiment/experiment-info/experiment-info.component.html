@@ -1,0 +1,30 @@
+<div>
+  <div>
+    <ngb-rating
+      title="Max Evidence"
+      [max]="5"
+      [readonly]="true"
+      [rate]="experiment.maxEvidence!"
+    ></ngb-rating>
+  </div>
+  <div>
+    {{ experiment.name }}
+    <small class="text-muted" *ngIf="showDescription && experiment.description">
+      {{ experiment.description }}</small
+    >
+  </div>
+  <div *ngIf="metric != null">Metric: {{ metric }}</div>
+  <div>
+    <ng-template #costsIcon let-fill="fill">
+      <i class="bi bi-circle-fill" *ngIf="fill === 100"></i>
+      <i class="bi bi-circle" *ngIf="fill !== 100"></i>
+    </ng-template>
+    <ngb-rating
+      title="Costs"
+      [starTemplate]="costsIcon"
+      [max]="5"
+      [readonly]="true"
+      [rate]="experiment.costs!"
+    ></ngb-rating>
+  </div>
+</div>

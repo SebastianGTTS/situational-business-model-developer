@@ -1,0 +1,110 @@
+<ng-template #errorProcessModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Error instantiating Method</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger">
+      This Business Model Development Method cannot be instantiated, because it
+      is not completely defined. You first have to define it completely. More
+      information is available in the error panel in the
+      <a
+        [routerLink]="[]"
+        [queryParamsHandling]="'preserve'"
+        (click)="goToEdit(); d()"
+        >Edit step</a
+      >. As long as this Business Model Development Method is not completely
+      defined, you cannot finish the context change.
+    </div>
+  </div>
+</ng-template>
+
+<main role="main">
+  <div class="container">
+    <div class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Steps</h6>
+      <ul
+        ngbNav
+        (navChange)="navChange($event)"
+        #nav="ngbNav"
+        class="nav-pills nav-justified"
+      >
+        <li ngbNavItem="stepView" #stepView="ngbNavItem">
+          <a ngbNavLink>1. Adapt context</a>
+          <ng-template ngbNavContent>
+            View the request from the business developer and adapt the context
+            accordingly.
+          </ng-template>
+        </li>
+        <li ngbNavItem="stepEdit" #stepEdit="ngbNavItem">
+          <a ngbNavLink>2. Edit method</a>
+          <ng-template ngbNavContent>
+            Edit the method to fit it to the new context.
+          </ng-template>
+        </li>
+        <li ngbNavItem="stepRun" #stepRun="ngbNavItem">
+          <a ngbNavLink>3. Adapt enaction</a>
+          <ng-template ngbNavContent>
+            Adapt the enaction of the method. Re-Run some methods and set the
+            pointer for the current execution.
+          </ng-template>
+        </li>
+        <li ngbNavItem="stepFinish" #stepFinish="ngbNavItem">
+          <a ngbNavLink>4. Finish context change</a>
+          <ng-template ngbNavContent>
+            Re-check whether the requests from the business developer are
+            fulfilled. Additionally, check whether the method is valid. After
+            that, finish the context change and give the method back to the
+            business developer.
+          </ng-template>
+        </li>
+      </ul>
+      <div class="mt-1" [ngbNavOutlet]="nav"></div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="runningProcess != null">
+    <app-running-pattern-process-context
+      *ngIf="runningPatternProcess != null"
+      [runningProcess]="runningPatternProcess"
+      [activeStep]="nav.activeId"
+    ></app-running-pattern-process-context>
+    <app-running-phase-process-context
+      *ngIf="runningPhaseProcess != null"
+      [runningProcess]="runningPhaseProcess"
+      [activeStep]="nav.activeId"
+    ></app-running-phase-process-context>
+
+    <div class="container">
+      <div class="my-3 sbmd-panel" *ngIf="!stepFinish.active">
+        <h6 class="sbmd-panel-title">Next</h6>
+        <div class="d-grid">
+          <button
+            (click)="nextStep()"
+            type="submit"
+            class="btn btn-sm btn-primary"
+          >
+            Update all and next step
+          </button>
+        </div>
+      </div>
+      <div class="my-3 sbmd-panel" *ngIf="stepFinish.active">
+        <h6 class="sbmd-panel-title">Finish</h6>
+        <div class="d-grid">
+          <button
+            (click)="finishContextChange()"
+            type="submit"
+            class="btn btn-sm btn-primary"
+          >
+            Finish context change
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</main>

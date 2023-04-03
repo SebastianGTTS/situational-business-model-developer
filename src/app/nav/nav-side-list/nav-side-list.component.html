@@ -1,0 +1,67 @@
+<ul
+  [class.ms-3]="depth === 1"
+  [class.ms-5]="depth === 2"
+  class="nav nav-pills flex-column"
+>
+  <ng-container *ngFor="let navItem of navItems; let index = index">
+    <ng-container
+      *ngIf="navItem.roles == null || navItem.roles.includes(currentRole)"
+    >
+      <li
+        [id]="navItem.id ?? ''"
+        class="nav-item"
+        routerLinkActive=""
+        #itemActive="routerLinkActive"
+      >
+        <a
+          *ngIf="!isMenuItem(navItem) && navItem.route != null"
+          class="nav-link text-nowrap"
+          [class.active]="itemActive.isActive"
+          [routerLink]="navItem.route"
+          [queryParams]="navItem.queryParams"
+        >
+          {{ navItem.name }}
+          <span *ngIf="itemActive.isActive" class="visually-hidden"
+            >(current)</span
+          >
+        </a>
+        <button
+          *ngIf="
+            !isMenuItem(navItem) &&
+            navItem.route == null &&
+            navItem.click != null
+          "
+          class="nav-link text-nowrap"
+          [class.active]="itemActive.isActive"
+          (click)="navItem.click()"
+        >
+          {{ navItem.name }}
+          <span *ngIf="itemActive.isActive" class="visually-hidden"
+            >(current)</span
+          >
+        </button>
+        <button
+          *ngIf="isMenuItem(navItem)"
+          class="nav-link text-nowrap w-100 d-flex"
+          (click)="toggleSubmenu(index)"
+        >
+          {{ navItem.name }}
+          <i
+            [@chevron]="openState[index] ? 'open' : 'closed'"
+            [attr.aria-label]="
+              'Submenu ' + (openState[index] ? 'open' : 'closed')
+            "
+            class="ms-auto bi bi-chevron-right"
+          ></i>
+        </button>
+        <app-nav-side-list
+          @submenu
+          *ngIf="isMenuItem(navItem) && openState[index]"
+          [expandAll]="expandAll"
+          [navItems]="navItem.submenu"
+          [depth]="depth + 1"
+        ></app-nav-side-list>
+      </li>
+    </ng-container>
+  </ng-container>
+</ul>

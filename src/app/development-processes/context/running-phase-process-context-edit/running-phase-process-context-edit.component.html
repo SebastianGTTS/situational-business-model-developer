@@ -1,0 +1,17 @@
+<app-running-process-context-edit-base [runningProcess]="runningProcess">
+  <app-bm-phase-process-edit
+    editView
+    [bmProcess]="runningProcess.process"
+    (updatePhases)="updatePhases($event)"
+    (addDevelopmentMethod)="
+      insertDevelopmentMethod($event.phaseId, $event.developmentMethod)
+    "
+    (updateDecisions)="
+      updateDecisions($event.phaseMethodDecisionId, $event.update)
+    "
+    (updateDecisionNumber)="
+      updateDecisionNumber($event.decisionId, $event.number)
+    "
+    (removeDecision)="removeDevelopmentMethod($event)"
+  ></app-bm-phase-process-edit>
+</app-running-process-context-edit-base>

@@ -6,11 +6,11 @@
       "name": "Business Model Canvas",
       "description": "",
       "internalArtifact": true,
-      "metaModel": {
+      "metaArtifact": {
         "name": "Canvas",
         "type": "CompanyModel"
       },
-      "metaModelData": {
+      "metaArtifactData": {
         "definitionId": "1660315503510d70fe96c-14f0-4fc0-9752-af260ead2ec7"
       },
       "_id": "1660315485431fb84a376-ae2b-47a2-a3cb-8864d1aa21ff"

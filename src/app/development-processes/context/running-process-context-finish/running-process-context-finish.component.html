@@ -1,0 +1,39 @@
+<div class="container">
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">
+      Changes compared to the request from the business developer
+    </h6>
+    <div class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Comment</h6>
+      <p class="mb-0">
+        <span class="show-new-lines">{{
+          runningProcess.contextChangeInfo.comment
+        }}</span>
+      </p>
+    </div>
+    <app-domains-list
+      [domains]="runningProcess.contextChangeInfo.suggestedDomains"
+      [newDomains]="runningProcess.domains"
+    ></app-domains-list>
+    <app-situational-factors-list
+      [situationalFactors]="
+        runningProcess.contextChangeInfo.suggestedSituationalFactors
+      "
+      [newSituationalFactors]="runningProcess.situationalFactors"
+    ></app-situational-factors-list>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Changes compared to the previous method</h6>
+    <app-domains-list
+      [domains]="runningProcess.contextChangeInfo.oldDomains"
+      [newDomains]="runningProcess.domains"
+    ></app-domains-list>
+    <app-situational-factors-list
+      [situationalFactors]="
+        runningProcess.contextChangeInfo.oldSituationalFactors
+      "
+      [newSituationalFactors]="runningProcess.situationalFactors"
+    ></app-situational-factors-list>
+  </div>
+</div>

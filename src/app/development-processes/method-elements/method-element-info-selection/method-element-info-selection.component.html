@@ -1,0 +1,36 @@
+<label
+  class="form-label"
+  for="{{ methodElementName }}MultipleInput{{ index }}"
+  [class.visually-hidden]="index !== 0"
+  >{{ methodElementName }}</label
+>
+<div class="input-group">
+  <input
+    type="text"
+    [formControl]="formControl"
+    class="form-control"
+    id="{{ methodElementName }}MultipleInput{{ index }}"
+    [ngbTypeahead]="searchElements"
+    [editable]="false"
+    [resultFormatter]="formatter"
+    [inputFormatter]="formatter"
+    (click)="openElementInput.next($any($event.target).value)"
+    (focus)="openElementInput.next($any($event.target).value)"
+  />
+  <ng-container *ngIf="multiple">
+    <button
+      (click)="add.emit()"
+      class="btn btn-outline-secondary align-self-baseline"
+      type="button"
+    >
+      +
+    </button>
+    <button
+      (click)="remove.emit()"
+      class="btn btn-outline-secondary align-self-baseline"
+      type="button"
+    >
+      -
+    </button>
+  </ng-container>
+</div>

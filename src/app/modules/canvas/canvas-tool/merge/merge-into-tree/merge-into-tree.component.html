@@ -1,0 +1,46 @@
+<ng-template #extraButtons let-feature="feature">
+  <button
+    type="button"
+    class="btn btn-dark btn-sm mb-1 me-1"
+    *ngIf="feature.expertModelTrace[expertModelId]"
+    (click)="
+      $event.preventDefault();
+      $event.stopPropagation();
+      openTrace.emit(feature.id)
+    "
+  >
+    Show Trace
+  </button>
+  <button
+    (click)="
+      $event.preventDefault();
+      $event.stopPropagation();
+      updateFeature.emit(feature.id)
+    "
+    type="button"
+    class="btn btn-warning btn-sm mb-1 me-1"
+  >
+    Update
+  </button>
+  <button
+    *ngIf="feature.parent != null"
+    (click)="
+      $event.preventDefault();
+      $event.stopPropagation();
+      deleteFeature.emit(feature.id)
+    "
+    type="button"
+    class="btn btn-secondary btn-sm mb-1 me-1"
+  >
+    Delete
+  </button>
+</ng-template>
+
+<app-feature-tree
+  [showUpdate]="false"
+  [showDelete]="false"
+  [extraButtons]="extraButtons"
+  [features]="features"
+  (openDependenciesEmitter)="openDependencies.emit($event)"
+>
+</app-feature-tree>

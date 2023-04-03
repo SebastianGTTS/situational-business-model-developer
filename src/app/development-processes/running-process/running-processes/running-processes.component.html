@@ -1,0 +1,78 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of Running Development Methods
+    </h1>
+    The Executed Development Methods can be based on an existing Composed
+    Development Method or created as an new Ad-hoc Development Method.
+  </div>
+
+  <app-list-panel
+    elementName="Running Method"
+    elementNamePlural="Running Methods"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a running method. By deleting this running method all
+      corresponding models are deleted too. This cannot be undone.
+    </div>
+  </app-list-panel>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Add Running Method</h6>
+    <div class="sbmd-form-wrapper">
+      <form
+        [formGroup]="addRunningProcessForm"
+        (ngSubmit)="addRunningProcess()"
+      >
+        <div class="mb-3 row">
+          <label for="processSelector" class="col-sm-4 col-form-label"
+            >Method</label
+          >
+          <div class="col-sm-8">
+            <select
+              id="processSelector"
+              formControlName="process"
+              class="form-select"
+              [class.is-invalid]="
+                processControl.invalid && processControl.touched
+              "
+            >
+              <option [ngValue]="null">
+                No Method &ndash; Ad-hoc Creation
+              </option>
+              <option *ngFor="let process of processes" [ngValue]="process">
+                {{ process.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-4 col-form-label">Name</label>
+          <div class="col-sm-8">
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              [class.is-invalid]="nameControl.invalid && nameControl.touched"
+              id="name"
+            />
+          </div>
+        </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-dark"
+            [disabled]="!addRunningProcessForm.valid"
+          >
+            Add
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <app-running-processes-context-list></app-running-processes-context-list>
+
+  <app-running-completed-processes></app-running-completed-processes>
+</main>

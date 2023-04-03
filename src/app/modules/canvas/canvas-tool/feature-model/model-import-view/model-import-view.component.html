@@ -1,0 +1,29 @@
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Import {{ elementName }}</h6>
+  <div class="sbmd-form-wrapper">
+    <form [formGroup]="form" (ngSubmit)="submitForm()">
+      <div class="mb-3 row">
+        <label for="file" class="col-sm-4 col-form-label">File</label>
+        <div class="col-sm-8">
+          <input
+            type="file"
+            class="form-control"
+            [class.is-invalid]="importError"
+            id="file"
+            aria-describedby="fileErrorDescription"
+            formControlName="file"
+            (change)="fileChange($event)"
+          />
+          <div id="fileErrorDescription" class="invalid-feedback">
+            {{ importError }}
+          </div>
+        </div>
+      </div>
+      <div class="d-grid">
+        <button [disabled]="!file" type="submit" class="btn btn-primary btn-sm">
+          Import {{ elementName }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

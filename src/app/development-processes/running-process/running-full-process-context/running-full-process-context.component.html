@@ -1,0 +1,37 @@
+<main *ngIf="runningProcess != null" role="main" class="container">
+  <div id="running-full-process-context-context" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Context</h6>
+      <button
+        *ngIf="!runningProcess.completed"
+        class="btn btn-sm btn-dark ms-auto"
+        (click)="openRequestContextChangeModal()"
+      >
+        Request context change
+      </button>
+    </div>
+    <div class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Domain</h6>
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let domain of runningProcess.domains"
+        >
+          {{ domain.name }}
+        </li>
+      </ul>
+    </div>
+    <div class="mt-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Situational Factors</h6>
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let situationalFactor of runningProcess.situationalFactors"
+        >
+          {{ situationalFactor.element!.factor.name }}:
+          {{ situationalFactor.element!.value }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>

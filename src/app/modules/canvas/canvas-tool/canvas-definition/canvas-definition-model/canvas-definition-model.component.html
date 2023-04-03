@@ -1,0 +1,37 @@
+<main *ngIf="canvasDefinition != null" role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h6 class="border-bottom border-gray pb-2">Canvas Model</h6>
+    <app-canvas-definition-row-form
+      #canvasDefinitionRowFormComponent
+      [canvasDefinitionRows]="canvasDefinition.rows"
+      (submitForm)="submitRowForm($event.value)"
+    ></app-canvas-definition-row-form>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="border-bottom border-gray pb-2">Canvas Model Overview</h6>
+    <app-canvas-definition-model-overview
+      [canvasDefinitionCells]="
+        toCanvasDefinitionRows(
+          canvasDefinitionRowFormComponent.form.valueChanges | async
+        )
+      "
+    ></app-canvas-definition-model-overview>
+  </div>
+
+  <div id="relationships" class="my-3 sbmd-panel">
+    <h6 class="border-bottom border-gray pb-2">Canvas Model Relationships</h6>
+    <app-canvas-definition-relationships-form
+      [relationshipTypes]="canvasDefinition.relationshipTypes"
+      (submitRelationshipTypesForm)="
+        updateCanvasDefinition({ relationshipTypes: $event.value })
+      "
+    ></app-canvas-definition-relationships-form>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

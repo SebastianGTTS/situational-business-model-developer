@@ -1,0 +1,6 @@
+<main *ngIf="expertModel != null" role="main" class="container">
+  <app-feature-model-edit
+    [featureModel]="expertModel"
+    (updateFeatureModel)="updateExpertModel()"
+  ></app-feature-model-edit>
+</main>

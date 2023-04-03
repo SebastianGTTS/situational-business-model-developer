@@ -1,0 +1,20 @@
+<div class="sbmd-panel position-relative">
+  <div class="mb-3 d-flex align-items-center">
+    <app-icon [icon]="item.icon"></app-icon>
+    <h2 class="ms-3 mb-0 me-5">{{ item.name }}</h2>
+  </div>
+  <div>
+    <span class="sbmd-show-new-lines">{{ item.description }}</span>
+  </div>
+  <ng-content></ng-content>
+  <div *ngIf="editLink != null" class="position-absolute top-0 end-0 mt-3 me-3">
+    <a
+      id="element-overview-edit-button"
+      class="btn btn-primary rounded-circle"
+      [routerLink]="editLink"
+      [fragment]="fragment"
+    >
+      <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+    </a>
+  </div>
+</div>

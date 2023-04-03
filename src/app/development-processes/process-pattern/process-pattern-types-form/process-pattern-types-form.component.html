@@ -1,0 +1,62 @@
+<form [formGroup]="typesForm" (ngSubmit)="submitForm()">
+  <div class="alert alert-info">
+    Inherit types from parent to create generic patterns.
+  </div>
+
+  <div class="mb-3">
+    <div class="ms-auto btn-group" role="group" aria-label="Inherit or not">
+      <input
+        type="radio"
+        class="btn-check"
+        id="inherit-option"
+        autocomplete="off"
+        [value]="true"
+        formControlName="inherit"
+      />
+      <label class="btn btn-primary" for="inherit-option">Inherit types</label>
+      <input
+        type="radio"
+        class="btn-check"
+        id="not-inherit-option"
+        autocomplete="off"
+        [value]="false"
+        formControlName="inherit"
+      />
+      <label class="btn btn-primary" for="not-inherit-option"
+        >Do not inherit types</label
+      >
+    </div>
+  </div>
+
+  <app-method-elements-selection-form
+    *ngIf="!typesForm.value.inherit"
+    class="mb-3"
+    formArrayName="neededType"
+    [createFormGroupFactory]="createFormGroupFactory"
+    [listNames]="listNames ?? []"
+    [methodElements]="methodElements ?? []"
+    methodElementName="Needed Type"
+  ></app-method-elements-selection-form>
+
+  <app-method-elements-selection-form
+    *ngIf="!typesForm.value.inherit"
+    class="mb-3"
+    formArrayName="forbiddenType"
+    [createFormGroupFactory]="createFormGroupFactory"
+    [listNames]="listNames ?? []"
+    [methodElements]="methodElements ?? []"
+    methodElementName="Forbidden Type"
+  ></app-method-elements-selection-form>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm btn-block"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!typesForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

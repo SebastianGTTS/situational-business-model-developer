@@ -1,0 +1,24 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Stakeholders</h1>
+    The Stakeholders define the involved persons within a Method Building Block.
+  </div>
+
+  <app-method-element-list
+    elementNamePlural="Stakeholders"
+    elementName="Stakeholder"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a stakeholder. This cannot be undone. This action will
+      not delete the stakeholder from method building blocks that are using it.
+    </div>
+  </app-method-element-list>
+
+  <app-method-element-create-form
+    elementName="Stakeholder"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+  </app-method-element-create-form>
+</main>

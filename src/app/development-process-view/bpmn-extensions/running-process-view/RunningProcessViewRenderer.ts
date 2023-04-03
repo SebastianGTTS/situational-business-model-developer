@@ -44,7 +44,7 @@ export default class RunningProcessViewRenderer
     const shape: SVGRectElement = this.bpmnRenderer.drawShape(
       parentNode,
       element
-    );
+    ) as SVGRectElement;
     const method = element.businessObject.get('method');
     if (method) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

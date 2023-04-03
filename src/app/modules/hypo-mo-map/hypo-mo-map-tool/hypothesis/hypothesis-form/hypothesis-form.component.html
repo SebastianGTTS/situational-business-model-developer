@@ -1,0 +1,78 @@
+<form [formGroup]="hypothesisForm" (ngSubmit)="submitForm()">
+  <div class="mb-3 row">
+    <label for="name" class="col-sm-4 col-form-label">Hypothesis Name</label>
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="name"
+        class="form-control"
+        id="name"
+      />
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="subhypothesisOf" class="col-sm-4 col-form-label"
+      >Subhypothesis of</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="subhypothesisOf"
+        formControlName="subhypothesisOf"
+        class="form-select"
+      >
+        <option [ngValue]="null">root</option>
+        <option
+          *ngFor="let h of hypothesisList"
+          [disabled]="disabledSubhypotheses.includes(h.id)"
+          [ngValue]="h.id"
+        >
+          {{ '-'.repeat(h.level) }} {{ h.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="priority" class="col-sm-4 col-form-label">Priority</label>
+    <div class="col-sm-8">
+      <ng-template #priorityIcon let-fill="fill">
+        <i class="bi bi-square-fill" *ngIf="fill === 100"></i>
+        <i class="bi bi-square" *ngIf="fill !== 100"></i>
+      </ng-template>
+      <ngb-rating
+        class="sbmd-rating"
+        id="priority"
+        formControlName="priority"
+        [starTemplate]="priorityIcon"
+        [max]="5"
+      ></ngb-rating>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="subhypothesesConnections" class="col-sm-4 col-form-label"
+      >Subhypotheses Connections</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="subhypothesesConnections"
+        formControlName="subhypothesesConnections"
+        class="form-control"
+      >
+        <option [ngValue]="'and'">AND</option>
+        <option [ngValue]="'or'">OR</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!hypothesisForm.valid"
+    >
+      {{ submitButtonText }}
+    </button>
+  </div>
+</form>

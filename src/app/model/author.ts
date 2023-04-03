@@ -52,7 +52,7 @@ export class Author implements AuthorInit, Equality<Author>, DatabaseModelPart {
     };
   }
 
-  equals(other: Author): boolean {
+  equals(other: Author | AuthorInit): boolean {
     if (other == null) {
       return false;
     }

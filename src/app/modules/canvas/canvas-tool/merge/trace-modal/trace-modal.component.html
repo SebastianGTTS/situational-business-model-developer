@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ feature.name }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  Connected to:
+  <ul class="list-group">
+    <li class="list-group-item d-flex align-items-center">
+      {{ tracedFeature.name }}
+      <button
+        (click)="deleteTrace.emit()"
+        *ngIf="feature.parent != null"
+        type="button"
+        class="ms-auto btn btn-danger btn-sm"
+      >
+        Delete
+      </button>
+    </li>
+  </ul>
+</div>

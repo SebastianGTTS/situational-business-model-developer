@@ -3,6 +3,7 @@ import {
   MethodElementEntry,
   MethodElementInit,
 } from '../method-element';
+import { IconInit } from '../../../model/icon';
 
 export interface SituationalFactorDefinitionInit extends MethodElementInit {
   values?: string[];
@@ -19,6 +20,7 @@ export class SituationalFactorDefinition
   implements SituationalFactorDefinitionInit
 {
   static readonly typeName = 'SituationalFactorDefinition';
+  static readonly defaultIcon: IconInit = { icon: 'bi-list-check' };
 
   values: string[] = [];
   ordered = false;
@@ -27,6 +29,9 @@ export class SituationalFactorDefinition
     entry: SituationalFactorDefinitionEntry | undefined,
     init: SituationalFactorDefinitionInit | undefined
   ) {
+    if (init != null && init.icon == null) {
+      init.icon = SituationalFactorDefinition.defaultIcon;
+    }
     super(entry, init, SituationalFactorDefinition.typeName);
     const element = entry ?? init;
     if (element == null) {

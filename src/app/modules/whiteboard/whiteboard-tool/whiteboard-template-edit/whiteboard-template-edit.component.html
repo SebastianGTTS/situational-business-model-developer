@@ -1,0 +1,19 @@
+<main *ngIf="whiteboardTemplate != null" role="main" class="container-fluid">
+  <div class="my-3 sbmd-panel d-flex flex-column" #fullscreenElement>
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Whiteboard Template</h6>
+      <app-fullscreen-toggle
+        class="ms-auto"
+        [fullscreenElement]="fullscreenElement"
+      ></app-fullscreen-toggle>
+    </div>
+    <app-whiteboard-canvas
+      class="flex-fill sbmd-min-height-0"
+      [fullscreen]="isInFullscreenMode"
+      [whiteboardCanvas]="whiteboardTemplate.whiteboard"
+    ></app-whiteboard-canvas>
+    <button class="btn btn-primary mt-1" (click)="saveWhiteboard()">
+      Save Whiteboard
+    </button>
+  </div>
+</main>

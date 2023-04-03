@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { Artifact } from '../../development-process-registry/method-elements/artifact/artifact';
 import { ArtifactDataType } from '../../development-process-registry/running-process/artifact-data';
 import { OutputArtifactMapping } from '../../development-process-registry/running-process/output-artifact-mapping';
@@ -16,16 +20,16 @@ export interface OutputArtifactMappingFormValue {
   providedIn: 'root',
 })
 export class OutputArtifactMappingFormService {
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: UntypedFormBuilder) {}
 
   createForm(
     artifacts: SelectedElementOptional<Artifact>[],
     outputArtifacts?: (OutputArtifactMapping | undefined)[]
-  ): FormGroup {
+  ): UntypedFormGroup {
     const form = this.fb.group({
       outputArtifacts: this.fb.array([]),
     });
-    let formGroups: FormGroup[];
+    let formGroups: UntypedFormGroup[];
     if (outputArtifacts != null) {
       formGroups = artifacts.map((artifact, index) =>
         this.createOutputArtifactMappingControl(
@@ -45,7 +49,7 @@ export class OutputArtifactMappingFormService {
   createOutputArtifactMappingControl(
     outputArtifact?: OutputArtifactMapping,
     optionalAllowed?: boolean
-  ): FormGroup {
+  ): UntypedFormGroup {
     return this.fb.group(
       {
         isDefinition: this.fb.control(
@@ -53,7 +57,7 @@ export class OutputArtifactMappingFormService {
             ? outputArtifact.isDefinition
             : optionalAllowed
             ? undefined
-            : false,
+            : true,
           optionalAllowed ? undefined : Validators.required
         ),
         artifact: this.fb.control(outputArtifact?.artifact),

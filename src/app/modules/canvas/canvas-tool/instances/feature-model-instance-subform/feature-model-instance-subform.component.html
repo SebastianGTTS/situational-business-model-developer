@@ -1,0 +1,37 @@
+<ng-container [formGroup]="formGroup">
+  <div class="mb-3 row">
+    <label for="name" class="col-sm-4 col-form-label">Artifact Name</label>
+    <div class="col-sm-8">
+      <div class="input-group">
+        <input
+          type="text"
+          formControlName="name"
+          class="form-control"
+          [class.is-invalid]="nameControl.invalid"
+          id="name"
+        />
+        <button
+          *ngIf="hasDefaultName"
+          class="btn btn-outline-primary"
+          type="button"
+          (click)="setDefaultName()"
+        >
+          Set default name
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="description" class="col-sm-4 col-form-label">
+      Artifact Description
+    </label>
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="description"
+        class="form-control"
+        id="description"
+      />
+    </div>
+  </div>
+</ng-container>

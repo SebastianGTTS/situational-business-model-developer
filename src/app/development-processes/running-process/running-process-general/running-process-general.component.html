@@ -1,0 +1,34 @@
+<main *ngIf="runningProcess != null" role="main" class="container">
+  <div id="block" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Running Method</h6>
+    <div class="sbmd-form-wrapper">
+      <app-element-form
+        [disabled]="runningProcess.completed"
+        [element]="runningProcess"
+        (submitElementForm)="
+          updateInfo(
+            $event.getRawValue().name,
+            $event.getRawValue().description
+          )
+        "
+      ></app-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [disabled]="runningProcess.completed"
+        [icon]="runningProcess.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div *ngIf="!runningProcess.completed" class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

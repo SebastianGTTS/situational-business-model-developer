@@ -4,7 +4,7 @@ import { RunningProcessMethodCommentsMixin } from '../../../../../development-pr
 import { EmptyClass } from '../../../../../shared/utils';
 import { ProcessApiService } from '../../../../../development-process-registry/module-api/process-api.service';
 import { RunningProcessService } from '../../../../../development-process-registry/running-process/running-process.service';
-import { Example } from '../../../example-artifact/example';
+import { Example } from '../../../example-meta-artifact/example';
 import { ExampleLoaderService } from '../../shared/example-loader.service';
 import { ExampleToolResolveService } from '../../example-tool-resolve.service';
 import {
@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
-import { ExampleService } from '../../../example-artifact/example.service';
+import { ExampleService } from '../../../example-meta-artifact/example.service';
 
 @Component({
   selector: 'app-example-edit',

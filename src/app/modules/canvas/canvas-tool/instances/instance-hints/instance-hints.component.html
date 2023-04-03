@@ -1,0 +1,165 @@
+<div class="sbmd-panel">
+  <h6 class="sbmd-panel-title">Conformance Check & Hints</h6>
+  <div class="d-grid">
+    <button
+      type="button"
+      *ngIf="!conformanceIsChecked"
+      (click)="checkConformance.emit()"
+      class="btn btn-dark btn-sm"
+    >
+      Activate
+    </button>
+    <button
+      type="button"
+      *ngIf="conformanceIsChecked"
+      (click)="uncheckConformance.emit()"
+      class="btn btn-dark btn-sm"
+    >
+      Deactivate
+    </button>
+  </div>
+  <div class="mt-3" *ngIf="conformanceIsChecked">
+    <form [formGroup]="conformanceOptionsForm">
+      <div class="form-check form-switch mb-2">
+        <input
+          formControlName="showWarnings"
+          type="checkbox"
+          role="switch"
+          class="form-check-input"
+          id="optionShowWarnings"
+        />
+        <label class="form-check-label" for="optionShowWarnings">
+          Show weaknesses
+          <small class="text-muted d-block"
+            >Used features that have a hurt cross-tree relationship to other
+            used features</small
+          >
+        </label>
+      </div>
+      <div class="form-check form-switch mb-2">
+        <input
+          formControlName="showStrengths"
+          type="checkbox"
+          class="form-check-input"
+          id="showStrengths"
+        />
+        <label class="form-check-label" for="showStrengths">
+          Show strengths
+          <small class="text-muted d-block"
+            >Used features that have a supports cross-tree relationship to other
+            used features</small
+          >
+        </label>
+      </div>
+      <div class="form-check form-switch mb-2">
+        <input
+          formControlName="showHints"
+          type="checkbox"
+          class="form-check-input"
+          id="showHints"
+        />
+        <label class="form-check-label" for="showHints">
+          Show hints
+          <small class="text-muted d-block"
+            >Unused features that have a supports cross-tree relationship to
+            other used features and can be added without requirements and do not
+            lead to other errors</small
+          >
+        </label>
+      </div>
+      <div class="form-check form-switch mb-2">
+        <input
+          formControlName="showPatternHints"
+          type="checkbox"
+          class="form-check-input"
+          id="showPatternHints"
+        />
+        <label class="form-check-label" for="showPatternHints">
+          Show pattern hints
+          <small class="text-muted d-block"
+            >A pattern is shown as a hint, if at least half of the pattern is
+            included in the current business model</small
+          >
+        </label>
+      </div>
+      <div class="form-check form-switch mb-2">
+        <input
+          formControlName="showUsedPatterns"
+          type="checkbox"
+          class="form-check-input"
+          id="showUsedPatterns"
+        />
+        <label class="form-check-label" for="showUsedPatterns">
+          Show used patterns
+          <small class="text-muted d-block"
+            >A pattern is shown as used, if it is completely included in the
+            current business model</small
+          >
+        </label>
+      </div>
+    </form>
+    <div class="mt-3 row">
+      <div class="col">
+        <h6>Errors</h6>
+        <ul>
+          <li *ngFor="let error of conformance.errors">{{ error }}</li>
+        </ul>
+      </div>
+      <div
+        class="col border-start"
+        *ngIf="
+          conformanceOptionsForm.value.showWarnings ||
+          conformanceOptionsForm.value.showStrengths
+        "
+      >
+        <div *ngIf="conformanceOptionsForm.value.showWarnings">
+          <h6>Weaknesses</h6>
+          <ul>
+            <li *ngFor="let warning of conformance.warnings">
+              {{ warning }}
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="conformanceOptionsForm.value.showStrengths">
+          <h6>Strengths</h6>
+          <ul>
+            <li *ngFor="let strength of conformance.strengths">
+              {{ strength }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        class="col border-start"
+        *ngIf="
+          conformanceOptionsForm.value.showHints ||
+          conformanceOptionsForm.value.showPatternHints ||
+          conformanceOptionsForm.value.showUsedPatterns
+        "
+      >
+        <div *ngIf="conformanceOptionsForm.value.showHints">
+          <h6>Hints</h6>
+          <ul>
+            <li *ngFor="let hint of conformance.hints">{{ hint }}</li>
+          </ul>
+        </div>
+        <div *ngIf="conformanceOptionsForm.value.showPatternHints">
+          <h6>Pattern Hints</h6>
+          <ul>
+            <li *ngFor="let hint of conformance.patternHints">
+              <app-pattern-hint [patternHint]="hint"></app-pattern-hint>
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="conformanceOptionsForm.value.showUsedPatterns">
+          <h6>Used Patterns</h6>
+          <ul>
+            <li *ngFor="let pattern of conformance.usedPatterns">
+              <app-pattern-view [pattern]="pattern"></app-pattern-view>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="d-flex flex-column align-items-center">
+  <div
+    *ngFor="
+      let phaseMethodDecision of phaseMethodDecisions
+        | slice: (page - 1) * pageSize:page * pageSize;
+      trackBy: trackBy
+    "
+    class="card text-center w-75 my-2 border-2"
+    [class.border-success]="executedDecisionIds.has(phaseMethodDecision.id)"
+    [class.border-secondary]="phaseMethodDecision.number !== executionIndex"
+    [class.border-danger]="phaseMethodDecision.number === executionIndex"
+    [class.text-muted]="
+      missingArtifactDecisionIds?.has(phaseMethodDecision.id) ?? false
+    "
+  >
+    <div
+      class="position-absolute border-bottom border-start px-2 enaction-number"
+    >
+      {{ phaseMethodDecision.number ?? '&ndash;' }}
+    </div>
+    <div class="card-body">
+      <div class="card-title font-weight-bold">
+        {{ phaseMethodDecision.decision.method.name }}
+      </div>
+      <button
+        *ngIf="editEnaction"
+        [disabled]="phaseMethodDecision.number === executionIndex"
+        class="btn btn-sm btn-primary me-1 mb-1"
+        (click)="startExecution.emit(phaseMethodDecision)"
+      >
+        Set as current
+      </button>
+      <button
+        class="btn btn-sm btn-warning me-1 mb-1"
+        *ngIf="editEnaction && phaseMethodDecision.number === executionIndex"
+        (click)="skipExecution.emit(phaseMethodDecision)"
+      >
+        Skip
+      </button>
+      <button
+        class="btn btn-sm btn-warning me-1 mb-1"
+        *ngIf="editEnaction"
+        (click)="fakeExecution.emit(phaseMethodDecision)"
+      >
+        Fake Execute
+      </button>
+      <button
+        class="btn btn-sm btn-info me-1 mb-1"
+        (click)="infoDecision.emit(phaseMethodDecision)"
+      >
+        Info
+      </button>
+    </div>
+  </div>
+  <ngb-pagination
+    *ngIf="phaseMethodDecisions.length > pageSize"
+    [collectionSize]="phaseMethodDecisions.length"
+    [(page)]="page"
+    [pageSize]="pageSize"
+    class="mt-3"
+  ></ngb-pagination>
+</div>

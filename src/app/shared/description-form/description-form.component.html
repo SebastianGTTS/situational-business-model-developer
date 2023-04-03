@@ -1,6 +1,6 @@
 <form [formGroup]="descriptionForm" (ngSubmit)="submitForm()">
-  <div class="form-group">
-    <label for="description">Description</label>
+  <div class="mb-3">
+    <label class="form-label" for="description">Description</label>
     <textarea
       formControlName="description"
       class="form-control"
@@ -8,17 +8,15 @@
       rows="3"
     ></textarea>
   </div>
-  <div class="form-group row">
-    <div class="col-sm-12">
-      <button
-        type="submit"
-        class="btn btn-sm btn-block"
-        [class.btn-dark]="!changed"
-        [class.btn-primary]="changed"
-        [disabled]="!descriptionForm.valid"
-      >
-        Update Description<span *ngIf="changed"> (unsaved changes)</span>
-      </button>
-    </div>
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!descriptionForm.valid"
+    >
+      Update Description<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
   </div>
 </form>

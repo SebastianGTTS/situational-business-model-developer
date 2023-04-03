@@ -11,6 +11,8 @@ import noImplicitSplit from 'bpmnlint/rules/no-implicit-split';
 import singleBlankStartEvent from 'bpmnlint/rules/single-blank-start-event';
 import startEventRequired from 'bpmnlint/rules/start-event-required';
 import noEmptyTypes from './linting-rules/no-empty-types';
+import startReachable from './linting-rules/start-reachable';
+import endReachable from './linting-rules/end-reachable';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
@@ -32,6 +34,8 @@ export class ProcessPatternLinterService {
           'single-blank-start-event': 'error',
           'start-event-required': 'error',
           'sbmd/no-empty-types': 'error',
+          'sbmd/start-reachable': 'error',
+          'sbmd/end-reachable': 'error',
         },
       },
       resolver: new StaticResolver({
@@ -44,6 +48,8 @@ export class ProcessPatternLinterService {
         'rule:bpmnlint/single-blank-start-event': singleBlankStartEvent,
         'rule:bpmnlint/start-event-required': startEventRequired,
         'rule:bpmnlint-plugin-sbmd/no-empty-types': noEmptyTypes,
+        'rule:bpmnlint-plugin-sbmd/start-reachable': startReachable,
+        'rule:bpmnlint-plugin-sbmd/end-reachable': endReachable,
       }),
     });
   }

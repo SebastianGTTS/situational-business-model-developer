@@ -1,0 +1,41 @@
+<div *ngIf="phase == null" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<main class="container" *ngIf="phase != null">
+  <div class="my-3">
+    <app-element-overview [item]="phase"></app-element-overview>
+  </div>
+
+  <div class="my-3 sbmd-info-block">
+    Update the Phase and define its values.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Phase</h6>
+    <div class="sbmd-form-wrapper">
+      <app-phase-form
+        [phase]="phase"
+        (submitPhaseForm)="updateValue($event.value)"
+      ></app-phase-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="phase.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

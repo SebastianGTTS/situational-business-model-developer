@@ -1,4 +1,4 @@
-import { Reference } from '../meta-model-definition';
+import { Reference } from '../meta-artifact-definition';
 import { ArtifactVersionId } from '../running-process/artifact-version';
 
 export interface ApiQueryParams {

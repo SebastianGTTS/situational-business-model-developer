@@ -1,33 +1,30 @@
 import { Injectable } from '@angular/core';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { PouchdbService } from '../../database/pouchdb.service';
-import { Observable } from 'rxjs';
-import {
-  RunningArtifact,
-  RunningArtifactEntry,
-  RunningArtifactInit,
-} from './running-artifact';
+import { RunningArtifact, RunningArtifactInit } from './running-artifact';
 import { ArtifactDataType } from './artifact-data';
 import { ArtifactVersion, ArtifactVersionId } from './artifact-version';
 import { ArtifactDataService } from './artifact-data.service';
-import { ElementService } from '../../database/element.service';
-import { DatabaseRevision, DbId } from '../../database/database-entry';
+import { DbId } from '../../database/database-entry';
+import { IconInit } from '../../model/icon';
+import { DefaultElementService } from '../../database/default-element.service';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
 })
-export class ConcreteArtifactService
-  implements ElementService<RunningArtifact, RunningArtifactInit>
-{
+export class ConcreteArtifactService extends DefaultElementService<
+  RunningArtifact,
+  RunningArtifactInit
+> {
+  protected readonly typeName = RunningArtifact.typeName;
+
+  protected readonly elementConstructor = RunningArtifact;
+
   constructor(
     private artifactDataService: ArtifactDataService,
-    private pouchdbService: PouchdbService
-  ) {}
-
-  async add(artifact: RunningArtifactInit): Promise<RunningArtifact> {
-    const add = new RunningArtifact(undefined, artifact);
-    await this.pouchdbService.post(add);
-    return add;
+    pouchdbService: PouchdbService
+  ) {
+    super(pouchdbService);
   }
 
   /**
@@ -42,7 +39,7 @@ export class ConcreteArtifactService
     if (version == null) {
       throw new Error('Artifact does not contain a version with the versionId');
     }
-    this.artifactDataService.edit(version.data, {
+    this.artifactDataService.view(version.data, {
       referenceType: 'Artifact',
       artifactId: artifact._id,
       versionId: version.id,
@@ -81,15 +78,41 @@ export class ConcreteArtifactService
   }
 
   /**
-   * Update the artifact identifier
+   * Update the artifact info
    *
    * @param id the id of the artifact
    * @param identifier the identifier of the artifact
+   * @param description
    */
-  async updateIdentifier(id: DbId, identifier: string): Promise<void> {
-    const artifact = await this.get(id);
-    artifact.identifier = identifier;
-    await this.save(artifact);
+  async updateInfo(
+    id: DbId,
+    identifier: string,
+    description: string
+  ): Promise<void> {
+    try {
+      const artifact = await this.getWrite(id);
+      artifact.name = identifier;
+      artifact.description = description;
+      await this.save(artifact);
+    } finally {
+      this.freeWrite(id);
+    }
+  }
+
+  /**
+   * Update the icon of an artifact
+   *
+   * @param id
+   * @param icon
+   */
+  async updateIcon(id: string, icon: IconInit): Promise<void> {
+    try {
+      const artifact = await this.getWrite(id);
+      artifact.updateIcon(icon);
+      await this.save(artifact);
+    } finally {
+      this.freeWrite(id);
+    }
   }
 
   /**
@@ -106,7 +129,7 @@ export class ConcreteArtifactService
     importName: string
   ): Promise<RunningArtifact> {
     artifact = await this.copy(artifact);
-    artifact.identifier = identifier;
+    artifact.name = identifier;
     artifact.versions.forEach((version) => {
       version.createdBy = 'imported';
       version.executedBy = undefined;
@@ -118,32 +141,6 @@ export class ConcreteArtifactService
     return artifact;
   }
 
-  async getList(): Promise<RunningArtifactEntry[]> {
-    return this.pouchdbService.find<RunningArtifactEntry>(
-      RunningArtifact.typeName,
-      {
-        selector: {},
-      }
-    );
-  }
-
-  async get(id: string): Promise<RunningArtifact & DatabaseRevision> {
-    return new RunningArtifact(
-      await this.pouchdbService.get<RunningArtifactEntry>(id),
-      undefined
-    ) as RunningArtifact & DatabaseRevision;
-  }
-
-  /**
-   * Get the changes of a domain
-   *
-   * @param id the id of the domain
-   * @return the changes feed
-   */
-  getChangesFeed(id: string): Observable<void> {
-    return this.pouchdbService.getChangesFeed(id);
-  }
-
   async delete(id: string): Promise<void> {
     const result = await this.get(id);
     for (const version of result.versions) {
@@ -152,10 +149,6 @@ export class ConcreteArtifactService
       }
     }
     await this.pouchdbService.remove(result);
-  }
-
-  async save(runningArtifact: RunningArtifact): Promise<void> {
-    await this.pouchdbService.put(runningArtifact);
   }
 
   /**

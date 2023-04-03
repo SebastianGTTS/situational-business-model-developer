@@ -1,0 +1,18 @@
+<strong>{{ buildingBlockName }}</strong>
+<div class="mt-1 list-group">
+  <div *ngFor="let f of features" class="list-group-item p-2">
+    <ng-container *ngIf="f.type === 'mandatory'">
+      <i
+        class="bi bi-circle-fill me-1"
+        aria-hidden="true"
+        title="mandatory"
+      ></i>
+      <span class="visually-hidden">mandatory</span>
+    </ng-container>
+    <ng-container *ngIf="f.type === 'optional'">
+      <i class="bi bi-circle me-1" aria-hidden="true" title="optional"></i>
+      <span class="visually-hidden">optional</span>
+    </ng-container>
+    {{ f.name }}
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Types</h1>
+    The Types classify the possible types where a Method Building Block or a
+    Method Pattern can be used during the pattern-based composition.
+  </div>
+
+  <app-method-element-list
+    elementNamePlural="Types"
+    elementName="Type"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a type. This can not be undone. This action will not
+      delete the type from method building blocks that are using it.
+    </div>
+  </app-method-element-list>
+
+  <app-method-element-create-form
+    elementName="Type"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+  </app-method-element-create-form>
+</main>

@@ -1,0 +1,30 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="companyModel != null && runningMethod != null && isCorrectStep()"
+  role="main"
+  class="container"
+>
+  <app-feature-model-edit
+    [featureModel]="companyModel"
+    (updateFeatureModel)="updateCompanyModel()"
+  ></app-feature-model-edit>
+
+  <div class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish editing</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">
+        Finish editing
+      </button>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,134 @@
+<ng-template #importModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Import Database</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-danger">
+      This step will do the following:
+      <ol>
+        <li>
+          <strong>Delete all documents in the current database</strong><br />
+          This will remove everything that is in the database. After this step
+          the database is empty. <strong>This can not be undone.</strong>
+        </li>
+        <li>
+          <strong>Import the file</strong><br />
+          Then the given file will be imported. On any error the database will
+          <strong>remain empty</strong>. So please have a backup of the current
+          state.
+        </li>
+      </ol>
+      You should be really sure when executing this step. To confirm this step
+      enter "{{ verifyString }}" into the verify input field.<br />
+      Again, this step <strong>can not be undone</strong>.
+    </div>
+    <div class="text-muted pt-3">
+      <form [formGroup]="form" (ngSubmit)="submitForm()">
+        <div class="mb-3 row">
+          <label for="file" class="col-sm-4 col-form-label">File</label>
+          <div class="col-sm-8">
+            <input
+              type="file"
+              class="form-control"
+              [class.is-invalid]="importError != null"
+              id="file"
+              aria-describedby="fileErrorDescription"
+              formControlName="file"
+              (change)="fileChange($event)"
+            />
+            <div id="fileErrorDescription" class="invalid-feedback">
+              {{ importError }}
+            </div>
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="inputVerify" class="col-sm-4 col-form-label"
+            >Verify</label
+          >
+          <div class="col-sm-8">
+            <input
+              type="text"
+              class="form-control"
+              [class.is-invalid]="verifyControl.invalid"
+              id="inputVerify"
+              formControlName="verify"
+            />
+          </div>
+        </div>
+        <div class="d-grid">
+          <button
+            [disabled]="!form.valid"
+            type="submit"
+            class="btn btn-sm btn-primary"
+          >
+            Reset database and import file into database
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<main class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Options for the Situational Business Model Developer
+    </h1>
+    The Situational Business Model Developer has some general options to import
+    or export a database together with resetting it.
+  </div>
+
+  <app-profile></app-profile>
+
+  <div *ngIf="isLocalDatabase()" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Reset Database</h6>
+    <div class="d-grid">
+      <button
+        type="button"
+        (click)="resetDatabase()"
+        class="btn btn-dark btn-sm"
+      >
+        Reset Database to Default
+      </button>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Database Import/Export</h6>
+    <div class="d-grid gap-2">
+      <button
+        type="button"
+        (click)="openImportDatabase()"
+        class="btn btn-dark btn-sm"
+      >
+        Import database
+      </button>
+      <button
+        type="button"
+        (click)="exportDatabase()"
+        class="btn btn-dark btn-sm"
+      >
+        Export database
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="username != null && !isLocalDatabase()" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Change Password</h6>
+    <app-change-password-form
+      (changePassword)="changePassword($event)"
+    ></app-change-password-form>
+    <div class="mt-3 alert alert-danger" *ngIf="passwordChangeError">
+      Password not changed due to an error.
+    </div>
+    <div class="mt-3 alert alert-danger" *ngIf="passwordChangeForbidden">
+      You do not have the permission to change your password.
+    </div>
+  </div>
+</main>

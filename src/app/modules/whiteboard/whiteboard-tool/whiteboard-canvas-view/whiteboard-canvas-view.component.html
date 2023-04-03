@@ -1,0 +1,20 @@
+<div class="h-100 d-flex flex-column">
+  <div>
+    <div class="btn-group mb-1" role="group" aria-label="Zoom">
+      <button type="button" class="btn btn-light" (click)="zoom(-1)">
+        <i class="bi bi-zoom-out whiteboard-icon"></i
+        ><span class="visually-hidden">Zoom out</span>
+      </button>
+      <button type="button" class="btn btn-light" (click)="zoom(1)">
+        <i class="bi bi-zoom-in whiteboard-icon"></i
+        ><span class="visually-hidden">Zoom in</span>
+      </button>
+      <button type="button" class="ml-3 btn btn-light" (click)="zoomReset()">
+        <b>Reset zoom</b>
+      </button>
+    </div>
+  </div>
+  <div class="border flex-fill sbmd-min-height-0" #canvasWrapper>
+    <canvas #canvasElement></canvas>
+  </div>
+</div>

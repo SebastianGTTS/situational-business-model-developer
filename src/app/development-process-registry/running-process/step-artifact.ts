@@ -4,21 +4,21 @@ import {
   ArtifactDataInit,
 } from './artifact-data';
 import { DatabaseModelPart } from '../../database/database-model-part';
-import { MetaModelType } from '../meta-model-definition';
+import { MetaArtifactType } from '../meta-artifact-definition';
 import { DatabaseEntry, DatabaseInit } from '../../database/database-entry';
 
 export interface StepArtifactInit extends DatabaseInit {
-  metaModelType?: MetaModelType;
+  metaArtifactType?: MetaArtifactType;
   data: ArtifactDataInit;
 }
 
 export interface StepArtifactEntry extends DatabaseEntry {
-  metaModelType?: MetaModelType;
+  metaArtifactType?: MetaArtifactType;
   data: ArtifactDataEntry;
 }
 
 export class StepArtifact implements StepArtifactInit, DatabaseModelPart {
-  metaModelType?: MetaModelType;
+  metaArtifactType?: MetaArtifactType;
   data: ArtifactData;
 
   constructor(
@@ -26,10 +26,10 @@ export class StepArtifact implements StepArtifactInit, DatabaseModelPart {
     init: StepArtifactInit | undefined
   ) {
     if (entry != null) {
-      this.metaModelType = entry.metaModelType;
+      this.metaArtifactType = entry.metaArtifactType;
       this.data = new ArtifactData(entry.data, undefined);
     } else if (init != null) {
-      this.metaModelType = init.metaModelType;
+      this.metaArtifactType = init.metaArtifactType;
       this.data = new ArtifactData(undefined, init.data);
     } else {
       throw new Error('Either entry or init must be provided.');
@@ -38,7 +38,7 @@ export class StepArtifact implements StepArtifactInit, DatabaseModelPart {
 
   toDb(): StepArtifactEntry {
     return {
-      metaModelType: this.metaModelType,
+      metaArtifactType: this.metaArtifactType,
       data: this.data.toDb(),
     };
   }

@@ -1,0 +1,172 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Dashboard of the Method Enactment
+    </h1>
+    <p>
+      The dashboard provides statistics for the different Executed Development
+      Methods, Completed Development Methods, and Created Artifacts.
+    </p>
+  </div>
+
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="sbmd-panel">
+          <div
+            *ngIf="numberOfRunningMethods == null"
+            class="spinner-border text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div *ngIf="numberOfRunningMethods != null" class="h2">
+            {{ numberOfRunningMethods }}
+          </div>
+          <div class="mt-2">executing Development Methods</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="sbmd-panel">
+          <div
+            *ngIf="numberOfCompletedMethods == null"
+            class="spinner-border text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div *ngIf="numberOfCompletedMethods != null" class="h2">
+            {{ numberOfCompletedMethods }}
+          </div>
+          <div class="mt-2">completed Development Methods</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="sbmd-panel">
+          <div
+            *ngIf="numberOfArtifacts == null"
+            class="spinner-border text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div *ngIf="numberOfArtifacts != null" class="h2">
+            {{ numberOfArtifacts }}
+          </div>
+          <div class="mt-2">created Artifacts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3">
+    <div class="sbmd-panel" *ngIf="lastVisitedRunningProcess != null">
+      <h6 class="sbmd-panel-small-title">Current Development Method</h6>
+      <div class="mb-3">
+        <div class="sbmd-panel position-relative">
+          <div class="d-flex align-items-center">
+            <app-icon [icon]="lastVisitedRunningProcess.icon"></app-icon>
+            <h2 class="ms-3 mb-0 me-5">{{ lastVisitedRunningProcess.name }}</h2>
+          </div>
+          <div class="position-absolute top-0 end-0 mt-3 me-3">
+            <a
+              class="btn btn-primary rounded-circle"
+              [routerLink]="[
+                '/',
+                'runningprocess',
+                'runningprocessview',
+                lastVisitedRunningProcess._id
+              ]"
+            >
+              <i class="bi bi-caret-right-fill" aria-label="View"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="sbmd-panel">
+              <div class="d-flex align-items-start">
+                <h6 class="sbmd-panel-small-title">
+                  Currently Executing Steps
+                </h6>
+                <div class="ms-auto">
+                  <a
+                    class="btn btn-sm btn-primary rounded-circle mb-1"
+                    [routerLink]="[
+                      '/',
+                      'runningprocess',
+                      'runningprocessview',
+                      lastVisitedRunningProcess._id,
+                      'light',
+                      'execution'
+                    ]"
+                  >
+                    <i class="bi bi-caret-right-fill" aria-label="View"></i>
+                  </a>
+                </div>
+              </div>
+              <ul class="list-group">
+                <li
+                  *ngFor="
+                    let method of lastVisitedRunningProcess.runningMethods
+                  "
+                  class="list-group-item d-flex align-items-center"
+                >
+                  <div class="h5 me-3 mb-0 p-1">{{ method.methodName }}</div>
+                  <div class="ms-auto">
+                    <a
+                      class="btn btn-sm btn-primary rounded-circle"
+                      [routerLink]="[
+                        '/',
+                        'runningprocess',
+                        'runningprocessview',
+                        lastVisitedRunningProcess._id,
+                        'method',
+                        method.executionId
+                      ]"
+                    >
+                      <i class="bi bi-caret-right-fill" aria-label="View"></i>
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="sbmd-panel">
+              <div class="d-flex align-items-start">
+                <h6 class="sbmd-panel-small-title">Created Artifacts</h6>
+                <div class="ms-auto">
+                  <a
+                    class="btn btn-sm btn-primary rounded-circle mb-1"
+                    [routerLink]="[
+                      '/',
+                      'runningprocess',
+                      'runningprocessview',
+                      lastVisitedRunningProcess._id,
+                      'light',
+                      'artifacts'
+                    ]"
+                  >
+                    <i class="bi bi-caret-right-fill" aria-label="View"></i>
+                  </a>
+                </div>
+              </div>
+              <ul class="list-group">
+                <li
+                  *ngFor="let artifact of lastVisitedRunningProcess.artifacts"
+                  class="list-group-item"
+                >
+                  <div class="h5 me-3 mb-0 p-1">{{ artifact.name }}</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

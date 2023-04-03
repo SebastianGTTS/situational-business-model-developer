@@ -1,0 +1,7 @@
+<div *ngIf="canvasDefinition == null" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<router-outlet *ngIf="canvasDefinition != null"></router-outlet>

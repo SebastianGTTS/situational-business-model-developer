@@ -1,0 +1,79 @@
+<form [formGroup]="mappingForm" (ngSubmit)="submitForm()">
+  <div class="mb-3 row">
+    <label for="experimentDefinitionId" class="col-sm-4 col-form-label"
+      >Experiment Definition</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="experimentDefinitionId"
+        formControlName="experimentDefinitionId"
+        class="form-select"
+      >
+        <option></option>
+        <option *ngFor="let e of experimentDefinitionList" [ngValue]="e.id">
+          {{ e.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="experimentId" class="col-sm-4 col-form-label">Experiment</label>
+    <div class="col-sm-8">
+      <select
+        id="experimentId"
+        formControlName="experimentId"
+        class="form-select"
+      >
+        <option></option>
+        <option *ngFor="let e of currentSubexperimentsList" [ngValue]="e.id">
+          {{ '-'.repeat(e.level) }} {{ e.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="hypothesisId" class="col-sm-4 col-form-label">Hypothesis</label>
+    <div class="col-sm-8">
+      <select
+        id="hypothesisId"
+        formControlName="hypothesisId"
+        class="form-select"
+      >
+        <option></option>
+        <option *ngFor="let h of hypothesisList" [ngValue]="h.id">
+          {{ '-'.repeat(h.level) }} {{ h.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="metric" class="col-sm-4 col-form-label">Metric</label>
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="metric"
+        class="form-control"
+        id="metric"
+      />
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!mappingForm.valid"
+    >
+      Add Mapping
+    </button>
+    <div
+      *ngIf="mappingForm.hasError('alreadyDefined')"
+      class="alert alert-info mb-0 mt-2"
+    >
+      Mapping already defined
+    </div>
+  </div>
+</form>

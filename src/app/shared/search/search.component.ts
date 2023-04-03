@@ -6,13 +6,14 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { SearchService } from '../search.service';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
+import { FilterService } from '../filter.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
-  providers: [SearchService],
+  providers: [FilterService, SearchService],
 })
 export class SearchComponent<T> implements OnChanges {
   @Input() heading!: string;
@@ -20,20 +21,23 @@ export class SearchComponent<T> implements OnChanges {
   @Input() content!: TemplateRef<unknown>;
   @Input() items?: T[];
 
-  constructor(private searchService: SearchService<T>) {}
+  constructor(
+    private filterService: FilterService<T>,
+    private searchService: SearchService<T>
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.items) {
       this.searchForm.reset();
-      this.searchService.items = changes.items.currentValue;
+      this.filterService.items = changes.items.currentValue;
     }
   }
 
-  get searchForm(): FormGroup {
+  get searchForm(): UntypedFormGroup {
     return this.searchService.searchForm;
   }
 
   get filteredResults(): T[] | undefined {
-    return this.searchService.filteredResults;
+    return this.filterService.filteredResults;
   }
 }

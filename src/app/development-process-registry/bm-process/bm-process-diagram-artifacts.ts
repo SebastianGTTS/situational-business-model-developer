@@ -10,14 +10,16 @@ import {
   BpmnSubProcess,
 } from 'bpmn-js';
 
+interface MissingArtifactsNode {
+  node: BpmnFlowNode;
+  missingArtifacts: Artifact[] | null;
+}
+
 /**
  * Nodes are included if there are missing artifacts or can not be reached.
  * If a node is unreachable missing artifacts is set to null.
  */
-export type MissingArtifactsNodesList = {
-  node: BpmnFlowNode;
-  missingArtifacts: Artifact[] | null;
-}[];
+export type MissingArtifactsNodesList = MissingArtifactsNode[];
 
 export class BmProcessDiagramArtifacts {
   private readonly elementRegistry: BpmnElementRegistry;
@@ -26,8 +28,9 @@ export class BmProcessDiagramArtifacts {
   private visitedNodes = new Set<BpmnFlowNode>();
   private artifacts: { [elementId: string]: Artifact[] } = {};
   private currentNodes: BpmnFlowNode[] = [];
+  private tokens?: { [nodeId: string]: number };
 
-  private missingMap: MissingArtifactsNodesList = [];
+  private missingMap: { [nodeId: string]: MissingArtifactsNode } = {};
 
   constructor(
     modeler: BpmnModeler,
@@ -42,15 +45,17 @@ export class BmProcessDiagramArtifacts {
    *
    * @param startingElements the nodes from where to start the checking.
    * Defaults to the start event of the most outer process
+   * @param tokenNodes a map that maps node ids to tokens
    * @param artifacts the artifacts that are already given
    * @return A map of elementIds with the missing artifacts or null if the node can not be reached
    */
   checkArtifacts(
     startingElements?: Set<string>,
+    tokenNodes?: { [nodeId: string]: number },
     artifacts?: Artifact[]
   ): MissingArtifactsNodesList {
     const fixedStart: Set<string> = new Set<string>();
-    if (startingElements == null) {
+    if (startingElements == null || tokenNodes == null) {
       const start = this.elementRegistry.find(
         (element: BpmnElement) =>
           BpmnUtils.isStartEvent(element) &&
@@ -64,6 +69,8 @@ export class BmProcessDiagramArtifacts {
       ) as BpmnFlowNode[];
       this.currentNodes.push(...start);
       start.forEach((element) => fixedStart.add(element.id));
+      Object.keys(tokenNodes).forEach((nodeId) => fixedStart.add(nodeId));
+      this.tokens = tokenNodes;
     }
     while (this.currentNodes.length > 0) {
       const currentNode = this.currentNodes[0];
@@ -74,13 +81,16 @@ export class BmProcessDiagramArtifacts {
         this.handleCurrentNode(currentNode, artifacts);
       }
     }
-    this.getAllUnreachedNodes().forEach((element) =>
-      this.missingMap.push({
-        node: element,
-        missingArtifacts: null,
-      })
+    this.getAllUnreachedNodes().forEach(
+      (element) =>
+        (this.missingMap[element.id] = {
+          node: element,
+          missingArtifacts: null,
+        })
     );
-    return this.missingMap;
+    return Object.entries(this.missingMap).map(
+      ([, missingArtifactsNode]) => missingArtifactsNode
+    );
   }
 
   private handleCurrentNode(
@@ -113,11 +123,11 @@ export class BmProcessDiagramArtifacts {
     const missing = neededArtifacts.filter(
       (artifact) => !incomingArtifactIds.includes(artifact._id)
     );
-    if (missing.length > 0 || currentNode.id in this.missingMap) {
-      this.missingMap.push({
+    if (missing.length > 0) {
+      this.missingMap[currentNode.id] = {
         node: currentNode,
         missingArtifacts: missing,
-      });
+      };
     }
     const previousArtifactIds =
       currentNode.id in this.artifacts
@@ -180,7 +190,10 @@ export class BmProcessDiagramArtifacts {
   ): Artifact[] | undefined {
     const artifacts: Artifact[] = [];
     const sources = this.getSources(element);
-    if (sources.some((source) => !(source.id in this.artifacts))) {
+    if (
+      sources.filter((source) => !(source.id in this.artifacts)).length >
+      (this.tokens?.[element.id] ?? 0)
+    ) {
       return undefined;
     }
     sources.forEach((source) => artifacts.push(...this.getArtifacts(source)));

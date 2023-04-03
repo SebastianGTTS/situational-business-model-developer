@@ -1,0 +1,70 @@
+<ng-template #deletePhaseModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalPhase != null"
+    (dismiss)="d()"
+    (delete)="deletePhase(modalPhase); c()"
+  >
+    <div modalTitle>Delete Phase {{ modalPhase.name }}</div>
+    You are deleting the phase {{ modalPhase.name }}. This can not be undone.
+    This action will not delete the phase in methods that are using it.
+  </app-delete-modal>
+</ng-template>
+
+<main class="container" *ngIf="phaseList != null">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Phases</h1>
+    The Phases classify the possible phases where a Method Building Block can be
+    used during the phase-based composition.
+  </div>
+
+  <app-list-wrapper
+    listTitle="Phases"
+    [reloading]="reloading"
+    [noResults]="phaseList.phases.length === 0"
+  >
+    <div noResults>No phases defined.</div>
+    <ul results class="list-group">
+      <li
+        class="list-group-item"
+        *ngFor="
+          let phase of phaseList.phases;
+          let first = first;
+          let last = last;
+          trackBy: trackBy
+        "
+      >
+        <app-list-item
+          [item]="phase"
+          [viewLink]="[phase.id]"
+          (delete)="openDeletePhaseModal(phase)"
+        >
+          <ng-container extraButtons>
+            <button
+              [class.invisible]="first"
+              (click)="movePhase(phase, -1)"
+              type="button"
+              class="btn btn-dark btn-sm ms-1"
+            >
+              Up
+            </button>
+            <button
+              [class.invisible]="last"
+              (click)="movePhase(phase, 1)"
+              type="button"
+              class="btn btn-dark btn-sm ms-1"
+            >
+              Down
+            </button>
+          </ng-container>
+        </app-list-item>
+      </li>
+    </ul>
+  </app-list-wrapper>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Add Phase</h6>
+    <div class="sbmd-form-wrapper">
+      <app-phase-form (submitPhaseForm)="addPhase($event)"></app-phase-form>
+    </div>
+  </div>
+</main>

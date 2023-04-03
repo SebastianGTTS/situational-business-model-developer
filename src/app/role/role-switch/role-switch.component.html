@@ -1,0 +1,21 @@
+<main role="main" class="container">
+  <div class="my-3">
+    <div class="sbmd-panel">
+      <p>You need to switch your role to go to this page.</p>
+      <p>Your current role is: {{ currentRole?.name ?? 'No role' }}</p>
+      <ng-container *ngIf="nextRoles.length > 0">
+        <p class="mb-0">You need to switch to one of the following roles:</p>
+        <ul>
+          <li *ngFor="let role of nextRoles">{{ role.name }}</li>
+        </ul>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="my-3">
+    <app-role-selector
+      [defaultRole]="nextRole"
+      (confirm)="redirect()"
+    ></app-role-selector>
+  </div>
+</main>

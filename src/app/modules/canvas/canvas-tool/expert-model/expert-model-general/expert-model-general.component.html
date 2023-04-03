@@ -1,0 +1,47 @@
+<main *ngIf="expertModel != null" role="main" class="container">
+  <div id="block" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Canvas Building Block</h6>
+    <div class="sbmd-form-wrapper">
+      <app-feature-model-form
+        [featureModel]="expertModel"
+        (submitFeatureModelForm)="updateExpertModel($event.value)"
+      ></app-feature-model-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="expertModel.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div id="domains" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Domains</h6>
+    <div class="sbmd-form-wrapper">
+      <app-domains-selection-form
+        [domains]="expertModel.domains"
+        (submitDomainsForm)="updateDomains($event.value)"
+      ></app-domains-selection-form>
+    </div>
+  </div>
+
+  <div id="author" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Author</h6>
+    <div class="sbmd-form-wrapper">
+      <app-author-form
+        [author]="expertModel.author"
+        (submitAuthorForm)="updateFeatureModelAuthor($event.value)"
+      ></app-author-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

@@ -5,8 +5,8 @@ import {
   ArtifactDataReference,
   ArtifactDataType,
 } from './artifact-data';
-import { MetaModelService } from '../meta-model.service';
-import { MetaModelType, Reference } from '../meta-model-definition';
+import { MetaArtifactService } from '../meta-artifact.service';
+import { MetaArtifactType, Reference } from '../meta-artifact-definition';
 import { Router } from '@angular/router';
 import { DbId } from '../../database/database-entry';
 
@@ -19,40 +19,40 @@ export enum ArtifactDataErrors {
 })
 export class ArtifactDataService {
   constructor(
-    private metaModelService: MetaModelService,
+    private metaArtifactService: MetaArtifactService,
     private router: Router
   ) {}
 
   /**
    * Get the name of an internal artifact
    *
-   * @param metaModelType
+   * @param metaArtifactType
    * @param artifact
    */
   async getName(
-    metaModelType: MetaModelType,
+    metaArtifactType: MetaArtifactType,
     artifact: ArtifactData
   ): Promise<string | undefined> {
     if (artifact.type !== ArtifactDataType.REFERENCE) {
       throw new Error(ArtifactDataErrors.WRONG_ARTIFACT_TYPE);
     }
-    const api = this.metaModelService.getMetaModelApi(metaModelType);
+    const api = this.metaArtifactService.getMetaArtifactApi(metaArtifactType);
     return api.getName(artifact.data as ArtifactDataReference);
   }
 
   /**
    * Creates an internal artifact
    *
-   * @param metaModelType
+   * @param metaArtifactType
    * @param reference
    * @param artifactId
    */
   create(
-    metaModelType: MetaModelType,
+    metaArtifactType: MetaArtifactType,
     reference: Reference,
     artifactId: DbId
   ): void {
-    const api = this.metaModelService.getMetaModelApi(metaModelType);
+    const api = this.metaArtifactService.getMetaArtifactApi(metaArtifactType);
     api.create(this.router, reference, artifactId);
   }
 
@@ -62,7 +62,7 @@ export class ArtifactDataService {
     }
     const artifactDataReference: ArtifactDataReference =
       artifact.data as ArtifactDataReference;
-    const api = this.metaModelService.getMetaModelApi(
+    const api = this.metaArtifactService.getMetaArtifactApi(
       artifactDataReference.type
     );
     api.view(artifactDataReference, this.router, reference);
@@ -80,7 +80,7 @@ export class ArtifactDataService {
     }
     const artifactDataReference: ArtifactDataReference =
       artifact.data as ArtifactDataReference;
-    const api = this.metaModelService.getMetaModelApi(
+    const api = this.metaArtifactService.getMetaArtifactApi(
       artifactDataReference.type
     );
     api.edit(artifactDataReference, this.router, reference);
@@ -97,7 +97,7 @@ export class ArtifactDataService {
     }
     const reference: ArtifactDataReference =
       artifact.data as ArtifactDataReference;
-    const api = this.metaModelService.getMetaModelApi(reference.type);
+    const api = this.metaArtifactService.getMetaArtifactApi(reference.type);
     try {
       await api.remove(reference);
     } catch (
@@ -128,7 +128,7 @@ export class ArtifactDataService {
     }
     const reference: ArtifactDataReference =
       artifact.data as ArtifactDataReference;
-    const api = this.metaModelService.getMetaModelApi(reference.type);
+    const api = this.metaArtifactService.getMetaArtifactApi(reference.type);
     return new ArtifactData(undefined, {
       ...artifact,
       data: await api.copy(reference),

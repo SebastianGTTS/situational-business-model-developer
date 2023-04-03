@@ -1,0 +1,16 @@
+<main role="main" *ngIf="bmProcess != null">
+  <app-bm-phase-process-edit
+    [bmProcess]="bmProcess"
+    (addDevelopmentMethod)="
+      addDevelopmentMethod($event.phaseId, $event.developmentMethod)
+    "
+    (updateDecisions)="
+      updateDecisions($event.phaseMethodDecisionId, $event.update)
+    "
+    (updateDecisionNumber)="
+      updateDecisionNumber($event.decisionId, $event.number)
+    "
+    (updatePhases)="updatePhases($event)"
+    (removeDecision)="removeDecision($event)"
+  ></app-bm-phase-process-edit>
+</main>

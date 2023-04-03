@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <ul formArrayName="steps" class="list-group">
+    <li *ngFor="let step of steps; let index = index" class="list-group-item">
+      <app-method-info-step
+        [formGroupName]="index.toString()"
+        [bmProcess]="bmProcess"
+        [runningProcess]="runningProcess"
+        [contextDomains]="contextDomains"
+        [step]="step"
+        [stepDecision]="stepDecisions[index]"
+        (forceUpdate)="forceUpdate.emit({ step: index, stepDecision: $event })"
+      ></app-method-info-step>
+    </li>
+  </ul>
+  <div *ngIf="steps.length > 0" class="my-3 d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!form.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

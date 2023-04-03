@@ -1,0 +1,44 @@
+<div *ngIf="situationalFactor == null" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<main class="container" *ngIf="situationalFactor != null">
+  <div class="my-3">
+    <app-element-overview [item]="situationalFactor"></app-element-overview>
+  </div>
+
+  <div class="my-3 sbmd-info-block">
+    Create a situational factor and define its values. Additionally, it is
+    possible to specify whether the values are ordered. If the values are
+    ordered, a lower value will include the higher values.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Situational Factor</h6>
+    <div class="sbmd-form-wrapper">
+      <app-situational-factor-form
+        [situationalFactor]="situationalFactor"
+        [listNames]="listNames"
+        (submitSituationalFactorForm)="updateSituationalFactor($event)"
+      ></app-situational-factor-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="situationalFactor.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

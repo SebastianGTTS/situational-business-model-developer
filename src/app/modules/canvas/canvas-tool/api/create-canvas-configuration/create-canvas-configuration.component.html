@@ -1,0 +1,72 @@
+<ng-template #createModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Create Composed Model</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="createForm" (ngSubmit)="createCompanyModel()">
+        <app-feature-model-subform
+          formGroupName="featureModel"
+        ></app-feature-model-subform>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-primary"
+            [disabled]="!createForm.valid"
+          >
+            Create Composed Model
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-container [formGroup]="formGroup">
+  <div class="mb-3 row">
+    <label for="companyModelSelector" class="col-sm-6 col-form-label"
+      >Composed Model</label
+    >
+    <div class="col-sm-6">
+      <div class="input-group">
+        <select
+          id="companyModelSelector"
+          formControlName="companyModelId"
+          class="form-select"
+        >
+          <option></option>
+          <option *ngFor="let model of companyModels" [value]="model._id">
+            {{ model.name }}
+          </option>
+        </select>
+        <button
+          *ngIf="
+            stepDecision &&
+            stepDecision.automaticCreation &&
+            stepDecision.companyModelId === companyModelIdControl.value
+          "
+          class="btn btn-outline-warning"
+          type="button"
+          (click)="navigateSelectExpertKnowledge()"
+        >
+          Edit
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex">
+    <button
+      type="button"
+      class="btn btn-primary ms-auto"
+      (click)="openCreateCompanyModelModal()"
+    >
+      Create new Composed Model
+    </button>
+  </div>
+</ng-container>

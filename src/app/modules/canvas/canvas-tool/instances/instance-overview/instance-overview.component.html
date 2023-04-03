@@ -1,0 +1,46 @@
+<main
+  *ngIf="expertModel != null && instance != null"
+  role="main"
+  class="container"
+>
+  <div class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="instance"
+    >
+      <div class="mt-3 d-flex">
+        <button
+          type="button"
+          (click)="createAdaptation()"
+          class="ms-auto btn btn-primary btn-sm"
+        >
+          Create new Adaptation
+        </button>
+      </div>
+    </app-element-overview>
+  </div>
+
+  <div class="my-3">
+    <div #canvas class="sbmd-panel overflow-auto">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">{{ instanceTypeName }} Overview</h6>
+        <app-fullscreen-toggle
+          class="ms-auto"
+          [fullscreenElement]="canvas"
+        ></app-fullscreen-toggle>
+        <a
+          class="ms-2 btn btn-primary btn-sm rounded-circle mb-1"
+          [routerLink]="['..', 'edit']"
+        >
+          <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+        </a>
+      </div>
+      <app-canvas
+        [featureModel]="expertModel"
+        [instance]="instance"
+        [editable]="false"
+      ></app-canvas>
+    </div>
+  </div>
+</main>

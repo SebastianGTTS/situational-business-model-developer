@@ -1,0 +1,145 @@
+<ngb-accordion *ngIf="features != null">
+  <ngb-panel
+    [cardClass]="
+      f.hasSubfeatures() ? 'sbmd-panel-active' : 'sbmd-panel-disabled'
+    "
+    [disabled]="!f.hasSubfeatures()"
+    *ngFor="let f of getFeatures(); trackBy: trackBy"
+  >
+    <ng-template ngbPanelTitle>
+      <div class="d-flex align-items-center w-100 me-3">
+        <div class="me-2">
+          <div class="mb-1" *ngIf="f.parent != null && hasExpertTraces(f)">
+            <span class="badge text-bg-dark">from canvas building block</span>
+          </div>
+
+          <div class="d-flex align-items-baseline">
+            <i
+              *ngIf="f.type === 'mandatory'"
+              class="me-2 bi bi-circle-fill"
+              aria-label="mandatory"
+              title="mandatory"
+            ></i>
+            <i
+              *ngIf="f.type === 'optional'"
+              class="me-2 bi bi-circle"
+              aria-label="optional"
+              title="optional"
+            ></i>
+
+            <span
+              [class.text-danger]="
+                problemFeatureIds && problemFeatureIds.includes(f.id)
+              "
+              [class.text-warning]="
+                supportsHurtsProblemFeatureIds &&
+                supportsHurtsProblemFeatureIds.includes(f.id)
+              "
+              >{{ f.name
+              }}<span
+                *ngIf="problemFeatureIds && problemFeatureIds.includes(f.id)"
+                class="visually-hidden"
+              >
+                (instantiation error)</span
+              ><span
+                *ngIf="
+                  supportsHurtsProblemFeatureIds &&
+                  supportsHurtsProblemFeatureIds.includes(f.id)
+                "
+                class="visually-hidden"
+              >
+                (supports/hurts error)</span
+              ></span
+            >
+
+            <div *ngIf="f.subfeatureConnections != null" class="ms-1">
+              <i
+                *ngIf="f.subfeatureConnections === 'or'"
+                class="bi bi-caret-up-fill"
+                aria-label="or subfeatures"
+                title="or subfeatures"
+              ></i>
+              <i
+                *ngIf="f.subfeatureConnections === 'xor'"
+                class="bi bi-chevron-up"
+                aria-label="xor subfeatures"
+                title="xor subfeatures"
+              ></i>
+            </div>
+          </div>
+
+          <div *ngIf="f.description != null">
+            <small class="text-muted">{{ f.description }}</small>
+          </div>
+        </div>
+
+        <div class="ms-auto d-flex flex-wrap align-items-baseline">
+          <button
+            type="button"
+            *ngIf="!f.relationships.hasNoRelationships()"
+            class="btn btn-dark btn-sm mb-1 me-1"
+            (click)="
+              $event.preventDefault();
+              $event.stopPropagation();
+              openDependencies(f.id)
+            "
+          >
+            Show Dependencies
+          </button>
+          <ng-container *ngIf="extraButtons != null">
+            <ng-container
+              *ngTemplateOutlet="extraButtons; context: { feature: f }"
+            ></ng-container>
+          </ng-container>
+          <button
+            *ngIf="showUpdate"
+            (click)="
+              $event.preventDefault();
+              $event.stopPropagation();
+              updateFeature(f.id)
+            "
+            type="button"
+            class="btn btn-warning btn-sm mb-1 me-1"
+          >
+            Update
+          </button>
+          <button
+            *ngIf="showDelete"
+            [class.invisible]="f.parent == null"
+            (click)="
+              $event.preventDefault();
+              $event.stopPropagation();
+              deleteFeature(f.id)
+            "
+            type="button"
+            class="btn btn-secondary btn-sm mb-1"
+          >
+            Delete
+          </button>
+        </div>
+        <ng-container *ngIf="extra != null">
+          <ng-container
+            *ngTemplateOutlet="extra; context: { feature: f }"
+          ></ng-container>
+        </ng-container>
+      </div>
+    </ng-template>
+
+    <ng-template ngbPanelContent>
+      <app-feature-tree
+        class="w-100"
+        [showUpdate]="showUpdate"
+        [showDelete]="showDelete"
+        [extraButtons]="extraButtons"
+        [extra]="extra"
+        [expanded]="internalExpanded"
+        [features]="f.subfeatures"
+        [problemFeatureIds]="problemFeatureIds"
+        [supportsHurtsProblemFeatureIds]="supportsHurtsProblemFeatureIds"
+        (openDependenciesEmitter)="openDependenciesForwardEmitter($event)"
+        (updateFeatureEmitter)="updateFeatureForwardEmitter($event)"
+        (deleteFeatureEmitter)="deleteFeatureForwardEmitter($event)"
+      ></app-feature-tree>
+    </ng-template>
+  </ngb-panel>
+</ngb-accordion>

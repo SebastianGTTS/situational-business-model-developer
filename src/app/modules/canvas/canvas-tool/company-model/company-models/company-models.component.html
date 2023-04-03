@@ -1,0 +1,25 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Composed Models
+    </h1>
+    The Composed Models are used to represent merged Canvas Building Blocks that
+    can be used within a Composed Development Method.
+  </div>
+
+  <app-list-panel
+    elementName="Composed Model"
+    elementNamePlural="Composed Models"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a composed model. This cannot be undone.
+    </div>
+  </app-list-panel>
+
+  <app-model-add-form
+    elementName="Composed Model"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-model-add-form>
+</main>

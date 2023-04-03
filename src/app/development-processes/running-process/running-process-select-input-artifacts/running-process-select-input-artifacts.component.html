@@ -1,0 +1,63 @@
+<div class="alert alert-info" *ngIf="inputArtifacts == null">Loading...</div>
+<ng-container *ngIf="inputArtifacts != null && inputArtifacts.length === 0">
+  <div class="alert alert-info">
+    This building block has no input artifacts.
+  </div>
+  <div class="d-grid">
+    <button
+      id="running-process-select-input-artifacts-confirm-no-input"
+      type="button"
+      class="btn btn-primary"
+      (click)="nextStep()"
+    >
+      Confirm
+    </button>
+  </div>
+</ng-container>
+<form
+  [formGroup]="form"
+  *ngIf="inputArtifacts != null && inputArtifacts.length > 0"
+  (ngSubmit)="submitForm()"
+>
+  <div formArrayName="inputArtifacts">
+    <div
+      class="my-3 sbmd-panel"
+      *ngFor="let elementOptional of inputArtifacts; let index = index"
+      formGroupName="{{ index }}"
+    >
+      <h6 class="sbmd-panel-title">
+        Artifact Type:
+        {{ elementOptional.element.name | optional: elementOptional.optional }}
+        ({{ elementOptional.element.list | list }})
+      </h6>
+      <div class="mb-3">
+        <label class="form-label" for="artifact">Artifact</label>
+        <select class="form-select" id="artifact" formControlName="artifact">
+          <option *ngIf="elementOptional.optional" [ngValue]="null">
+            None
+          </option>
+          <ng-container
+            *ngFor="let a of runningProcess.artifacts; let index = index"
+          >
+            <option
+              *ngIf="a.artifact._id === elementOptional.element._id"
+              [ngValue]="index"
+            >
+              {{ a.name }}
+            </option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="d-grid">
+    <button
+      id="running-process-select-input-artifacts-confirm-input"
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!form.valid"
+    >
+      Confirm
+    </button>
+  </div>
+</form>

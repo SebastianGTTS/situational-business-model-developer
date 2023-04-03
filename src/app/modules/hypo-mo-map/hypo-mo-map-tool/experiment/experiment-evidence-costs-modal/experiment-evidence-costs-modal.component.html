@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="experiment != null">
+    Set maximum Evidence and Costs of {{ experiment.name }}
+  </h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body" *ngIf="experiment != null">
+  <div class="text-muted pt-3">
+    <app-evidence-costs-form
+      [experiment]="experiment"
+      (submitEvidenceCostsForm)="_setEvidenceCosts($event)"
+    ></app-evidence-costs-form>
+  </div>
+</div>

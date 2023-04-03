@@ -1,0 +1,39 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Method Building Blocks
+    </h1>
+    The Method Building Blocks are used to combine the Method Elements into a
+    development steps.
+  </div>
+  <app-list-panel
+    elementName="Method Building Block"
+    elementNamePlural="Method Building Blocks"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a Method Building Block. This cannot be undone. This
+      action will not delete the Method Building Block from business model
+      development methods that are using it.
+    </div>
+    <ng-container filter>
+      <div class="row">
+        <div class="col-sm-6">
+          <app-type-filter></app-type-filter>
+        </div>
+        <div class="col-sm-3">
+          <app-phase-filter></app-phase-filter>
+        </div>
+        <div class="col-sm-3">
+          <app-author-filter></app-author-filter>
+        </div>
+      </div>
+    </ng-container>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Method Building Block"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+</main>

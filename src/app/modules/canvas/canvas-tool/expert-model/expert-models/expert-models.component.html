@@ -1,0 +1,30 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Canvas Building Blocks
+    </h1>
+    The Canvas Building Blocks are used to represent the knowledge of experts
+    about a certain domain.
+  </div>
+
+  <app-list-panel
+    elementName="Canvas Building Block"
+    elementNamePlural="Canvas Building Blocks"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a Canvas Building Block. This cannot be undone.
+    </div>
+  </app-list-panel>
+
+  <app-model-add-form
+    elementName="Canvas Building Block"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-model-add-form>
+
+  <app-model-import-view
+    elementName="Canvas Building Block"
+    (imported)="reload()"
+  ></app-model-import-view>
+</main>

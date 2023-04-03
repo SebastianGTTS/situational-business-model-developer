@@ -1,0 +1,47 @@
+<main class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Tutorials for the Situational Business Model Developer
+    </h1>
+    The Situational Business Model Developer provides guided tutorials for some
+    of the most important features for the different roles of the Domain Expert,
+    Method Engineer, and Business Developer.
+  </div>
+
+  <div *ngFor="let role of roles" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">{{ role.name }} Tutorials Overview</h6>
+    <ul class="list-group">
+      <li
+        *ngFor="let tutorial of tutorials?.[role.id] ?? []"
+        class="list-group-item"
+      >
+        <div class="d-flex align-items-baseline">
+          <div>
+            {{ tutorial.name }} &ndash;
+            <span *ngIf="tutorial.step + 1 < tutorial.steps"
+              >Step: {{ tutorial.step + 1 }}/{{ tutorial.steps }}</span
+            >
+            <span *ngIf="tutorial.step + 1 >= tutorial.steps">Finished</span>
+          </div>
+          <div class="ms-auto">
+            <button
+              (click)="start(tutorial)"
+              type="button"
+              class="btn btn-primary btn-sm"
+            >
+              <span *ngIf="tutorial.step === 0">Start</span>
+              <span *ngIf="tutorial.step !== 0">Resume</span>
+            </button>
+            <button
+              (click)="reset(tutorial)"
+              type="button"
+              class="btn btn-secondary btn-sm ms-1"
+            >
+              Restart
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</main>

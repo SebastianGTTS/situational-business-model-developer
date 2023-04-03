@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
-import {
-  ContextChangeRunningProcess,
-  FullRunningProcess,
-  RunningProcess,
-} from './running-process';
 import { ProcessExecutionModelerService } from './process-execution-modeler.service';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import * as BpmnUtils from '../bpmn/bpmn-utils';
 import { BpmnElement, BpmnFlowNode, BpmnSequenceFlow } from 'bpmn-js';
+import { RunningPatternProcess } from './running-pattern-process';
+import { ContextChangeRunningProcess } from './running-full-process';
 
 export enum ExecutionErrors {
   MULTIPLE_OPTIONS = 'No outgoing flow selected for exclusive gateway.',
@@ -28,7 +25,9 @@ export class ProcessExecutionService {
    *
    * @param runningProcess the running process
    */
-  async initRunningProcess(runningProcess: FullRunningProcess): Promise<void> {
+  async initRunningProcess(
+    runningProcess: RunningPatternProcess
+  ): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
       runningProcess
     );
@@ -49,7 +48,7 @@ export class ProcessExecutionService {
    * @param flowId the id of the flow to take if the node is a XOR node with multiple outgoing nodes
    */
   async moveToNextStep(
-    runningProcess: FullRunningProcess,
+    runningProcess: RunningPatternProcess,
     nodeId: string,
     flowId?: string
   ): Promise<void> {
@@ -122,7 +121,7 @@ export class ProcessExecutionService {
    * @param nodeId the id of the node
    */
   async moveToNextMethod(
-    runningProcess: FullRunningProcess,
+    runningProcess: RunningPatternProcess,
     nodeId: string
   ): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
@@ -161,7 +160,7 @@ export class ProcessExecutionService {
    * @param nodeId
    */
   async fakeExecuteMethod(
-    runningProcess: ContextChangeRunningProcess,
+    runningProcess: RunningPatternProcess & ContextChangeRunningProcess,
     nodeId: string
   ): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
@@ -194,7 +193,7 @@ export class ProcessExecutionService {
    * @param nodeId
    */
   async removeExecutedMethod(
-    runningProcess: ContextChangeRunningProcess,
+    runningProcess: RunningPatternProcess & ContextChangeRunningProcess,
     nodeId: string
   ): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
@@ -221,7 +220,7 @@ export class ProcessExecutionService {
    * @param nodeId
    */
   async setExecution(
-    runningProcess: ContextChangeRunningProcess,
+    runningProcess: RunningPatternProcess & ContextChangeRunningProcess,
     nodeId: string
   ): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
@@ -276,7 +275,7 @@ export class ProcessExecutionService {
    *
    * @param runningProcess the running process
    */
-  async jumpToNextMethod(runningProcess: FullRunningProcess): Promise<void> {
+  async jumpToNextMethod(runningProcess: RunningPatternProcess): Promise<void> {
     const modeler = await this.processExecutionModelerService.initModeling(
       runningProcess
     );
@@ -295,7 +294,7 @@ export class ProcessExecutionService {
    */
   private _jumpToNextMethod(
     modeler: BpmnModeler,
-    runningProcess: Readonly<FullRunningProcess>
+    runningProcess: Readonly<RunningPatternProcess>
   ): void {
     const ignoredIds = new Set<string>();
     const filterCommonNodes = (node: BpmnElement): boolean =>
@@ -355,7 +354,7 @@ export class ProcessExecutionService {
    * @return true if the node can be executed
    */
   async canExecuteNode(
-    runningProcess: FullRunningProcess,
+    runningProcess: RunningPatternProcess,
     nodeId: string
   ): Promise<boolean> {
     const modeler = await this.processExecutionModelerService.initModeling(
@@ -385,11 +384,8 @@ export class ProcessExecutionService {
    * @return the nodes that have enough tokens to be executed
    */
   async getExecutableNodes(
-    runningProcess: RunningProcess
+    runningProcess: RunningPatternProcess
   ): Promise<BpmnFlowNode[]> {
-    if (!runningProcess.hasProcess()) {
-      return [];
-    }
     const modeler = await this.processExecutionModelerService.initModeling(
       runningProcess
     );
@@ -405,11 +401,8 @@ export class ProcessExecutionService {
    * @return the decision nodes
    */
   async getExecutableDecisionNodes(
-    runningProcess: RunningProcess
+    runningProcess: RunningPatternProcess
   ): Promise<BpmnFlowNode[]> {
-    if (!runningProcess.hasProcess()) {
-      return [];
-    }
     const modeler = await this.processExecutionModelerService.initModeling(
       runningProcess
     );
@@ -440,6 +433,30 @@ export class ProcessExecutionService {
         !this.processExecutionModelerService.isSubProcess(node) &&
         this.hasEnoughTokens(node as BpmnFlowNode)
     ) as BpmnFlowNode[];
+  }
+
+  /**
+   * Get all nodes that have tokens set
+   *
+   * @param runningProcess
+   */
+  async getTokenNodes(
+    runningProcess: RunningPatternProcess
+  ): Promise<{ [nodeId: string]: number }> {
+    const modeler = await this.processExecutionModelerService.initModeling(
+      runningProcess
+    );
+    const tokens: { [nodeId: string]: number } = {};
+    this.processExecutionModelerService
+      .filterNodes(modeler, (node) => BpmnUtils.isFlowNode(node))
+      .map((node): [string, number] => [
+        node.id,
+        this.processExecutionModelerService.getTokens(node as BpmnFlowNode),
+      ])
+      .filter(([, token]) => token > 0)
+      .forEach(([id, token]) => (tokens[id] = token));
+    this.processExecutionModelerService.abortModeling(modeler);
+    return tokens;
   }
 
   /**

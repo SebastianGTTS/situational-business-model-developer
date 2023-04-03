@@ -1,0 +1,22 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Exported Artifacts
+    </h1>
+    <p>
+      The Exported Artifacts are the artifacts that are explicitly exported from
+      a running development method. They can be viewed or imported in another
+      running development method.
+    </p>
+  </div>
+
+  <app-list-panel
+    elementName="Concrete Artifact"
+    elementNamePlural="Concrete Artifacts"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a concrete artifact. This can not be undone.
+    </div>
+  </app-list-panel>
+</main>

@@ -1,0 +1,13 @@
+<main
+  *ngIf="expertModel != null && instance != null"
+  role="main"
+  class="container"
+>
+  <app-instance
+    [featureModel]="expertModel"
+    [instance]="instance"
+    (addFeature)="addFeature($event.parentId, $event.feature)"
+    (addDecision)="addDecision($event)"
+    (removeDecision)="removeDecision($event)"
+  ></app-instance>
+</main>

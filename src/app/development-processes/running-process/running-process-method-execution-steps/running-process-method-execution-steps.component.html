@@ -1,0 +1,51 @@
+<div id="running-process-method-execution-steps" class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Execution Steps</h6>
+  <ul class="list-group">
+    <li
+      *ngFor="let step of executionSteps; let index = index"
+      class="list-group-item"
+    >
+      <div class="d-flex">
+        <h5
+          class="mb-0"
+          [class.text-success]="index < currentStepNumber"
+          [class.text-warning]="index === currentStepNumber"
+          [class.m-0]="!hasDescription(index)"
+        >
+          {{ index + 1 }}.
+        </h5>
+        <div class="ms-2">
+          <h5
+            [class.text-success]="index < currentStepNumber"
+            [class.text-warning]="index === currentStepNumber"
+            [class.m-0]="!hasDescription(index)"
+          >
+            <span *ngIf="isMethodExecutionStep(step)"
+              >{{ step.module }} &ndash; {{ step.method }}</span
+            >
+            <span *ngIf="!isMethodExecutionStep(step)">{{ step.name }}</span>
+            <span *ngIf="index < currentStepNumber" class="visually-hidden">
+              (step already executed)</span
+            >
+            <span *ngIf="index === currentStepNumber" class="visually-hidden">
+              (step to execute)</span
+            >
+          </h5>
+          <p *ngIf="hasDescription(index)" class="mb-0">
+            <span class="show-new-lines">{{ getDescription(index) }}</span>
+          </p>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div class="d-grid">
+    <button
+      id="running-process-method-execution-steps-execute-next-step"
+      *ngIf="hasStepsLeft"
+      class="btn btn-primary mt-3"
+      (click)="executeStep.emit()"
+    >
+      Execute next step
+    </button>
+  </div>
+</div>

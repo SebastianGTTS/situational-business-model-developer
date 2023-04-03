@@ -99,6 +99,13 @@ export class Groups<T extends MethodElement>
     );
   }
 
+  /**
+   * Checks whether all groups have at least one item.
+   */
+  isComplete(): boolean {
+    return this.groups.every((group) => group.isComplete());
+  }
+
   toDb(): GroupsEntry<EntryType<T>> {
     return {
       allowNone: this.allowNone,

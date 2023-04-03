@@ -34,7 +34,10 @@ export function equalsListOfLists<T>(
  * @param listB the second list
  * @return true if the lists are both null/undefined or have the same amount of elements and all elements are equal at the same index
  */
-export function equalsList<T>(listA: Equality<T>[], listB: T[]): boolean {
+export function equalsList<T>(
+  listA: Equality<T>[] | undefined,
+  listB: T[] | undefined
+): boolean {
   return equalsListGeneric<Equality<T>, T>(listA, listB, (a, b) => a.equals(b));
 }
 

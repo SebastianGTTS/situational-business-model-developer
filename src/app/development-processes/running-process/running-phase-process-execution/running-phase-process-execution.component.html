@@ -1,0 +1,18 @@
+<app-running-process-base
+  *ngIf="runningProcess != null"
+  [runningProcess]="runningProcess"
+  (focusNode)="focus($event)"
+  (startNodeExecution)="startNodeExecution($event)"
+>
+  <div processView #processBoard class="container-fluid">
+    <div id="running-phase-process-execution-phases" class="my-3 sbmd-panel">
+      <h6 class="border-bottom border-gray pb-2">Phases</h6>
+      <app-phase-running-process-board
+        [phaseDecisions]="runningProcess.process.phases"
+        [executionIndex]="runningProcess.executionIndex"
+        [executedDecisionIds]="executedDecisionIds"
+        (infoDecision)="openInfoModal($event.decision)"
+      ></app-phase-running-process-board>
+    </div>
+  </div>
+</app-running-process-base>

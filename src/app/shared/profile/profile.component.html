@@ -1,0 +1,16 @@
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Profile</h6>
+  <table class="table" *ngIf="username != null || group != null">
+    <tbody>
+      <tr *ngIf="username != null">
+        <th scope="row">Username</th>
+        <td>{{ username }}</td>
+      </tr>
+      <tr *ngIf="group != null">
+        <th scope="row">Group</th>
+        <td>{{ group }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <span *ngIf="isLocalDatabase()">Connected to a local database</span>
+</div>

@@ -5,8 +5,9 @@ import lintModule from 'bpmn-js-bpmnlint';
 import bmdl from '../../../assets/bpmn_bmdl.json';
 import { Type } from '../../development-process-registry/method-elements/type/type';
 import { BpmnViewerService } from '../../development-process-view/shared/bpmn-viewer.service';
-import { BpmnModdle } from 'bpmn-js';
+import { BpmnModdle, BusinessObject } from 'bpmn-js';
 import { ProcessPatternLinterService } from '../../development-process-registry/process-pattern/process-pattern-linter.service';
+import BpmnViewer from 'bpmn-js/lib/Viewer';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,22 @@ export class ProcessPatternModelerService extends BpmnViewerService {
       moddleExtensions: {
         bmdl,
       },
+    });
+  }
+
+  /**
+   * Get a read only bpmn viewer to view process patterns
+   */
+  getBpmnViewer(): BpmnViewer {
+    return new BpmnViewer({
+      additionalModules: [
+        {
+          selection: ['value', {}],
+          selectionVisuals: ['value', {}],
+          selectionBehavior: ['value', {}],
+        },
+      ],
+      moddleExtensions: {},
     });
   }
 
@@ -64,6 +81,21 @@ export class ProcessPatternModelerService extends BpmnViewerService {
         ),
       });
     }
+  }
+
+  /**
+   * Get a specific business object
+   *
+   * @param modeler
+   * @param nodeId
+   */
+  getBusinessObject(
+    modeler: BpmnModeler,
+    nodeId: string
+  ): BusinessObject | undefined {
+    return modeler
+      .get('elementRegistry')
+      .find((element) => element.id === nodeId)?.businessObject;
   }
 }
 

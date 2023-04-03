@@ -1,0 +1,22 @@
+<form class="row g-3" [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="col-sm-7">
+    <label for="enactionNumber" class="visually-hidden">Enaction number</label>
+    <input
+      #numberInput
+      type="number"
+      class="form-control"
+      id="enactionNumber"
+      formControlName="number"
+      [min]="1"
+    />
+  </div>
+  <div class="col-sm-5 d-flex">
+    <button
+      [disabled]="!form.valid"
+      type="submit"
+      class="flex-fill btn btn-primary"
+    >
+      Confirm
+    </button>
+  </div>
+</form>

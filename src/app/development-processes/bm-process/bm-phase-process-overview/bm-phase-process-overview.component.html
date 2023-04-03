@@ -1,0 +1,76 @@
+<main *ngIf="bmProcess != null" role="main" class="container">
+  <div id="bm-phase-process-overview-element-overview" class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="bmProcess"
+    ></app-element-overview>
+  </div>
+
+  <div class="my-3">
+    <div id="bm-phase-process-overview-method-overview" class="sbmd-panel">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">Method Overview</h6>
+        <div class="ms-auto">
+          <a
+            id="bm-phase-process-overview-method-overview-edit"
+            class="btn btn-sm rounded-circle mb-1"
+            [class.btn-primary]="methodCorrectlyDefined"
+            [class.btn-danger]="!methodCorrectlyDefined"
+            [routerLink]="['..', 'method']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+      <div *ngIf="bmProcess.phases.length === 0">There are no phases yet</div>
+      <div
+        *ngIf="bmProcess.phases.length > 0"
+        class="row sbmd-min-height-200-px"
+      >
+        <div
+          *ngFor="let phase of bmProcess.phases; let last = last"
+          class="col"
+          [class.border-end]="!last"
+        >
+          <div class="d-flex align-items-baseline">
+            <h6 class="text-center ms-auto me-auto">
+              {{ phase.phase.name }}
+            </h6>
+          </div>
+          <div class="d-flex flex-column align-items-center">
+            <div
+              *ngFor="let decision of phase.decisions"
+              class="card text-center w-75 my-2 border-2"
+            >
+              <div
+                class="
+                  position-absolute
+                  border-bottom border-start
+                  px-2
+                  enaction-number
+                "
+              >
+                {{ decision.number ?? '&ndash;' }}
+              </div>
+              <div class="card-body">
+                <div class="font-weight-bold">
+                  {{ decision.decision.method.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3 row">
+    <div id="bm-phase-process-overview-context" class="col-md-6">
+      <app-context-overview
+        [domains]="bmProcess.domains"
+        [situationalFactors]="bmProcess.situationalFactors"
+      ></app-context-overview>
+    </div>
+  </div>
+</main>

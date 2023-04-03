@@ -1,0 +1,20 @@
+<main
+  *ngIf="companyModel != null && instance != null"
+  role="main"
+  class="container"
+>
+  <app-instance
+    [featureModel]="companyModel"
+    [instance]="instance"
+    [editable]="false"
+  ></app-instance>
+
+  <div class="my-3 sbmd-panel" *ngIf="stepInfo?.step != null">
+    <h6 class="sbmd-panel-title">Finish viewing</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">
+        Finish viewing
+      </button>
+    </div>
+  </div>
+</main>

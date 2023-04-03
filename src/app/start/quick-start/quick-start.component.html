@@ -1,0 +1,42 @@
+<div class="sbmd-panel">
+  <h2 class="sbmd-panel-title">Quick Start</h2>
+  <div class="mb-2">{{ text }}</div>
+  <div *ngIf="depth > 1" class="d-flex my-2">
+    <div
+      class="ms-auto btn-group"
+      role="group"
+      aria-label="Quick Start controls"
+    >
+      <button type="button" class="btn btn-secondary" (click)="back()">
+        Back
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="reset()">
+        Reset
+      </button>
+    </div>
+  </div>
+  <div *ngIf="currentTreeItem.children.length > 0" class="list-group">
+    <button
+      *ngFor="let item of currentTreeItem.children; let index = index"
+      type="button"
+      class="list-group-item list-group-item-action"
+      (click)="next(index)"
+    >
+      {{ item.text }}
+    </button>
+  </div>
+  <ng-container *ngIf="currentTreeItem.steps != null">
+    <div class="my-2">Next Steps</div>
+    <ol>
+      <li *ngFor="let step of currentTreeItem.steps">{{ step }}</li>
+    </ol>
+  </ng-container>
+  <button
+    *ngIf="currentTreeItem.action != null"
+    type="button"
+    class="btn btn-primary"
+    (click)="execute()"
+  >
+    Execute
+  </button>
+</div>

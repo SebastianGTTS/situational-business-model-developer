@@ -10,6 +10,7 @@ export default class BmProcessContextPadProvider {
 
   getContextPadEntries(element: BpmnFlowNode): {
     [id: string]: {
+      html?: string;
       group: string;
       className: string;
       title: string;
@@ -18,6 +19,7 @@ export default class BmProcessContextPadProvider {
   } {
     const controls: {
       [id: string]: {
+        html?: string;
         group: string;
         className: string;
         title: string;
@@ -32,7 +34,7 @@ export default class BmProcessContextPadProvider {
     ) {
       controls['bmp.showTypes'] = {
         group: 'info',
-        className: 'fas fa-list font-bpmn-adaption',
+        className: 'bi bi-list-ul font-bpmn-adaption',
         title: 'Show types',
         action: {
           click: (): void => this.eventBus.fire('bmp.showTypes', element),
@@ -42,7 +44,7 @@ export default class BmProcessContextPadProvider {
     if (is(element, 'bpmn:SubProcess')) {
       controls['bmp.showPattern'] = {
         group: 'info',
-        className: 'fas fa-info-circle font-bpmn-adaption',
+        className: 'bi bi-info-square font-bpmn-adaption',
         title: 'Show Method Pattern details',
         action: {
           click: (): void => this.eventBus.fire('bmp.showPattern', element),
@@ -50,7 +52,7 @@ export default class BmProcessContextPadProvider {
       };
       controls['bmp.deletePattern'] = {
         group: 'edit',
-        className: 'far fa-trash-alt font-bpmn-adaption',
+        className: 'bi bi-trash font-bpmn-adaption',
         title: 'Delete Method Pattern',
         action: {
           click: (): void => this.eventBus.fire('bmp.deletePattern', element),
@@ -62,8 +64,9 @@ export default class BmProcessContextPadProvider {
       element.businessObject.get('outgoing').length === 0
     ) {
       controls['bmp.processPatterns'] = {
+        html: '<div id="bm-process-context-pad-add-method-pattern" class="entry" draggable="true"></div>',
         group: 'edit',
-        className: 'far fa-plus-square font-bpmn-adaption',
+        className: 'bi bi-plus-square font-bpmn-adaption',
         title: 'Add Method Pattern',
         action: {
           click: (): void => this.eventBus.fire('bmp.processPatterns', element),
@@ -73,7 +76,7 @@ export default class BmProcessContextPadProvider {
     if (is(element, 'bpmn:Task') || is(element, 'bpmn:CallActivity')) {
       controls['bmp.selectMethod'] = {
         group: 'edit',
-        className: 'fas fa-database font-bpmn-adaption',
+        className: 'bi bi-server font-bpmn-adaption',
         title: 'Select Method Building Block',
         action: {
           click: (): void => this.eventBus.fire('bmp.selectMethod', element),
@@ -82,7 +85,7 @@ export default class BmProcessContextPadProvider {
       if (element.businessObject.method) {
         controls['bmp.showMethod'] = {
           group: 'edit',
-          className: 'fas fa-clipboard-list font-bpmn-adaption',
+          className: 'bi bi-gear font-bpmn-adaption',
           title: 'Edit Method Building Block details',
           action: {
             click: (): void => this.eventBus.fire('bmp.showMethod', element),
@@ -90,7 +93,7 @@ export default class BmProcessContextPadProvider {
         };
         controls['bmp.summary'] = {
           group: 'info',
-          className: 'fas fa-clipboard-check font-bpmn-adaption',
+          className: 'bi bi-clipboard-check font-bpmn-adaption',
           title: 'Show Method Building Block summary',
           action: {
             click: (): void => this.eventBus.fire('bmp.summary', element),
@@ -98,7 +101,7 @@ export default class BmProcessContextPadProvider {
         };
         controls['bmp.removeMethod'] = {
           group: 'edit',
-          className: 'far fa-trash-alt font-bpmn-adaption',
+          className: 'bi bi-trash font-bpmn-adaption',
           title: 'Remove Method Building Block from task',
           action: {
             click: (): void => this.eventBus.fire('bmp.removeMethod', element),
@@ -109,7 +112,7 @@ export default class BmProcessContextPadProvider {
     if (is(element, 'bpmn:CallActivity')) {
       controls['bmp.selectPattern'] = {
         group: 'edit',
-        className: 'fas fa-sign-in-alt font-bpmn-adaption',
+        className: 'bi bi-box-arrow-in-right font-bpmn-adaption',
         title: 'Insert Method Pattern',
         action: {
           click: (): void => this.eventBus.fire('bmp.selectPattern', element),

@@ -1,0 +1,52 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="runningMethod != null && isCorrectStep"
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Create Competitors</h6>
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <ul class="list-group mb-3" formArrayName="competitors">
+          <li
+            *ngFor="let control of formArray.controls; let index = index"
+            class="list-group-item"
+          >
+            <app-feature-model-instance-subform
+              [formGroupName]="index.toString()"
+            ></app-feature-model-instance-subform>
+            <div class="d-flex">
+              <button
+                type="button"
+                class="btn btn-secondary ms-auto"
+                (click)="removeCompetitor(index)"
+              >
+                Remove
+              </button>
+            </div>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <button
+            type="button"
+            class="btn btn-primary ms-auto mb-3"
+            (click)="addCompetitor()"
+          >
+            Add Competitor
+          </button>
+        </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-primary"
+            [disabled]="!form.valid"
+          >
+            Create Competitors
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

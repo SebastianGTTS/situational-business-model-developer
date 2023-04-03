@@ -1,0 +1,23 @@
+<app-running-process-context-run-base
+  [runningProcess]="runningProcess"
+  [missingArtifacts]="missingArtifacts"
+  [isComplexModel]="false"
+  (focusNode)="focus($event)"
+>
+  <div processView #processBoard class="container-fluid">
+    <div class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Phases</h6>
+      <app-phase-running-process-board
+        [phaseDecisions]="runningProcess.process.phases"
+        [executionIndex]="runningProcess.executionIndex"
+        [executedDecisionIds]="executedDecisionIds"
+        [missingArtifactDecisionIds]="missingArtifactsNodeIds"
+        [editEnaction]="true"
+        (infoDecision)="openInfoModal($event.decision)"
+        (startExecution)="startExecution($event)"
+        (fakeExecution)="openFakeExecuteModal($event.id)"
+        (skipExecution)="skipExecution()"
+      ></app-phase-running-process-board>
+    </div>
+  </div>
+</app-running-process-context-run-base>

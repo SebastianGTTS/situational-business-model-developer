@@ -1,0 +1,21 @@
+<div *ngIf="runningProcess == null && !error" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<main *ngIf="error && errorStatus === 404" class="container" role="main">
+  <div class="alert alert-info my-3">
+    <p>
+      This running method does not exist. Reason:
+      {{ errorReason }}.
+    </p>
+    <p class="mb-0">
+      <a [routerLink]="['/', 'runningprocess']"
+        >Go back to overview of running methods</a
+      >
+    </p>
+  </div>
+</main>
+
+<router-outlet *ngIf="runningProcess != null"></router-outlet>

@@ -1,0 +1,20 @@
+<div class="mb-3">
+  <label class="form-label" for="phaseInput">Phase</label>
+  <div class="input-group">
+    <input
+      type="text"
+      [formControl]="formControl"
+      class="form-control"
+      id="phaseInput"
+      [ngbTypeahead]="searchPhases"
+      [editable]="false"
+      [resultFormatter]="formatter"
+      [inputFormatter]="formatter"
+      (click)="openPhaseInput.next($any($event.target).value)"
+      (focus)="openPhaseInput.next($any($event.target).value)"
+    />
+    <button (click)="remove.emit()" class="btn btn-secondary" type="button">
+      Remove
+    </button>
+  </div>
+</div>

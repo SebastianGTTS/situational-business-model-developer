@@ -1,0 +1,59 @@
+<ng-template #showArtifactVersionModal let-d="dismiss">
+  <app-concrete-artifact-show-version-modal
+    [showEdit]="false"
+    [artifact]="artifact"
+    [version]="modalVersion"
+    (viewArtifactVersion)="viewArtifactVersion()"
+    (editArtifactVersion)="editArtifactVersion()"
+    (dismiss)="d()"
+  ></app-concrete-artifact-show-version-modal>
+</ng-template>
+
+<main class="container" *ngIf="artifact != null">
+  <div class="my-3 sbmd-info-block">Update an artifact and view it.</div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Artifact</h6>
+    <app-concrete-artifact-form
+      [artifact]="artifact"
+      (submitArtifactForm)="
+        updateInfo(
+          $event.getRawValue().identifier,
+          $event.getRawValue().description
+        )
+      "
+    ></app-concrete-artifact-form>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <app-icon-form
+      [icon]="artifact.icon"
+      (submitIconForm)="updateIcon($event)"
+    ></app-icon-form>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Versions</h6>
+    <ul class="list-group" *ngIf="artifact.versions.length > 0">
+      <li
+        class="list-group-item"
+        *ngFor="let version of artifact.versions; let index = index"
+      >
+        <a [routerLink]="[]" (click)="openShowArtifactVersionModal(version)">
+          Version #{{ index + 1 }}
+        </a>
+        &ndash; Imported from {{ version.importName
+        }}<span *ngIf="version.editing"> (editable)</span>
+        &ndash;
+        {{ version.time | date: 'short' }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

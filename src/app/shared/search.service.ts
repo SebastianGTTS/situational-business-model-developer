@@ -1,7 +1,8 @@
 import { Inject, Injectable, InjectionToken, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, tap } from 'rxjs/operators';
+import { FilterFunction, FilterService } from './filter.service';
 
 type SearchFunction<T> = (searchValue: string, item: T) => boolean;
 
@@ -19,47 +20,50 @@ export function defaultSearchFunction<T extends { name: string }>(
 
 @Injectable()
 export class SearchService<T> implements OnDestroy {
-  searchForm: FormGroup = this.fb.group({
-    search: [''],
+  private static readonly filterId = 'search';
+
+  searchForm = this.fb.nonNullable.group({
+    search: '',
   });
-
-  private _items?: T[];
-  set items(items: T[] | undefined) {
-    this._items = items;
-    this.search(this.searchForm.value.search);
-  }
-
-  private _filteredResults?: T[];
-  get filteredResults(): T[] | undefined {
-    return this._filteredResults;
-  }
 
   private searchSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
+    private filterService: FilterService<T>,
     @Inject(SEARCH_FUNCTION) private searchFunction: SearchFunction<T>
   ) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.searchSubscription = this.searchForm
       .get('search')!
-      .valueChanges.pipe(debounceTime(300))
+      .valueChanges.pipe(
+        tap(() => this.filterService.preAnnounceFiltering()),
+        debounceTime(300)
+      )
       .subscribe((value) => this.search(value));
   }
 
   private search(value?: string): void {
     if (value != null) {
-      value = value.toLowerCase();
-      this._filteredResults = this._items?.filter((item) =>
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.searchFunction(value!, item)
+      let searchValue = value;
+      searchValue = searchValue.toLowerCase();
+      const filterFunction: FilterFunction<T> = (item) =>
+        this.searchFunction(searchValue, item);
+      this.filterService.addFilterFunction(
+        SearchService.filterId,
+        filterFunction
       );
     } else {
-      this._filteredResults = this._items;
+      this.filterService.removeFilterFunction(SearchService.filterId);
     }
+  }
+
+  get searchValue(): string | undefined {
+    return this.searchForm.get('search')?.value;
   }
 
   ngOnDestroy(): void {
     this.searchSubscription.unsubscribe();
+    this.filterService.removeFilterFunction(SearchService.filterId);
   }
 }

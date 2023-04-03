@@ -7,7 +7,7 @@ import {
   ArtifactDataReference,
   ArtifactDataType,
 } from '../../../development-process-registry/running-process/artifact-data';
-import { Example } from '../example-artifact/example';
+import { Example } from '../example-meta-artifact/example';
 import { ArtifactVersionId } from '../../../development-process-registry/running-process/artifact-version';
 
 @Injectable({

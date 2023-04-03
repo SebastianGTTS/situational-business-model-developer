@@ -1,0 +1,84 @@
+<form [formGroup]="executionStepsSelectionForm" (ngSubmit)="submitForm()">
+  <ul
+    *ngIf="formArray.controls.length > 0"
+    formArrayName="steps"
+    class="list-group mb-3"
+  >
+    <li
+      *ngFor="let control of formArray.controls; let index = index"
+      id="development-method-select-execution-steps-step-{{ index }}"
+      [formGroupName]="index"
+      class="list-group-item"
+    >
+      <div class="d-flex align-items-baseline">
+        <h5>Step #{{ index + 1 }}</h5>
+        <div class="ms-auto btn-group" role="group" aria-label="Text or Method">
+          <input
+            type="radio"
+            class="btn-check"
+            id="text-option-{{ id }}"
+            autocomplete="off"
+            [value]="false"
+            formControlName="isMethod"
+          />
+          <label
+            (click)="changeStep(index, false)"
+            class="btn btn-primary"
+            for="text-option-{{ id }}"
+            >Text</label
+          >
+          <input
+            type="radio"
+            class="btn-check"
+            id="method-option-{{ id }}"
+            autocomplete="off"
+            [value]="true"
+            formControlName="isMethod"
+          />
+          <label
+            (click)="changeStep(index, true)"
+            class="btn btn-primary"
+            for="method-option-{{ id }}"
+            >Method</label
+          >
+        </div>
+      </div>
+      <app-development-method-empty-execution-step
+        *ngIf="!control.get('isMethod')?.value"
+        [formGroup]="$any(control)"
+        [stepNumber]="index"
+        (remove)="removeStep(index)"
+      ></app-development-method-empty-execution-step>
+      <app-development-method-select-execution-step
+        *ngIf="control.get('isMethod')?.value"
+        [executionStepsFormValue]="formArray.value"
+        [formGroup]="$any(control)"
+        [developmentMethod]="developmentMethod"
+        [stepNumber]="index"
+        (remove)="removeStep(index)"
+      ></app-development-method-select-execution-step>
+    </li>
+  </ul>
+  <div class="d-flex mb-3">
+    <button
+      id="development-method-select-execution-steps-add-execution-step"
+      type="button"
+      class="btn btn-primary ms-auto"
+      (click)="addStep()"
+    >
+      Add execution step
+    </button>
+  </div>
+  <div class="d-grid">
+    <button
+      id="development-method-select-execution-steps-update"
+      type="submit"
+      class="btn btn-sm btn-block"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!executionStepsSelectionForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

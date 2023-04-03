@@ -1,0 +1,160 @@
+<main *ngIf="error && errorStatus === 404" role="main">
+  <div class="alert alert-info container my-3">
+    <p>This running method does not exist. Reason: {{ errorReason }}.</p>
+    <p class="mb-0">
+      <a [routerLink]="['/', 'runningprocess']">
+        Go back to overview of running methods
+      </a>
+    </p>
+  </div>
+</main>
+
+<main *ngIf="runningProcess != null && runningMethod == null" role="main">
+  <div class="alert alert-info container my-3">
+    <p>This development step does not exist or is not executed.</p>
+    <p class="mb-0">
+      <a
+        [routerLink]="[
+          '/',
+          'runningprocess',
+          'runningprocessview',
+          runningProcess._id
+        ]"
+      >
+        Go back to kanban board of running method
+      </a>
+    </p>
+  </div>
+</main>
+
+<main *ngIf="runningProcess != null && runningMethod != null" role="main">
+  <div class="container">
+    <div id="running-process-method-steps" class="my-3 sbmd-panel">
+      <div class="sbmd-panel-header">
+        <h6 class="sbmd-panel-header-title">Steps</h6>
+        <button
+          class="btn btn-sm btn-warning ms-auto"
+          (click)="abortMethodExecution()"
+        >
+          Abort development step execution
+        </button>
+      </div>
+      <div class="d-flex">
+        <ul class="list-group list-group-horizontal ms-auto me-auto">
+          <li
+            class="list-group-item"
+            [class.active]="getStateInputSelection() === getState()"
+            [class.disabled]="getState() > getStateInputSelection()"
+            [attr.aria-disabled]="getState() > getStateInputSelection()"
+          >
+            Select input artifacts<span
+              *ngIf="getStateInputSelection() === getState()"
+              class="visually-hidden"
+            >
+              (active)</span
+            >
+          </li>
+          <li
+            *ngIf="runningMethod.hasSteps()"
+            class="list-group-item"
+            [class.active]="getStateExecution() === getState()"
+            [class.disabled]="getState() > getStateExecution()"
+            [attr.aria-disabled]="getState() > getStateExecution()"
+          >
+            Execute Development Step<span
+              *ngIf="getStateExecution() === getState()"
+              class="visually-hidden"
+            >
+              (active)</span
+            >
+          </li>
+          <li
+            class="list-group-item"
+            [class.active]="getStateOutputSelection() === getState()"
+            [class.disabled]="getState() > getStateOutputSelection()"
+            [attr.aria-disabled]="getState() > getStateOutputSelection()"
+          >
+            Create/Merge output artifacts<span
+              *ngIf="getStateOutputSelection() === getState()"
+              class="visually-hidden"
+            >
+              (active)</span
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div
+      id="running-process-method-input-mapping"
+      *ngIf="getStateInputSelection() === getState()"
+      class="my-3 sbmd-panel"
+    >
+      <h6 class="sbmd-panel-title">Input Mapping</h6>
+      <app-running-process-select-input-artifacts
+        [decision]="runningMethod.decision"
+        [runningProcess]="runningProcess"
+        (selectInputArtifacts)="selectInputArtifacts($event)"
+      ></app-running-process-select-input-artifacts>
+    </div>
+    <div
+      id="running-process-method-development-step-overview"
+      *ngIf="getState() > getStateInputSelection()"
+      class="my-3 sbmd-panel"
+    >
+      <h6 class="sbmd-panel-title">Development Step Overview</h6>
+      <app-development-method-summary
+        [decision]="runningMethod.decision"
+        [inputArtifacts]="runningMethod.inputArtifacts"
+        (viewArtifactReference)="
+          viewArtifactReference($event.reference, $event.api)
+        "
+      ></app-development-method-summary>
+    </div>
+    <app-running-process-method-execution-steps
+      *ngIf="getStateExecution() <= getState() && runningMethod.hasSteps()"
+      [executionSteps]="runningMethod.decision.method.executionSteps"
+      [currentStepNumber]="runningMethod.currentStepNumber"
+      [hasStepsLeft]="runningMethod.hasStepsLeft()"
+      (executeStep)="executeMethodStep()"
+    ></app-running-process-method-execution-steps>
+    <div
+      id="running-process-method-output-mapping"
+      *ngIf="getStateExecution() <= getState()"
+      class="my-3 sbmd-panel"
+    >
+      <h6 class="sbmd-panel-title">Output Mapping</h6>
+      <app-running-process-select-output-artifacts
+        [runningProcess]="runningProcess"
+        [runningMethod]="runningMethod"
+        [decision]="runningMethod.decision"
+        (updateOutputArtifacts)="updateOutputArtifacts($event)"
+      ></app-running-process-select-output-artifacts>
+    </div>
+
+    <div
+      *ngIf="getStateOutputSelection() === getState()"
+      class="my-3 sbmd-panel"
+    >
+      <h6 class="sbmd-panel-title">Finish execution</h6>
+      <div class="d-grid">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!runningMethod.hasOutputArtifactsCorrectlyDefined()"
+          (click)="finishExecution()"
+        >
+          Finish execution
+        </button>
+      </div>
+    </div>
+
+    <div class="my-3 sbmd-panel">
+      <app-running-process-method-comments
+        [comments]="runningMethod.comments"
+        (addComment)="addComment($event)"
+        (updateComment)="updateComment($event)"
+        (removeComment)="removeComment($event)"
+      ></app-running-process-method-comments>
+    </div>
+  </div>
+</main>

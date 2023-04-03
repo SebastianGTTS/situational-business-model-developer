@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Comment } from '../../development-process-registry/running-process/comment';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -29,7 +29,7 @@ export class RunningProcessMethodCommentsComponent {
 
   constructor(private modalService: NgbModal) {}
 
-  _addComment(formGroup: FormGroup): void {
+  _addComment(formGroup: UntypedFormGroup): void {
     this.addComment.emit(new Comment(undefined, formGroup.getRawValue()));
     formGroup.reset();
   }
@@ -41,7 +41,7 @@ export class RunningProcessMethodCommentsComponent {
     });
   }
 
-  _updateComment(formGroup: FormGroup): void {
+  _updateComment(formGroup: UntypedFormGroup): void {
     this.modalComment?.update(formGroup.value);
     this.updateComment.emit(this.modalComment);
     this.modalReference?.close();

@@ -1,0 +1,42 @@
+<form [formGroup]="evidenceCostsForm" (ngSubmit)="submitForm()">
+  <div class="mb-3 row">
+    <label for="maxEvidence" class="col-sm-4 col-form-label"
+      >Maximum Evidence</label
+    >
+    <div class="col-sm-8">
+      <ngb-rating
+        class="sbmd-rating"
+        id="maxEvidence"
+        formControlName="maxEvidence"
+        [max]="5"
+      ></ngb-rating>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="costs" class="col-sm-4 col-form-label">Costs</label>
+    <div class="col-sm-8">
+      <ng-template #costsIcon let-fill="fill">
+        <i class="bi bi-circle-fill" *ngIf="fill === 100"></i>
+        <i class="bi bi-circle" *ngIf="fill !== 100"></i>
+      </ng-template>
+      <ngb-rating
+        class="sbmd-rating"
+        id="costs"
+        formControlName="costs"
+        [starTemplate]="costsIcon"
+        [max]="5"
+      ></ngb-rating>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!evidenceCostsForm.valid"
+    >
+      Set maximum Evidence and Costs
+    </button>
+  </div>
+</form>

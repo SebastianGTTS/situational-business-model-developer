@@ -1,0 +1,55 @@
+<app-step-errors *ngIf="!isManually()"></app-step-errors>
+
+<main
+  *ngIf="
+    (isManually() || (runningMethod != null && isCorrectStep())) &&
+    hypoMoMap != null
+  "
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Hypothesis Tree</h6>
+    <div>
+      <app-hypothesis-tree
+        [hypotheses]="hypoMoMap.hypotheses"
+        [hypothesisExperimentMap]="hypothesisMappingsMap"
+        [processPhase]="'stepView'"
+      ></app-hypothesis-tree>
+    </div>
+    <div class="mt-3">
+      <app-hypothesis-tree-legend
+        [showEvidenceScore]="true"
+      ></app-hypothesis-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Experiment Tree</h6>
+    <app-used-experiment-tree
+      [editable]="false"
+      [usedExperiments]="hypoMoMap.usedExperimentsList"
+    ></app-used-experiment-tree>
+    <div class="mt-3">
+      <app-used-experiment-tree-legend></app-used-experiment-tree-legend>
+    </div>
+  </div>
+
+  <div *ngIf="runningMethod != null" class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div *ngIf="!isManually()" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish editing</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">
+        Finish viewing
+      </button>
+    </div>
+  </div>
+</main>

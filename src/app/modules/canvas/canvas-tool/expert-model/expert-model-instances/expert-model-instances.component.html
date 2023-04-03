@@ -1,0 +1,23 @@
+<main *ngIf="expertModel != null" role="main" class="container">
+  <div id="patterns" class="my-3">
+    <app-instance-list
+      elementName="Pattern"
+      elementNamePlural="Patterns"
+      [instances]="getPatternInstances()"
+      [viewLinkFunction]="viewPattern"
+      (addInstance)="addInstance($event, instanceTypes.PATTERN)"
+      (deleteInstance)="deleteInstance($event)"
+    ></app-instance-list>
+  </div>
+
+  <div id="examples" class="my-3">
+    <app-instance-list
+      elementName="Example"
+      elementNamePlural="Examples"
+      [instances]="getExampleInstances()"
+      [viewLinkFunction]="viewExample"
+      (addInstance)="addInstance($event, instanceTypes.EXAMPLE)"
+      (deleteInstance)="deleteInstance($event)"
+    ></app-instance-list>
+  </div>
+</main>

@@ -1,0 +1,32 @@
+<section class="sbmd-panel position-relative">
+  <div class="d-flex align-items-start">
+    <h6 class="sbmd-panel-small-title">{{ panelTitle }}</h6>
+    <div *ngIf="editLink != null" class="ms-auto">
+      <a
+        [id]="editId ?? ''"
+        class="btn btn-sm rounded-circle mb-1"
+        [class.btn-primary]="!hasErrors"
+        [class.btn-danger]="hasErrors"
+        [routerLink]="editLink"
+        [fragment]="fragment"
+      >
+        <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+        <span class="visually-hidden" *ngIf="hasErrors"
+          >(Errors in this part)</span
+        >
+      </a>
+    </div>
+  </div>
+  <ul class="list-group">
+    <li
+      *ngFor="let group of groups.groups"
+      class="list-group-item text-bg-light"
+    >
+      <ul class="list-group shadow-sm">
+        <li *ngFor="let item of group.items" class="list-group-item">
+          {{ item.list }} &ndash; {{ item.element?.name }}
+        </li>
+      </ul>
+    </li>
+  </ul>
+</section>

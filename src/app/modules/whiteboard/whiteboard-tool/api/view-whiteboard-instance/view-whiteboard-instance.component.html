@@ -1,0 +1,29 @@
+<main *ngIf="whiteboardInstance" role="main">
+  <div class="container-fluid">
+    <div class="my-3 sbmd-panel d-flex flex-column" #fullscreenElement>
+      <div class="sbmd-panel-header">
+        <h6 class="sbmd-panel-header-title">Whiteboard</h6>
+        <app-fullscreen-toggle
+          class="ms-auto"
+          [fullscreenElement]="fullscreenElement"
+        ></app-fullscreen-toggle>
+      </div>
+      <app-whiteboard-canvas-view
+        class="flex-fill sbmd-min-height-0"
+        [fullscreen]="isInFullscreenMode"
+        [whiteboardCanvas]="whiteboardInstance.whiteboard"
+      ></app-whiteboard-canvas-view>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="my-3 sbmd-panel" *ngIf="isCorrectStep()">
+      <h6 class="sbmd-panel-title">Finish viewing</h6>
+      <div class="d-grid">
+        <button class="btn btn-sm btn-primary" (click)="finish()">
+          Finish viewing
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

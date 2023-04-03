@@ -1,10 +1,15 @@
-<div class="row min-height-200-px">
-  <div class="col border-right">
-    <div class="d-flex justify-content-center">
-      <div class="flex-1"></div>
-      <h6 class="text-center ml-auto mr-auto">TODO</h6>
-      <div class="d-flex flex-1">
-        <button class="btn btn-xs btn-primary ml-auto" (click)="addTodo.emit()">
+<div class="row sbmd-min-height-200-px">
+  <div class="col border-end">
+    <div class="d-flex">
+      <div class="flex-fill"></div>
+      <h6 class="text-center ms-auto me-auto">TODO</h6>
+      <div class="d-flex flex-fill">
+        <button
+          id="kanban-board-add"
+          *ngIf="editable && !infoOnly"
+          class="btn btn-sm btn-primary ms-auto"
+          (click)="addTodo.emit()"
+        >
           Add
         </button>
       </div>
@@ -13,45 +18,51 @@
       <div
         *ngFor="
           let info of todo
-            | slice: (todoPage - 1) * todoPageSize:todoPage * todoPageSize
+            | slice: (todoPage - 1) * todoPageSize:todoPage * todoPageSize;
+          let index = index
         "
+        id="kanban-board-todo-{{ index }}"
         class="card text-center w-75 my-2"
       >
         <div class="card-body">
-          <div class="card-title font-weight-bold">{{ info.methodName }}</div>
-          <button
-            *ngIf="info.nodeId"
-            class="btn btn-xs btn-dark mr-1 mb-1"
-            (click)="viewNode.emit(info.nodeId)"
-          >
-            Show development step in process
-          </button>
-          <button
-            class="btn btn-xs btn-info mr-1 mb-1"
-            (click)="_showInfo(info)"
-          >
-            Info
-          </button>
-          <button
-            *ngIf="info.nodeId == null"
-            class="btn btn-xs btn-warning mr-1 mb-1"
-            (click)="editTodo.emit(info.executionId)"
-          >
-            Edit
-          </button>
-          <button
-            class="btn btn-xs btn-warning mr-1 mb-1"
-            (click)="_startExecution(info)"
-          >
-            Start
-          </button>
-          <button
-            *ngIf="info.nodeId == null"
-            class="btn btn-xs btn-secondary mb-1"
-            (click)="removeTodo.emit(info.executionId)"
-          >
-            Remove
-          </button>
+          <div class="card-title fw-bold">{{ info.methodName }}</div>
+          <ng-container *ngIf="editable">
+            <button
+              *ngIf="info.nodeId"
+              class="btn btn-sm btn-dark me-1 mb-1"
+              (click)="viewNode.emit(info.nodeId)"
+            >
+              Show development step in process
+            </button>
+            <button
+              class="btn btn-sm btn-info me-1 mb-1"
+              (click)="_showInfo(info)"
+            >
+              Info
+            </button>
+            <button
+              *ngIf="info.nodeId == null && !infoOnly"
+              class="btn btn-sm btn-warning me-1 mb-1"
+              (click)="editTodo.emit(info.executionId)"
+            >
+              Edit
+            </button>
+            <button
+              id="kanban-board-todo-{{ index }}-start"
+              *ngIf="!infoOnly"
+              class="btn btn-sm btn-warning me-1 mb-1"
+              (click)="_startExecution(info)"
+            >
+              Start
+            </button>
+            <button
+              *ngIf="info.nodeId == null && !infoOnly"
+              class="btn btn-sm btn-secondary mb-1"
+              (click)="removeTodo.emit(info.executionId)"
+            >
+              Remove
+            </button>
+          </ng-container>
         </div>
       </div>
       <ngb-pagination
@@ -63,37 +74,42 @@
       ></ngb-pagination>
     </div>
   </div>
-  <div class="col border-right">
+  <div class="col border-end">
     <h6 class="text-center">Doing</h6>
     <div class="d-flex flex-column align-items-center">
       <div
         *ngFor="
           let info of doing
-            | slice: (doingPage - 1) * doingPageSize:doingPage * doingPageSize
+            | slice: (doingPage - 1) * doingPageSize:doingPage * doingPageSize;
+          let index = index
         "
         class="card text-center w-75 my-2"
       >
         <div class="card-body">
-          <div class="card-title font-weight-bold">{{ info.methodName }}</div>
-          <button
-            *ngIf="info.nodeId"
-            class="btn btn-xs btn-dark mr-1 mb-1"
-            (click)="viewNode.emit(info.nodeId)"
-          >
-            Show development step in process
-          </button>
-          <button
-            class="btn btn-xs btn-info mr-1 mb-1"
-            (click)="_showInfo(info)"
-          >
-            Info
-          </button>
-          <button
-            class="btn btn-xs btn-warning mb-1"
-            (click)="viewExecution.emit(info.executionId)"
-          >
-            View Execution
-          </button>
+          <div class="card-title fw-bold">{{ info.methodName }}</div>
+          <ng-container *ngIf="editable">
+            <button
+              *ngIf="info.nodeId"
+              class="btn btn-sm btn-dark me-1 mb-1"
+              (click)="viewNode.emit(info.nodeId)"
+            >
+              Show development step in process
+            </button>
+            <button
+              class="btn btn-sm btn-info me-1 mb-1"
+              (click)="_showInfo(info)"
+            >
+              Info
+            </button>
+            <button
+              id="kanban-board-doing-{{ index }}-view-execution"
+              *ngIf="!infoOnly"
+              class="btn btn-sm btn-warning mb-1"
+              (click)="viewExecution.emit(info.executionId)"
+            >
+              View Execution
+            </button>
+          </ng-container>
         </div>
       </div>
       <ngb-pagination
@@ -111,31 +127,35 @@
       <div
         *ngFor="
           let info of done
-            | slice: (donePage - 1) * donePageSize:donePage * donePageSize
+            | slice: (donePage - 1) * donePageSize:donePage * donePageSize;
+          let index = index
         "
+        id="kanban-board-done-{{ index }}"
         class="card text-center w-75 my-2"
       >
         <div class="card-body">
-          <div class="card-title font-weight-bold">{{ info.methodName }}</div>
-          <button
-            *ngIf="info.nodeId"
-            class="btn btn-xs btn-dark mr-1 mb-1"
-            (click)="viewNode.emit(info.nodeId)"
-          >
-            Show development step in process
-          </button>
-          <button
-            class="btn btn-xs btn-dark mr-1 mb-1"
-            (click)="viewArtifacts.emit(info.executionId)"
-          >
-            View created artifact versions
-          </button>
-          <button
-            class="btn btn-xs btn-dark mr-1 mb-1"
-            (click)="viewComments.emit(info.executionId)"
-          >
-            View Comments
-          </button>
+          <div class="card-title fw-bold">{{ info.methodName }}</div>
+          <ng-container *ngIf="editable">
+            <button
+              *ngIf="info.nodeId"
+              class="btn btn-sm btn-dark me-1 mb-1"
+              (click)="viewNode.emit(info.nodeId)"
+            >
+              Show development step in process
+            </button>
+            <button
+              class="btn btn-sm btn-dark me-1 mb-1"
+              (click)="viewArtifacts.emit(info.executionId)"
+            >
+              View created artifact versions
+            </button>
+            <button
+              class="btn btn-sm btn-dark me-1 mb-1"
+              (click)="viewComments.emit(info.executionId)"
+            >
+              View Comments
+            </button>
+          </ng-container>
         </div>
       </div>
       <ngb-pagination

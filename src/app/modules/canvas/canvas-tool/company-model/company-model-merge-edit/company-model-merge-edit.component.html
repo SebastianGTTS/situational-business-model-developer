@@ -1,0 +1,106 @@
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Selected Canvas Building Blocks</h6>
+
+  <div
+    *ngIf="selectedExpertModelList == null"
+    class="d-flex justify-content-center"
+  >
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div
+    *ngIf="
+      selectedExpertModelList != null && selectedExpertModelList.length === 0
+    "
+  >
+    No Canvas Building Blocks selected for this Composed Model
+  </div>
+  <ul
+    *ngIf="
+      selectedExpertModelList != null && selectedExpertModelList.length > 0
+    "
+    class="list-group"
+  >
+    <li
+      *ngFor="let expertModel of selectedExpertModelList"
+      class="list-group-item"
+    >
+      <app-list-item
+        [item]="expertModel"
+        [showView]="false"
+        [showDelete]="false"
+      >
+        <ng-container extraButtons>
+          <a
+            [routerLink]="[
+              '/',
+              'merge',
+              this.companyModel._id,
+              expertModel._id
+            ]"
+            queryParamsHandling="preserve"
+            class="btn btn-primary btn-sm"
+          >
+            Merge
+          </a>
+          <a
+            *ngIf="showView"
+            [routerLink]="['/', 'expertModels', expertModel._id]"
+            class="btn btn-dark btn-sm ms-1"
+          >
+            View
+          </a>
+          <button
+            (click)="unselectExpertModel(expertModel._id)"
+            type="button"
+            class="btn btn-secondary btn-sm ms-1"
+          >
+            Unselect
+          </button>
+        </ng-container>
+      </app-list-item>
+    </li>
+  </ul>
+</div>
+
+<!-- Select expert model -->
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Select Canvas Building Block</h6>
+  <div class="sbmd-form-wrapper">
+    <form
+      [formGroup]="selectedExpertModelForm"
+      (ngSubmit)="selectExpertModel()"
+    >
+      <div class="mb-3 row">
+        <label for="expertModelSelector" class="col-sm-4 col-form-label"
+          >Canvas Building Block</label
+        >
+        <div class="col-sm-8">
+          <select
+            id="expertModelSelector"
+            formControlName="expertModelId"
+            class="form-select"
+          >
+            <option></option>
+            <option
+              *ngFor="let expertModel of unselectedExpertModelList"
+              [ngValue]="expertModel._id"
+            >
+              {{ expertModel.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="d-grid">
+        <button
+          type="submit"
+          class="btn btn-sm btn-primary"
+          [disabled]="!selectedExpertModelForm.valid"
+        >
+          Add Canvas Building Block
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

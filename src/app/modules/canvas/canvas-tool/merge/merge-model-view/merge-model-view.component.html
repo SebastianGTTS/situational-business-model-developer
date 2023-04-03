@@ -1,0 +1,280 @@
+<ng-template #deleteModal>
+  <app-delete-feature-confirm
+    *ngIf="modalFeature != null"
+    [feature]="modalFeature"
+    (deletionResult)="deleteFeature($event)"
+    (closeModal)="closeModal()"
+  ></app-delete-feature-confirm>
+</ng-template>
+
+<ng-template #updateModal>
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalFeature != null">
+      {{ modalFeature.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="text-muted pt-3">
+      <app-feature-form
+        *ngIf="modalFeature != null"
+        [feature]="modalFeature"
+        [disabledSubfeatures]="modalSubfeatureIds ?? []"
+        [featureList]="companyFeatureList"
+        (submitFeatureForm)="updateFeature($event)"
+      ></app-feature-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #dependencyModal>
+  <app-cross-tree-relationship-modal
+    *ngIf="
+      modalFeature != null && modalFeatureModel != null && expertModel != null
+    "
+    [feature]="modalFeature"
+    [featureModel]="modalFeatureModel"
+    [companyModel]="
+      modalFeatureModel._id === expertModel._id ? companyModel : undefined
+    "
+    (addRelationshipOnCompanyModel)="
+      addDependency($event.type, $event.fromFeatureId, $event.toFeatureId)
+    "
+    (closeModal)="closeModal()"
+    (removeRelationship)="
+      deleteDependency($event.type, $event.fromFeatureId, $event.toFeatureId)
+    "
+  ></app-cross-tree-relationship-modal>
+</ng-template>
+
+<ng-template #traceModal>
+  <app-trace-modal
+    *ngIf="modalFeature != null && modalTracedFeature != null"
+    [feature]="modalFeature"
+    [tracedFeature]="modalTracedFeature"
+    (closeModal)="closeModal()"
+    (deleteTrace)="deleteTrace()"
+  ></app-trace-modal>
+</ng-template>
+
+<ng-template #mergeModal>
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalFeature != null">
+      {{ modalFeature.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="sbmd-form-wrapper">
+      <app-feature-form
+        *ngIf="modalFeature != null"
+        [feature]="modalFeature"
+        [featureList]="companyFeatureList"
+        [enabledSubfeatures]="modalSubfeatureIds"
+        submitButtonText="Merge Feature"
+        (submitFeatureForm)="mergeFeature($event)"
+      ></app-feature-form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #addAllModal>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      Add all subfeatures of
+      {{ modalFeature ? modalFeature.name : 'the model' }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-warning mb-0" role="alert">
+      This will add all subfeatures of
+      {{ modalFeature ? modalFeature.name : 'the model' }} to the composed model
+      as new features if they are not merged yet.
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="w-100 d-grid">
+      <button
+        type="button"
+        class="btn btn-warning"
+        (click)="addAll(modalFeature?.id)"
+      >
+        Add all
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #selectModal>
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalFeature != null">
+      {{ modalFeature.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="closeModal()"
+    ></button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalSelectFeatureForm != null && modalSubfeatureIds != null"
+  >
+    <div class="sbmd-form-wrapper">
+      <form
+        [formGroup]="modalSelectFeatureForm"
+        (ngSubmit)="mergeIntoSelected()"
+      >
+        <div class="mb-3 row">
+          <label for="feature" class="col-sm-4 col-form-label"
+            >Select feature</label
+          >
+          <div class="col-sm-8">
+            <select id="feature" formControlName="feature" class="form-select">
+              <option></option>
+              <option
+                *ngFor="let fl of companyFeatureList; let i = index"
+                [disabled]="!modalSubfeatureIds.includes(fl.id)"
+                [ngValue]="fl.id"
+              >
+                {{ fl.levelname }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!modalSelectFeatureForm.valid"
+          >
+            Merge Feature
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #featurerow let-id="id">
+  <div class="row mb-3">
+    <div class="col-sm-6">
+      <app-merge-tree
+        *ngIf="expertModel != null && companyModel != null"
+        [features]="{ id: expertModel.features[id] }"
+        [trace]="companyModel.expertModelTraces[expertModel._id]"
+        (addTrace)="openMergeModal($event)"
+        (openDependencies)="openDependenciesModalExpertModel($event)"
+        (selectFeature)="openSelectModal($event)"
+        (addAll)="openAddAllModal($event)"
+        (openTrace)="openExpertTraceModal($event)"
+      ></app-merge-tree>
+    </div>
+    <div class="col-sm-6">
+      <app-merge-into-tree
+        *ngIf="expertModel != null && companyModel != null"
+        [expertModelId]="expertModel._id"
+        [features]="{ id: companyModel.features[id] }"
+        (openDependencies)="openDependenciesModalCompanyModel($event)"
+        (openTrace)="openTraceModal($event)"
+        (updateFeature)="openUpdateFeatureModal($event)"
+        (deleteFeature)="openDeleteFeatureModal($event)"
+      ></app-merge-into-tree>
+    </div>
+  </div>
+</ng-template>
+
+<main *ngIf="expertModel != null && companyModel != null" role="main">
+  <div class="container">
+    <div class="sbmd-info-block">
+      <p>
+        Merge all features from the canvas building block on the left into the
+        composed model on the right. This can be done in three different ways:
+      </p>
+      <ul>
+        <li>
+          Add all: Add all subfeatures that are not yet merged to the composed
+          model.
+        </li>
+        <li>
+          Add: Add the feature to the composed model. Opens a pre filled feature
+          form to adjust the feature.
+        </li>
+        <li>
+          Select: Select the corresponding feature in the composed model. This
+          just creates a trace.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Merge Feature Tree</h6>
+
+      <div
+        class="alert alert-warning container"
+        role="alert"
+        *ngIf="!isFullyMerged"
+      >
+        Not all features are merged yet.
+      </div>
+
+      <div
+        class="alert alert-success container"
+        role="alert"
+        *ngIf="isFullyMerged"
+      >
+        All features are merged.
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-warning btn-sm mb-3"
+        (click)="openAddAllModal(undefined)"
+      >
+        Add all
+      </button>
+
+      <ng-container *ngFor="let id of asKeys(companyModel.features)">
+        <ng-container
+          *ngTemplateOutlet="featurerow; context: { id: id }"
+        ></ng-container>
+      </ng-container>
+
+      <div class="row">
+        <div class="col-4"><strong>Legend:</strong></div>
+        <div class="col-4">
+          <i class="bi bi-circle-fill"></i> Mandatory Feature
+        </div>
+        <div class="col-4"><i class="bi bi-circle"></i> Optional Feature</div>
+      </div>
+      <div class="row">
+        <div class="col-4">&nbsp;</div>
+        <div class="col-4"><i class="bi bi-caret-up-fill"></i> Or</div>
+        <div class="col-4">
+          <i class="bi bi-chevron-up"></i> Alternative (Xor)
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

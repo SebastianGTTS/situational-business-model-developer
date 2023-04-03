@@ -1,0 +1,47 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Dashboard of the Method Composition
+    </h1>
+    <p>
+      The dashboard provides statistics for the different Pattern-based Composed
+      Methods, Phase-based Composed Methods, and Composed Models.
+    </p>
+  </div>
+
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="patternBasedMethodElement.name"
+          [elementDescription]="patternBasedMethodElement.description"
+          [elementIcon]="patternBasedMethodElement.icon"
+          [elementLink]="patternBasedMethodElement.route"
+          [numberOfElements]="numberOfPatternBasedMethods"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="phaseBasedMethodElement.name"
+          [elementDescription]="phaseBasedMethodElement.description"
+          [elementIcon]="phaseBasedMethodElement.icon"
+          [elementLink]="phaseBasedMethodElement.route"
+          [numberOfElements]="numberOfPhaseBasedMethods"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-12">
+        <app-dashboard-item
+          [elementName]="companyModelElement.name"
+          [elementDescription]="companyModelElement.description"
+          [elementIcon]="companyModelElement.icon"
+          [elementLink]="companyModelElement.route"
+          [numberOfElements]="numberOfCompanyModels"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+</main>

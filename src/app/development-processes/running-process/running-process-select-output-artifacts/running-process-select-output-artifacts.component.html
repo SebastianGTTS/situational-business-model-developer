@@ -1,0 +1,31 @@
+<ng-container *ngIf="outputArtifacts.length === 0">
+  <div class="alert alert-info">
+    This building block has no output artifacts.
+  </div>
+</ng-container>
+<form
+  [formGroup]="form"
+  *ngIf="outputArtifacts.length > 0"
+  (ngSubmit)="submitForm()"
+>
+  <div formArrayName="outputArtifacts">
+    <app-running-process-select-output-artifact
+      *ngFor="let artifactOptional of outputArtifacts; let index = index"
+      formGroupName="{{ index }}"
+      [artifactOptional]="artifactOptional"
+      [internalArtifact]="internalOutputArtifacts[index]"
+      [processArtifacts]="runningProcess.artifacts"
+    ></app-running-process-select-output-artifact>
+  </div>
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!form.valid"
+    >
+      Update Artifacts<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

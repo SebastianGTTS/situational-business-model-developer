@@ -1,0 +1,81 @@
+<ng-template #extraButtons let-feature="feature">
+  <button
+    type="button"
+    class="btn btn-warning btn-sm mb-1 me-1"
+    *ngIf="
+      !trace.expertFeatureIdMap[feature.id] &&
+      feature.parent &&
+      trace.expertFeatureIdMap[feature.parent.id]
+    "
+    (click)="
+      $event.preventDefault();
+      $event.stopPropagation();
+      addTrace.emit(feature.id)
+    "
+  >
+    Add
+  </button>
+  <button
+    type="button"
+    class="btn btn-warning btn-sm mb-1 me-1"
+    *ngIf="
+      !trace.expertFeatureIdMap[feature.id] &&
+      feature.parent &&
+      trace.expertFeatureIdMap[feature.parent.id]
+    "
+    (click)="
+      $event.preventDefault();
+      $event.stopPropagation();
+      selectFeature.emit(feature.id)
+    "
+  >
+    Select
+  </button>
+  <button
+    type="button"
+    class="btn btn-warning btn-sm mb-1 me-1"
+    *ngIf="trace.expertFeatureIdMap[feature.id]"
+    (click)="
+      $event.preventDefault(); $event.stopPropagation(); addAll.emit(feature.id)
+    "
+  >
+    Add all
+  </button>
+  <button
+    type="button"
+    class="btn btn-dark btn-sm mb-1 me-1"
+    *ngIf="trace.expertFeatureIdMap[feature.id]"
+    (click)="
+      $event.preventDefault();
+      $event.stopPropagation();
+      openTrace.emit(feature.id)
+    "
+  >
+    Show Trace
+  </button>
+</ng-template>
+
+<ng-template #extra let-feature="feature">
+  <i
+    *ngIf="trace.expertFeatureIdMap[feature.id]"
+    class="ms-1 bi bi-check-lg"
+    aria-label="Merged"
+    title="Merged"
+  ></i>
+  <i
+    *ngIf="!trace.expertFeatureIdMap[feature.id]"
+    class="ms-1 bi bi-exclamation-circle-fill"
+    aria-label="Unmerged"
+    title="Unmerged"
+  ></i>
+</ng-template>
+
+<app-feature-tree
+  [showUpdate]="false"
+  [showDelete]="false"
+  [extraButtons]="extraButtons"
+  [extra]="extra"
+  [features]="features"
+  (openDependenciesEmitter)="openDependencies.emit($event)"
+>
+</app-feature-tree>

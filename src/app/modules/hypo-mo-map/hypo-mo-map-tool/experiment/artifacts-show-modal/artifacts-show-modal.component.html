@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="experiment != null">
+    Artifacts of {{ experiment.name }}
+  </h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body" *ngIf="experiment != null">
+  <div
+    *ngIf="experiment.artifacts.length === 0"
+    class="alert alert-info"
+    role="alert"
+  >
+    This experiment has no artifacts.
+  </div>
+  <ul *ngIf="experiment.artifacts.length > 0" class="list-group">
+    <li *ngFor="let artifact of experiment.artifacts" class="list-group-item">
+      {{ artifact }}
+    </li>
+  </ul>
+</div>

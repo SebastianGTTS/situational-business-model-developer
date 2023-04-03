@@ -1,0 +1,42 @@
+<main *ngIf="canvasDefinition != null" role="main" class="container">
+  <div class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="canvasDefinition"
+    ></app-element-overview>
+  </div>
+  <div class="my-3">
+    <section class="sbmd-panel position-relative">
+      <h6 class="sbmd-panel-small-title">Canvas Model Overview</h6>
+      <app-canvas-definition-model-overview
+        [canvasDefinitionCells]="canvasDefinition.rows"
+      ></app-canvas-definition-model-overview>
+      <div class="position-absolute top-0 end-0 mt-3 me-3">
+        <a
+          class="btn btn-primary rounded-circle"
+          [routerLink]="['..', 'model']"
+        >
+          <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+        </a>
+      </div>
+    </section>
+  </div>
+  <div class="my-3">
+    <section class="sbmd-panel position-relative">
+      <h6 class="sbmd-panel-small-title">Relationships</h6>
+      <div *ngFor="let relationship of canvasDefinition.relationshipTypes">
+        {{ relationship }}
+      </div>
+      <div class="position-absolute top-0 end-0 mt-3 me-3">
+        <a
+          class="btn btn-primary rounded-circle"
+          [routerLink]="['..', 'model']"
+          fragment="relationships"
+        >
+          <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+        </a>
+      </div>
+    </section>
+  </div>
+</main>

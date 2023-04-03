@@ -1,0 +1,37 @@
+<div *ngIf="phaseDecisions.length === 0">There are no phases yet</div>
+<div *ngIf="phaseDecisions.length > 0" class="row sbmd-min-height-200-px">
+  <div
+    *ngFor="
+      let phaseDecision of phaseDecisions;
+      trackBy: trackBy;
+      let index = index;
+      let last = last
+    "
+    class="col"
+    [class.border-end]="!last"
+  >
+    <div class="d-flex align-items-baseline">
+      <div class="flex-fill"></div>
+      <h6 class="text-center ms-auto me-auto">
+        {{ phaseDecision.phase.name }}
+      </h6>
+      <div class="d-flex flex-fill">
+        <button
+          id="bm-phase-process-board-phase-decision-{{ index }}-add"
+          class="btn btn-sm btn-primary ms-auto"
+          (click)="addDevelopmentMethod.emit(phaseDecision)"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+    <app-bm-phase-process-board-column
+      [index]="index"
+      [phaseMethodDecisions]="phaseDecision.decisions"
+      (infoDecision)="infoDecision.emit($event)"
+      (editDecision)="editDecision.emit($event)"
+      (editDecisionNumber)="editDecisionNumber.emit($event)"
+      (removeDecision)="removeDecision.emit($event)"
+    ></app-bm-phase-process-board-column>
+  </div>
+</div>

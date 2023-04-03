@@ -80,7 +80,7 @@ describe('Enaction', () => {
     cy.contains('.btn', 'Create Canvas Artifact').click();
     cy.contains('.btn', 'Execute next step').click();
     cy.contains('app-canvas-building-block', 'Products & Services')
-      .find('.fa-plus-square')
+      .find('[aria-label="Add Feature"]')
       .click();
     cy.get('#name').clear();
     cy.get('#name').type('Test');

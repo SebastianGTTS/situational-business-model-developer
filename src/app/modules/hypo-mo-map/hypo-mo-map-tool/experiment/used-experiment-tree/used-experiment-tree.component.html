@@ -1,0 +1,101 @@
+<ul class="list-group">
+  <li
+    *ngFor="let experiment of usedExperiments"
+    class="
+      d-flex
+      flex-wrap
+      list-group-item
+      justify-content-between
+      align-items-center
+    "
+  >
+    <app-experiment-info [experiment]="experiment"></app-experiment-info>
+
+    <div>
+      <button
+        *ngIf="experiment.costs && experiment.maxEvidence && editable"
+        (click)="
+          addHypothesis.emit({
+            experimentDefinitionId: experiment.getExperimentDefinitionId(),
+            experimentId: experiment.id
+          })
+        "
+        type="button"
+        class="btn btn-primary btn-sm me-1"
+      >
+        Add Hypothesis
+      </button>
+      <button
+        *ngIf="(!experiment.costs || !experiment.maxEvidence) && editable"
+        (click)="
+          setCostAndScore.emit({
+            experimentDefinitionId: experiment.getExperimentDefinitionId(),
+            experimentId: experiment.id
+          })
+        "
+        type="button"
+        class="btn btn-primary btn-sm me-1"
+      >
+        Set Costs and maximum Evidence
+      </button>
+      <button
+        *ngIf="experiment.costs && experiment.maxEvidence && editable"
+        (click)="
+          setCostAndScore.emit({
+            experimentDefinitionId: experiment.getExperimentDefinitionId(),
+            experimentId: experiment.id
+          })
+        "
+        type="button"
+        class="btn btn-secondary btn-sm me-1"
+      >
+        Update Costs and maximum Evidence
+      </button>
+      <button
+        *ngIf="experiment.costs && experiment.maxEvidence && editable"
+        (click)="
+          showMappings.emit({
+            experimentDefinitionId: experiment.getExperimentDefinitionId(),
+            experimentId: experiment.id
+          })
+        "
+        type="button"
+        class="btn btn-dark btn-sm me-1"
+      >
+        Show Mappings
+      </button>
+      <button
+        *ngIf="editable"
+        (click)="
+          showArtifacts.emit({
+            experimentDefinitionId: experiment.getExperimentDefinitionId(),
+            experimentId: experiment.id
+          })
+        "
+        type="button"
+        class="btn btn-dark btn-sm me-1"
+      >
+        Show Artifacts
+      </button>
+      <button
+        *ngIf="experiment.level === 1 && editable"
+        (click)="deleteExperiment.emit(experiment.id)"
+        type="button"
+        class="btn btn-secondary btn-sm"
+      >
+        Delete
+      </button>
+    </div>
+
+    <app-used-experiment-tree
+      class="mt-2 w-100"
+      *ngIf="experiment.subexperiments.length > 0"
+      [editable]="editable"
+      [usedExperiments]="experiment.subexperiments"
+      (addHypothesis)="addHypothesis.emit($event)"
+      (setCostAndScore)="setCostAndScore.emit($event)"
+      (showMappings)="showMappings.emit($event)"
+      (showArtifacts)="showArtifacts.emit($event)"
+    ></app-used-experiment-tree>
+  </li>
+</ul>

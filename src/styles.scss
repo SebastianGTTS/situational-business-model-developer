@@ -1,0 +1,126 @@
+@import '../node_modules/bootstrap/scss/functions';
+
+$primary: #021c58;
+
+@import '../node_modules/bootstrap/scss/variables';
+
+$additional-colors: (
+  'accent': #f29614,
+);
+$theme-colors: map-merge($theme-colors, $additional-colors);
+
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+/* Customizations SBMD */
+
+#content {
+  overflow-y: auto;
+}
+
+.sbmd-navbar {
+  @extend .bg-primary;
+}
+
+.sbmd-sidenav {
+  min-height: 100%;
+  min-width: 285px;
+  overflow: hidden;
+}
+
+.sbmd-panel {
+  @extend .p-3, .bg-white, .rounded, .shadow-sm;
+
+  &-title {
+    @extend .border-bottom, .pb-2;
+  }
+
+  &-small-title {
+    @extend .small, .text-muted;
+  }
+
+  &-header {
+    @extend .d-flex, .align-items-baseline, .border-bottom, .mb-2;
+
+    &-title {
+      @extend .pb-2, .mb-0;
+    }
+  }
+}
+
+.sbmd-form-wrapper {
+  @extend .pt-2, .text-muted;
+}
+
+.sbmd-show-new-lines {
+  white-space: pre-wrap !important;
+}
+
+.sbmd-update-all {
+  @extend .fixed-bottom, .p-3, .bg-white, .rounded, .shadow-sm;
+  left: auto;
+}
+
+.sbmd-tutorial-button {
+  @extend .fixed-bottom, .p-3, .bg-white, .rounded, .shadow-sm;
+  left: auto;
+  right: auto;
+}
+
+.sbmd-min-height-200-px {
+  min-height: 200px;
+}
+
+.sbmd-min-height-0 {
+  min-height: 0;
+}
+
+.sbmd-icon-lg {
+  font-size: 1.4rem;
+}
+
+.sbmd-icon-xl {
+  font-size: 2rem;
+}
+
+.sbmd-canvas-table {
+  table-layout: fixed;
+}
+
+.sbmd-canvas-table,
+td.sbmd-canvas-table-cell {
+  border: 3px #343a40 solid;
+}
+
+.sbmd-canvas-table-block {
+  min-height: 200px;
+}
+
+.sbmd-info-block {
+  @extend .sbmd-panel;
+}
+
+.sbmd-panel-disabled .accordion-button::after {
+  visibility: hidden;
+}
+
+.sbmd-rating {
+  font-size: 1.5rem;
+}
+
+.sbmd-tutorial-popover-behind-modal {
+  z-index: 1048;
+}
+
+/* Carousel items should be centered */
+.carousel-item {
+  text-align: center;
+}
+
+/* Fix https://github.com/KillerCodeMonkey/ngx-quill/issues/352 */
+.ql-container {
+  height: auto;
+}
+
+.quill-lg-box > .ql-editor {
+  min-height: 250px;
+}

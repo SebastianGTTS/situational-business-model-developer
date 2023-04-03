@@ -1,0 +1,21 @@
+<div class="modal-header" *ngIf="bmProcess != null">
+  <h4 class="modal-title">Error instantiating Method {{ bmProcess.name }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body" *ngIf="bmProcess != null">
+  <div class="alert alert-danger">
+    This Business Model Development Method cannot be instantiated, because it is
+    not completely defined. The method engineer first has to define it
+    completely. More information is available in the error panel on the
+    <a
+      [routerLink]="['/', 'bmprocess', 'bmprocessview', bmProcess._id]"
+      (click)="dismiss()"
+      >Business Model Development Method composition page</a
+    >.
+  </div>
+</div>

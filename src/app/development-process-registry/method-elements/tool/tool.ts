@@ -3,6 +3,7 @@ import {
   MethodElementEntry,
   MethodElementInit,
 } from '../method-element';
+import { IconInit } from '../../../model/icon';
 
 export type ToolInit = MethodElementInit;
 
@@ -10,8 +11,12 @@ export type ToolEntry = MethodElementEntry;
 
 export class Tool extends MethodElement {
   static readonly typeName = 'Tool';
+  static readonly defaultIcon: IconInit = { icon: 'bi-window' };
 
   constructor(entry: ToolEntry | undefined, init: ToolInit | undefined) {
+    if (init != null && init.icon == null) {
+      init.icon = Tool.defaultIcon;
+    }
     super(entry, init, Tool.typeName);
   }
 

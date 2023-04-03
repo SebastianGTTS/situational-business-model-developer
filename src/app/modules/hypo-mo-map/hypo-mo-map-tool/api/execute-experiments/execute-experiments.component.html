@@ -1,0 +1,56 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="hypoMoMap != null && runningMethod != null"
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-info-block">
+    Validate Hypotheses by executing experiments.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Choose experiment</h6>
+    <app-experiment-chooser
+      [hypoMoMap]="hypoMoMap"
+      (executeExperiment)="
+        executeExperiment(
+          $event.experimentDefinitionId,
+          $event.experimentId,
+          $event.results
+        )
+      "
+    ></app-experiment-chooser>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Hypothesis Tree</h6>
+    <div>
+      <app-hypothesis-tree
+        [hypotheses]="hypoMoMap.hypotheses"
+        [processPhase]="'stepAdaption'"
+      ></app-hypothesis-tree>
+    </div>
+    <div class="mt-3">
+      <app-hypothesis-tree-legend
+        [showEvidenceScore]="true"
+      ></app-hypothesis-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">Finish</button>
+    </div>
+  </div>
+</main>

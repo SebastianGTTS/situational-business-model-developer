@@ -1,0 +1,48 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="
+    companyModel != null &&
+    competitor != null &&
+    runningMethod != null &&
+    isCorrectStep()
+  "
+  role="main"
+  class="container"
+>
+  <app-instance
+    [featureModel]="companyModel"
+    [instance]="competitor"
+    (addDecision)="addDecision($event)"
+    (addFeature)="addFeature($event.parentId, $event.feature)"
+    (removeDecision)="removeDecision($event)"
+  ></app-instance>
+
+  <div class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <div class="d-grid">
+      <a
+        class="btn btn-sm btn-primary"
+        [routerLink]="[
+          '/',
+          'canvas',
+          this.companyModel._id,
+          'instance',
+          this.instanceId,
+          'competitors',
+          'edit'
+        ]"
+        [queryParams]="queryParams"
+        >Go back to overview of competitors</a
+      >
+    </div>
+  </div>
+</main>

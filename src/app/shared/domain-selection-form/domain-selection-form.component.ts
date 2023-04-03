@@ -6,7 +6,7 @@ import {
 import { merge, Observable, Subject } from 'rxjs';
 import { getTypeaheadInputPipe } from '../utils';
 import { map } from 'rxjs/operators';
-import { ControlContainer, FormControl } from '@angular/forms';
+import { ControlContainer, UntypedFormControl } from '@angular/forms';
 import { NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -45,7 +45,7 @@ export class DomainSelectionFormComponent {
     this.formControl.setValue(new Domain(event.item, undefined));
   }
 
-  get formControl(): FormControl {
-    return this.controlContainer.control as FormControl;
+  get formControl(): UntypedFormControl {
+    return this.controlContainer.control as UntypedFormControl;
   }
 }

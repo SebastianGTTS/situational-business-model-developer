@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthorFormComponent } from './author-form/author-form.component';
-import { AuthorInfoComponent } from './author-info/author-info.component';
 import { DescriptionFormComponent } from './description-form/description-form.component';
 import { DevelopmentProcessViewModule } from '../development-process-view/development-process-view.module';
 import { FormArrayListComponent } from './form-array-list/form-array-list.component';
@@ -12,17 +11,26 @@ import { DomainsSelectionFormComponent } from './domains-selection-form/domains-
 import { DeleteModalComponent } from './delete-modal/delete-modal.component';
 import { SearchComponent } from './search/search.component';
 import { ListWrapperComponent } from './list-wrapper/list-wrapper.component';
-import { ResultsListItemComponent } from './results-list-item/results-list-item.component';
 import { RouterModule } from '@angular/router';
-import { ApiNavigationComponent } from './api-navigation/api-navigation.component';
 import { StepErrorsComponent } from './step-errors/step-errors.component';
-import { RunningProcessNamePipe } from './running-process-name.pipe';
+import { FullscreenToggleComponent } from './fullscreen-toggle/fullscreen-toggle.component';
+import { ListComponent } from './list/list.component';
+import { ListItemComponent } from './list-item/list-item.component';
+import { ListPanelComponent } from './list-panel/list-panel.component';
+import { ElementNameFormComponent } from './element-name-form/element-name-form.component';
+import { ElementOverviewComponent } from './element-overview/element-overview.component';
+import { AuthorOverviewComponent } from './author-overview/author-overview.component';
+import { IconFormComponent } from './icon-form/icon-form.component';
+import { ElementFormComponent } from './element-form/element-form.component';
+import { AuthorFilterComponent } from './author-filter/author-filter.component';
+import { ElementNameModalComponent } from './element-name-modal/element-name-modal.component';
+import { IconComponent } from './icon/icon.component';
+import { ProfileComponent } from './profile/profile.component';
+import { RoleSelectorComponent } from './role-selector/role-selector.component';
 
 @NgModule({
   declarations: [
-    ApiNavigationComponent,
     AuthorFormComponent,
-    AuthorInfoComponent,
     DescriptionFormComponent,
     FormArrayListComponent,
     DomainSelectionFormComponent,
@@ -30,9 +38,21 @@ import { RunningProcessNamePipe } from './running-process-name.pipe';
     DeleteModalComponent,
     SearchComponent,
     ListWrapperComponent,
-    ResultsListItemComponent,
     StepErrorsComponent,
-    RunningProcessNamePipe,
+    FullscreenToggleComponent,
+    ListComponent,
+    ListItemComponent,
+    ListPanelComponent,
+    ElementNameFormComponent,
+    ElementOverviewComponent,
+    AuthorOverviewComponent,
+    IconFormComponent,
+    ElementFormComponent,
+    AuthorFilterComponent,
+    ElementNameModalComponent,
+    IconComponent,
+    ProfileComponent,
+    RoleSelectorComponent,
   ],
   imports: [
     CommonModule,
@@ -46,9 +66,7 @@ import { RunningProcessNamePipe } from './running-process-name.pipe';
     NgbModule,
     ReactiveFormsModule,
 
-    ApiNavigationComponent,
     AuthorFormComponent,
-    AuthorInfoComponent,
     DeleteModalComponent,
     DescriptionFormComponent,
     DevelopmentProcessViewModule,
@@ -56,9 +74,20 @@ import { RunningProcessNamePipe } from './running-process-name.pipe';
     DomainsSelectionFormComponent,
     SearchComponent,
     ListWrapperComponent,
-    ResultsListItemComponent,
     StepErrorsComponent,
-    RunningProcessNamePipe,
+    FullscreenToggleComponent,
+    ListComponent,
+    ListPanelComponent,
+    ElementNameFormComponent,
+    ElementOverviewComponent,
+    AuthorOverviewComponent,
+    IconFormComponent,
+    ListItemComponent,
+    ElementFormComponent,
+    AuthorFilterComponent,
+    IconComponent,
+    ProfileComponent,
+    RoleSelectorComponent,
   ],
 })
 export class SharedModule {}

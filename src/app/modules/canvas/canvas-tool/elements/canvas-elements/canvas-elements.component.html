@@ -1,0 +1,25 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Canvas Elements
+    </h1>
+    The Canvas Elements are the atomic parts that combined into Canvas Building
+    Blocks. Except the domains, all elements are directly defined in the
+    building blocks.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Canvas Elements</h6>
+    <div>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let item of canvasElements">
+          <app-list-item
+            [item]="item"
+            [viewLink]="item.route"
+            [showDelete]="false"
+          ></app-list-item>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>

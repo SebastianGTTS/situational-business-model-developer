@@ -26,7 +26,7 @@ export class DescriptionFormComponent
 
   @Output() submitDescriptionForm = new EventEmitter<FormGroup>();
 
-  descriptionForm: FormGroup = this.fb.group({
+  descriptionForm = this.fb.group({
     description: this.fb.control(''),
   });
   changed = false;

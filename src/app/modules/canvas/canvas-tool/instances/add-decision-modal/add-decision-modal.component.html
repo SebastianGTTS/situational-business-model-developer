@@ -1,0 +1,104 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{ feature.name }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  ></button>
+</div>
+<div class="modal-body">
+  <ul class="list-group">
+    <li *ngIf="feature.description !== ''" class="list-group-item">
+      <i
+        aria-hidden="true"
+        class="bi bi-info-square sbmd-icon-lg align-middle me-2"
+      ></i>
+      <span class="align-middle">Description: {{ feature.description }}</span>
+    </li>
+    <li *ngIf="feature.guidingQuestions.length > 0" class="list-group-item">
+      <i
+        aria-hidden="true"
+        class="bi bi-question-square sbmd-icon-lg align-middle me-2"
+      ></i>
+      <span class="align-middle">Guiding Questions:</span>
+      <ul class="list-group mt-1">
+        <li
+          class="list-group-item"
+          *ngFor="let guidingQuestion of feature.guidingQuestions"
+        >
+          {{ guidingQuestion }}
+        </li>
+      </ul>
+    </li>
+    <li *ngIf="feature.examples.length > 0" class="list-group-item">
+      <i
+        aria-hidden="true"
+        class="bi bi-lightbulb sbmd-icon-lg align-middle me-2"
+      ></i>
+      <span class="align-middle">Examples:</span>
+      <ul class="list-group mt-1">
+        <li class="list-group-item" *ngFor="let example of feature.examples">
+          {{ example }}
+        </li>
+      </ul>
+    </li>
+    <li class="list-group-item">
+      <i
+        aria-hidden="true"
+        class="bi bi-plus-square-fill sbmd-icon-lg align-middle me-2"
+      ></i>
+      <span class="align-middle">Add existing business model decisions:</span>
+      <ul class="list-group mt-1">
+        <li
+          class="list-group-item d-flex align-items-baseline"
+          *ngFor="let f of unselectedFeatures"
+        >
+          <span>
+            {{ f.name }}
+            <small class="text-muted" *ngIf="f.description">{{
+              f.description
+            }}</small>
+          </span>
+          <button
+            (click)="addBusinessModelDecision.emit(f.id)"
+            type="button"
+            class="ms-auto btn btn-warning btn-sm"
+          >
+            Add
+          </button>
+        </li>
+        <li class="list-group-item" *ngIf="unselectedFeatures.length === 0">
+          There are no existing business model decisions left to add.
+        </li>
+      </ul>
+    </li>
+    <li class="list-group-item">
+      <i
+        aria-hidden="true"
+        class="bi bi-plus-square-fill sbmd-icon-lg align-middle me-2"
+      ></i>
+      <span class="align-middle">Add new business model decision:</span>
+      <ul class="list-group mt-1">
+        <li class="list-group-item">
+          <form
+            [formGroup]="addFeatureForm"
+            (ngSubmit)="submitAddFeatureForm()"
+            class="d-flex"
+          >
+            <label class="visually-hidden" for="name">Decision Name</label>
+            <input
+              type="text"
+              formControlName="name"
+              class="form-control"
+              id="name"
+            />
+            <button type="submit" class="ms-3 btn btn-warning btn-sm">
+              Add
+            </button>
+          </form>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

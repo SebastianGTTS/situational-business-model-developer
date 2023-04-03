@@ -35,14 +35,19 @@ import {
   ExecutionStepInit,
   isMethodExecutionStep,
 } from './execution-step';
+import { Phase, PhaseEntry, PhaseInit } from '../phase/phase';
+import { Icon, IconEntry, IconInit } from '../../model/icon';
 
 export interface DevelopmentMethodInit extends DatabaseRootInit {
   name: string;
   description?: string;
+  icon?: IconInit;
+
   examples?: string[];
   author: AuthorInit;
 
   types?: SelectionInit<TypeInit>[];
+  phases?: PhaseInit[];
   situationalFactors?: SelectionInit<SituationalFactorInit>[];
 
   inputArtifacts?: ArtifactGroupsInit;
@@ -56,10 +61,13 @@ export interface DevelopmentMethodInit extends DatabaseRootInit {
 export interface DevelopmentMethodEntry extends DatabaseRootEntry {
   name: string;
   description: string;
+  icon: IconEntry;
+
   examples: string[];
   author: AuthorEntry;
 
   types: SelectionEntry<TypeEntry>[];
+  phases: PhaseEntry[];
   situationalFactors: SelectionEntry<SituationalFactorEntry>[];
 
   inputArtifacts: ArtifactGroupsEntry;
@@ -75,13 +83,17 @@ export class DevelopmentMethod
   implements DevelopmentMethodInit
 {
   static readonly typeName = 'DevelopmentMethod';
+  static readonly defaultIcon: IconInit = { icon: 'bi-card-list' };
 
   name: string;
   description = '';
+  icon: Icon;
+
   examples: string[] = [];
   author: Author;
 
   types: Selection<Type>[] = [];
+  phases: Phase[] = [];
   situationalFactors: Selection<SituationalFactor>[] = [];
 
   inputArtifacts: ArtifactGroups;
@@ -104,11 +116,15 @@ export class DevelopmentMethod
     this.description = element.description ?? this.description;
     this.examples = element.examples ?? this.examples;
     if (entry != null) {
+      this.icon = new Icon(entry.icon ?? {}, undefined);
       this.author = new Author(entry.author, undefined);
       this.types =
         entry.types?.map(
           (selection) => new Selection<Type>(selection, undefined, Type)
         ) ?? this.types;
+      this.phases =
+        entry.phases?.map((phase) => new Phase(phase, undefined)) ??
+        this.phases;
       this.situationalFactors =
         entry.situationalFactors?.map(
           (selection) =>
@@ -135,11 +151,17 @@ export class DevelopmentMethod
           createExecutionStep(executionStep, undefined)
         ) ?? this.executionSteps;
     } else if (init != null) {
+      this.icon = new Icon(
+        undefined,
+        init.icon ?? DevelopmentMethod.defaultIcon
+      );
       this.author = new Author(undefined, init.author);
       this.types =
         init.types?.map(
           (selection) => new Selection<Type>(undefined, selection, Type)
         ) ?? this.types;
+      this.phases =
+        init.phases?.map((phase) => new Phase(undefined, phase)) ?? this.phases;
       this.situationalFactors =
         init.situationalFactors?.map(
           (selection) =>
@@ -202,6 +224,10 @@ export class DevelopmentMethod
     this.executionSteps = this.executionSteps.map((step) =>
       createExecutionStep(undefined, step)
     );
+  }
+
+  updateIcon(icon: IconInit): void {
+    this.icon.update(icon);
   }
 
   /**
@@ -284,14 +310,28 @@ export class DevelopmentMethod
     return tools;
   }
 
+  /**
+   * Checks whether all groups are correctly defined.
+   */
+  isComplete(): boolean {
+    return (
+      this.inputArtifacts.isComplete() &&
+      this.outputArtifacts.isComplete() &&
+      this.stakeholders.isComplete() &&
+      this.tools.isComplete()
+    );
+  }
+
   toDb(): DevelopmentMethodEntry {
     return {
       ...super.toDb(),
       name: this.name,
       description: this.description,
+      icon: this.icon.toDb(),
       examples: this.examples,
       author: this.author.toDb(),
       types: this.types.map((type) => type.toDb()),
+      phases: this.phases.map((phase) => phase.toDb()),
       situationalFactors: this.situationalFactors.map((factor) =>
         factor.toDb()
       ),

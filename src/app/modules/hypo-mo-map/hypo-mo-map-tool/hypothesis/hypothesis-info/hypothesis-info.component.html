@@ -1,0 +1,62 @@
+<div>
+  <div *ngIf="showEvidence">
+    <ngb-rating
+      title="Evidence Score"
+      [max]="5"
+      [readonly]="true"
+      [rate]="hypothesis.evidenceScore!"
+    ></ngb-rating>
+  </div>
+  <div class="d-flex">
+    <div class="me-1">
+      <i
+        *ngIf="hypothesis.state === 'validated'"
+        class="bi bi-check-lg"
+        aria-label="validated"
+        title="validated"
+      ></i>
+      <i
+        *ngIf="hypothesis.state === 'disapproved'"
+        class="bi bi-x-lg"
+        aria-label="disapproved"
+        title="disapproved"
+      ></i>
+      <i
+        *ngIf="hypothesis.state === 'untested'"
+        class="bi bi-question-lg"
+        aria-label="untested"
+        title="untested"
+      ></i>
+    </div>
+    <div class="me-1">
+      {{ hypothesis.name }}
+    </div>
+    <div>
+      <i
+        *ngIf="hypothesis.subhypothesesConnections === 'and'"
+        class="bi bi-caret-up-square-fill"
+        aria-label="and"
+        title="and"
+      ></i>
+      <i
+        *ngIf="hypothesis.subhypothesesConnections === 'or'"
+        class="bi bi-chevron-up"
+        aria-label="or"
+        title="or"
+      ></i>
+    </div>
+  </div>
+  <div>
+    <ng-template #priorityIcon let-fill="fill">
+      <i class="bi bi-square-fill" *ngIf="fill === 100"></i>
+      <i class="bi bi-square" *ngIf="fill !== 100"></i>
+    </ng-template>
+    <ngb-rating
+      title="Priority"
+      [starTemplate]="priorityIcon"
+      [max]="5"
+      [readonly]="true"
+      [rate]="hypothesis.priority"
+    ></ngb-rating>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="mb-3" formArrayName="relationshipTypes">
+    <app-form-array-list
+      elementName="Relationship Name"
+      [formArray]="formArray"
+      [ordered]="false"
+    ></app-form-array-list>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!form.valid"
+    >
+      Update Relationships<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

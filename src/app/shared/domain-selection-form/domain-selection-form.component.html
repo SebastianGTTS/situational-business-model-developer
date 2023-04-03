@@ -1,6 +1,6 @@
-<div class="form-row">
-  <div class="form-group col">
-    <label for="domainSelection{{ index }}">Domain</label>
+<div class="row">
+  <div class="col mb-3">
+    <label class="form-label" for="domainSelection{{ index }}">Domain</label>
     <div class="input-group">
       <input
         type="text"
@@ -15,15 +15,9 @@
         (click)="openDomainInput.next($any($event.target).value)"
         (focus)="openDomainInput.next($any($event.target).value)"
       />
-      <div class="input-group-append">
-        <button
-          (click)="remove.emit()"
-          class="btn btn-secondary align-self-baseline"
-          type="button"
-        >
-          Remove
-        </button>
-      </div>
+      <button (click)="remove.emit()" class="btn btn-secondary" type="button">
+        Remove
+      </button>
     </div>
   </div>
 </div>

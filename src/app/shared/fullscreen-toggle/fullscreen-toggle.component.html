@@ -1,0 +1,14 @@
+<button
+  *ngIf="isFullscreenPossible && !isInFullscreenMode"
+  class="btn btn-sm btn-dark"
+  (click)="openFullscreen()"
+>
+  Fullscreen
+</button>
+<button
+  *ngIf="isFullscreenPossible && isInFullscreenMode"
+  class="btn btn-sm btn-primary"
+  (click)="closeFullscreen()"
+>
+  Close
+</button>

@@ -1,0 +1,149 @@
+<main role="main" class="container">
+  <app-profile *ngIf="!isLocalDatabase()"></app-profile>
+
+  <div class="my-3 sbmd-panel" *ngIf="currentRole == null">
+    <h1 class="border-bottom border-gray pb-2">
+      Situational Business Model Developer
+    </h1>
+    <p>
+      The Situational Business Model Developer (SMDB) is a software tool for a
+      novel approach to support the situation-specific business model
+      development. That development aims to adjust the business model
+      development methods as well as the business models to the actual situation
+      of the developing organization.
+    </p>
+    <div class="text-center">
+      <img
+        style="max-height: 400px"
+        class="img-fluid"
+        [src]="['assets/start.png']"
+        alt="An overview of the three steps: Knowledge Provision, Method Composition, and Method Enactment. Shown are databases for the Knowledge Provision, an abstract process for the Method Composition, and a Kanban board with an abstract process for the Method Enactment. The Domain Expert is responsible for the Knowledge Provision. The Method Engineer is responsible for the Method Composition. The Business Developer is responsible for the Method Enactment."
+      />
+    </div>
+    <p>
+      For that, the tool consists of three parts. In the first part of Knowledge
+      Provision, different Domain Experts store their knowledge about
+      development methods and business model in distinct repositories. In the
+      second part of Method Composition, the Method Engineer composes a business
+      model development method out of those repositories based on the currently
+      situation of the organization. In the third part of Method Enactment, the
+      Business Developer enacts those business model development method and
+      conducts various development steps to develop the business model. A
+      detailed explanation is given
+      <a [routerLink]="['/', 'explanation']">here</a>. Moreover, we provide some
+      guided tutorials for the different roles
+      <a [routerLink]="['/tutorial', 'overview']">here</a>.
+    </p>
+  </div>
+
+  <div class="my-3 sbmd-panel" *ngIf="currentRole === roles.DOMAIN_EXPERT">
+    <h1 class="border-bottom border-gray pb-2">
+      Knowledge Provision of Methods and Models
+    </h1>
+    <p>
+      The first part of our SBMD is the Knowledge Provision. The part is used by
+      the Domain Experts to store the their knowledge about development methods
+      and business models in distinct repositories. The knowledge is used later
+      for the composition of situation-specific development methods.
+    </p>
+    <div class="text-center">
+      <img
+        style="max-height: 400px"
+        class="img-fluid"
+        [src]="['assets/start_provision.png']"
+        alt="An overview of the first part on Knowledge Provision."
+      />
+    </div>
+    <p>
+      The Knowledge Provision needs to be done for the Creation of the Method
+      Repository and the Creation of the Canvas Model Repository. The Method
+      Repository contains atomic Method Elements that are combined to Method
+      Building Blocks, and, optionally, arranged to Method Patterns. The Canvas
+      Model Repository contains atomic Canvas Elements that are hierachical
+      structured through Canvas Building Blocks and visualized by Canvas Models.
+      A detailed explanation for the Creation of the Method Repository is given
+      <a [routerLink]="['/', 'explanation']">here</a>. Moreover, we provide some
+      guided tutorials for the creation of the Method Building Blocks and Method
+      Patterns <a [routerLink]="['/tutorial', 'overview']">here</a>.
+    </p>
+  </div>
+
+  <div class="my-3 sbmd-panel" *ngIf="currentRole === roles.METHOD_ENGINEER">
+    <h1 class="border-bottom border-gray pb-2">
+      Composition of the Development Method
+    </h1>
+    <p>
+      The second part of our SBMD is the Method Composition. The part is used by
+      the Method Engineers to compose business model development methods out of
+      the existing repositories based on the current situation of the
+      organization. The composed development methods are later enacted to
+      develop a business model.
+    </p>
+    <div class="text-center">
+      <img
+        style="max-height: 400px"
+        class="img-fluid"
+        [src]="['assets/start_composition.png']"
+        alt="An overview of the second part on Method Composition."
+      />
+    </div>
+    <p>
+      The Method Composition can be done with the Pattern-based Composition of
+      the Development Method or the Phase-based Composition of the Development
+      Method. The Pattern-based Composition uses the Method Patterns that are
+      combined and filled with the Method Building Blocks. The Phase-based
+      Composition uses the Phase Elements that are selected and filled with the
+      Method Building Blocks. A detailed explanation for the Composition of the
+      Development Methods is given
+      <a [routerLink]="['/', 'explanation']">here</a>. Moreover, we provide some
+      guided tutorials for the Pattern-based Composition of the Development
+      Method and the Phase-based Composition of the Development Method
+      <a [routerLink]="['/tutorial', 'overview']">here</a>.
+    </p>
+  </div>
+
+  <div class="my-3 sbmd-panel" *ngIf="currentRole === roles.BUSINESS_DEVELOPER">
+    <h1 class="border-bottom border-gray pb-2">
+      Enactment of the Development Method
+    </h1>
+    <p>
+      The third part of our SBMD is the Method Enactment. The part is used by
+      the Business Developer to enact a composed business model development
+      method. During the enactment, a business model is developed.
+    </p>
+    <div class="text-center">
+      <img
+        style="max-height: 400px"
+        class="img-fluid"
+        [src]="['assets/start_enactment.png']"
+        alt="An overview of the third part on Method Enactment."
+      />
+    </div>
+    <p>
+      The Method Enactment is used for the Execution of the Development Method
+      and the Conduction of the Development Steps. The Execution of the
+      Development Method is based on a Kanban Board and is done based on the
+      composed development methods or in an ad-hoc manner. The Execution of the
+      Development Steps executes a single Method Building Block and stores the
+      result as artifacts. A detailed explanation for the Execution of the
+      Development Method is given
+      <a [routerLink]="['/', 'explanation']">here</a>. Moreover, we provide a
+      guided tutorial for the Ad-hoc Execution of the Development Method
+      <a [routerLink]="['/tutorial', 'overview']">here</a>.
+    </p>
+  </div>
+
+  <div class="my-3">
+    <app-quick-start *ngIf="currentRole == null"></app-quick-start>
+  </div>
+
+  <app-role-selector *ngIf="currentRole == null"></app-role-selector>
+  <app-start-business-developer
+    *ngIf="currentRole === roles.BUSINESS_DEVELOPER"
+  ></app-start-business-developer>
+  <app-start-method-engineer
+    *ngIf="currentRole === roles.METHOD_ENGINEER"
+  ></app-start-method-engineer>
+  <app-start-domain-expert *ngIf="currentRole === roles.DOMAIN_EXPERT">
+  </app-start-domain-expert>
+</main>

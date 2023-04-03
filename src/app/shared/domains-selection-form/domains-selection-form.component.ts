@@ -12,7 +12,12 @@ import {
   Domain,
   DomainEntry,
 } from '../../development-process-registry/knowledge/domain';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomainService } from '../../development-process-registry/knowledge/domain.service';
 import { Subscription } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
@@ -36,9 +41,9 @@ export class DomainsSelectionFormComponent
    * Emits a form array containing of real domains,
    * i.e., of type Domain
    */
-  @Output() submitDomainsForm = new EventEmitter<FormArray>();
+  @Output() submitDomainsForm = new EventEmitter<UntypedFormArray>();
 
-  domainsForm: FormGroup = this.fb.group({
+  domainsForm: UntypedFormGroup = this.fb.group({
     domains: this.fb.array([]),
   });
   changed = false;
@@ -47,7 +52,10 @@ export class DomainsSelectionFormComponent
 
   private changeSubscription?: Subscription;
 
-  constructor(private domainService: DomainService, private fb: FormBuilder) {}
+  constructor(
+    private domainService: DomainService,
+    private fb: UntypedFormBuilder
+  ) {}
 
   ngOnInit(): void {
     void this.loadDomains();
@@ -102,8 +110,8 @@ export class DomainsSelectionFormComponent
     }
   }
 
-  get domainsFormArray(): FormArray {
-    return this.domainsForm.get('domains') as FormArray;
+  get domainsFormArray(): UntypedFormArray {
+    return this.domainsForm.get('domains') as UntypedFormArray;
   }
 
   private async loadDomains(): Promise<void> {

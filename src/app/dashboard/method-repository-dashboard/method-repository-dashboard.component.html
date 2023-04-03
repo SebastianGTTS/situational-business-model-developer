@@ -1,0 +1,110 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h1 class="border-bottom border-gray pb-2">
+      Dashboard of the Method Repository
+    </h1>
+    <p>
+      The dashboard provides statistics for the different Method Elements,
+      Method Building Blocks, and Method Patterns of the Method Repository.
+    </p>
+  </div>
+
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="typesElement.name"
+          [elementDescription]="typesElement.description"
+          [elementIcon]="typesElement.icon"
+          [elementLink]="typesElement.route"
+          [numberOfElements]="numberOfTypes"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="phasesElement.name"
+          [elementDescription]="phasesElement.description"
+          [elementIcon]="phasesElement.icon"
+          [elementLink]="phasesElement.route"
+          [numberOfElements]="numberOfPhases"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="situationalFactorsElement.name"
+          [elementDescription]="situationalFactorsElement.description"
+          [elementIcon]="situationalFactorsElement.icon"
+          [elementLink]="situationalFactorsElement.route"
+          [numberOfElements]="numberOfSituationalFactors"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="domainsElement.name"
+          [elementDescription]="domainsElement.description"
+          [elementIcon]="domainsElement.icon"
+          [elementLink]="domainsElement.route"
+          [numberOfElements]="numberOfDomains"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-4">
+        <app-dashboard-item
+          [elementName]="artifactElement.name"
+          [elementDescription]="artifactElement.description"
+          [elementIcon]="artifactElement.icon"
+          [elementLink]="artifactElement.route"
+          [numberOfElements]="numberOfArtifacts"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-4">
+        <app-dashboard-item
+          [elementName]="stakeholdersElement.name"
+          [elementDescription]="stakeholdersElement.description"
+          [elementIcon]="stakeholdersElement.icon"
+          [elementLink]="stakeholdersElement.route"
+          [numberOfElements]="numberOfStakeholders"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-4">
+        <app-dashboard-item
+          [elementName]="toolsElement.name"
+          [elementDescription]="toolsElement.description"
+          [elementIcon]="toolsElement.icon"
+          [elementLink]="toolsElement.route"
+          [numberOfElements]="numberOfTools"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3">
+    <div class="row">
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="developmentMethodsElement.name"
+          [elementDescription]="developmentMethodsElement.description"
+          [elementIcon]="developmentMethodsElement.icon"
+          [elementLink]="developmentMethodsElement.route"
+          [numberOfElements]="numberOfDevelopmentMethods"
+        ></app-dashboard-item>
+      </div>
+      <div class="col-md-6">
+        <app-dashboard-item
+          [elementName]="patternsElement.name"
+          [elementDescription]="patternsElement.description"
+          [elementIcon]="patternsElement.icon"
+          [elementLink]="patternsElement.route"
+          [numberOfElements]="numberOfPatterns"
+        ></app-dashboard-item>
+      </div>
+    </div>
+  </div>
+</main>

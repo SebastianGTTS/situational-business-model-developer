@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { DbId } from '../../../../database/database-entry';
 import { ElementLoaderService } from '../../../../database/element-loader.service';
-import { Example } from '../../example-artifact/example';
-import { ExampleService } from '../../example-artifact/example.service';
+import { Example } from '../../example-meta-artifact/example';
+import { ExampleService } from '../../example-meta-artifact/example.service';
 
 @Injectable()
 export class ExampleLoaderService extends ElementLoaderService {

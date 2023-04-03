@@ -1,0 +1,38 @@
+<form [formGroup]="methodElementForm" (ngSubmit)="submitForm()">
+  <div class="row mb-3">
+    <label for="list" class="col-sm-2 col-form-label">List</label>
+    <div class="col-sm-10">
+      <input
+        formControlName="list"
+        type="text"
+        class="form-control"
+        id="list"
+        [ngbTypeahead]="searchLists"
+        (click)="openListInput.next($any($event.target).value)"
+        (focus)="openListInput.next($any($event.target).value)"
+      />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="description" class="col-sm-2 col-form-label">Description</label>
+    <div class="col-sm-10">
+      <textarea
+        formControlName="description"
+        id="description"
+        class="form-control"
+        rows="3"
+      ></textarea>
+    </div>
+  </div>
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!methodElementForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

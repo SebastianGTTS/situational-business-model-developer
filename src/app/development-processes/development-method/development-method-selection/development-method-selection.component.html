@@ -1,0 +1,43 @@
+<main *ngIf="developmentMethod != null" role="main" class="container">
+  <div id="types" class="my-3 sbmd-panel">
+    <h6 class="border-bottom pb-2 mb-0">Types</h6>
+    <div class="text-muted pt-3">
+      <app-types-selection-form
+        [types]="developmentMethod.types"
+        (submitTypesForm)="
+          updateDevelopmentMethodValue({ types: $event.value })
+        "
+      ></app-types-selection-form>
+    </div>
+  </div>
+
+  <div id="phases" class="my-3 sbmd-panel">
+    <h6 class="border-bottom pb-2 mb-0">Phases</h6>
+    <div class="text-muted pt-3">
+      <app-phases-selection-form
+        [phases]="developmentMethod.phases"
+        (submitPhasesForm)="
+          updateDevelopmentMethodValue({ phases: $event.value })
+        "
+      ></app-phases-selection-form>
+    </div>
+  </div>
+
+  <div id="situational-factors" class="my-3 sbmd-panel">
+    <h6 class="border-bottom pb-2 mb-0">Situational Factors</h6>
+    <div class="text-muted pt-3">
+      <app-situational-factors-selection-form
+        [situationalFactors]="developmentMethod.situationalFactors"
+        (submitSituationalFactorsForm)="
+          updateDevelopmentMethodValue({ situationalFactors: $event.value })
+        "
+      ></app-situational-factors-selection-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

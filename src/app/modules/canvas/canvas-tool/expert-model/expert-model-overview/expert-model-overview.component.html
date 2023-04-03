@@ -1,0 +1,105 @@
+<main *ngIf="expertModel != null" role="main" class="container">
+  <div class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="expertModel"
+    >
+      <div class="mt-3 d-flex align-items-end">
+        <small class="text-muted">
+          {{ expertModel.version
+          }}<span
+            *ngIf="expertModel.version !== '' && expertModel.copyright !== ''"
+          >
+            &ndash; </span
+          >{{ expertModel.copyright }}
+        </small>
+        <button
+          (click)="exportModel()"
+          type="submit"
+          class="ms-auto btn btn-sm btn-primary"
+        >
+          Export Canvas Building Block
+        </button>
+      </div>
+    </app-element-overview>
+  </div>
+  <div class="my-3">
+    <section class="sbmd-panel">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">Building Block Overview</h6>
+        <div class="ms-auto">
+          <a
+            class="btn btn-primary btn-sm rounded-circle mb-1"
+            [routerLink]="['..', 'edit']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+      <app-feature-model [featureModel]="expertModel"></app-feature-model>
+    </section>
+  </div>
+  <div class="my-3 row">
+    <div class="col-sm-6">
+      <section class="sbmd-panel position-relative">
+        <h6 class="sbmd-panel-small-title">Patterns</h6>
+        <div *ngFor="let pattern of expertModel.getPatterns()">
+          {{ pattern.name }}
+        </div>
+        <div class="position-absolute top-0 end-0 mt-3 me-3">
+          <a
+            class="btn btn-primary btn-sm rounded-circle"
+            [routerLink]="['..', 'instances']"
+            fragment="patterns"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </section>
+    </div>
+    <div class="col-sm-6">
+      <section class="sbmd-panel position-relative">
+        <h6 class="sbmd-panel-small-title">Examples</h6>
+        <div *ngFor="let example of expertModel.getExamples()">
+          {{ example.name }}
+        </div>
+        <div class="position-absolute top-0 end-0 mt-3 me-3">
+          <a
+            class="btn btn-primary btn-sm rounded-circle"
+            [routerLink]="['..', 'instances']"
+            fragment="examples"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="my-3 row">
+    <div class="col-md-6">
+      <section class="sbmd-panel position-relative">
+        <h6 class="sbmd-panel-small-title">Domains</h6>
+        <div *ngFor="let domain of expertModel.domains">
+          {{ domain.name }}
+        </div>
+        <div class="position-absolute top-0 end-0 mt-3 me-3">
+          <a
+            class="btn btn-primary btn-sm rounded-circle"
+            [routerLink]="['..', 'general']"
+            fragment="domains"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </section>
+    </div>
+    <div class="col-md-6">
+      <app-author-overview
+        [author]="expertModel.author"
+        [editLink]="['..', 'general']"
+        fragment="author"
+      ></app-author-overview>
+    </div>
+  </div>
+</main>

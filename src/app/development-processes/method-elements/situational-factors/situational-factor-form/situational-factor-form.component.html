@@ -1,0 +1,81 @@
+<form [formGroup]="form" (ngSubmit)="submitForm()">
+  <div class="row mb-3">
+    <label for="listName" class="col-sm-2 col-form-label">List Name</label>
+    <div class="col-sm-10">
+      <input
+        formControlName="list"
+        type="text"
+        class="form-control"
+        id="listName"
+        [ngbTypeahead]="searchLists"
+        (click)="openListInput.next($any($event.target).value)"
+        (focus)="openListInput.next($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <label for="description" class="col-sm-2 col-form-label">Description</label>
+    <div class="col-sm-10">
+      <textarea
+        formControlName="description"
+        id="description"
+        class="form-control"
+        rows="3"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="d-flex align-items-baseline mb-2">
+      <h6>Values<span *ngIf="ordered"> from low to high</span></h6>
+      <div class="ms-auto">
+        <div
+          class="btn-group"
+          role="group"
+          aria-label="Ordered or unordered situational factor"
+        >
+          <input
+            type="radio"
+            class="btn-check"
+            id="unordered-option"
+            autocomplete="off"
+            [value]="false"
+            formControlName="ordered"
+          />
+          <label class="btn btn-outline-primary" for="unordered-option"
+            >unordered</label
+          >
+          <input
+            type="radio"
+            class="btn-check"
+            id="ordered-option"
+            autocomplete="off"
+            [value]="true"
+            formControlName="ordered"
+          />
+          <label class="btn btn-outline-primary" for="ordered-option"
+            >ordered</label
+          >
+        </div>
+      </div>
+    </div>
+    <app-form-array-list
+      elementName="Value"
+      [formArray]="valuesFormArray"
+      [ordered]="ordered"
+    ></app-form-array-list>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm btn-block"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!form.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

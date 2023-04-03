@@ -1,0 +1,23 @@
+<div class="modal-header">
+  <h4 class="modal-title">Finish Running Method?</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  <p class="mb-0">
+    There are no development steps left for this method. Do you want to finish
+    the execution of this method?
+  </p>
+</div>
+<div class="modal-footer">
+  <button (click)="dismiss()" type="button" class="btn btn-secondary">
+    Close
+  </button>
+  <button (click)="finish()" type="button" class="btn btn-primary ms-auto">
+    Finish Method
+  </button>
+</div>

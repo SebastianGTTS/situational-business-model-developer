@@ -1,0 +1,54 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">{{ feature.name }}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="closeModal.emit()"
+  ></button>
+</div>
+
+<div class="modal-body">
+  <div
+    *ngIf="feature.relationships.hasNoRelationships()"
+    class="alert alert-info mb-0"
+    role="alert"
+  >
+    There are no dependencies left to remove.
+  </div>
+
+  <ul class="list-group">
+    <ng-container *ngFor="let relationship of relationships">
+      <li class="list-group-item" *ngIf="relationship.features.length !== 0">
+        <i class="bi bi-arrow-right"></i> {{ relationship.name }}:
+        <ul class="mt-1 list-group">
+          <li
+            class="list-group-item d-flex align-items-baseline"
+            *ngFor="let f of relationship.features"
+          >
+            {{ f.name }}
+            <button
+              *ngIf="
+                companyModel &&
+                relationshipDoesNotExistInCompanyModel(relationship.type, f.id)
+              "
+              type="button"
+              class="ms-auto btn btn-primary btn-sm"
+              (click)="add(relationship.type, f.id)"
+            >
+              Add
+            </button>
+            <button
+              *ngIf="!companyModel"
+              (click)="remove(relationship.type, f.id)"
+              type="button"
+              class="ms-auto btn btn-warning btn-sm"
+            >
+              Delete
+            </button>
+          </li>
+        </ul>
+      </li>
+    </ng-container>
+  </ul>
+</div>

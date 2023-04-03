@@ -1,4 +1,4 @@
-type DbTypes = string | number | boolean | DatabaseEntry | undefined;
+type DbTypes = string | number | boolean | DatabaseEntry | null | undefined;
 type DbTypesArray = (DbTypes | DbTypesArray)[];
 
 export interface DatabaseEntry {

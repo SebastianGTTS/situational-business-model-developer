@@ -1,0 +1,154 @@
+<main *ngIf="developmentMethod != null" role="main" class="container">
+  <div id="development-method-overview-element-overview" class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="developmentMethod"
+    ></app-element-overview>
+  </div>
+  <div class="my-3 row">
+    <div class="col-md-6">
+      <div
+        id="development-method-overview-selection"
+        class="sbmd-panel position-relative"
+      >
+        <section class="mb-3">
+          <h6 class="sbmd-panel-small-title">Types</h6>
+          <div *ngFor="let type of developmentMethod.types">
+            {{ type.list }} &ndash; {{ type.element?.name }}
+          </div>
+        </section>
+        <section class="mb-3">
+          <h6 class="sbmd-panel-small-title">Phases</h6>
+          <div *ngFor="let phase of developmentMethod.phases">
+            {{ phase.name }}
+          </div>
+        </section>
+        <section>
+          <h6 class="sbmd-panel-small-title">Situational Factors</h6>
+          <div
+            *ngFor="
+              let situationalFactor of developmentMethod.situationalFactors
+            "
+          >
+            {{ situationalFactor.list }} &ndash;
+            {{ situationalFactor.element?.factor?.name }} &ndash;
+            {{ situationalFactor.element?.value }}
+          </div>
+        </section>
+        <div class="position-absolute top-0 end-0 mt-3 me-3">
+          <a
+            id="development-method-overview-selection-edit-button"
+            class="btn btn-primary btn-sm rounded-circle"
+            [routerLink]="['..', 'selection']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <section class="sbmd-panel position-relative">
+        <div class="d-flex align-items-start">
+          <h6 class="sbmd-panel-small-title">Explanations</h6>
+          <div class="ms-auto">
+            <a
+              class="btn btn-primary btn-sm rounded-circle mb-1"
+              [routerLink]="['..', 'execution']"
+            >
+              <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+            </a>
+          </div>
+        </div>
+        <ul class="list-group">
+          <li
+            *ngFor="let example of developmentMethod.examples"
+            class="list-group-item"
+          >
+            {{ example }}
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
+  <div class="my-3 row" id="development-method-overview-artifacts">
+    <div class="col-md-6">
+      <app-development-method-overview-group
+        editId="development-method-overview-input-artifacts-edit"
+        [groups]="developmentMethod.inputArtifacts"
+        panelTitle="Input"
+        [editLink]="['..', 'execution']"
+        fragment="input-artifacts"
+        [hasErrors]="!inputArtifactsCorrectlyDefined"
+      ></app-development-method-overview-group>
+    </div>
+    <div class="col-md-6">
+      <app-development-method-overview-group
+        [groups]="developmentMethod.outputArtifacts"
+        panelTitle="Output"
+        [editLink]="['..', 'execution']"
+        fragment="output-artifacts"
+        [hasErrors]="!outputArtifactsCorrectlyDefined"
+      ></app-development-method-overview-group>
+    </div>
+  </div>
+  <div class="my-3 row">
+    <div id="development-method-overview-tools" class="col-md-6">
+      <app-development-method-overview-group
+        editId="development-method-overview-tools-edit"
+        panelTitle="Tools"
+        [groups]="developmentMethod.tools"
+        [editLink]="['..', 'execution']"
+        fragment="tools"
+        [hasErrors]="!toolsCorrectlyDefined"
+      ></app-development-method-overview-group>
+    </div>
+    <div class="col-md-6">
+      <section
+        id="development-method-overview-execution-steps"
+        class="sbmd-panel"
+      >
+        <div class="d-flex align-items-start">
+          <h6 class="sbmd-panel-small-title">Execution Steps</h6>
+          <div class="ms-auto">
+            <a
+              class="btn btn-sm rounded-circle mb-1"
+              [class.btn-primary]="executionStepsCorrectlyDefined"
+              [class.btn-danger]="!executionStepsCorrectlyDefined"
+              [routerLink]="['..', 'execution']"
+              fragment="execution-steps"
+            >
+              <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+              <span
+                class="visually-hidden"
+                *ngIf="!executionStepsCorrectlyDefined"
+                >(Errors in this part)</span
+              >
+            </a>
+          </div>
+        </div>
+        <app-development-method-overview-execution-steps
+          [executionSteps]="developmentMethod.executionSteps"
+        ></app-development-method-overview-execution-steps>
+      </section>
+    </div>
+  </div>
+  <div class="my-3 row">
+    <div class="col-md-6">
+      <app-development-method-overview-group
+        panelTitle="Stakeholders"
+        [groups]="developmentMethod.stakeholders"
+        [editLink]="['..', 'execution']"
+        fragment="stakeholders"
+        [hasErrors]="!stakeholdersCorrectlyDefined"
+      ></app-development-method-overview-group>
+    </div>
+    <div class="col-md-6">
+      <app-author-overview
+        [author]="developmentMethod.author"
+        [editLink]="['..', 'general']"
+        fragment="author"
+      ></app-author-overview>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,24 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Artifacts</h1>
+    The Artifacts define the inputs and outputs of Method Building Blocks.
+  </div>
+
+  <app-method-element-list
+    elementNamePlural="Artifacts"
+    elementName="Artifact"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting an artifact. This cannot be undone. This action will not
+      delete the artifact from building blocks that are using it.
+    </div>
+  </app-method-element-list>
+
+  <app-method-element-create-form
+    elementName="Artifact"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+  </app-method-element-create-form>
+</main>

@@ -1,0 +1,42 @@
+<main *ngIf="whiteboardTemplate != null" role="main" class="container">
+  <div id="block" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Method Building Block</h6>
+    <div class="sbmd-form-wrapper">
+      <app-element-form
+        [element]="whiteboardTemplate"
+        (submitElementForm)="
+          updateInformation(
+            $event.getRawValue().name,
+            $event.getRawValue().description
+          )
+        "
+      ></app-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="whiteboardTemplate.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div id="author" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Author</h6>
+    <div class="sbmd-form-wrapper">
+      <app-author-form
+        [author]="whiteboardTemplate.author"
+        (submitAuthorForm)="updateAuthor($event.value)"
+      ></app-author-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

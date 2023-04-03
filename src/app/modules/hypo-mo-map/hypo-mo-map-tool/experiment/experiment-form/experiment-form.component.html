@@ -1,0 +1,59 @@
+<form [formGroup]="experimentForm" (ngSubmit)="submitForm()">
+  <div class="mb-3 row">
+    <label for="name" class="col-sm-4 col-form-label">Experiment Name</label>
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="name"
+        class="form-control"
+        id="name"
+      />
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="description" class="col-sm-4 col-form-label"
+      >Experiment Description</label
+    >
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="description"
+        class="form-control"
+        id="description"
+      />
+    </div>
+  </div>
+
+  <div *ngIf="experiment == null || experiment.parent != null" class="mb-3 row">
+    <label for="subexperimentOf" class="col-sm-4 col-form-label"
+      >Subexperiment of</label
+    >
+    <div class="col-sm-8">
+      <select
+        id="subexperimentOf"
+        formControlName="subexperimentOf"
+        class="form-select"
+      >
+        <option></option>
+        <option
+          *ngFor="let e of experimentList"
+          [disabled]="disabledSubexperiments.includes(e.id)"
+          [ngValue]="e.id"
+        >
+          {{ '-'.repeat(e.level) }} {{ e.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!experimentForm.valid"
+    >
+      {{ submitButtonText }}
+    </button>
+  </div>
+</form>

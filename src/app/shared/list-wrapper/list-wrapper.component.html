@@ -1,18 +1,18 @@
-<div class="my-3 p-3 bg-white rounded shadow-sm">
-  <div class="d-flex border-bottom border-gray mb-2">
-    <h6 class="pb-2 mb-0">{{ listTitle }}</h6>
+<div class="my-3 sbmd-panel">
+  <div class="d-flex border-bottom mb-2">
+    <h6 class="sbmd-panel-header-title">{{ listTitle }}</h6>
     <div
       *ngIf="!loading && reloading"
-      class="spinner-border spinner-border-sm ml-auto"
+      class="spinner-border spinner-border-sm ms-auto"
       role="status"
     >
-      <span class="sr-only">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
   </div>
   <div *ngIf="loading">
     <div class="d-flex justify-content-center">
       <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   </div>
@@ -20,20 +20,6 @@
     <ng-content select="[noResults]"></ng-content>
   </div>
   <div *ngIf="!loading && !noResults">
-    <form
-      *ngIf="searchForm != null"
-      [formGroup]="searchForm"
-      class="form-inline"
-    >
-      <label class="sr-only" for="search">Search</label>
-      <input
-        formControlName="search"
-        type="text"
-        class="form-control mb-2 mr-sm-2"
-        id="search"
-        placeholder="Search"
-      />
-    </form>
     <ng-content select="[results]"></ng-content>
   </div>
 </div>

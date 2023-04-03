@@ -9,7 +9,7 @@ import { ProcessApiService } from '../../../../../development-process-registry/m
 import { ActivatedRoute } from '@angular/router';
 import { RunningMethod } from '../../../../../development-process-registry/running-process/running-method';
 import { ExampleToolResolveService } from '../../example-tool-resolve.service';
-import { ExampleService } from '../../../example-artifact/example.service';
+import { ExampleService } from '../../../example-meta-artifact/example.service';
 
 @Component({
   selector: 'app-example-create',

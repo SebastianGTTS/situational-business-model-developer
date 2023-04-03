@@ -1,0 +1,27 @@
+<div id="context-overview" class="sbmd-panel position-relative">
+  <h6 class="sbmd-panel-small-title">Domain</h6>
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let domain of domains">
+      {{ domain.name }}
+    </li>
+  </ul>
+  <h6 class="mt-3 sbmd-panel-small-title">Situational Factors</h6>
+  <ul class="list-group">
+    <li
+      class="list-group-item"
+      *ngFor="let situationalFactor of situationalFactors"
+    >
+      {{ situationalFactor.element!.factor.name }}:
+      {{ situationalFactor.element!.value }}
+    </li>
+  </ul>
+  <div class="position-absolute top-0 end-0 mt-3 me-3">
+    <a
+      id="context-overview-edit"
+      class="btn btn-primary btn-sm rounded-circle"
+      [routerLink]="['..', 'context']"
+    >
+      <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<main *ngIf="bmProcess != null" role="main">
+  <app-bm-process-edit-diagram
+    [bmProcess]="bmProcess"
+    (saveBmProcess)="saveBmProcess($event.processDiagram, $event.decisions)"
+    (appendProcessPattern)="
+      appendProcessPattern($event.nodeId, $event.processPattern)
+    "
+    (insertProcessPattern)="
+      insertProcessPattern($event.nodeId, $event.processPattern)
+    "
+    (deleteProcessPattern)="deleteProcessPattern($event)"
+    (insertDevelopmentMethod)="
+      insertDevelopmentMethod($event.nodeId, $event.developmentMethod)
+    "
+    (removeDevelopmentMethod)="removeDevelopmentMethod($event)"
+  ></app-bm-process-edit-diagram>
+</main>

@@ -1,0 +1,31 @@
+<ngb-carousel
+  [interval]="0"
+  [showNavigationArrows]="false"
+  [showNavigationIndicators]="false"
+  (slide)="startSliding()"
+  (slid)="endSliding($event)"
+>
+  <ng-container *ngFor="let image of images; let index = index">
+    <!--suppress AngularUndefinedBinding -->
+    <ng-template ngbSlide [id]="(index + 1).toString()">
+      <figure class="figure">
+        <img
+          [src]="image.src"
+          [alt]="image.alt"
+          class="sbmd-carousel-image figure-img"
+        />
+        <figcaption class="figure-caption">
+          {{ image.caption }}
+        </figcaption>
+      </figure>
+    </ng-template>
+  </ng-container>
+</ngb-carousel>
+
+<ngb-pagination
+  aria-label="Controls for the above images"
+  class="d-flex justify-content-center"
+  [collectionSize]="images.length"
+  [pageSize]="1"
+  (pageChange)="updateCarousel($event)"
+></ngb-pagination>

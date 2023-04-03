@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import bmdl from '../../../assets/bpmn_bmdl.json';
 import rbmp from '../../../assets/bpmn_running_process.json';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
-import { FullRunningProcess } from './running-process';
+import { RunningPatternProcess } from './running-pattern-process';
 import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import * as BpmnUtils from '../bpmn/bpmn-utils';
 import {
@@ -23,7 +23,9 @@ export class ProcessExecutionModelerService extends ModelerService {
    * @param runningProcess the running process to import
    * @return the bpmnModeler
    */
-  async initModeling(runningProcess: FullRunningProcess): Promise<BpmnModeler> {
+  async initModeling(
+    runningProcess: RunningPatternProcess
+  ): Promise<BpmnModeler> {
     const processModeler =
       ProcessExecutionModelerService.getRunningProcessModeler();
     await processModeler.importXML(runningProcess.process.processDiagram);
@@ -37,7 +39,7 @@ export class ProcessExecutionModelerService extends ModelerService {
    * @param modeler the modeler
    */
   async endModeling(
-    runningProcess: FullRunningProcess,
+    runningProcess: RunningPatternProcess,
     modeler: BpmnModeler
   ): Promise<void> {
     const result = await modeler.saveXML();

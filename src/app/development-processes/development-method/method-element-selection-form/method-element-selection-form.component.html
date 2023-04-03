@@ -1,0 +1,84 @@
+<div [formGroup]="formGroup" class="row">
+  <div class="col-md mb-3">
+    <label class="form-label" for="listInput-{{ id }}">List</label>
+    <div [class.input-group]="multipleAllowed" class="has-validation">
+      <input
+        type="text"
+        formControlName="list"
+        class="form-control"
+        [class.is-invalid]="listControl.invalid"
+        [class.is-valid]="listValid"
+        id="listInput-{{ id }}"
+        [attr.aria-describedby]="'listInputFeedback-' + id"
+        [ngbTypeahead]="searchLists"
+        (click)="openListInput.next($any($event.target).value)"
+        (focus)="openListInput.next($any($event.target).value)"
+      />
+      <ng-container *ngIf="multipleAllowed">
+        <input
+          #multipleInput
+          type="checkbox"
+          class="btn-check"
+          id="multiple-check-{{ id }}"
+          autocomplete="off"
+          formControlName="multiple"
+        />
+        <label
+          id="multiple-check-{{ id }}-label"
+          class="btn btn-outline-secondary"
+          [for]="multipleInput.id"
+          >Multiple</label
+        >
+      </ng-container>
+      <div id="listInputFeedback-{{ id }}" class="invalid-feedback">
+        <span *ngIf="listControl.hasError('required')"
+          >This field is required.</span
+        >
+      </div>
+    </div>
+  </div>
+  <div class="col-md mb-3">
+    <label class="form-label" for="elementInput-{{ id }}">{{
+      methodElementName
+    }}</label>
+    <div [class.input-group]="multipleAllowed || removeAllowed">
+      <input
+        type="text"
+        formControlName="element"
+        class="form-control"
+        id="elementInput-{{ id }}"
+        [class.is-valid]="elementValid"
+        [ngbTypeahead]="searchElements"
+        [editable]="false"
+        [resultFormatter]="formatter"
+        [inputFormatter]="formatter"
+        (click)="openElementInput.next($any($event.target).value)"
+        (focus)="openElementInput.next($any($event.target).value)"
+      />
+      <ng-container *ngIf="multipleAllowed">
+        <input
+          #optionalInput
+          type="checkbox"
+          class="btn-check"
+          id="optional-check-{{ id }}"
+          autocomplete="off"
+          formControlName="optional"
+        />
+        <label
+          id="optional-check-{{ id }}-label"
+          class="btn btn-outline-secondary"
+          [for]="optionalInput.id"
+          >Optional</label
+        >
+      </ng-container>
+      <button
+        *ngIf="removeAllowed"
+        (click)="remove.emit()"
+        class="btn btn-secondary"
+        type="button"
+      >
+        Remove
+      </button>
+    </div>
+  </div>
+</div>

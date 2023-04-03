@@ -1,0 +1,136 @@
+<table class="table mb-0">
+  <tbody>
+    <tr>
+      <th scope="row">Building Block Name</th>
+      <td>{{ developmentMethod.name }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Building Block Description</th>
+      <td class="show-new-lines">{{ developmentMethod.description }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Explanations</th>
+      <td class="show-new-lines">
+        <ul class="list-group">
+          <li
+            *ngFor="let example of developmentMethod.examples"
+            class="list-group-item"
+          >
+            {{ example }}
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr
+      *ngIf="contextSituationalFactors && contextSituationalFactors.length > 0"
+    >
+      <th scope="row">Situational Factors</th>
+      <td class="show-new-lines">
+        <app-situational-factors-overview
+          [needed]="needed"
+          [provided]="provided"
+        ></app-situational-factors-overview>
+      </td>
+    </tr>
+    <tr id="method-info-input-artifacts">
+      <th scope="row">
+        Input Artifacts
+        <ng-container *ngIf="!inputArtifactsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger bi bi-exclamation-circle-fill sbmd-icon-lg"
+          ></i>
+          <span class="visually-hidden">(This part is incomplete)</span>
+        </ng-container>
+      </th>
+      <td>
+        <app-artifacts-group-info
+          [groupDecision]="decision.inputArtifacts"
+          (submitGroupsForm)="updateDecisions.emit({ inputArtifacts: $event })"
+        ></app-artifacts-group-info>
+      </td>
+    </tr>
+    <tr id="method-info-output-artifacts">
+      <th scope="row">
+        Output Artifacts
+        <ng-container *ngIf="!outputArtifactsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger bi bi-exclamation-circle-fill sbmd-icon-lg"
+          ></i>
+          <span class="visually-hidden">(This part is incomplete)</span>
+        </ng-container>
+      </th>
+      <td>
+        <app-artifacts-group-info
+          [groupDecision]="decision.outputArtifacts"
+          (submitGroupsForm)="updateDecisions.emit({ outputArtifacts: $event })"
+        ></app-artifacts-group-info>
+      </td>
+    </tr>
+    <tr id="method-info-stakeholders">
+      <th scope="row">
+        Involved Stakeholders
+        <ng-container *ngIf="!stakeholdersComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger bi bi-exclamation-circle-fill sbmd-icon-lg"
+          ></i>
+          <span class="visually-hidden">(This part is incomplete)</span>
+        </ng-container>
+      </th>
+      <td>
+        <app-stakeholders-group-info
+          [groupDecision]="decision.stakeholders"
+          (submitGroupsForm)="updateDecisions.emit({ stakeholders: $event })"
+        ></app-stakeholders-group-info>
+      </td>
+    </tr>
+    <tr id="method-info-tools">
+      <th scope="row">
+        Tools
+        <ng-container *ngIf="!toolsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger bi bi-exclamation-circle-fill sbmd-icon-lg"
+          ></i>
+          <span class="visually-hidden">(This part is incomplete)</span>
+        </ng-container>
+      </th>
+      <td>
+        <app-tools-group-info
+          [groupDecision]="decision.tools"
+          (submitGroupsForm)="updateDecisions.emit({ tools: $event })"
+        ></app-tools-group-info>
+      </td>
+    </tr>
+    <tr id="method-info-steps">
+      <th scope="row">
+        Steps
+        <ng-container *ngIf="!stepsComplete">
+          <i
+            ngbTooltip="This part is incomplete"
+            triggers="hover focus click"
+            class="text-danger bi bi-exclamation-circle-fill sbmd-icon-lg"
+          ></i>
+          <span class="visually-hidden">(This part is incomplete)</span>
+        </ng-container>
+      </th>
+      <td>
+        <app-method-info-steps
+          [bmProcess]="bmProcess"
+          [runningProcess]="runningProcess"
+          [contextDomains]="contextDomains"
+          [steps]="decision.method.executionSteps"
+          [stepDecisions]="decision.stepDecisions"
+          (submitStepsForm)="updateDecisions.emit({ stepDecisions: $event })"
+          (forceUpdate)="forceUpdate($event)"
+        ></app-method-info-steps>
+      </td>
+    </tr>
+  </tbody>
+</table>

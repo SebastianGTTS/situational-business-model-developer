@@ -1,0 +1,20 @@
+<div
+  class="
+    border
+    item-icon
+    d-flex
+    flex-shrink-0
+    align-self-center
+    overflow-hidden
+  "
+>
+  <i
+    *ngIf="icon == null || icon.type !== iconType.CUSTOM"
+    class="fs-2 bi {{ iconIcon }} text-{{ iconColor }} m-auto"
+  ></i>
+  <img
+    *ngIf="icon != null && icon.type === iconType.CUSTOM && icon.image != null"
+    [src]="icon.image"
+    [alt]="icon.altText"
+  />
+</div>

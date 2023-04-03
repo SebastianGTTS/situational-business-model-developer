@@ -16,6 +16,7 @@ import {
   MethodDecisionUpdate,
 } from '../bm-process/method-decision';
 import { isMethodExecutionStep } from '../development-method/execution-step';
+import { RunningFullProcess } from './running-full-process';
 
 export enum MethodExecutionErrors {
   NO_METHOD = 'The node has no method defined',
@@ -32,6 +33,7 @@ export enum MethodExecutionErrors {
   MISSING_MODULE_METHOD = 'A module method is missing',
   MISSING_INPUT_ARTIFACT = 'The step can not be executed as an input artifact is missing',
   FINISH_TEXTUAL_METHOD = 'A textual method is automatically finished',
+  ALREADY_SET_INPUT = 'The input artifacts are already set',
 }
 
 @Injectable({
@@ -100,11 +102,11 @@ export class MethodExecutionService {
    * Does not check whether the node has enough tokens to be executed
    *
    * @param runningProcess the running process
-   * @param nodeId the node id of the task which includes the method
+   * @param nodeId the node id of the task which includes the method or the phase method decision id
    * @return the added running method
    */
   startMethodExecution(
-    runningProcess: RunningProcess,
+    runningProcess: RunningFullProcess,
     nodeId: string
   ): RunningMethod {
     if (runningProcess.getRunningMethodByNode(nodeId) != null) {
@@ -153,6 +155,9 @@ export class MethodExecutionService {
     if (method == null) {
       throw new Error(MethodExecutionErrors.NOT_EXECUTING);
     }
+    if (method.inputArtifacts != null) {
+      throw new Error(MethodExecutionErrors.ALREADY_SET_INPUT);
+    }
     method.inputArtifacts = inputArtifactMapping.map((mapping) => {
       if (mapping.artifact == null || mapping.version == null) {
         return undefined;
@@ -160,8 +165,8 @@ export class MethodExecutionService {
       const artifact = runningProcess.artifacts[mapping.artifact];
       const version = artifact.versions[mapping.version];
       return new StepInputArtifact(undefined, {
-        metaModelType: artifact.artifact.metaModel?.type,
-        identifier: artifact.identifier,
+        metaArtifactType: artifact.artifact.metaArtifact?.type,
+        identifier: artifact.name,
         artifact: artifact.artifact,
         data: version.data,
         versionInfo: {
@@ -322,7 +327,7 @@ export class MethodExecutionService {
         artifacts.map(
           (artifactData, index) =>
             new StepArtifact(undefined, {
-              metaModelType: moduleMethodDefinition.output[index].type,
+              metaArtifactType: moduleMethodDefinition.output[index].type,
               data: artifactData,
             })
         )

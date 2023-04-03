@@ -1,0 +1,29 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Pattern-based Development Methods
+    </h1>
+    The Pattern-based Development Methods are created by combining different
+    Method Patterns and adding Method Building Blocks.
+  </div>
+  <app-list-panel
+    elementName="Pattern-based Business Model Development Method"
+    elementNamePlural="Pattern-based Business Model Development Methods"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a business model development method. This cannot be
+      undone. This action has no effect on running methods.
+    </div>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Pattern-based Business Model Development Method"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+
+  <app-running-pattern-processes-context-list
+    [editable]="true"
+  ></app-running-pattern-processes-context-list>
+</main>

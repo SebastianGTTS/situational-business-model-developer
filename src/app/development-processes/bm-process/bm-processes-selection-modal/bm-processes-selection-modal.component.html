@@ -1,0 +1,22 @@
+<div class="modal-header">
+  <h4 class="modal-title">
+    {{ title ?? 'Select a name' }}
+  </h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  <app-bm-processes-selection
+    [bmProcesses]="bmProcesses"
+    (selectBmProcess)="close($event)"
+  ></app-bm-processes-selection>
+</div>
+<div class="modal-footer d-flex">
+  <button type="button" class="btn btn-secondary me-auto" (click)="dismiss()">
+    Abort
+  </button>
+</div>

@@ -3,6 +3,7 @@ import {
   MethodElementEntry,
   MethodElementInit,
 } from '../method-element';
+import { IconInit } from '../../../model/icon';
 
 export type StakeholderInit = MethodElementInit;
 
@@ -10,11 +11,15 @@ export type StakeholderEntry = MethodElementEntry;
 
 export class Stakeholder extends MethodElement implements StakeholderInit {
   static readonly typeName = 'Stakeholder';
+  static readonly defaultIcon: IconInit = { icon: 'bi-person' };
 
   constructor(
     entry: StakeholderEntry | undefined,
     init: StakeholderInit | undefined
   ) {
+    if (init != null && init.icon == null) {
+      init.icon = Stakeholder.defaultIcon;
+    }
     super(entry, init, Stakeholder.typeName);
   }
 

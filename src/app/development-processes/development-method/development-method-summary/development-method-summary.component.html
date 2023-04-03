@@ -1,0 +1,145 @@
+<ng-template #defaultCell let-decision="decision">
+  <ul>
+    <li
+      *ngFor="let elementDecision of asGroupDecision(decision).elementDecisions"
+    >
+      <ng-container *ngIf="elementDecision.selection.multiple">
+        {{ elementDecision.selection.list | list | multiple: true }}
+        <ul>
+          <li *ngFor="let concreteElement of elementDecision.elements">
+            {{ concreteElement.name }}
+          </li>
+        </ul>
+      </ng-container>
+      <ng-container *ngIf="!elementDecision.selection.multiple">
+        <ng-container
+          *ngIf="
+            elementDecision.selection.element != null ||
+            elementDecision.element != null
+          "
+        >
+          {{
+            (elementDecision.selection.element ?? elementDecision.element!).name
+              | optional: elementDecision.selection.optional
+          }}
+          ({{ elementDecision.selection.list | list }})
+        </ng-container>
+        <ng-container
+          *ngIf="
+            elementDecision.selection.element == null &&
+            elementDecision.element == null
+          "
+        >
+          ({{ elementDecision.selection.list | list }})
+        </ng-container>
+      </ng-container>
+    </li>
+  </ul>
+</ng-template>
+
+<ng-template #inputArtifactsCell>
+  <ul>
+    <ng-container *ngFor="let element of inputArtifacts; let index = index">
+      <li *ngIf="element != null">
+        {{ element.identifier }} &ndash; {{ element.artifact.name }} &ndash;
+        Version #{{ element.versionInfo.number + 1 }} &ndash;
+        {{ element.versionInfo.time | date: 'short' }}
+        <ul
+          *ngIf="
+            element.data && (element.data.type === 1 || element.data.type === 2)
+          "
+        >
+          <li *ngIf="element.data.type === 1">
+            <quill-view [content]="element.data.data"></quill-view>
+          </li>
+          <li
+            *ngIf="element.data.type === 2 && metaArtifactDefinitions != null"
+          >
+            {{ metaArtifactDefinitions[index].name }}
+            <button
+              class="btn btn-sm btn-secondary"
+              (click)="_viewArtifactReference(index, $any(element.data.data))"
+            >
+              View
+            </button>
+          </li>
+        </ul>
+      </li>
+    </ng-container>
+  </ul>
+</ng-template>
+
+<table class="table mb-0">
+  <tbody>
+    <tr *ngIf="showInfo">
+      <th scope="row">Building Block Name</th>
+      <td>{{ decision.method.name }}</td>
+    </tr>
+    <tr *ngIf="showInfo">
+      <th scope="row">Building Block Description</th>
+      <td class="show-new-lines">{{ decision.method.description }}</td>
+    </tr>
+    <tr *ngIf="showInfo && decision.method.examples.length > 0">
+      <th scope="row">Explanations</th>
+      <td class="show-new-lines">
+        <ul class="list-group">
+          <li
+            *ngFor="let example of decision.method.examples"
+            class="list-group-item"
+          >
+            {{ example }}
+          </li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Input Artifacts</th>
+      <td>
+        <ng-container *ngIf="!inputArtifacts">
+          <ng-container
+            *ngTemplateOutlet="
+              defaultCell;
+              context: { decision: this.decision.inputArtifacts }
+            "
+          ></ng-container>
+        </ng-container>
+        <ng-container *ngIf="inputArtifacts">
+          <ng-container *ngTemplateOutlet="inputArtifactsCell"></ng-container>
+        </ng-container>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Output Artifacts</th>
+      <td>
+        <ng-container
+          *ngTemplateOutlet="
+            defaultCell;
+            context: { decision: this.decision.outputArtifacts }
+          "
+        ></ng-container>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Involved Stakeholders</th>
+      <td>
+        <ng-container
+          *ngTemplateOutlet="
+            defaultCell;
+            context: { decision: this.decision.stakeholders }
+          "
+        ></ng-container>
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Tools</th>
+      <td>
+        <ng-container
+          *ngTemplateOutlet="
+            defaultCell;
+            context: { decision: this.decision.tools }
+          "
+        ></ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,71 @@
+<main *ngIf="processPattern != null" role="main" class="container">
+  <div id="process-pattern-overview-element-overview" class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="pattern"
+      [item]="processPattern"
+    ></app-element-overview>
+  </div>
+  <div id="process-pattern-overview-pattern" class="my-3">
+    <div class="sbmd-panel">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">Pattern</h6>
+        <div class="ms-auto">
+          <a
+            id="process-pattern-overview-pattern-edit"
+            class="btn btn-sm rounded-circle mb-1"
+            [class.btn-primary]="patternCorrectlyDefined"
+            [class.btn-danger]="!patternCorrectlyDefined"
+            [routerLink]="['..', 'pattern']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+      <app-process-pattern-overview-pattern
+        [pattern]="processPattern.pattern"
+      ></app-process-pattern-overview-pattern>
+    </div>
+  </div>
+  <div class="my-3 row">
+    <div class="col-md-6">
+      <div
+        id="process-pattern-overview-types-factors"
+        class="sbmd-panel position-relative"
+      >
+        <section class="mb-3">
+          <h6 class="sbmd-panel-small-title">Types</h6>
+          <div *ngFor="let type of processPattern.types">
+            {{ type.list }} &ndash; {{ type.element?.name }}
+          </div>
+        </section>
+        <section>
+          <h6 class="sbmd-panel-small-title">Situational Factors</h6>
+          <div
+            *ngFor="let situationalFactor of processPattern.situationalFactors"
+          >
+            {{ situationalFactor.list }} &ndash;
+            {{ situationalFactor.element?.factor?.name }} &ndash;
+            {{ situationalFactor.element?.value }}
+          </div>
+        </section>
+        <div class="position-absolute top-0 end-0 mt-3 me-3">
+          <a
+            id="process-pattern-overview-types-factors-edit"
+            class="btn btn-primary btn-sm rounded-circle"
+            [routerLink]="['..', 'selection']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <app-author-overview
+        [author]="processPattern.author"
+        [editLink]="['..', 'general']"
+        fragment="author"
+      ></app-author-overview>
+    </div>
+  </div>
+</main>

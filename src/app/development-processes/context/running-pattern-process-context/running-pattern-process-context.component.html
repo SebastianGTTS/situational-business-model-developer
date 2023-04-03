@@ -1,0 +1,19 @@
+<app-running-process-context-view
+  *ngIf="activeStep === steps.VIEW"
+  [runningProcess]="runningProcess"
+></app-running-process-context-view>
+
+<app-running-pattern-process-context-edit
+  *ngIf="activeStep === steps.EDIT"
+  [runningProcess]="runningProcess"
+></app-running-pattern-process-context-edit>
+
+<app-running-pattern-process-context-run
+  *ngIf="activeStep === steps.RUN"
+  [runningProcess]="runningProcess"
+></app-running-pattern-process-context-run>
+
+<app-running-process-context-finish
+  *ngIf="activeStep === steps.FINISH"
+  [runningProcess]="runningProcess"
+></app-running-process-context-finish>

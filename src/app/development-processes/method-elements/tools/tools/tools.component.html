@@ -1,0 +1,45 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Tools</h1>
+    The Tools define the supporting software that can be used within a Method
+    Building Block.
+  </div>
+
+  <app-method-element-list
+    elementNamePlural="Tools"
+    elementName="Tool"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a tool. This can not be undone. This action will not
+      delete the tool from method building blocks that are using it.
+    </div>
+  </app-method-element-list>
+
+  <app-method-element-create-form
+    elementName="Tool"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+  </app-method-element-create-form>
+
+  <app-list-wrapper
+    listTitle="Loaded Modules"
+    [loading]="moduleLists == null"
+    [noResults]="moduleLists != null && moduleLists.length === 0"
+  >
+    <div noResults>No modules loaded.</div>
+    <div results *ngFor="let list of moduleLists" class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">{{ list.listName }}</h6>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let module of list.elements">
+          <h6>{{ module.name }}</h6>
+          Methods:
+          <ul>
+            <li *ngFor="let method of module.methodNames">{{ method }}</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </app-list-wrapper>
+</main>

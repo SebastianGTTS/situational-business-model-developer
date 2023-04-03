@@ -1,0 +1,43 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="runningMethod != null && isCorrectStep()"
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Create Artifact</h6>
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <app-feature-model-instance-subform
+          [hasDefaultName]="true"
+          [defaultName]="companyModel?.name ?? undefined"
+        ></app-feature-model-instance-subform>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-primary"
+            [disabled]="!form.valid"
+          >
+            Create Canvas Artifact
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="companyModel" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">
+      Canvas Artifact Preview: {{ companyModel.definition.name }}
+    </h6>
+    <section>
+      <app-feature-model [featureModel]="companyModel"></app-feature-model>
+    </section>
+    <section class="mt-3" *ngIf="companyModel.definition.description">
+      <h6>Description</h6>
+      <p class="mb-0 sbmd-show-new-lines">
+        {{ companyModel.definition.description }}
+      </p>
+    </section>
+  </div>
+</main>

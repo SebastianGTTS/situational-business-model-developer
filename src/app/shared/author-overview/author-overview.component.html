@@ -1,0 +1,25 @@
+<section class="sbmd-panel position-relative">
+  <h6 class="sbmd-panel-small-title">Author</h6>
+  <h3>{{ author.name }}</h3>
+  <div *ngIf="author.email != null && author.email !== ''" class="row mb-1">
+    <div class="col-sm-4 text-muted">E-Mail:</div>
+    <div class="col-sm-8 text-break">{{ author.email }}</div>
+  </div>
+  <div *ngIf="author.company != null && author.company !== ''" class="row mb-1">
+    <div class="col-sm-4 text-muted">Company:</div>
+    <div class="col-sm-8">{{ author.company }}</div>
+  </div>
+  <div *ngIf="author.website != null && author.website !== ''" class="row">
+    <div class="col-sm-4 text-muted">Website:</div>
+    <div class="col-sm-8">{{ author.website }}</div>
+  </div>
+  <div *ngIf="editLink != null" class="position-absolute top-0 end-0 mt-3 me-3">
+    <a
+      class="btn btn-primary btn-sm rounded-circle"
+      [routerLink]="editLink"
+      [fragment]="fragment"
+    >
+      <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+    </a>
+  </div>
+</section>

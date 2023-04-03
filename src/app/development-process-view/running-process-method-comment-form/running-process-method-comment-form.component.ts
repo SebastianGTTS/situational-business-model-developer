@@ -9,9 +9,9 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   Validators,
 } from '@angular/forms';
 import { Comment } from '../../development-process-registry/running-process/comment';
@@ -29,9 +29,9 @@ export class RunningProcessMethodCommentFormComponent
 {
   @Input() comment?: Comment = undefined;
 
-  @Output() submitCommentForm = new EventEmitter<FormGroup>();
+  @Output() submitCommentForm = new EventEmitter<UntypedFormGroup>();
 
-  commentForm: FormGroup = this.fb.group({
+  commentForm: UntypedFormGroup = this.fb.group({
     userName: ['', Validators.required],
     title: ['', Validators.required],
     comment: ['', Validators.required],
@@ -39,7 +39,10 @@ export class RunningProcessMethodCommentFormComponent
 
   private userNameChangeSubscription?: Subscription;
 
-  constructor(private authService: AuthService, private fb: FormBuilder) {}
+  constructor(
+    private authService: AuthService,
+    private fb: UntypedFormBuilder
+  ) {}
 
   ngOnInit(): void {
     if (this.comment == null && this.authService.username != null) {
@@ -77,7 +80,7 @@ export class RunningProcessMethodCommentFormComponent
     this.submitCommentForm.emit(this.commentForm);
   }
 
-  get userNameControl(): FormControl {
-    return this.commentForm.get('userName') as FormControl;
+  get userNameControl(): UntypedFormControl {
+    return this.commentForm.get('userName') as UntypedFormControl;
   }
 }

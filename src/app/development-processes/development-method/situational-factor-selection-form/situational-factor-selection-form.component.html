@@ -1,0 +1,68 @@
+<div [formGroup]="formGroup" class="row">
+  <div class="mb-3 col-md">
+    <label class="form-label" for="situational-factor-list-input-{{ index }}"
+      >List</label
+    >
+    <input
+      type="text"
+      formControlName="list"
+      class="form-control"
+      [class.is-invalid]="listControl.invalid"
+      id="situational-factor-list-input-{{ index }}"
+      [attr.aria-describedby]="
+        'situational-factor-list-input-feedback-' + index
+      "
+      [ngbTypeahead]="searchLists"
+      (click)="openListInput.next($any($event.target).value)"
+      (focus)="openListInput.next($any($event.target).value)"
+    />
+    <div id="list-input-feedback-{{ index }}" class="invalid-feedback">
+      <span *ngIf="listControl.hasError('required')"
+        >This field is required.</span
+      >
+    </div>
+  </div>
+  <ng-container formGroupName="element">
+    <div class="mb-3 col-md">
+      <label
+        class="form-label"
+        for="situational-factor-element-input-{{ index }}"
+        >Situational Factor</label
+      >
+      <input
+        type="text"
+        formControlName="factor"
+        class="form-control"
+        id="situational-factor-element-input-{{ index }}"
+        [ngbTypeahead]="searchElements"
+        [editable]="false"
+        [resultFormatter]="formatter"
+        [inputFormatter]="formatter"
+        (selectItem)="selectFactor($event)"
+        (click)="openElementInput.next($any($event.target).value)"
+        (focus)="openElementInput.next($any($event.target).value)"
+      />
+    </div>
+    <div class="mb-3 col-md">
+      <label
+        class="form-label"
+        for="situational-factor-factor-value-{{ index }}"
+        >Value</label
+      >
+      <div class="input-group">
+        <select
+          class="form-select"
+          formControlName="value"
+          id="situational-factor-factor-value-{{ index }}"
+        >
+          <option *ngFor="let value of values" [ngValue]="value">
+            {{ value }}
+          </option>
+        </select>
+        <button (click)="remove.emit()" class="btn btn-secondary" type="button">
+          Remove
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>

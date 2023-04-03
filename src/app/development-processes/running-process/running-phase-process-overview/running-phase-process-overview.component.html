@@ -1,0 +1,53 @@
+<main *ngIf="runningProcess != null" role="main" class="container">
+  <div id="running-phase-process-overview-element-overview" class="my-3">
+    <app-element-overview
+      [editLink]="['..', 'general']"
+      fragment="block"
+      [item]="runningProcess"
+    ></app-element-overview>
+  </div>
+
+  <div class="my-3" *ngIf="runningProcess.completed">
+    <div class="sbmd-panel">
+      <h6 class="sbmd-panel-title">Conclusion of completed method</h6>
+      <p *ngIf="runningProcess.conclusion != null" class="mb-0">
+        <span class="sbmd-show-new-lines">{{ runningProcess.conclusion }}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="my-3">
+    <div class="sbmd-panel">
+      <div class="d-flex align-items-start">
+        <h6 class="sbmd-panel-small-title">Execution Overview</h6>
+        <div class="ms-auto">
+          <a
+            id="running-phase-process-overview-execution-overview-edit"
+            class="btn btn-sm btn-primary rounded-circle mb-1"
+            [routerLink]="['..', 'execution']"
+          >
+            <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+          </a>
+        </div>
+      </div>
+      <app-running-process-kanban-board
+        [editable]="false"
+        [runningProcess]="runningProcess"
+      ></app-running-process-kanban-board>
+    </div>
+  </div>
+
+  <div class="my-3 row">
+    <div class="col-md-6">
+      <app-running-process-overview-artifacts
+        [artifacts]="runningProcess.artifacts"
+      ></app-running-process-overview-artifacts>
+    </div>
+    <div class="col-md-6">
+      <app-context-overview
+        [domains]="runningProcess.domains"
+        [situationalFactors]="runningProcess.situationalFactors"
+      ></app-context-overview>
+    </div>
+  </div>
+</main>

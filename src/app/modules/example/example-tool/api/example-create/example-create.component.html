@@ -1,5 +1,3 @@
-<app-api-navigation apiName="Create Example"></app-api-navigation>
-
 <app-step-errors *ngIf="!isManually()"></app-step-errors>
 
 <main
@@ -7,11 +5,11 @@
   role="main"
   class="container"
 >
-  <div class="my-3 p-3 bg-white rounded shadow-sm">
-    <h6 class="border-bottom border-gray pb-2 mb-0">Create Example</h6>
-    <div class="text-muted pt-3">
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Create Example</h6>
+    <div class="sbmd-form-wrapper">
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="form-group row">
+        <div class="mb-3 row">
           <label for="name" class="col-sm-4 col-form-label">Name</label>
           <div class="col-sm-8">
             <input
@@ -23,7 +21,7 @@
             />
           </div>
         </div>
-        <div class="form-group row">
+        <div class="mb-3 row">
           <label for="name" class="col-sm-4 col-form-label">Description</label>
           <div class="col-sm-8">
             <input
@@ -35,16 +33,14 @@
             />
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-12">
-            <button
-              type="submit"
-              class="btn btn-sm btn-dark btn-block"
-              [disabled]="!form.valid"
-            >
-              Create Example
-            </button>
-          </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-primary"
+            [disabled]="!form.valid"
+          >
+            Create Example
+          </button>
         </div>
       </form>
     </div>

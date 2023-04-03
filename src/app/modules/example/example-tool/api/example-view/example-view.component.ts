@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProcessApiService } from '../../../../../development-process-registry/module-api/process-api.service';
 import { ExampleLoaderService } from '../../shared/example-loader.service';
 import { ExampleToolResolveService } from '../../example-tool-resolve.service';
-import { Example } from '../../../example-artifact/example';
+import { Example } from '../../../example-meta-artifact/example';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({

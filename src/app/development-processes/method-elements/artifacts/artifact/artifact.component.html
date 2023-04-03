@@ -1,0 +1,52 @@
+<div *ngIf="artifact == null" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<main class="container" *ngIf="artifact != null">
+  <div class="my-3">
+    <app-element-overview [item]="artifact"></app-element-overview>
+  </div>
+
+  <div class="my-3 sbmd-info-block">
+    Update the Artifact and define its values.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="border-bottom border-gray pb-2">Artifact</h6>
+    <div class="text-muted">
+      <app-method-element-form
+        [methodElement]="artifact"
+        [listNames]="listNames"
+        (submitMethodElementForm)="updateValue($event.value)"
+      ></app-method-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="artifact.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="border-bottom border-gray pb-2">Definition</h6>
+    <div class="text-muted">
+      <app-artifact-definition-form
+        [artifact]="artifact"
+        (submitArtifactForm)="updateValue($event.value)"
+      ></app-artifact-definition-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

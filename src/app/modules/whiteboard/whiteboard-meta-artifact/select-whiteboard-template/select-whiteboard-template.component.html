@@ -1,0 +1,34 @@
+<ng-container [formGroup]="formGroup">
+  <div class="mb-3 row">
+    <label for="templateSelector" class="col-sm-4 col-form-label"
+      >Whiteboard Template</label
+    >
+    <div class="col-sm-8">
+      <div class="input-group">
+        <select
+          id="templateSelector"
+          formControlName="templateId"
+          class="form-select"
+          [class.is-invalid]="
+            templateControl.invalid && templateControl.touched
+          "
+        >
+          <option
+            *ngFor="let template of whiteboardTemplates"
+            [ngValue]="template._id"
+          >
+            {{ template.name }}
+          </option>
+        </select>
+        <div *ngIf="whiteboardTemplates == null" class="input-group-text">
+          <div
+            class="spinner-border spinner-border-sm text-primary"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

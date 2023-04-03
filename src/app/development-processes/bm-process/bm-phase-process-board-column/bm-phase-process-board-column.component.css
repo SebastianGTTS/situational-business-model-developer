@@ -1,0 +1,8 @@
+.border-2 {
+  border-width: 2px;
+}
+
+.enaction-number {
+  right: 0;
+  border-width: 2px !important;
+}

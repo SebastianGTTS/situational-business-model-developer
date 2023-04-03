@@ -1,0 +1,89 @@
+<div class="modal-header">
+  <h4 class="modal-title">Fake execute development step</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="alert alert-info">
+    Select the output artifacts of this development step. You can only select
+    artifacts that are added manually or imported.
+  </div>
+  <form
+    [formGroup]="form"
+    *ngIf="
+      methodDecision.outputArtifacts.elementDecisions != null &&
+      methodDecision.outputArtifacts.elementDecisions.length > 0
+    "
+    (ngSubmit)="submitForm()"
+  >
+    <div formArrayName="outputArtifacts">
+      <div
+        class="my-3 sbmd-panel"
+        *ngFor="let elementOptional of outputArtifacts; let index = index"
+        formGroupName="{{ index }}"
+      >
+        <h6 class="sbmd-panel-title">
+          Artifact Type:
+          {{
+            elementOptional.element.name | optional: elementOptional.optional
+          }}
+          ({{ elementOptional.element.list | list }})
+        </h6>
+        <div class="row">
+          <div class="mb-3 col">
+            <label for="artifact">Artifact</label>
+            <select
+              class="form-select"
+              id="artifact"
+              formControlName="artifact"
+            >
+              <option *ngIf="elementOptional.optional" [ngValue]="null">
+                None
+              </option>
+              <ng-container *ngFor="let a of artifacts; let index = index">
+                <option
+                  *ngIf="a.artifact._id === elementOptional.element._id"
+                  [ngValue]="index"
+                >
+                  {{ a.name }}
+                </option>
+              </ng-container>
+            </select>
+          </div>
+          <div class="mb-3 col">
+            <label for="artifact">Version</label>
+            <select class="form-select" id="version" formControlName="version">
+              <option></option>
+              <ng-container *ngIf="getArtifactIndex(index) != null">
+                <ng-container
+                  *ngFor="
+                    let version of getArtifact(index).versions;
+                    let versionIndex = index
+                  "
+                >
+                  <option
+                    *ngIf="version.executedBy == null"
+                    [ngValue]="versionIndex"
+                  >
+                    Version #{{
+                      getArtifact(index).getVersionNumber(version) + 1
+                    }}
+                  </option>
+                </ng-container>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
+        Add fake execution
+      </button>
+    </div>
+  </form>
+</div>

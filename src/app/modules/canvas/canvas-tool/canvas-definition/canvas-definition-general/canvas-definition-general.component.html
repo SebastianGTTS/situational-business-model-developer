@@ -1,0 +1,27 @@
+<main *ngIf="canvasDefinition != null" role="main" class="container">
+  <div id="block" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Canvas Definition</h6>
+    <div class="sbmd-form-wrapper">
+      <app-element-form
+        [element]="canvasDefinition"
+        (submitElementForm)="updateCanvasDefinition($event.value)"
+      ></app-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="canvasDefinition.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

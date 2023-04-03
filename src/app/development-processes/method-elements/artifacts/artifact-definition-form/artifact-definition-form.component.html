@@ -1,0 +1,64 @@
+<form [formGroup]="definitionForm" (ngSubmit)="submitForm()">
+  <div class="mb-3">
+    <div
+      class="btn-group"
+      role="group"
+      aria-label="Internal or external artifact"
+    >
+      <input
+        type="radio"
+        class="btn-check"
+        id="internal-option"
+        autocomplete="off"
+        [value]="true"
+        formControlName="internalArtifact"
+      />
+      <label class="btn btn-outline-primary" for="internal-option"
+        >Internal Artifact</label
+      >
+      <input
+        type="radio"
+        class="btn-check"
+        id="external-option"
+        autocomplete="off"
+        [value]="false"
+        formControlName="internalArtifact"
+      />
+      <label class="btn btn-outline-primary" for="external-option"
+        >External Artifact</label
+      >
+    </div>
+  </div>
+  <div *ngIf="definitionForm.get('internalArtifact')?.value" class="row mb-3">
+    <label for="metaArtifact" class="col-sm-4 col-form-label"
+      >Meta Artifact</label
+    >
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="metaArtifact"
+        class="form-control"
+        [class.is-invalid]="metaArtifactControl.invalid"
+        id="metaArtifact"
+        [ngbTypeahead]="searchMetaArtifact"
+        [editable]="false"
+        [resultFormatter]="formatter"
+        [inputFormatter]="formatter"
+        (click)="openMetaArtifactInput.next($any($event.target).value)"
+        (focus)="openMetaArtifactInput.next($any($event.target).value)"
+      />
+    </div>
+  </div>
+  <ng-template appConfigurationFormPlaceholder></ng-template>
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!definitionForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

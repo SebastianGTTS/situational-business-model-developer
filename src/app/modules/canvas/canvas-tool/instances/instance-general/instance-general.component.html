@@ -1,0 +1,28 @@
+<main *ngIf="instance != null" role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">{{ instanceTypeName }}</h6>
+
+    <div class="sbmd-form-wrapper">
+      <app-element-form
+        [element]="instance"
+        (submitElementForm)="updateInstance($event)"
+      ></app-element-form>
+    </div>
+  </div>
+
+  <div id="icon" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Icon</h6>
+    <div class="sbmd-form-wrapper">
+      <app-icon-form
+        [icon]="instance.icon"
+        (submitIconForm)="updateIcon($event)"
+      ></app-icon-form>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

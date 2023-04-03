@@ -1,0 +1,31 @@
+<table class="table mb-0">
+  <tbody>
+    <tr>
+      <th scope="col">List</th>
+      <th scope="col">Situational Factor</th>
+      <th scope="col">Needed Context</th>
+      <th scope="col">Provided by Element</th>
+      <th scope="col" class="text-center">Fulfilled</th>
+    </tr>
+    <tr *ngFor="let factor of factors">
+      <td class="align-middle">{{ factor.list }}</td>
+      <td class="align-middle">{{ factor.name }}</td>
+      <td class="align-middle">{{ factor.needed }}</td>
+      <td class="align-middle">{{ factor.provided }}</td>
+      <td class="text-center">
+        <ng-container *ngIf="factor.fulfills === undefined">
+          <i class="bi bi bi-question-square-fill text-muted sbmd-icon-lg"></i>
+          <span class="visually-hidden">Factor not specified by element</span>
+        </ng-container>
+        <ng-container *ngIf="factor.fulfills === false">
+          <i class="bi bi-x-square-fill text-danger sbmd-icon-lg"></i>
+          <span class="visually-hidden">Factor unfulfilled</span>
+        </ng-container>
+        <ng-container *ngIf="factor.fulfills === true">
+          <i class="bi bi-check-square-fill text-success sbmd-icon-lg"></i>
+          <span class="visually-hidden">Factor fulfilled</span>
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>

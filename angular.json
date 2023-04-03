@@ -5,7 +5,11 @@
   "projects": {
     "bmdl-modeler": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -20,16 +24,17 @@
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "node_modules/bpmn-js/dist/assets/diagram-js.css",
               "node_modules/bpmn-js/dist/assets/bpmn-font/css/bpmn.css",
               "bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.bubble.css",
               "node_modules/quill/dist/quill.snow.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": [],
+            "baseHref": "/situational-business-model-developer/",
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -40,7 +45,15 @@
               "ajv",
               "bpmnlint",
               "fabric",
-              "immediate"
+              "immediate",
+              "css.escape",
+              "quill",
+              "argsarray",
+              "inherits",
+              "spark-md5",
+              "vuvuzela",
+              "file-saver",
+              "path-intersection"
             ]
           },
           "configurations": {
@@ -61,8 +74,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -130,7 +142,8 @@
         },
         "deploy": {
           "builder": "angular-cli-ghpages:deploy",
-          "options": {}
+          "options": {
+          }
         },
         "cypress-run": {
           "builder": "@cypress/schematic:cypress",
@@ -153,8 +166,7 @@
       }
     }
   },
-  "defaultProject": "bmdl-modeler",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": ["@angular-eslint/schematics"]
   }
 }

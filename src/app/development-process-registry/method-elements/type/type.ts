@@ -3,6 +3,7 @@ import {
   MethodElementEntry,
   MethodElementInit,
 } from '../method-element';
+import { IconInit } from '../../../model/icon';
 
 export type TypeInit = MethodElementInit;
 
@@ -10,6 +11,7 @@ export type TypeEntry = MethodElementEntry;
 
 export class Type extends MethodElement {
   static readonly typeName = 'Type';
+  static readonly defaultIcon: IconInit = { icon: 'bi-collection' };
 
   static validTypes(
     types: { list: string; element?: Type | TypeEntry }[],
@@ -38,6 +40,9 @@ export class Type extends MethodElement {
   }
 
   constructor(entry: TypeEntry | undefined, init: TypeInit | undefined) {
+    if (init != null && init.icon == null) {
+      init.icon = Type.defaultIcon;
+    }
     super(entry, init, Type.typeName);
   }
 

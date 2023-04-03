@@ -8,13 +8,13 @@ There are two types of modules that can extend the SBMD. These are:
 - Tool Modules: Tool modules allow to add execution steps to the SBMD that
   can be added to Method Building Blocks and are executed in the
   enaction of a Development Method.
-- Artifact Modules: Artifact modules are used to add new metamodel
-  definitions to the SBMD. Metamodel definitions can be used to define the underling
-  metamodel of artifacts.
+- Meta Artifact Modules: Meta Artifact modules are used to add new meta artifact
+  definitions to the SBMD. Meta artifact definitions can be used to define the underling
+  meta artifact of artifacts, i.e., the underlying structure of the data stored in them.
 
 **Why this separation?** This separation allows different tool modules to
-share metamodel definitions, e.g., there could be a tool model that
-converts between different metamodels to increase the interoperability.
+share meta artifact definitions, e.g., there could be a tool model that
+converts between different meta artifacts to increase the interoperability.
 
 ## Current Modules
 
@@ -24,31 +24,38 @@ Currently, there are three modules:
 - HypoMoMap
 - Whiteboard
 
-Each of these three has a tool module and an artifact module defined.
+Each of these three has a tool module and a meta artifact module defined.
 
 ## How to add a new Module
 
-### Artifact Module
+### Prerequisites
+
+Before you can use any of our schematics, you must build them.
+To do this, go to the folder `module-schematics` and run `npm install`
+and then `npm build`. After that, you can run our schematics from
+the root of the repository.
+
+### Meta Artifact Module
 
 Run the following command
 
 ```
-ng generate ./module-schematics:artifact-module
+ng generate ./module-schematics:meta-artifact-module
 ```
 
-Additionally, add the artifact module (`*ArtifactModule`) in the `imports` section
+Additionally, add the meta artifact module (`*MetaArtifactModule`) in the `imports` section
 of `app.module.ts`. The star (`*`) stands for your chosen module name.
 
-The command already creates a basic artifact module with a single
-definition. You need to adapt the names in `*-artifact.service.ts`.
-Furthermore, you need to implement the methods in `*-artifact-api.service.ts` to
-describe how to copy and remove artifacts, and how to get a default name
-for artifacts. Currently, all modules are using the default database to store their
-artifacts, you can look into the example artifact module for an easy example.
+The command already creates a basic meta artifact module with a single
+definition. You need to adapt the names in `*-meta-artifact.service.ts`.
+Furthermore, you need to implement the methods in `*-meta-artifact-api.service.ts` to
+describe how to copy and remove meta artifacts, and how to get a default name
+for meta artifacts. Currently, all modules are using the default database to store their
+meta artifacts, you can look into the example meta artifact module for an easy example.
 
 The command also created some `register`-methods. These can be used by tool modules
-to register themselves as methods to create, edit, and view artifacts. It is up to you
-whether you want to implement these methods directly inside the artifact module or via registration
+to register themselves as methods to create, edit, and view meta artifacts. It is up to you
+whether you want to implement these methods directly inside the meta artifact module or via registration
 in a tool module. Currently, only the latter option is used.
 
 ### Tool Module

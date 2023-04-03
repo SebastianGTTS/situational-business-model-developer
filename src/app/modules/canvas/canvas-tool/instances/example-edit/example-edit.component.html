@@ -1,0 +1,125 @@
+<main
+  *ngIf="expertModel != null && instance != null"
+  role="main"
+  class="container"
+>
+  <app-instance
+    [featureModel]="expertModel"
+    [instance]="instance"
+    [conformance]="conformance"
+    [conformanceIsChecked]="conformanceIsChecked"
+    [conformanceOptions]="conformanceOptionsForm.getRawValue()"
+    [compareInstance]="compareInstance"
+    [percentages]="percentages"
+    [patternInstance]="patternInstance"
+    [editable]="true"
+    (addDecision)="addDecision($event)"
+    (addFeature)="addFeature($event.parentId, $event.feature)"
+    (removeDecision)="removeDecision($event)"
+  ></app-instance>
+
+  <div class="my-3">
+    <app-instance-hints
+      [conformanceIsChecked]="conformanceIsChecked"
+      [conformanceOptionsForm]="conformanceOptionsForm"
+      [conformance]="conformance"
+      (checkConformance)="checkConformance()"
+      (uncheckConformance)="uncheckConformance()"
+    ></app-instance-hints>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Compare</h6>
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="selectOtherInstanceForm" (ngSubmit)="compare()">
+        <div class="mb-3 row">
+          <label for="instance" class="col-sm-4 col-form-label"
+            >Business Model</label
+          >
+          <div class="col-sm-8">
+            <select
+              id="instance"
+              formControlName="instance"
+              class="form-select"
+            >
+              <ng-container *ngFor="let example of expertModel.getExamples()">
+                <option *ngIf="example.id !== instance.id" [ngValue]="example">
+                  {{ example.name }}
+                </option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+        <div class="d-grid">
+          <button
+            *ngIf="compareInstance == null"
+            type="submit"
+            class="btn btn-sm btn-dark"
+            [disabled]="!selectOtherInstanceForm.valid"
+          >
+            Compare
+          </button>
+          <button
+            *ngIf="compareInstance != null"
+            type="button"
+            class="btn btn-sm btn-dark"
+            (click)="clearCompare()"
+          >
+            Clear Compare
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Show pattern</h6>
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="selectPatternForm" (ngSubmit)="showPattern()">
+        <div class="mb-3 row">
+          <label for="pattern" class="col-sm-4 col-form-label">Pattern</label>
+          <div class="col-sm-8">
+            <select id="pattern" formControlName="pattern" class="form-select">
+              <ng-container *ngFor="let instance of expertModel.getPatterns()">
+                <option [ngValue]="instance">
+                  {{ instance.name }}
+                </option>
+              </ng-container>
+            </select>
+          </div>
+        </div>
+        <div
+          *ngIf="
+            (selectPatternForm.valid || patternInstance != null) &&
+            selectedPattern != null &&
+            selectedPattern.description
+          "
+          class="mb-3 row"
+        >
+          <label class="col-sm-4 col-form-label">Description</label>
+          <div class="col-sm-8">
+            {{ selectedPattern.description }}
+          </div>
+        </div>
+        <div class="d-grid">
+          <button
+            *ngIf="patternInstance == null"
+            type="submit"
+            class="btn btn-sm btn-dark"
+            [disabled]="!selectPatternForm.valid"
+          >
+            Show
+          </button>
+          <button
+            *ngIf="patternInstance != null"
+            type="button"
+            class="btn btn-sm btn-dark"
+            (click)="clearPattern()"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

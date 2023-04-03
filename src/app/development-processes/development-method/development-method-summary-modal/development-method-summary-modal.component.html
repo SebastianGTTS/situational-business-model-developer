@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h4 class="modal-title" *ngIf="name == null && methodDecision != null">
+    Building Block Info of {{ methodDecision.method.name }}
+  </h4>
+  <h4 class="modal-title" *ngIf="name != null">
+    Overview of Activity {{ name }}
+  </h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+<div class="modal-body">
+  <app-development-method-summary
+    *ngIf="methodDecision != null"
+    [decision]="methodDecision"
+  ></app-development-method-summary>
+</div>

@@ -1,0 +1,25 @@
+<form [formGroup]="phasesForm" (ngSubmit)="submitForm()">
+  <app-phase-selection-form
+    *ngFor="let phaseControl of phasesControl.controls; let index = index"
+    [formGroup]="$any(phaseControl)"
+    [phases]="allPhases"
+    (remove)="remove(index)"
+  >
+  </app-phase-selection-form>
+  <div class="mb-3 d-flex">
+    <button (click)="add()" type="button" class="btn btn-secondary ms-auto">
+      Add Phase
+    </button>
+  </div>
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!phasesForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

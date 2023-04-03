@@ -1,0 +1,37 @@
+import { Injectable } from '@angular/core';
+import { MetaArtifactService } from '../../../development-process-registry/meta-artifact.service';
+import {
+  MetaArtifactApi,
+  MetaArtifactDefinition,
+} from '../../../development-process-registry/meta-artifact-definition';
+import { <%= classify(name) %>MetaArtifactApiService } from './<%= dasherize(name) %>-meta-artifact-api.service';
+
+@Injectable()
+export class <%= classify(name) %>MetaArtifactService {
+  constructor(
+    private <%= camelize(name) %>MetaArtifactApiService: <%= classify(name) %>MetaArtifactApiService,
+    private metaArtifactService: MetaArtifactService
+  ) {}
+
+  init(): void {
+    const definition: MetaArtifactDefinition = {
+      name: '<ADD NAME HERE>', // TODO add meta artifact name
+      type: '<ADD TYPE NAME>', // TODO add type name
+      api: this.<%= camelize(name) %>MetaArtifactApiService,
+    };
+    this.metaArtifactService.registerMetaArtifact(definition);
+    console.log('Registered ' + definition.name + ' Meta Artifact');
+  }
+
+  registerCreateMethod(create: MetaArtifactApi['create']): void {
+    this.<%= camelize(name) %>MetaArtifactApiService.createMethod = create;
+  }
+
+  registerEditMethod(edit: MetaArtifactApi['edit']): void {
+    this.<%= camelize(name) %>MetaArtifactApiService.editMethod = edit;
+  }
+
+  registerViewMethod(view: MetaArtifactApi['view']): void {
+    this.<%= camelize(name) %>MetaArtifactApiService.viewMethod = view;
+  }
+}

@@ -15,12 +15,14 @@ import {
   DatabaseRootEntry,
   DatabaseRootInit,
 } from '../../database/database-entry';
+import { Icon, IconEntry, IconInit } from '../../model/icon';
 
 export type PatternDiagram = string;
 
 export interface ProcessPatternInit extends DatabaseRootInit {
   name: string;
   description?: string;
+  icon?: IconInit;
   author?: AuthorInit;
 
   pattern: PatternDiagram;
@@ -32,6 +34,7 @@ export interface ProcessPatternInit extends DatabaseRootInit {
 export interface ProcessPatternEntry extends DatabaseRootEntry {
   name: string;
   description: string;
+  icon: IconEntry;
   author: AuthorEntry;
 
   pattern: PatternDiagram;
@@ -45,9 +48,11 @@ export class ProcessPattern
   implements ProcessPatternInit
 {
   static readonly typeName = 'ProcessPattern';
+  static readonly defaultIcon: IconInit = { icon: 'bi-diagram-2' };
 
   name: string;
   description = '';
+  icon: Icon;
   author: Author;
 
   pattern: PatternDiagram;
@@ -63,6 +68,7 @@ export class ProcessPattern
     let element;
     if (entry != null) {
       element = entry;
+      this.icon = new Icon(entry.icon ?? {}, undefined);
       this.author = new Author(entry.author, undefined);
       this.types =
         entry.types?.map(
@@ -79,6 +85,7 @@ export class ProcessPattern
         ) ?? this.situationalFactors;
     } else if (init != null) {
       element = init;
+      this.icon = new Icon(undefined, init.icon ?? ProcessPattern.defaultIcon);
       this.author = new Author(undefined, init.author ?? {});
       this.types =
         init.types?.map(
@@ -117,11 +124,16 @@ export class ProcessPattern
     );
   }
 
+  updateIcon(icon: IconInit): void {
+    this.icon.update(icon);
+  }
+
   toDb(): ProcessPatternEntry {
     return {
       ...super.toDb(),
       name: this.name,
       description: this.description,
+      icon: this.icon.toDb(),
       author: this.author.toDb(),
       pattern: this.pattern,
       types: this.types.map((selection) => selection.toDb()),

@@ -1,0 +1,104 @@
+<ng-template #manageTypesModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalTask != null">
+      Manage types of activity {{ modalTask.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <div class="sbmd-form-wrapper">
+      <app-process-pattern-types-form
+        *ngIf="modalTask != null"
+        [types]="modalTask"
+        (submitTypesForm)="updateTypes($event)"
+      ></app-process-pattern-types-form>
+    </div>
+  </div>
+</ng-template>
+
+<div
+  id="process-pattern-diagram-canvas"
+  #canvas
+  class="border bg-white"
+  style="height: 500px"
+></div>
+<div class="container">
+  <div class="sbmd-panel">
+    <div class="row">
+      <div class="col-4"><strong>Legend:</strong></div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="bpmn-icon-end-event-none bpmn-legend-icon"></i> Create/Append
+        EndEvent
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-gateway-none bpmn-legend-icon"></i> Create/Append
+        Gateway
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-task bpmn-legend-icon"></i> Create/Append Task
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="bpmn-icon-screw-wrench bpmn-legend-icon"></i> Change type of
+        BPMN element
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-trash bpmn-legend-icon"></i> Remove
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-service bpmn-legend-icon"></i> Manage Types of task
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="bpmn-icon-connection-multi bpmn-legend-icon"></i> Add
+        Connection
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-text-annotation bpmn-legend-icon"></i> Add
+        Annotation
+      </div>
+      <div class="col-4"></div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="bpmn-icon-hand-tool bpmn-legend-icon"></i> Hand Tool to move
+        the diagram
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-lasso-tool bpmn-legend-icon"></i> Lasso Tool to
+        select multiple elements
+      </div>
+      <div class="col-4">
+        <i class="bpmn-icon-space-tool bpmn-legend-icon"></i> Space Tool to
+        create/remove space between elements
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Controls</h6>
+    <button
+      id="process-pattern-diagram-toggle-linter"
+      class="btn btn-primary me-1"
+      (click)="toggleLinter()"
+    >
+      Toggle Linter
+    </button>
+    <button
+      id="process-pattern-diagram-save"
+      class="btn btn-primary"
+      (click)="saveDiagram()"
+    >
+      Save Diagram
+    </button>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="runningMethod != null && isCorrectStep()"
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Create Whiteboard</h6>
+    <div class="sbmd-form-wrapper">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="mb-3 row">
+          <label for="name" class="col-sm-4 col-form-label">Name</label>
+          <div class="col-sm-8">
+            <div class="input-group">
+              <input
+                type="text"
+                formControlName="name"
+                class="form-control"
+                [class.is-invalid]="nameControl.invalid"
+                id="name"
+              />
+              <button
+                class="btn btn-outline-primary"
+                type="button"
+                (click)="setDefaultName()"
+              >
+                Set default name
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            class="btn btn-sm btn-primary"
+            [disabled]="!form.valid && whiteboardTemplate != null"
+          >
+            Create Whiteboard
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="whiteboardTemplate != null" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Preview {{ whiteboardTemplate.name }}</h6>
+    <app-whiteboard-canvas-view
+      [whiteboardCanvas]="whiteboardTemplate.whiteboard"
+    ></app-whiteboard-canvas-view>
+  </div>
+</main>

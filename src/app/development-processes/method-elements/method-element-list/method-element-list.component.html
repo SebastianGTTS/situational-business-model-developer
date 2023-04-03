@@ -1,0 +1,106 @@
+<ng-template #deleteItemModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalItem != null"
+    (dismiss)="d()"
+    (delete)="delete(modalItem); c()"
+  >
+    <div modalTitle>Delete {{ elementName }} {{ modalItem.name }}</div>
+    <ng-content select="[deleteMessage]"></ng-content>
+  </app-delete-modal>
+</ng-template>
+
+<div class="my-3 sbmd-panel">
+  <div class="d-flex border-bottom mb-2">
+    <h6 class="pb-2 mb-0">{{ elementNamePlural }}</h6>
+    <div
+      *ngIf="!loading && reloading"
+      class="spinner-border spinner-border-sm ms-auto"
+      role="status"
+    >
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div *ngIf="loading">
+    <div class="d-flex justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!loading">
+    <div *ngIf="noResults">No {{ elementNamePlural }} defined.</div>
+    <div *ngIf="!noResults">
+      <div class="d-flex">
+        <form class="mb-3" [formGroup]="searchForm">
+          <label class="visually-hidden" for="search">Search</label>
+          <input
+            formControlName="search"
+            type="text"
+            class="form-control"
+            id="search"
+            placeholder="Search"
+          />
+        </form>
+        <ngb-pagination
+          class="ms-auto"
+          [collectionSize]="size"
+          [(page)]="page"
+          [pageSize]="pageSize"
+          aria-label="List pagination"
+        ></ngb-pagination>
+        <form class="ms-3 mb-3 d-flex" [formGroup]="pageSizeForm">
+          <label for="pageSizeSelection" class="col-form-label me-1 text-nowrap"
+            >Page Size</label
+          >
+          <select
+            id="pageSizeSelection"
+            formControlName="pageSize"
+            class="form-select"
+          >
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="30">30</option>
+          </select>
+        </form>
+      </div>
+      <div *ngIf="filtering">
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!filtering && filteredItems.length === 0">
+        No {{ elementNamePlural }} found<span *ngIf="searchValue !== ''">
+          for search: {{ searchValue }}</span
+        ><span *ngIf="searchValue === ''"> for current filter settings</span>.
+      </div>
+      <ul *ngIf="!filtering && filteredItems.length > 0" class="list-group">
+        <ng-container
+          *ngFor="
+            let item of filteredItems
+              | slice: (page - 1) * pageSize:page * pageSize;
+            let paginatedList = ngForOf;
+            let index = index;
+            let first = first;
+            trackBy: trackBy
+          "
+        >
+          <li
+            *ngIf="first || paginatedList[index - 1].list !== item.list"
+            class="list-group-item"
+          >
+            <h6 class="mb-0">{{ item.list }}</h6>
+          </li>
+          <li class="list-group-item">
+            <app-list-item
+              [item]="item"
+              [viewLink]="viewLinkFunction(item)"
+              (delete)="openDeleteItemModal(item)"
+            ></app-list-item>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</div>

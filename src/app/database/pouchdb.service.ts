@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import PouchDB from 'pouchdb-browser';
 import PouchDBFind from 'pouchdb-find';
 import { DatabaseModel } from './database-model';
@@ -26,13 +26,25 @@ interface CouchDBFindResponse {
 
 // noinspection JSVoidFunctionReturnValueUsed
 @Injectable()
-export class PouchdbService {
+export class PouchdbService implements OnDestroy {
   private db?: PouchDB.Database<DatabaseRootEntry>;
   private expired?: () => Promise<void>;
   private error?: () => Promise<void>;
 
+  private readonly dbChange: Subject<boolean> = new Subject<boolean>();
+  readonly dbChangeObserver: Observable<boolean> = this.dbChange.asObservable();
+
+  private readonly dbDataReset: Subject<boolean> = new Subject<boolean>();
+  readonly dbDataResetObserver: Observable<boolean> =
+    this.dbDataReset.asObservable();
+
   constructor(private zone: NgZone) {
     PouchDB.plugin(PouchDBFind);
+  }
+
+  ngOnDestroy(): void {
+    this.dbChange.complete();
+    this.dbDataReset.complete();
   }
 
   init(
@@ -46,6 +58,7 @@ export class PouchdbService {
     this.db = this.getDatabase(name);
     this.expired = expired;
     this.error = error;
+    this.dbChange.next(true);
   }
 
   /**
@@ -56,6 +69,7 @@ export class PouchdbService {
     this.db = undefined;
     this.expired = undefined;
     this.error = undefined;
+    this.dbChange.next(false);
   }
 
   /**
@@ -212,12 +226,14 @@ export class PouchdbService {
     } catch (error) {
       return this.handleError(error);
     }
+    this.dbDataReset.next(false);
   }
 
   /**
    * Clear all documents from the database
    */
   async clearDatabase(): Promise<void> {
+    this.dbDataReset.next(true);
     try {
       const allDocs = await this.getDb().allDocs();
       const toBeDeleted = allDocs.rows.map((row) => {
@@ -253,6 +269,7 @@ export class PouchdbService {
     } catch (error) {
       await this.handleError(error);
     }
+    this.dbDataReset.next(false);
   }
 
   private async _find<T extends DatabaseRootEntry>(

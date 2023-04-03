@@ -1,0 +1,37 @@
+<ng-template
+  #defaultMethodElementSelectionForm
+  let-formGroup="formGroup"
+  let-index="index"
+>
+  <app-method-element-selection-form
+    [formGroup]="formGroup"
+    [listNames]="listNames"
+    [methodElements]="methodElements"
+    [methodElementName]="methodElementName"
+    [multipleAllowed]="multipleAllowed"
+    (remove)="remove(index)"
+  ></app-method-element-selection-form>
+</ng-template>
+
+<div class="mb-3">
+  <div *ngFor="let control of formArray.controls; let index = index">
+    <ng-container
+      *ngTemplateOutlet="
+        methodElementFormTemplate
+          ? methodElementFormTemplate
+          : defaultMethodElementSelectionForm;
+        context: getTemplateContext($any(control), index)
+      "
+    ></ng-container>
+  </div>
+</div>
+<div class="mb-3 d-flex">
+  <button
+    [id]="idPrefix ? idPrefix + '-add' : ''"
+    (click)="add()"
+    type="button"
+    class="btn btn-secondary ms-auto"
+  >
+    Add {{ methodElementName }}
+  </button>
+</div>

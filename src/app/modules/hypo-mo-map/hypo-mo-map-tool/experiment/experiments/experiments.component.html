@@ -1,0 +1,24 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block" role="alert">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Experiments</h1>
+    The Experiments are models that are used within the instances of the
+    HypoMoMap Module
+  </div>
+  <app-list-panel
+    elementName="Experiment"
+    elementNamePlural="Experiments"
+    [viewLinkFunction]="viewLinkFunction"
+    [mapFunction]="mapFunction"
+  >
+    <div deleteMessage>
+      You are deleting an experiment. This cannot be undone. This action will
+      not delete the experiment from HypoMoMaps that are using it.
+    </div>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Experiment"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+</main>

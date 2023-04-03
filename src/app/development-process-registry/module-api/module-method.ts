@@ -1,8 +1,8 @@
 import { Type } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { ConfigurationFormComponent } from './configuration-form-component';
 import { DecisionConfigurationFormComponent } from './decision-configuration-form-component';
-import { MetaModelIdentifier } from '../meta-model-definition';
+import { MetaArtifactIdentifier } from '../meta-artifact-definition';
 import { DatabaseEntry } from '../../database/database-entry';
 import { ArtifactMapping } from '../development-method/artifact-mapping';
 import { DevelopmentMethod } from '../development-method/development-method';
@@ -25,12 +25,12 @@ export interface ModuleMethod {
   /**
    * The input artifacts of this method.
    */
-  readonly input: Readonly<MetaModelIdentifier>[];
+  readonly input: Readonly<MetaArtifactIdentifier>[];
 
   /**
    * The output artifacts of this method.
    */
-  readonly output: Readonly<MetaModelIdentifier>[];
+  readonly output: Readonly<MetaArtifactIdentifier>[];
 
   /**
    * Optional configuration component that is displayed when the execution
@@ -53,7 +53,7 @@ export interface ModuleMethod {
    */
   createConfigurationForm?(
     predefinedInput: PredefinedInput | undefined
-  ): FormGroup;
+  ): UntypedFormGroup;
 
   /**
    * Checks whether two predefined inputs are the same
@@ -75,7 +75,7 @@ export interface ModuleMethod {
    */
   createDecisionConfigurationForm?(
     stepDecision: StepDecision | undefined
-  ): FormGroup;
+  ): UntypedFormGroup;
 
   /**
    * Checks whether two step decisions are the same
@@ -95,12 +95,12 @@ export interface ModuleMethod {
    *
    * Many constraints are already checked by the framework, e.g., every
    * input of the method will have an input at execution time, the input
-   * matches the metamodel type, the output mappings match the metamodel types
+   * matches the meta artifact type, the output mappings match the meta artifact types
    * where they are mapped to, the predefined input is correctly defined
    * according to the provided form, the module is defined in tools.
    *
    * The main reason for this method is to check whether the predefinedInput
-   * and the resulting mappings fit together to potential metamodel data of
+   * and the resulting mappings fit together to potential meta artifact data of
    * output artifacts.
    *
    * @param developmentMethod

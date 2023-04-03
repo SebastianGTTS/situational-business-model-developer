@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { PouchdbService } from '../../database/pouchdb.service';
 import {
-  FullRunningProcess,
   RunningProcess,
   RunningProcessEntry,
   RunningProcessInit,
 } from './running-process';
-import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import { ArtifactData, ArtifactDataType } from './artifact-data';
-import { ProcessExecutionService } from './process-execution.service';
 import { MethodExecutionService } from './method-execution.service';
 import { MethodExecutionOutput } from '../module-api/method-execution-output';
 import { StepInfo } from '../module-api/step-info';
@@ -21,144 +18,88 @@ import {
   MethodDecision,
   MethodDecisionUpdate,
 } from '../bm-process/method-decision';
-import { EntryType } from '../../database/database-model-part';
-import { BpmnFlowNode } from 'bpmn-js';
-import { DbId } from '../../database/database-entry';
+import {
+  DatabaseConstructor,
+  EntryType,
+} from '../../database/database-model-part';
+import { DatabaseRevision, DbId } from '../../database/database-entry';
 import { Artifact } from '../method-elements/artifact/artifact';
-import { ProcessReference } from '../meta-model-definition';
+import { ProcessReference } from '../meta-artifact-definition';
 import { Router } from '@angular/router';
 import { ArtifactService } from '../method-elements/artifact/artifact.service';
 import { ArtifactVersion, ArtifactVersionId } from './artifact-version';
-import { Domain } from '../knowledge/domain';
-import { Selection, SelectionInit } from '../development-method/selection';
+import { DevelopmentProcessRegistryModule } from '../development-process-registry.module';
 import {
-  SituationalFactor,
-  SituationalFactorInit,
-} from '../method-elements/situational-factor/situational-factor';
-import { ContextChangeInfo } from './context-change-info';
+  isRunningPatternProcessEntry,
+  RunningPatternProcess,
+} from './running-pattern-process';
+import {
+  isRunningPhaseProcessEntry,
+  RunningPhaseProcess,
+} from './running-phase-process';
+import {
+  isRunningLightProcessEntry,
+  RunningLightProcess,
+} from './running-light-process';
+import { IconInit } from '../../model/icon';
 
-@Injectable({
-  providedIn: DevelopmentProcessRegistryModule,
-})
-export class RunningProcessService extends DefaultElementService<
-  RunningProcess,
-  RunningProcessInit
-> {
+@Injectable()
+export abstract class RunningProcessServiceBase<
+  T extends RunningProcess,
+  S extends RunningProcessInit
+> extends DefaultElementService<T, S> {
   protected readonly typeName = RunningProcess.typeName;
 
-  protected readonly elementConstructor = RunningProcess;
-
-  constructor(
+  protected constructor(
     private artifactDataService: ArtifactDataService,
     private artifactService: ArtifactService,
     protected methodExecutionService: MethodExecutionService,
     pouchdbService: PouchdbService,
-    protected processExecutionService: ProcessExecutionService,
-    private router: Router
+    protected router: Router
   ) {
     super(pouchdbService);
   }
 
-  async getList(): Promise<EntryType<RunningProcess>[]> {
-    return this.pouchdbService.find<EntryType<RunningProcess>>(this.typeName, {
+  async getList(): Promise<EntryType<T>[]> {
+    return this.pouchdbService.find<EntryType<T>>(this.typeName, {
       selector: {
-        contextChange: false,
+        $not: {
+          $or: [{ contextChange: true }, { completed: true }],
+        },
       },
     });
   }
 
   /**
-   * Add new running process from a process.
+   * Update the info of a running process
    *
-   * @param element the running process
+   * @param id
+   * @param name
+   * @param description
    */
-  async add(element: RunningProcessInit): Promise<RunningProcess> {
-    const runningProcess = new RunningProcess(undefined, element);
-    if (runningProcess.hasProcess()) {
-      await this.processExecutionService.initRunningProcess(runningProcess);
-      await this.processExecutionService.jumpToNextMethod(runningProcess);
-    }
-    await this.save(runningProcess);
-    return runningProcess;
-  }
-
-  /**
-   * Execute a single common node
-   *
-   * @param runningProcess the running process
-   * @param nodeId the id of the node to execute
-   * @param flowId the flow id to take after the execution if it is an exclusive gateway
-   */
-  async executeStep(
-    runningProcess: FullRunningProcess,
-    nodeId: string,
-    flowId?: string
-  ): Promise<void> {
+  async updateInfo(id: DbId, name: string, description: string): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
-      await this.processExecutionService.moveToNextStep(
-        runningProcess,
-        nodeId,
-        flowId
-      );
-      await this.save(runningProcess);
+      const dbProcess = await this.getWrite(id);
+      dbProcess.updateInfo(name, description);
+      await this.save(dbProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
   /**
-   * Jump to next methods or decisions
+   * Update the icon of a running process
    *
-   * @param runningProcess the running process
+   * @param id
+   * @param icon
    */
-  async jumpSteps(runningProcess: FullRunningProcess): Promise<void> {
+  async updateIcon(id: DbId, icon: IconInit): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
-      await this.processExecutionService.jumpToNextMethod(runningProcess);
-      await this.save(runningProcess);
+      const dbProcess = await this.getWrite(id);
+      dbProcess.updateIcon(icon);
+      await this.save(dbProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
-    }
-  }
-
-  /**
-   * Start the execution of a method
-   *
-   * @param runningProcessId the id of the running process
-   * @param nodeId the id of the node to execute
-   */
-  async startMethodExecution(
-    runningProcessId: string,
-    nodeId: string
-  ): Promise<void> {
-    try {
-      const databaseProcess = await this.getWrite(runningProcessId);
-      if (!databaseProcess.hasProcess()) {
-        throw new Error('Incorrect process type');
-      }
-      if (
-        !(await this.processExecutionService.canExecuteNode(
-          databaseProcess,
-          nodeId
-        ))
-      ) {
-        throw new Error('Can not execute node');
-      }
-      this.methodExecutionService.startMethodExecution(databaseProcess, nodeId);
-      await this.save(databaseProcess);
-    } finally {
-      this.freeWrite(runningProcessId);
+      this.freeWrite(id);
     }
   }
 
@@ -169,7 +110,7 @@ export class RunningProcessService extends DefaultElementService<
    * @param executionId the execution id of the todomethod
    */
   async startTodoMethodExecution(
-    runningProcessId: string,
+    runningProcessId: DbId,
     executionId: string
   ): Promise<void> {
     try {
@@ -187,20 +128,12 @@ export class RunningProcessService extends DefaultElementService<
   /**
    * Execute a step of the running method
    *
-   * @param runningProcess the running process
+   * @param id the id of the running process
    * @param executionId the id of the executed method
    */
-  async executeMethodStep(
-    runningProcess: RunningProcess,
-    executionId: string
-  ): Promise<void> {
+  async executeMethodStep(id: DbId, executionId: string): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
+      let runningProcess = await this.getWrite(id);
       if (
         !this.methodExecutionService.isExecutionStepPrepared(
           runningProcess,
@@ -220,7 +153,7 @@ export class RunningProcessService extends DefaultElementService<
       );
       await this.save(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
@@ -260,107 +193,76 @@ export class RunningProcessService extends DefaultElementService<
   /**
    * Stop the execution of the current method
    *
-   * @param runningProcess the running process
+   * @param id the id of the running process
    * @param executionId the id of the executed method
+   * @return whether there are executable methods left
    */
-  async stopMethodExecution(
-    runningProcess: RunningProcess,
-    executionId: string
-  ): Promise<void> {
+  async stopMethodExecution(id: DbId, executionId: string): Promise<boolean> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
+      const runningProcess = await this.getWrite(id);
       const nodeId = runningProcess.getRunningMethod(executionId)?.nodeId;
       await this.methodExecutionService.stopMethodExecution(
         runningProcess,
         executionId
       );
-      if (runningProcess.hasProcess()) {
-        if (nodeId != null) {
-          await this.processExecutionService.moveToNextMethod(
-            runningProcess,
-            nodeId
-          );
-        }
+      if (nodeId != null) {
+        await this.moveToNextMethod?.(runningProcess, nodeId);
       }
       await this.save(runningProcess);
+      return await this.hasExecutableMethodsLeft(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
+  }
+
+  /**
+   * Called after a method is finished successfully to allow the underlying
+   * process to mark the method as executed and mark the next method as ready.
+   *
+   * @param runningProcess
+   * @param nodeId
+   * @protected
+   */
+  protected async moveToNextMethod?(
+    runningProcess: T,
+    nodeId: string
+  ): Promise<void>;
+
+  /**
+   * Checks whether the running process has executable methods left. Should be
+   * overridden by subclasses that add possible executable methods but do not
+   * add them to the array.
+   *
+   * @param runningProcess
+   * @protected
+   */
+  protected async hasExecutableMethodsLeft(
+    runningProcess: T
+  ): Promise<boolean> {
+    return runningProcess.todoMethods.length > 0;
   }
 
   /**
    * Abort the execution of the current method
    *
-   * @param runningProcess the running process
+   * @param id the id of the running process
    * @param executionId the id of the executed method
    */
-  async abortMethodExecution(
-    runningProcess: RunningProcess,
-    executionId: string
-  ): Promise<void> {
+  async abortMethodExecution(id: DbId, executionId: string): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
+      const runningProcess = await this.getWrite(id);
       await this.methodExecutionService.abortMethodExecution(
         runningProcess,
         executionId
       );
       await this.save(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
-  async getExecutableElements(
-    runningProcess: RunningProcess
-  ): Promise<BpmnFlowNode[]> {
-    return this.processExecutionService.getExecutableNodes(runningProcess);
-  }
-
-  /**
-   * Get all decision nodes that are executable and need a decision
-   *
-   * @param runningProcess the running process
-   * @return the decision nodes
-   */
-  async getExecutableDecisionNodes(
-    runningProcess: RunningProcess
-  ): Promise<BpmnFlowNode[]> {
-    return this.processExecutionService.getExecutableDecisionNodes(
-      runningProcess
-    );
-  }
-
-  /**
-   * Get all executable method elements that are not already executed
-   *
-   * @param runningProcess the running process
-   * @return a list of nodes which have methods that can be executed
-   */
-  async getExecutableMethods(
-    runningProcess: RunningProcess
-  ): Promise<BpmnFlowNode[]> {
-    const executableNodes =
-      await this.processExecutionService.getExecutableNodes(runningProcess);
-    const methods = executableNodes.filter((node) =>
-      runningProcess.isExecutable(node.id)
-    );
-    return methods.filter(
-      (node) => runningProcess.getRunningMethodByNode(node.id) == null
-    );
-  }
-
   async setInputArtifacts(
-    runningProcess: RunningProcess,
+    id: DbId,
     executionId: string,
     inputArtifactMapping: {
       artifact: number | undefined;
@@ -368,43 +270,33 @@ export class RunningProcessService extends DefaultElementService<
     }[]
   ): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
+      const runningProcess = await this.getWrite(id);
       this.methodExecutionService.selectInputArtifacts(
-        databaseProcess,
+        runningProcess,
         executionId,
         inputArtifactMapping
       );
-      await this.save(databaseProcess);
+      await this.save(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
   async updateOutputArtifacts(
-    runningProcess: RunningProcess,
+    id: DbId,
     executionId: string,
     outputArtifactsMapping: (OutputArtifactMapping | undefined)[]
   ): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
+      const runningProcess = await this.getWrite(id);
       this.methodExecutionService.updateOutputArtifacts(
-        databaseProcess,
+        runningProcess,
         executionId,
         outputArtifactsMapping
       );
-      await this.save(databaseProcess);
+      await this.save(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
@@ -415,45 +307,12 @@ export class RunningProcessService extends DefaultElementService<
    * @param artifact the artifact to import into the running process
    */
   async importArtifact(
-    runningProcessId: string,
+    runningProcessId: DbId,
     artifact: RunningArtifact
   ): Promise<void> {
     try {
       const runningProcess = await this.getWrite(runningProcessId);
       runningProcess.importArtifact(artifact);
-      await this.save(runningProcess);
-    } finally {
-      this.freeWrite(runningProcessId);
-    }
-  }
-
-  /**
-   * Set context change of running process to true
-   *
-   * @param runningProcessId the id of the running process
-   * @param comment comment from the method engineer why and what changes are necessary
-   * @param domains suggested domains
-   * @param situationalFactors suggested situationalFactors
-   */
-  async setContextChange(
-    runningProcessId: string,
-    comment: string,
-    domains: Domain[],
-    situationalFactors: Selection<SituationalFactor>[]
-  ): Promise<void> {
-    try {
-      const runningProcess = await this.getWrite(runningProcessId);
-      if (!runningProcess.hasProcess()) {
-        throw new Error('Incorrect process type');
-      }
-      runningProcess.contextChange = true;
-      runningProcess.contextChangeInfo = new ContextChangeInfo(undefined, {
-        comment: comment,
-        suggestedDomains: domains,
-        suggestedSituationalFactors: situationalFactors,
-        oldDomains: runningProcess.domains,
-        oldSituationalFactors: runningProcess.situationalFactors,
-      });
       await this.save(runningProcess);
     } finally {
       this.freeWrite(runningProcessId);
@@ -510,24 +369,16 @@ export class RunningProcessService extends DefaultElementService<
   /**
    * Remove a method from a running process that is executed out of the defined process
    *
-   * @param runningProcess the running process
+   * @param id running process id
    * @param executionId the id of the method to remove
    */
-  async removeMethod(
-    runningProcess: RunningProcess,
-    executionId: string
-  ): Promise<void> {
+  async removeMethod(id: DbId, executionId: string): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
+      const runningProcess = await this.getWrite(id);
       this.methodExecutionService.removeMethod(runningProcess, executionId);
       await this.save(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
@@ -536,16 +387,16 @@ export class RunningProcessService extends DefaultElementService<
    *
    * @param id id of the running process
    */
-  async delete(id: string): Promise<void> {
-    const result = await this.pouchdbService.get<RunningProcessEntry>(id);
-    const runningProcess = new RunningProcess(result, undefined);
+  async delete(id: DbId): Promise<void> {
+    const result = await this.pouchdbService.get<EntryType<T>>(id);
+    const runningProcess = new this.elementConstructor(result, undefined);
     // abort all running methods
-    runningProcess.runningMethods.forEach((method) =>
-      this.methodExecutionService.abortMethodExecution(
+    for (const method of runningProcess.runningMethods) {
+      await this.methodExecutionService.abortMethodExecution(
         runningProcess,
         method.executionId
-      )
-    );
+      );
+    }
     // delete all referenced artifacts
     for (const artifact of runningProcess.artifacts) {
       for (const version of artifact.versions) {
@@ -565,7 +416,7 @@ export class RunningProcessService extends DefaultElementService<
    * @param comment the comment to add
    */
   async addComment(
-    id: string,
+    id: DbId,
     executionId: string,
     comment: Comment
   ): Promise<void> {
@@ -592,7 +443,7 @@ export class RunningProcessService extends DefaultElementService<
    * @param comment the comment to add
    */
   async updateComment(
-    id: string,
+    id: DbId,
     executionId: string,
     comment: Comment
   ): Promise<void> {
@@ -623,7 +474,7 @@ export class RunningProcessService extends DefaultElementService<
    * @param commentId the id of the comment to remove
    */
   async removeComment(
-    id: string,
+    id: DbId,
     executionId: string,
     commentId: string
   ): Promise<void> {
@@ -645,26 +496,21 @@ export class RunningProcessService extends DefaultElementService<
   /**
    * Change a running artifact's identifier
    *
-   * @param runningProcess the running process
-   * @param runningArtifact the running artifact to change
+   * @param id the id of the running process
+   * @param runningArtifactId the id of the running artifact to change
    * @param identifier the new identifier
    */
   async renameArtifact(
-    runningProcess: RunningProcess,
-    runningArtifact: RunningArtifact,
+    id: DbId,
+    runningArtifactId: DbId,
     identifier: string
   ): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
-      runningProcess.renameArtifact(runningArtifact, identifier);
+      const runningProcess = await this.getWrite(id);
+      runningProcess.renameArtifact(runningArtifactId, identifier);
       await this.save(runningProcess);
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(id);
     }
   }
 
@@ -712,15 +558,15 @@ export class RunningProcessService extends DefaultElementService<
    * @param artifact
    */
   createInternalArtifact(id: DbId, artifact: Artifact): void {
-    if (artifact.metaModel == null) {
-      throw new Error('Artifact is missing a meta model');
+    if (artifact.metaArtifact == null) {
+      throw new Error('Artifact is missing a meta artifact');
     }
     const reference: ProcessReference = {
       referenceType: 'Process',
       runningProcessId: id,
     };
     this.artifactDataService.create(
-      artifact.metaModel.type,
+      artifact.metaArtifact.type,
       reference,
       artifact._id
     );
@@ -739,8 +585,8 @@ export class RunningProcessService extends DefaultElementService<
     data: ArtifactData
   ): Promise<void> {
     const artifact = await this.artifactService.get(artifactId);
-    if (artifact.metaModel == null) {
-      throw new Error('Artifact is missing a meta model');
+    if (artifact.metaArtifact == null) {
+      throw new Error('Artifact is missing a meta artifact');
     }
     try {
       const runningProcess = await this.getWrite(id);
@@ -749,25 +595,13 @@ export class RunningProcessService extends DefaultElementService<
         isDefinition: true,
         artifactName:
           (await this.artifactDataService.getName(
-            artifact.metaModel.type,
+            artifact.metaArtifact.type,
             data
           )) ?? 'Missing name',
       });
       runningProcess.addOutputArtifact(artifact, outputArtifactMapping, true);
       await this.save(runningProcess);
-      if (runningProcess.contextChange) {
-        await this.router.navigate([
-          'bmprocess',
-          'contextchange',
-          runningProcess._id,
-        ]);
-      } else {
-        await this.router.navigate([
-          'runningprocess',
-          'runningprocessview',
-          runningProcess._id,
-        ]);
-      }
+      await this.navigateToRunningProcess(runningProcess);
     } finally {
       this.freeWrite(id);
     }
@@ -792,18 +626,16 @@ export class RunningProcessService extends DefaultElementService<
   }
 
   async editInternalArtifact(
-    runningProcess: RunningProcess,
-    artifact: RunningArtifact
+    runningProcessId: DbId,
+    artifactId: DbId
   ): Promise<void> {
     try {
-      const databaseProcess = await this.getWrite(runningProcess._id);
-      if (databaseProcess._rev !== runningProcess._rev) {
-        throw new Error(
-          'Reload needed, process in database does not fit current process'
-        );
-      }
-      if (runningProcess.artifacts.indexOf(artifact) === -1) {
-        throw new Error('Artifact is not from the running process');
+      const runningProcess = await this.getWrite(runningProcessId);
+      const artifact = runningProcess.artifacts.find(
+        (a) => a._id === artifactId
+      );
+      if (artifact == null) {
+        throw new Error('Artifact does not exist');
       }
       const latestVersion = artifact.getLatestVersion();
       if (latestVersion == null) {
@@ -828,7 +660,7 @@ export class RunningProcessService extends DefaultElementService<
         artifactVersionId: editVersion.id,
       });
     } finally {
-      this.freeWrite(runningProcess._id);
+      this.freeWrite(runningProcessId);
     }
   }
 
@@ -855,71 +687,80 @@ export class RunningProcessService extends DefaultElementService<
       }
       version.editing = false;
       await this.save(runningProcess);
-      if (runningProcess.contextChange) {
-        await this.router.navigate([
-          'bmprocess',
-          'contextchange',
-          runningProcess._id,
-        ]);
-      } else {
-        await this.router.navigate([
-          'runningprocess',
-          'runningprocessview',
-          runningProcess._id,
-        ]);
-      }
+      await this.navigateToRunningProcess(runningProcess);
     } finally {
       this.freeWrite(id);
     }
   }
 
-  /**
-   * Updates the real domains for light processes.
-   * Should not be called with full processes.
-   *
-   * @param id
-   * @param domains
-   */
-  async updateDomains(id: DbId, domains: Domain[]): Promise<void> {
+  async finishRunningProcess(id: DbId, conclusion: string): Promise<void> {
     try {
       const runningProcess = await this.getWrite(id);
-      if (runningProcess.hasProcess()) {
-        throw new Error('Incorrect process type');
+      runningProcess.finish(conclusion);
+      // abort all running methods
+      for (const method of runningProcess.runningMethods) {
+        await this.methodExecutionService.abortMethodExecution(
+          runningProcess,
+          method.executionId
+        );
       }
-      runningProcess._domains = domains;
       await this.save(runningProcess);
     } finally {
       this.freeWrite(id);
     }
   }
 
-  /**
-   * Updates the real factors for light processes.
-   * Should not be called with full processes.
-   *
-   * @param id
-   * @param situationalFactors
-   */
-  async updateSituationalFactors(
-    id: DbId,
-    situationalFactors: SelectionInit<SituationalFactorInit>[]
-  ): Promise<void> {
-    try {
-      const runningProcess = await this.getWrite(id);
-      if (runningProcess.hasProcess()) {
-        throw new Error('Incorrect process type');
-      }
-      runningProcess._situationalFactors = situationalFactors.map(
-        (selection) =>
-          new Selection<SituationalFactor>(
-            undefined,
-            selection,
-            SituationalFactor
-          )
-      );
-      await this.save(runningProcess);
-    } finally {
-      this.freeWrite(id);
+  protected async navigateToRunningProcess(runningProcess: T): Promise<void> {
+    await this.router.navigate([
+      'runningprocess',
+      'runningprocessview',
+      runningProcess._id,
+    ]);
+  }
+
+  async getWrite(id: DbId): Promise<T> {
+    const runningProcess = await super.getWrite(id);
+    if (runningProcess.completed) {
+      throw new Error('Can not edit completed running process');
     }
+    return runningProcess;
+  }
+}
+
+@Injectable({
+  providedIn: DevelopmentProcessRegistryModule,
+})
+export class RunningProcessService extends RunningProcessServiceBase<
+  RunningProcess,
+  RunningProcessInit
+> {
+  protected get elementConstructor(): DatabaseConstructor<
+    RunningProcess,
+    RunningProcessInit
+  > {
+    throw new Error('Not implemented');
+  }
+
+  async add(): Promise<RunningProcess> {
+    throw new Error('Not implemented. Use RunningProcessTypesService instead.');
+  }
+
+  async get(id: DbId): Promise<RunningProcess & DatabaseRevision> {
+    const entry = await this.pouchdbService.get<EntryType<RunningProcess>>(id);
+    let runningProcess: RunningProcess;
+    if (isRunningPatternProcessEntry(entry)) {
+      runningProcess = new RunningPatternProcess(entry, undefined);
+    } else if (isRunningPhaseProcessEntry(entry)) {
+      runningProcess = new RunningPhaseProcess(entry, undefined);
+    } else if (isRunningLightProcessEntry(entry)) {
+      runningProcess = new RunningLightProcess(entry, undefined);
+    } else {
+      throw new Error('Unknown running process type');
+    }
+    return runningProcess as RunningProcess & DatabaseRevision;
+  }
+
+  getEntry(id: DbId): Promise<RunningProcessEntry> {
+    return this.pouchdbService.get<RunningProcessEntry>(id);
   }
 }

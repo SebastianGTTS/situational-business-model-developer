@@ -13,7 +13,7 @@ export type DataType = DatabaseEntry | string | ArtifactDataReference;
  * Holds a reference to the actual data of the artifact, e.g., the
  * actual canvas model. This type can be arbitrarily extended by
  * the module developer as long as it is possible to save it in the
- * database and the type can be used to identify the correct artifact
+ * database and the type can be used to identify the correct meta artifact
  * module to use.
  *
  * The module developer does not need to use the provided database by the
@@ -30,7 +30,7 @@ export interface ArtifactDataReference extends DatabaseEntry {
 
   /**
    * Used to resolve the correct artifact module api service
-   * (MetaModelApi).
+   * (MetaArtifactApi).
    */
   type: string;
 }

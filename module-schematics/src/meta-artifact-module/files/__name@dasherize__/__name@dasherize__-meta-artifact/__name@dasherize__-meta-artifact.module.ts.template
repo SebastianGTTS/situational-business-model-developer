@@ -1,0 +1,30 @@
+import { APP_INITIALIZER, NgModule, Optional, SkipSelf } from '@angular/core';
+import { <%= classify(name) %>MetaArtifactService } from './<%= dasherize(name) %>-meta-artifact.service';
+import { <%= classify(name) %>MetaArtifactApiService } from './<%= dasherize(name) %>-meta-artifact-api.service';
+
+@NgModule({
+  providers: [
+    <%= classify(name) %>MetaArtifactService,
+    <%= classify(name) %>MetaArtifactApiService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory:
+        (<%= camelize(name) %>MetaArtifactService: <%= classify(name) %>MetaArtifactService) => (): void =>
+          <%= camelize(name) %>MetaArtifactService.init(),
+      deps: [<%= classify(name) %>MetaArtifactService],
+      multi: true,
+    },
+  ],
+})
+export class <%= classify(name) %>MetaArtifactModule {
+  // see https://angular.io/guide/singleton-services#prevent-reimport-of-the-greetingmodule
+  constructor(
+    @Optional() @SkipSelf() <%= camelize(name) %>MetaArtifactModule?: <%= classify(name) %>MetaArtifactModule
+  ) {
+    if (<%= camelize(name) %>MetaArtifactModule != null) {
+      throw new Error(
+        '<%= classify(name) %>MetaArtifactModule is already loaded. Import it in the AppModule only.'
+      );
+    }
+  }
+}

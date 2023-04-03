@@ -1,0 +1,117 @@
+<main *ngIf="developmentMethod != null" role="main" class="container">
+  <div id="examples" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Explanations</h6>
+    <div class="sbmd-form-wrapper">
+      <app-examples-form
+        [examples]="developmentMethod.examples"
+        (submitExamplesForm)="
+          updateDevelopmentMethodValue({ examples: $event.value })
+        "
+      ></app-examples-form>
+    </div>
+  </div>
+  <div id="input-artifacts" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Input Artifacts</h6>
+      <i
+        *ngIf="!inputArtifactsCorrectlyDefined"
+        aria-label="Error in this part"
+        class="ms-auto text-danger bi bi-exclamation-circle-fill"
+      ></i>
+    </div>
+    <div class="sbmd-form-wrapper">
+      <app-artifacts-mapping-selection-form
+        idPrefix="input-artifacts"
+        [artifacts]="developmentMethod.inputArtifacts"
+        [developmentMethod]="developmentMethod"
+        (submitArtifactsForm)="
+          updateDevelopmentMethodValue({ inputArtifacts: $event })
+        "
+      ></app-artifacts-mapping-selection-form>
+    </div>
+  </div>
+
+  <div id="output-artifacts" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Output Artifacts</h6>
+      <i
+        *ngIf="!outputArtifactsCorrectlyDefined"
+        aria-label="Error in this part"
+        class="ms-auto text-danger bi bi-exclamation-circle-fill"
+      ></i>
+    </div>
+    <div class="sbmd-form-wrapper">
+      <app-artifacts-selection-form
+        idPrefix="output-artifacts"
+        [artifacts]="developmentMethod.outputArtifacts"
+        (submitArtifactsForm)="
+          updateDevelopmentMethodValue({ outputArtifacts: $event })
+        "
+      ></app-artifacts-selection-form>
+    </div>
+  </div>
+
+  <div id="stakeholders" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Stakeholders</h6>
+      <i
+        *ngIf="!stakeholdersCorrectlyDefined"
+        aria-label="Error in this part"
+        class="ms-auto text-danger bi bi-exclamation-circle-fill"
+      ></i>
+    </div>
+    <div class="sbmd-form-wrapper">
+      <app-stakeholders-selection-form
+        [stakeholders]="developmentMethod.stakeholders"
+        (submitStakeholdersForm)="
+          updateDevelopmentMethodValue({ stakeholders: $event })
+        "
+      ></app-stakeholders-selection-form>
+    </div>
+  </div>
+
+  <div id="tools" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Tools</h6>
+      <i
+        *ngIf="!toolsCorrectlyDefined"
+        aria-label="Error in this part"
+        class="ms-auto text-danger bi bi-exclamation-circle-fill"
+      ></i>
+    </div>
+    <div class="sbmd-form-wrapper">
+      <app-tools-selection-form
+        idPrefix="tools"
+        [tools]="developmentMethod.tools"
+        (submitToolsForm)="updateDevelopmentMethodValue({ tools: $event })"
+      ></app-tools-selection-form>
+    </div>
+  </div>
+
+  <div id="execution-steps" class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Execution steps</h6>
+      <i
+        *ngIf="!executionStepsCorrectlyDefined"
+        aria-label="Error in this part"
+        class="ms-auto text-danger bi bi-exclamation-circle-fill"
+      ></i>
+    </div>
+    <div class="sbmd-form-wrapper">
+      <div class="alert alert-info">
+        The modules must first be added in the tools before they can be selected
+        here.
+      </div>
+      <app-development-method-select-execution-steps
+        [developmentMethod]="developmentMethod"
+        (submitExecutionStepsSelectionForm)="updateExecutionSteps($event)"
+      ></app-development-method-select-execution-steps>
+    </div>
+  </div>
+
+  <div class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

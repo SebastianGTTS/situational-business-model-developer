@@ -7,6 +7,9 @@ import { KanbanBoardMethodInfo } from './kanban-board-method-info';
   styleUrls: ['./kanban-board.component.css'],
 })
 export class KanbanBoardComponent {
+  @Input() editable = true;
+  @Input() infoOnly = false;
+
   @Input() todo!: KanbanBoardMethodInfo[];
   @Input() doing!: KanbanBoardMethodInfo[];
   @Input() done!: KanbanBoardMethodInfo[];

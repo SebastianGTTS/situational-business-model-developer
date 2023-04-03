@@ -224,6 +224,10 @@ declare module 'bpmn-js/lib/util/LabelUtil' {
   export function isLabel(element: BpmnElements.BpmnElement): boolean;
 }
 
+declare module 'bpmn-js/lib/Viewer' {
+  export = BpmnViewer;
+}
+
 declare module 'bpmn-js/lib/NavigatedViewer' {
   export = BpmnViewer;
 }
@@ -236,7 +240,7 @@ declare class BaseRenderer {
   drawShape(
     parentNode: SVGGElement,
     element: BpmnElements.BpmnFlowNode
-  ): SVGRectElement;
+  ): SVGGElement;
 
   drawConnection(
     parentNode: SVGGElement,

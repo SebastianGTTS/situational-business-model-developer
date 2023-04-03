@@ -54,6 +54,9 @@ export interface RunningMethodEntry extends DatabaseEntry {
 export class RunningMethod
   implements RunningMethodInit, RunningMethodInfo, DatabaseModelPart
 {
+  /**
+   * Stores the nodeId or the phase method decision id
+   */
   nodeId?: string;
   executionId: string;
   comments: Comment[] = [];

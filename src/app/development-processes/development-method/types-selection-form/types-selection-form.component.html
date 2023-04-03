@@ -1,0 +1,24 @@
+<form [formGroup]="typesForm" (ngSubmit)="submitForm()">
+  <app-method-elements-selection-form
+    id="types-selection-from-method-elements-selection-form"
+    idPrefix="types-selection-form"
+    class="mb-3"
+    formArrayName="types"
+    [createFormGroupFactory]="createFormGroupFactory"
+    [listNames]="listNames"
+    [methodElements]="methodElements"
+    methodElementName="Type"
+  ></app-method-elements-selection-form>
+  <div class="d-grid">
+    <button
+      id="types-selection-form-save"
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!typesForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

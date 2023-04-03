@@ -3,42 +3,47 @@ import {
   MethodElementEntry,
   MethodElementInit,
 } from '../method-element';
-import { MetaModelIdentifier } from '../../meta-model-definition';
+import { MetaArtifactIdentifier } from '../../meta-artifact-definition';
 import { DatabaseEntry } from '../../../database/database-entry';
+import { IconInit } from '../../../model/icon';
 
-export type MetaModelData = DatabaseEntry;
+export type MetaArtifactData = DatabaseEntry;
 
 export interface ArtifactInit extends MethodElementInit {
   internalArtifact?: boolean;
-  metaModel?: MetaModelIdentifier;
-  metaModelData?: MetaModelData;
+  metaArtifact?: MetaArtifactIdentifier;
+  metaArtifactData?: MetaArtifactData;
 }
 
 export interface ArtifactEntry extends MethodElementEntry {
   internalArtifact: boolean;
-  metaModel?: MetaModelIdentifier;
-  metaModelData?: MetaModelData;
+  metaArtifact?: MetaArtifactIdentifier;
+  metaArtifactData?: MetaArtifactData;
 }
 
 export class Artifact extends MethodElement implements ArtifactInit {
   static readonly typeName = 'Artifact';
+  static readonly defaultIcon: IconInit = { icon: 'bi-file-earmark-richtext' };
 
   internalArtifact = false;
-  metaModel?: MetaModelIdentifier = undefined;
-  metaModelData?: MetaModelData;
+  metaArtifact?: MetaArtifactIdentifier = undefined;
+  metaArtifactData?: MetaArtifactData;
 
   constructor(
     entry: ArtifactEntry | undefined,
     init: ArtifactInit | undefined
   ) {
+    if (init != null && init.icon == null) {
+      init.icon = Artifact.defaultIcon;
+    }
     super(entry, init, Artifact.typeName);
     const element = entry ?? init;
     if (element == null) {
       throw new Error('Either entry or init must be provided.');
     }
     this.internalArtifact = element.internalArtifact ?? this.internalArtifact;
-    this.metaModel = element.metaModel;
-    this.metaModelData = element.metaModelData;
+    this.metaArtifact = element.metaArtifact;
+    this.metaArtifactData = element.metaArtifactData;
   }
 
   /**
@@ -54,13 +59,13 @@ export class Artifact extends MethodElement implements ArtifactInit {
     return {
       ...super.toDb(),
       internalArtifact: this.internalArtifact,
-      metaModel: this.metaModel
+      metaArtifact: this.metaArtifact
         ? {
-            name: this.metaModel.name,
-            type: this.metaModel.type,
+            name: this.metaArtifact.name,
+            type: this.metaArtifact.type,
           }
         : undefined,
-      metaModelData: this.metaModelData,
+      metaArtifactData: this.metaArtifactData,
     };
   }
 }

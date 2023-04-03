@@ -484,7 +484,7 @@
       "name": "User Persona Map",
       "description": "",
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648456976"
     },
     {
@@ -493,7 +493,7 @@
       "name": "Customer Journey Map",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648460846"
     },
     {
@@ -502,7 +502,7 @@
       "name": "SWOT Map",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648465839"
     },
     {
@@ -511,7 +511,7 @@
       "name": "Business Model Canvas",
       "description": null,
       "internalArtifact": true,
-      "metaModel": { "name": "Canvas", "type": "CompanyModel" },
+      "metaArtifact": { "name": "Canvas", "type": "CompanyModel" },
       "_id": "1615648470122"
     },
     {
@@ -520,7 +520,7 @@
       "name": "Value Proposition Canvas",
       "description": null,
       "internalArtifact": true,
-      "metaModel": { "name": "Canvas", "type": "CompanyModel" },
+      "metaArtifact": { "name": "Canvas", "type": "CompanyModel" },
       "_id": "1615648473666"
     },
     {
@@ -529,7 +529,7 @@
       "name": "Feature Set",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648477829"
     },
     {
@@ -538,7 +538,7 @@
       "name": "Customer Information",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648484285"
     },
     {
@@ -547,7 +547,7 @@
       "name": "Problem Information",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648488922"
     },
     {
@@ -556,7 +556,7 @@
       "name": "Market Information",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648493552"
     },
     {
@@ -565,7 +565,7 @@
       "name": "Competitor Information",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648497837"
     },
     {
@@ -574,7 +574,7 @@
       "name": "App Information",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648503459"
     },
     {
@@ -583,7 +583,7 @@
       "name": "Website",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648509560"
     },
     {
@@ -592,7 +592,7 @@
       "name": "Landing Page",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648513576"
     },
     {
@@ -601,7 +601,7 @@
       "name": "Blog",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648517309"
     },
     {
@@ -610,7 +610,7 @@
       "name": "Social Media Profile",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648521807"
     },
     {
@@ -619,7 +619,7 @@
       "name": "Proof-of-Concept",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648535262"
     },
     {
@@ -628,7 +628,7 @@
       "name": "Sketch",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648539192"
     },
     {
@@ -637,7 +637,7 @@
       "name": "Mockup",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648543172"
     },
     {
@@ -646,7 +646,7 @@
       "name": "Wireframe",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648546517"
     },
     {
@@ -655,7 +655,7 @@
       "name": "Minimum Viable Product",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648550737"
     },
     {
@@ -664,7 +664,7 @@
       "name": "iOS App",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648557299"
     },
     {
@@ -673,7 +673,7 @@
       "name": "Android App",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648562990"
     },
     {
@@ -682,7 +682,7 @@
       "name": "Web App",
       "description": null,
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615648569558"
     },
     {
@@ -1033,7 +1033,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1124,7 +1124,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -1149,7 +1149,7 @@
                   "name": "User Persona Map",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1256,7 +1256,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -1281,7 +1281,7 @@
                   "name": "Customer Journey Map",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1389,7 +1389,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1511,7 +1511,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1623,7 +1623,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1735,7 +1735,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -1879,7 +1879,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2009,7 +2009,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2143,7 +2143,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2162,7 +2162,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2296,7 +2296,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2315,7 +2315,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2479,7 +2479,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -2498,7 +2498,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -4069,7 +4069,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4085,7 +4085,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4110,7 +4110,7 @@
                   "name": "Market Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -4218,7 +4218,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4234,7 +4234,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4259,7 +4259,7 @@
                   "name": "Market Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -4387,7 +4387,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4403,7 +4403,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4428,7 +4428,7 @@
                   "name": "Market Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -4556,7 +4556,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4572,7 +4572,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4597,7 +4597,7 @@
                   "name": "Competitor Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -4705,7 +4705,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4721,7 +4721,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4746,7 +4746,7 @@
                   "name": "Competitor Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -4868,7 +4868,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4884,7 +4884,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -4909,7 +4909,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -5031,7 +5031,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5047,7 +5047,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5072,7 +5072,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -5178,7 +5178,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5203,7 +5203,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -5295,7 +5295,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5320,7 +5320,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -5394,7 +5394,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5410,7 +5410,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5426,7 +5426,7 @@
                   "name": "Market Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5442,7 +5442,7 @@
                   "name": "Competitor Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5467,7 +5467,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -5486,7 +5486,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -5591,7 +5591,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5607,7 +5607,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5623,7 +5623,7 @@
                   "name": "Market Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5639,7 +5639,7 @@
                   "name": "Competitor Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5664,7 +5664,7 @@
                   "name": "Value Proposition Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "optional": false
@@ -5774,7 +5774,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5790,7 +5790,7 @@
                   "name": "Problem Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5806,7 +5806,7 @@
                   "name": "Market Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5822,7 +5822,7 @@
                   "name": "Competitor Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -5847,7 +5847,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "optional": false
@@ -6181,7 +6181,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6206,7 +6206,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6297,7 +6297,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6322,7 +6322,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6413,7 +6413,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6438,7 +6438,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6529,7 +6529,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6545,7 +6545,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6570,7 +6570,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6585,7 +6585,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6690,7 +6690,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6706,7 +6706,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6731,7 +6731,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6746,7 +6746,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6820,7 +6820,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6836,7 +6836,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6852,7 +6852,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6877,7 +6877,7 @@
                   "name": "SWOT Map",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -6951,7 +6951,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6967,7 +6967,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -6983,7 +6983,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7008,7 +7008,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7023,7 +7023,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7038,7 +7038,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7112,7 +7112,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7128,7 +7128,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7144,7 +7144,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7160,7 +7160,7 @@
                   "name": "Competitor Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7185,7 +7185,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7200,7 +7200,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7215,7 +7215,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7322,7 +7322,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7347,7 +7347,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7388,7 +7388,7 @@
       "name": "Marketing Information",
       "description": "",
       "internalArtifact": false,
-      "metaModel": null,
+      "metaArtifact": null,
       "_id": "1615889474456"
     },
     {
@@ -7463,7 +7463,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7488,7 +7488,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7627,7 +7627,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7652,7 +7652,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7667,7 +7667,7 @@
                   "name": "Website",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7832,7 +7832,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -7857,7 +7857,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -7872,7 +7872,7 @@
                   "name": "Landing Page",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -8019,7 +8019,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8044,7 +8044,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -8165,7 +8165,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8190,7 +8190,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -8333,7 +8333,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8358,7 +8358,7 @@
                   "name": "Marketing Information",
                   "description": "",
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -8453,7 +8453,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8469,7 +8469,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8633,7 +8633,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8649,7 +8649,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8674,7 +8674,7 @@
                   "name": "Proof-of-Concept",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -8811,7 +8811,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8827,7 +8827,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -8852,7 +8852,7 @@
                   "name": "Mockup",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -8989,7 +8989,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9005,7 +9005,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9030,7 +9030,7 @@
                   "name": "Wireframe",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9151,7 +9151,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9167,7 +9167,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9192,7 +9192,7 @@
                   "name": "Minimum Viable Product",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9292,7 +9292,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9308,7 +9308,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9333,7 +9333,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9348,7 +9348,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9363,7 +9363,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9450,7 +9450,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9466,7 +9466,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9491,7 +9491,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9506,7 +9506,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9521,7 +9521,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9621,7 +9621,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9637,7 +9637,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9662,7 +9662,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9677,7 +9677,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9692,7 +9692,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "optional": false
@@ -9828,7 +9828,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -9844,7 +9844,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -10009,7 +10009,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -10025,7 +10025,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -10141,7 +10141,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -10157,7 +10157,7 @@
                   "name": "Feature Set",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -10173,7 +10173,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "multiple": false,
                 "mapping": [],
@@ -11446,7 +11446,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -11596,7 +11596,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -11882,7 +11882,7 @@
                   "name": "Customer Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -11893,7 +11893,7 @@
                     "name": "Customer Information",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -12298,7 +12298,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12314,7 +12314,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12339,7 +12339,7 @@
                         "name": "Market Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -12467,7 +12467,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12483,7 +12483,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12508,7 +12508,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -12636,7 +12636,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12652,7 +12652,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12677,7 +12677,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -12785,7 +12785,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12801,7 +12801,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12817,7 +12817,7 @@
                         "name": "Market Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12833,7 +12833,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -12858,7 +12858,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -12877,7 +12877,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -13004,7 +13004,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13020,7 +13020,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13036,7 +13036,7 @@
                         "name": "Market Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13052,7 +13052,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13077,7 +13077,7 @@
                         "name": "Value Proposition Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -13218,7 +13218,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13234,7 +13234,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13250,7 +13250,7 @@
                         "name": "Market Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13266,7 +13266,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13291,7 +13291,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -13415,7 +13415,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13431,7 +13431,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13447,7 +13447,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13463,7 +13463,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13488,7 +13488,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -13503,7 +13503,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -13518,7 +13518,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -13635,7 +13635,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13651,7 +13651,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13676,7 +13676,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -13691,7 +13691,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -13836,7 +13836,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13852,7 +13852,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -13877,7 +13877,7 @@
                         "name": "Minimum Viable Product",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -14178,7 +14178,7 @@
                   "name": "Minimum Viable Product",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -14189,7 +14189,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -14207,7 +14207,7 @@
                   "name": "Minimum Viable Product",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -14218,7 +14218,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -14309,7 +14309,7 @@
                         "name": "Marketing Information",
                         "description": "",
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -14334,7 +14334,7 @@
                         "name": "Marketing Information",
                         "description": "",
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -14459,7 +14459,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -14475,7 +14475,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -14500,7 +14500,7 @@
                         "name": "Minimum Viable Product",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -14815,7 +14815,7 @@
                   "name": "Minimum Viable Product",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -14826,7 +14826,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -14844,7 +14844,7 @@
                   "name": "Minimum Viable Product",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -14855,7 +14855,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -14956,7 +14956,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -14972,7 +14972,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -14997,7 +14997,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -15012,7 +15012,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -15027,7 +15027,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -15141,7 +15141,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15157,7 +15157,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15182,7 +15182,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -15197,7 +15197,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -15212,7 +15212,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -15389,7 +15389,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15405,7 +15405,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15500,7 +15500,7 @@
                   "name": "Web App",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -15511,7 +15511,7 @@
                     "name": "Web App",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -15570,7 +15570,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15586,7 +15586,7 @@
                         "name": "Feature Set",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15602,7 +15602,7 @@
                         "name": "App Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -15701,7 +15701,7 @@
                   "name": "Web App",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -15712,7 +15712,7 @@
                     "name": "Web App",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -15962,7 +15962,7 @@
                   "name": "Web App",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -15973,7 +15973,7 @@
                     "name": "Web App",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -15991,7 +15991,7 @@
                   "name": "App Information",
                   "description": null,
                   "internalArtifact": false,
-                  "metaModel": null
+                  "metaArtifact": null
                 },
                 "elements": [
                   {
@@ -16002,7 +16002,7 @@
                     "name": "App Information",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   }
                 ]
               }
@@ -16104,7 +16104,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "optional": false
@@ -19096,7 +19096,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "mapping": [{ "output": false, "step": 0, "artifact": 0 }],
@@ -19121,7 +19121,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "optional": false
@@ -19183,7 +19183,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "mapping": [{ "output": false, "step": 0, "artifact": 0 }],
@@ -19208,7 +19208,7 @@
                   "name": "Business Model Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "optional": false
@@ -19258,7 +19258,7 @@
                   "name": "Value Proposition Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "mapping": [{ "output": false, "step": 0, "artifact": 0 }],
@@ -19283,7 +19283,7 @@
                   "name": "Value Proposition Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "optional": false
@@ -19345,7 +19345,7 @@
                   "name": "Value Proposition Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "mapping": [{ "output": false, "step": 0, "artifact": 0 }],
@@ -19370,7 +19370,7 @@
                   "name": "Value Proposition Canvas",
                   "description": null,
                   "internalArtifact": true,
-                  "metaModel": { "name": "Canvas", "type": "CompanyModel" }
+                  "metaArtifact": { "name": "Canvas", "type": "CompanyModel" }
                 },
                 "multiple": false,
                 "optional": false
@@ -19477,7 +19477,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19493,7 +19493,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19509,7 +19509,7 @@
                         "name": "Market Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19525,7 +19525,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19550,7 +19550,7 @@
                         "name": "Value Proposition Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -19650,7 +19650,7 @@
                         "name": "Value Proposition Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -19680,7 +19680,7 @@
                         "name": "Value Proposition Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -19763,7 +19763,7 @@
                         "name": "Value Proposition Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -19793,7 +19793,7 @@
                         "name": "Value Proposition Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -19897,7 +19897,7 @@
                         "name": "Customer Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19913,7 +19913,7 @@
                         "name": "Problem Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19929,7 +19929,7 @@
                         "name": "Market Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19945,7 +19945,7 @@
                         "name": "Competitor Information",
                         "description": null,
                         "internalArtifact": false,
-                        "metaModel": null
+                        "metaArtifact": null
                       },
                       "multiple": false,
                       "mapping": [],
@@ -19970,7 +19970,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -20074,7 +20074,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -20104,7 +20104,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -20187,7 +20187,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -20217,7 +20217,7 @@
                         "name": "Business Model Canvas",
                         "description": null,
                         "internalArtifact": true,
-                        "metaModel": {
+                        "metaArtifact": {
                           "name": "Canvas",
                           "type": "CompanyModel"
                         }
@@ -20497,7 +20497,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20513,7 +20513,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20529,7 +20529,7 @@
                           "name": "Market Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20545,7 +20545,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20570,7 +20570,7 @@
                           "name": "Value Proposition Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -20670,7 +20670,7 @@
                           "name": "Value Proposition Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -20700,7 +20700,7 @@
                           "name": "Value Proposition Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -20783,7 +20783,7 @@
                           "name": "Value Proposition Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -20813,7 +20813,7 @@
                           "name": "Value Proposition Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -20917,7 +20917,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20933,7 +20933,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20949,7 +20949,7 @@
                           "name": "Market Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20965,7 +20965,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -20990,7 +20990,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -21094,7 +21094,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -21124,7 +21124,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -21207,7 +21207,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -21237,7 +21237,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -21483,7 +21483,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -21633,7 +21633,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -21919,7 +21919,7 @@
                     "name": "Customer Information",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -21930,7 +21930,7 @@
                       "name": "Customer Information",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -22335,7 +22335,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22351,7 +22351,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22376,7 +22376,7 @@
                           "name": "Market Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -22504,7 +22504,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22520,7 +22520,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22545,7 +22545,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -22673,7 +22673,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22689,7 +22689,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22714,7 +22714,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -22822,7 +22822,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22838,7 +22838,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22854,7 +22854,7 @@
                           "name": "Market Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22870,7 +22870,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -22895,7 +22895,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -22914,7 +22914,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -23041,7 +23041,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23057,7 +23057,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23073,7 +23073,7 @@
                           "name": "Market Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23089,7 +23089,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23114,7 +23114,7 @@
                           "name": "Value Proposition Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -23255,7 +23255,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23271,7 +23271,7 @@
                           "name": "Problem Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23287,7 +23287,7 @@
                           "name": "Market Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23303,7 +23303,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23328,7 +23328,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": true,
-                          "metaModel": {
+                          "metaArtifact": {
                             "name": "Canvas",
                             "type": "CompanyModel"
                           }
@@ -23452,7 +23452,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23468,7 +23468,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23484,7 +23484,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23500,7 +23500,7 @@
                           "name": "Competitor Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23525,7 +23525,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -23540,7 +23540,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -23555,7 +23555,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -23672,7 +23672,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23688,7 +23688,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23713,7 +23713,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -23728,7 +23728,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -23873,7 +23873,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23889,7 +23889,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -23914,7 +23914,7 @@
                           "name": "Minimum Viable Product",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -24215,7 +24215,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -24226,7 +24226,7 @@
                       "name": "Minimum Viable Product",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -24244,7 +24244,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -24255,7 +24255,7 @@
                       "name": "Minimum Viable Product",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -24346,7 +24346,7 @@
                           "name": "Marketing Information",
                           "description": "",
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -24371,7 +24371,7 @@
                           "name": "Marketing Information",
                           "description": "",
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -24496,7 +24496,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -24512,7 +24512,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -24537,7 +24537,7 @@
                           "name": "Minimum Viable Product",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -24852,7 +24852,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -24863,7 +24863,7 @@
                       "name": "Minimum Viable Product",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -24881,7 +24881,7 @@
                     "name": "Minimum Viable Product",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -24892,7 +24892,7 @@
                       "name": "Minimum Viable Product",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -24993,7 +24993,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25009,7 +25009,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25034,7 +25034,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -25049,7 +25049,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -25064,7 +25064,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -25178,7 +25178,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25194,7 +25194,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25219,7 +25219,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -25234,7 +25234,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -25249,7 +25249,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false
@@ -25426,7 +25426,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25442,7 +25442,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25537,7 +25537,7 @@
                     "name": "Web App",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -25548,7 +25548,7 @@
                       "name": "Web App",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -25607,7 +25607,7 @@
                           "name": "Business Model Canvas",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25623,7 +25623,7 @@
                           "name": "Feature Set",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25639,7 +25639,7 @@
                           "name": "App Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "mapping": [],
@@ -25738,7 +25738,7 @@
                     "name": "Web App",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -25749,7 +25749,7 @@
                       "name": "Web App",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -25999,7 +25999,7 @@
                     "name": "Web App",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -26010,7 +26010,7 @@
                       "name": "Web App",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -26028,7 +26028,7 @@
                     "name": "App Information",
                     "description": null,
                     "internalArtifact": false,
-                    "metaModel": null
+                    "metaArtifact": null
                   },
                   "elements": [
                     {
@@ -26039,7 +26039,7 @@
                       "name": "App Information",
                       "description": null,
                       "internalArtifact": false,
-                      "metaModel": null
+                      "metaArtifact": null
                     }
                   ]
                 }
@@ -26141,7 +26141,7 @@
                           "name": "Customer Information",
                           "description": null,
                           "internalArtifact": false,
-                          "metaModel": null
+                          "metaArtifact": null
                         },
                         "multiple": false,
                         "optional": false

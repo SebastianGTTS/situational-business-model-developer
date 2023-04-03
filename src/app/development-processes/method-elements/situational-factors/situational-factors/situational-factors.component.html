@@ -1,0 +1,28 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Situational Factors
+    </h1>
+    The Situational Factors define the situation in which a Method Building
+    Block should be applied.
+  </div>
+
+  <app-method-element-list
+    elementNamePlural="Situational Factors"
+    elementName="Situational Factor"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a situational factor. This cannot be undone. This action
+      will not delete the situational factor from method building blocks that
+      are using it.
+    </div>
+  </app-method-element-list>
+
+  <app-method-element-create-form
+    elementName="Situational Factor"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+  </app-method-element-create-form>
+</main>

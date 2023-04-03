@@ -1,0 +1,173 @@
+<ng-template #notCompletelyDefinedModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalToDoMethod != null">
+      Can not execute method {{ modalToDoMethod.decision.method.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    You need to completely define the method before executing it. Edit the
+    method to define it completely.
+  </div>
+  <div class="modal-footer" *ngIf="modalToDoMethod != null">
+    <div class="d-flex align-items-baseline">
+      <button
+        class="btn btn-primary"
+        (click)="d(); editToDoMethod(modalToDoMethod.executionId)"
+      >
+        Edit method
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #selectMethodModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Select Method Building Block to add to TODO</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-development-methods-selection-form
+      *ngIf="runningProcess != null"
+      [allowTypeFilter]="true"
+      [contextSituationalFactors]="runningProcess.situationalFactors"
+      [developmentMethods]="modalDevelopmentMethods"
+      (selectDevelopmentMethod)="addToDoMethod($event)"
+    ></app-development-methods-selection-form>
+  </div>
+</ng-template>
+
+<ng-template #methodConfigurationModal let-d="dismiss">
+  <div id="method-configuration-modal-header" class="modal-header">
+    <h4 class="modal-title" *ngIf="modalToDoMethod != null">
+      Configure Building Block {{ modalToDoMethod.decision.method.name }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <ng-container *ngIf="runningProcess != null && modalToDoMethod != null">
+    <div class="modal-body">
+      <app-method-info
+        #methodInfo
+        [runningProcess]="runningProcess"
+        [contextDomains]="runningProcess.domains"
+        [contextSituationalFactors]="runningProcess.situationalFactors"
+        [developmentMethod]="modalToDoMethod.decision.method"
+        [decision]="modalToDoMethod.decision"
+        (updateDecisions)="updateDecision($event)"
+      ></app-method-info>
+    </div>
+    <div class="modal-footer d-flex align-items-baseline">
+      <button class="btn btn-secondary" (click)="d()">Close</button>
+      <button
+        id="method-configuration-modal-finish"
+        class="ms-auto btn btn-primary"
+        (click)="methodInfo.update(); d()"
+      >
+        Update all and finish editing
+      </button>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #methodArtifactsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Artifacts of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalRunningMethodInfoArtifacts != null && runningProcess != null"
+  >
+    <app-running-process-artifacts
+      [runningProcess]="runningProcess"
+      [artifactVersions]="modalRunningMethodInfoArtifacts"
+      [allowChanges]="false"
+      [allowEdit]="!runningProcess.completed"
+      (focusNode)="focusNode.emit($event); d()"
+      (editArtifact)="editArtifact($event); d()"
+      (viewArtifactVersion)="viewArtifactVersion($event); d()"
+    ></app-running-process-artifacts>
+  </div>
+</ng-template>
+
+<ng-template #commentsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Comments of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-method-comments
+      *ngIf="modalRunningMethodInfo != null"
+      [comments]="modalRunningMethodInfo.comments"
+      [editable]="false"
+    ></app-running-process-method-comments>
+  </div>
+</ng-template>
+
+<main role="main">
+  <ng-content select="[processView]"></ng-content>
+
+  <div class="container">
+    <ng-content select="[processControls]"></ng-content>
+
+    <div id="running-process-base-kanban-board" class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-header">Kanban Board</h6>
+      <app-running-process-kanban-board
+        [infoOnly]="runningProcess.completed"
+        [runningProcess]="runningProcess"
+        (addTodo)="openSelectMethodModal()"
+        (editTodo)="editToDoMethod($event)"
+        (removeTodo)="removeMethod($event)"
+        (viewNode)="focusNode.emit($event)"
+        (showInfo)="openInfoModal($event)"
+        (startNodeExecution)="startNodeExecution.emit($event)"
+        (startExecution)="startExecution($event)"
+        (viewExecution)="viewExecution($event)"
+        (viewArtifacts)="viewArtifacts($event)"
+        (viewComments)="openCommentsModal($event)"
+      ></app-running-process-kanban-board>
+    </div>
+
+    <div
+      id="running-process-base-finish-method"
+      *ngIf="!runningProcess.completed"
+      class="my-3 sbmd-panel"
+    >
+      <h6 class="sbmd-panel-header">Finish Method</h6>
+      <div class="d-grid">
+        <button (click)="finish()" class="btn btn-primary btn-sm">
+          Finish Method
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

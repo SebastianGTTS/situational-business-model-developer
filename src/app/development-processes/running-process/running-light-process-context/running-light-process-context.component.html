@@ -1,0 +1,42 @@
+<main *ngIf="runningProcess != null" role="main" class="container">
+  <app-context-edit
+    *ngIf="!runningProcess.completed"
+    [domains]="runningProcess.domains"
+    [situationalFactors]="runningProcess.situationalFactors"
+    (updateDomains)="updateDomains($event)"
+    (updateSituationalFactors)="updateSituationalFactors($event)"
+  ></app-context-edit>
+
+  <div *ngIf="runningProcess.completed" class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Context</h6>
+    <div class="my-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Domain</h6>
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let domain of runningProcess.domains"
+        >
+          {{ domain.name }}
+        </li>
+      </ul>
+    </div>
+    <div class="mt-3 sbmd-panel">
+      <h6 class="sbmd-panel-title">Situational Factors</h6>
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          *ngFor="let situationalFactor of runningProcess.situationalFactors"
+        >
+          {{ situationalFactor.element!.factor.name }}:
+          {{ situationalFactor.element!.value }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div *ngIf="!runningProcess.completed" class="sbmd-update-all">
+    <button type="submit" class="btn btn-primary" (click)="update()">
+      Update all
+    </button>
+  </div>
+</main>

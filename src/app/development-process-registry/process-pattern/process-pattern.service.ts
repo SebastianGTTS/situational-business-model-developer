@@ -11,6 +11,7 @@ import { PouchdbService } from '../../database/pouchdb.service';
 import { SituationalFactorService } from '../method-elements/situational-factor/situational-factor.service';
 import { SituationalFactor } from '../method-elements/situational-factor/situational-factor';
 import { ProcessPatternDiagramService } from './process-pattern-diagram.service';
+import { IconInit } from '../../model/icon';
 
 @Injectable({
   providedIn: DevelopmentProcessRegistryModule,
@@ -81,9 +82,29 @@ export class ProcessPatternService extends DefaultElementService<
     id: string,
     processPattern: Partial<ProcessPattern>
   ): Promise<void> {
-    const dbProcessPattern = await this.get(id);
-    dbProcessPattern.update(processPattern);
-    await this.save(dbProcessPattern);
+    try {
+      const pattern = await this.getWrite(id);
+      pattern.update(processPattern);
+      await this.save(pattern);
+    } finally {
+      this.freeWrite(id);
+    }
+  }
+
+  /**
+   * Update the icon of a process pattern
+   *
+   * @param id
+   * @param icon
+   */
+  async updateIcon(id: string, icon: IconInit): Promise<void> {
+    try {
+      const pattern = await this.getWrite(id);
+      pattern.updateIcon(icon);
+      await this.save(pattern);
+    } finally {
+      this.freeWrite(id);
+    }
   }
 
   /**

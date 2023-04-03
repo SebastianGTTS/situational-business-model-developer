@@ -1,0 +1,96 @@
+<app-step-errors></app-step-errors>
+
+<main
+  *ngIf="hypoMoMap != null && runningMethod != null"
+  role="main"
+  class="container"
+>
+  <div class="my-3 sbmd-info-block">
+    <p>
+      Map experiments and hypotheses to later execute experiments and validate
+      the corresponding hypotheses.
+    </p>
+    <ul class="mb-0">
+      <li>Add experiments at the bottom of the page</li>
+      <li>Set costs and maximum evidence of the experiments</li>
+      <li>Map the experiments and hypotheses</li>
+    </ul>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Hypothesis Tree</h6>
+    <div>
+      <app-hypothesis-tree
+        [hypotheses]="hypoMoMap.hypotheses"
+        [processPhase]="'stepMap'"
+        [hypothesisExperimentMap]="hypothesisExperimentMap"
+        (addExperiment)="openAddExperimentToHypothesisModal($event)"
+        (showMappings)="openShowMappingsHypothesisModal($event)"
+      ></app-hypothesis-tree>
+    </div>
+    <div class="mt-3">
+      <app-hypothesis-tree-legend></app-hypothesis-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <div class="sbmd-panel-header">
+      <h6 class="sbmd-panel-header-title">Experiment Tree</h6>
+      <button
+        (click)="openAddExperimentModal()"
+        class="btn btn-primary btn-sm ms-auto"
+      >
+        Add Experiment
+      </button>
+    </div>
+    <app-used-experiment-tree
+      [usedExperiments]="hypoMoMap.usedExperimentsList"
+      (addHypothesis)="
+        openAddHypothesisToExperimentModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (setCostAndScore)="
+        openEvidenceCostsModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (showMappings)="
+        openShowMappingsExperimentModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (showArtifacts)="
+        openShowArtifactsModal(
+          $event.experimentDefinitionId,
+          $event.experimentId
+        )
+      "
+      (deleteExperiment)="openRemoveExperimentModal($event)"
+    ></app-used-experiment-tree>
+    <div class="mt-3">
+      <app-used-experiment-tree-legend></app-used-experiment-tree-legend>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <app-running-process-method-comments
+      [comments]="runningMethod.comments"
+      (addComment)="addComment($event)"
+      (updateComment)="updateComment($event)"
+      (removeComment)="removeComment($event)"
+    ></app-running-process-method-comments>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish editing</h6>
+    <div class="d-grid">
+      <button class="btn btn-sm btn-primary" (click)="finish()">
+        Finish editing
+      </button>
+    </div>
+  </div>
+</main>

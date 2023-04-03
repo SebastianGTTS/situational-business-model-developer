@@ -1,0 +1,20 @@
+<div class="my-3 sbmd-panel">
+  <h6 class="sbmd-panel-title">Domain</h6>
+  <ul class="list-group" *ngIf="combinedList != null">
+    <li class="list-group-item" *ngFor="let item of combinedList">
+      <span *ngIf="item.status === status.REMOVED" class="text-danger"
+        ><del
+          >{{ item.domain.name
+          }}<span class="visually-hidden"> (removed)</span></del
+        ></span
+      >
+      <span *ngIf="item.status === status.ADDED" class="text-success"
+        ><ins
+          >{{ item.domain.name
+          }}<span class="visually-hidden"> (added)</span></ins
+        ></span
+      >
+      <span *ngIf="item.status == null">{{ item.domain.name }}</span>
+    </li>
+  </ul>
+</div>

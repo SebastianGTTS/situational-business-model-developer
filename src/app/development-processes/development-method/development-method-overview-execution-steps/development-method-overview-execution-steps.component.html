@@ -1,0 +1,23 @@
+<ul class="list-group">
+  <li
+    *ngFor="let step of executionSteps; let index = index"
+    class="list-group-item"
+  >
+    <div class="d-flex">
+      <h6 class="mb-0" [class.m-0]="!hasDescription(index)">
+        {{ index + 1 }}.
+      </h6>
+      <div class="ms-2">
+        <h6 class="m-0">
+          <span *ngIf="isMethodExecutionStep(step)"
+            >{{ step.module }} &ndash; {{ step.method }}</span
+          >
+          <span *ngIf="!isMethodExecutionStep(step)">{{ step.name }}</span>
+        </h6>
+        <p *ngIf="hasDescription(index)" class="mb-0">
+          <span class="sbmd-show-new-lines">{{ getDescription(index) }}</span>
+        </p>
+      </div>
+    </div>
+  </li>
+</ul>

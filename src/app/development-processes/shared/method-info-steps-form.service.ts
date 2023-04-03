@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+} from '@angular/forms';
 import { ModuleService } from '../../development-process-registry/module-api/module.service';
 import { StepDecision } from '../../development-process-registry/module-api/module-method';
 import {
@@ -11,12 +15,15 @@ import {
   providedIn: 'root',
 })
 export class MethodInfoStepsFormService {
-  constructor(private fb: FormBuilder, private moduleService: ModuleService) {}
+  constructor(
+    private fb: UntypedFormBuilder,
+    private moduleService: ModuleService
+  ) {}
 
   createForm(
     executionSteps: ExecutionStep[],
     stepDecisions: (StepDecision | undefined)[]
-  ): FormArray {
+  ): UntypedFormArray {
     return this.fb.array(
       stepDecisions.map((step, index) =>
         this.createStepDecisionForm(executionSteps[index], step)
@@ -27,7 +34,7 @@ export class MethodInfoStepsFormService {
   createStepDecisionForm(
     executionStep: ExecutionStep,
     stepDecision: StepDecision | undefined
-  ): FormGroup | undefined {
+  ): UntypedFormGroup | undefined {
     if (!isMethodExecutionStep(executionStep)) {
       return undefined;
     }

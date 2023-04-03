@@ -1,0 +1,24 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">Overview of the Whiteboards</h1>
+    The Whiteboard Templates are models that are used within the instances of
+    the Whiteboard Module.
+  </div>
+  <app-list-panel
+    elementName="Whiteboard Template"
+    elementNamePlural="Whiteboard Templates"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a Whiteboard Template. This can not be undone. This
+      action will not delete the whiteboard template from whiteboard instances
+      that are using it.
+    </div>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Whiteboard Template"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+</main>

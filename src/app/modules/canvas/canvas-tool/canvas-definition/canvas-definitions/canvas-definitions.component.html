@@ -1,0 +1,27 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Canvas Models
+    </h1>
+    The Canvas Models are used to define different types of canvases which can
+    be used to structure the knowledge of the Canvas Building Blocks.
+  </div>
+
+  <app-list-panel
+    elementName="Canvas Model"
+    elementNamePlural="Canvas Models"
+    [viewLinkFunction]="viewLinkFunction"
+  >
+    <div deleteMessage>
+      You are deleting a canvas model. The deletion cannot be undone. The canvas
+      building blocks that are using it will still be available after the
+      deletion.
+    </div>
+  </app-list-panel>
+
+  <app-element-name-form
+    elementName="Canvas Model"
+    [createFunction]="createFunction"
+    [viewLinkFunction]="viewLinkFunction"
+  ></app-element-name-form>
+</main>

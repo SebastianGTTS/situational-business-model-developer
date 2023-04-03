@@ -1,0 +1,21 @@
+<ng-template #ref let-item>
+  <app-list-item [showView]="false" [showDelete]="false" [item]="item">
+    <ng-container extraButtons>
+      <button
+        (click)="selectBmProcess.emit(item)"
+        type="button"
+        class="btn btn-primary btn-sm"
+      >
+        Select
+      </button>
+    </ng-container>
+  </app-list-item>
+</ng-template>
+
+<app-search
+  heading="Business Model Development Methods"
+  itemName="Business Model Development Method"
+  [content]="ref"
+  [items]="bmProcesses"
+>
+</app-search>

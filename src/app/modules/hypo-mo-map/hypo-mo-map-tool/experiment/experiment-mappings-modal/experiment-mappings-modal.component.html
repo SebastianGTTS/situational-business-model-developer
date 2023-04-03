@@ -1,0 +1,41 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title" *ngIf="experiment != null">
+    {{ experiment.name }}
+  </h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="dismiss()"
+  ></button>
+</div>
+
+<div class="modal-body" *ngIf="experiment != null && mappings != null">
+  <div *ngIf="mappings.length === 0" class="alert alert-info" role="alert">
+    This experiment has no mappings.
+  </div>
+
+  <ul class="list-group">
+    <li
+      *ngFor="let mapping of mappings"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <app-hypothesis-info
+        [hypothesis]="mapping.hypothesis"
+      ></app-hypothesis-info>
+      <button
+        (click)="
+          removeMapping.emit({
+            hypothesisId: mapping.hypothesis.id,
+            experimentId: experiment.id,
+            experimentDefinitionId: experiment.getExperimentDefinitionId()
+          })
+        "
+        type="button"
+        class="btn btn-danger btn-sm"
+      >
+        Remove
+      </button>
+    </li>
+  </ul>
+</div>

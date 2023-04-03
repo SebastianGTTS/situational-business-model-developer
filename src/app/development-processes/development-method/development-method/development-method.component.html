@@ -1,0 +1,17 @@
+<div *ngIf="developmentMethod == null" class="d-flex h-100">
+  <div class="m-auto spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<div class="my-3 container" *ngIf="developmentMethod != null">
+  <div *ngIf="!correctlyDefined" class="alert alert-danger">
+    This Method Building Block has errors.
+  </div>
+
+  <div *ngIf="correctlyDefined" class="alert alert-success">
+    This Method Building Block is correctly defined.
+  </div>
+</div>
+
+<router-outlet *ngIf="developmentMethod != null"></router-outlet>

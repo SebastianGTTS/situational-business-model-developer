@@ -1,0 +1,69 @@
+<main *ngIf="bmProcess != null" class="container" role="main">
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Method Composition Type</h6>
+    <div class="alert alert-info">
+      <p>There are two different method composition types.</p>
+      <p>
+        <strong>Pattern Based Composition</strong> is a composition type where
+        the method's process is defined by using patterns.
+      </p>
+      <p class="mb-0">
+        <strong>Phase Based Composition</strong> is a composition type where the
+        method's process is defined by using phases.
+      </p>
+    </div>
+    <form class="text-center" [formGroup]="typeForm">
+      <div
+        class="btn-group"
+        role="group"
+        aria-label="Pattern or phase based composition"
+      >
+        <input
+          type="radio"
+          class="btn-check"
+          id="pattern-based-option"
+          autocomplete="off"
+          [value]="compositionTypes.PATTERN"
+          formControlName="type"
+        />
+        <label class="btn btn-outline-secondary" for="pattern-based-option"
+          ><i aria-hidden="true" class="bi bi-diagram-3 sbmd-icon-xl"></i><br />
+          Pattern Based</label
+        >
+        <input
+          type="radio"
+          class="btn-check"
+          id="phase-based-option"
+          autocomplete="off"
+          [value]="compositionTypes.PHASE"
+          formControlName="type"
+        />
+        <label class="btn btn-outline-secondary" for="phase-based-option"
+          ><i aria-hidden="true" class="bi bi-kanban sbmd-icon-xl"></i><br />
+          Phase Based</label
+        >
+      </div>
+    </form>
+  </div>
+
+  <app-context-edit
+    [domains]="bmProcess.domains"
+    [situationalFactors]="bmProcess.situationalFactors"
+    (updateDomains)="updateDomains($event)"
+    (updateSituationalFactors)="updateSituationalFactors($event)"
+  ></app-context-edit>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Finish</h6>
+    <div class="d-grid">
+      <button
+        [disabled]="!typeForm.valid && typeForm.enabled"
+        (click)="finishInitialization()"
+        type="button"
+        class="btn btn-sm btn-primary"
+      >
+        Update all and finish initialization
+      </button>
+    </div>
+  </div>
+</main>

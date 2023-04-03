@@ -1,0 +1,44 @@
+<form [formGroup]="phaseForm" (ngSubmit)="submitForm()">
+  <div class="row mb-3">
+    <label for="name" class="col-sm-4 col-form-label">Phase Name</label>
+    <div class="col-sm-8">
+      <input
+        type="text"
+        formControlName="name"
+        class="form-control"
+        id="name"
+      />
+    </div>
+  </div>
+  <div class="row mb-3" *ngIf="phase != null">
+    <label for="description" class="col-sm-4 col-form-label">Description</label>
+    <div class="col-sm-8">
+      <textarea
+        formControlName="description"
+        id="description"
+        class="form-control"
+        rows="3"
+      ></textarea>
+    </div>
+  </div>
+  <div class="d-grid">
+    <button
+      *ngIf="phase == null"
+      type="submit"
+      class="btn btn-sm btn-primary"
+      [disabled]="!phaseForm.valid"
+    >
+      Add Phase
+    </button>
+    <button
+      *ngIf="phase != null"
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!phaseForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

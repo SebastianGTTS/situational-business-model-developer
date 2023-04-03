@@ -1,0 +1,9 @@
+<app-tutorial-popover
+  *ngIf="tutorialStep != null && targetElement != null"
+  [tutorialStep]="tutorialStep"
+  [targetElement]="targetElement"
+  (closePopover)="close()"
+  (previous)="previousStep()"
+  (next)="nextStep()"
+  (restart)="restart()"
+></app-tutorial-popover>

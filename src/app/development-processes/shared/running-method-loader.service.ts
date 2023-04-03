@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { RunningProcessLoaderService } from './running-process-loader.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { RunningMethod } from '../../development-process-registry/running-process/running-method';
-import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
+import { RunningProcessTypesService } from '../../development-process-registry/running-process/running-process-types.service';
 
 @Injectable()
 export class RunningMethodLoaderService extends RunningProcessLoaderService {
@@ -10,10 +10,10 @@ export class RunningMethodLoaderService extends RunningProcessLoaderService {
   private executionId?: string;
 
   constructor(
-    runningProcessService: RunningProcessService,
+    runningProcessTypesService: RunningProcessTypesService,
     route: ActivatedRoute
   ) {
-    super(runningProcessService, route);
+    super(runningProcessTypesService, route);
     this.loaded.subscribe(() => this.loadRunningMethod());
   }
 

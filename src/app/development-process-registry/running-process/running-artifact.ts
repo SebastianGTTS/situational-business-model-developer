@@ -14,15 +14,20 @@ import {
   DatabaseRootEntry,
   DatabaseRootInit,
 } from '../../database/database-entry';
+import { Icon, IconEntry, IconInit } from '../../model/icon';
 
 export interface RunningArtifactInit extends DatabaseRootInit {
-  identifier: string;
+  name: string;
+  description?: string;
+  icon?: IconInit;
   artifact: ArtifactInit;
   versions?: ArtifactVersionInit[];
 }
 
 export interface RunningArtifactEntry extends DatabaseRootEntry {
-  identifier: string;
+  name: string;
+  description: string;
+  icon: IconEntry;
   artifact: ArtifactEntry;
   versions: ArtifactVersionEntry[];
 }
@@ -32,8 +37,11 @@ export class RunningArtifact
   implements RunningArtifactInit
 {
   static readonly typeName = 'RunningArtifact';
+  static readonly defaultIcon: IconInit = { icon: 'bi-file-earmark-richtext' };
 
-  identifier: string;
+  name: string;
+  description = '';
+  icon: Icon;
   artifact: Artifact;
   versions: ArtifactVersion[] = [];
 
@@ -43,14 +51,18 @@ export class RunningArtifact
   ) {
     super(entry, init, RunningArtifact.typeName);
     if (entry != null) {
-      this.identifier = entry.identifier;
+      this.name = entry.name;
+      this.description = entry.description ?? this.description;
+      this.icon = new Icon(entry.icon ?? {}, undefined);
       this.artifact = new Artifact(entry.artifact, undefined);
       this.versions =
         entry.versions?.map(
           (version) => new ArtifactVersion(version, undefined)
         ) ?? this.versions;
     } else if (init != null) {
-      this.identifier = init.identifier;
+      this.name = init.name;
+      this.description = init.description ?? this.description;
+      this.icon = new Icon(undefined, init.icon ?? RunningArtifact.defaultIcon);
       this.artifact = new Artifact(undefined, init.artifact);
       this.versions =
         init.versions?.map(
@@ -59,6 +71,10 @@ export class RunningArtifact
     } else {
       throw new Error('Either entry or init must be provided.');
     }
+  }
+
+  updateIcon(icon: IconInit): void {
+    this.icon.update(icon);
   }
 
   addVersion(version: ArtifactVersionInit): void {
@@ -97,7 +113,9 @@ export class RunningArtifact
   toDb(): RunningArtifactEntry {
     return {
       ...super.toDb(),
-      identifier: this.identifier,
+      name: this.name,
+      description: this.description,
+      icon: this.icon.toDb(),
       artifact: this.artifact.toDb(),
       versions: this.versions.map((version) => version.toDb()),
     };

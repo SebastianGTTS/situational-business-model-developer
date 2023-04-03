@@ -1,0 +1,18 @@
+<section class="sbmd-panel">
+  <div class="d-flex align-items-start">
+    <h6 class="sbmd-panel-small-title">Artifacts</h6>
+    <div class="ms-auto">
+      <a
+        class="btn btn-sm btn-primary rounded-circle mb-1"
+        [routerLink]="['..', 'artifacts']"
+      >
+        <i class="bi bi-pencil-fill" aria-label="Edit"></i>
+      </a>
+    </div>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let artifact of artifacts">
+      {{ artifact.name }} &ndash; {{ artifact.artifact.name }}
+    </li>
+  </ul>
+</section>

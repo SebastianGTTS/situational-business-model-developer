@@ -1,0 +1,60 @@
+<nav class="navbar navbar-dark sbmd-navbar">
+  <div class="container-fluid justify-content-start">
+    <button
+      [disabled]="!sidenavEnabled"
+      (click)="navbarToggle.emit()"
+      class="navbar-toggler"
+      [class.invisible]="!sidenavEnabled"
+      type="button"
+      aria-controls="navbarToggleExternalContent"
+      [attr.aria-expanded]="sidenavExpanded"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="ms-3 navbar-brand" [routerLink]="['/']"
+      >Situational Business Model Developer</a
+    >
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a
+          #itemActive="routerLinkActive"
+          routerLinkActive="active"
+          class="nav-link"
+          [routerLink]="['/', 'explanation']"
+          >Explanation
+          <span *ngIf="itemActive.isActive" class="visually-hidden"
+            >(current)</span
+          ></a
+        >
+      </li>
+    </ul>
+    <span *ngIf="text != null" class="navbar-text">
+      {{ text }}
+    </span>
+    <div class="ms-auto row g-3 align-items-center">
+      <div class="col-auto">
+        <label for="roleSelector" class="col-form-label text-light">Role</label>
+      </div>
+      <div class="col-auto">
+        <div class="input-group flex-nowrap">
+          <input
+            type="text"
+            readonly
+            disabled
+            class="form-control"
+            id="roleSelector"
+            value="{{ currentRole?.name ?? 'None' }}"
+          />
+          <button
+            (click)="switchRole()"
+            class="btn btn-outline-light"
+            type="button"
+          >
+            Switch
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

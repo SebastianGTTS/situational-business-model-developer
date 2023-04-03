@@ -1,0 +1,181 @@
+<ng-template #methodArtifactsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Artifacts of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div
+    class="modal-body"
+    *ngIf="modalRunningMethodInfoArtifacts != null && runningProcess != null"
+  >
+    <app-running-process-artifacts
+      [runningProcess]="runningProcess"
+      [artifactVersions]="modalRunningMethodInfoArtifacts"
+      [allowChanges]="false"
+      (focusNode)="focusNode.emit($event); d()"
+      (editArtifact)="editArtifact($event); d()"
+      (viewArtifactVersion)="viewArtifactVersion($event); d()"
+    ></app-running-process-artifacts>
+  </div>
+</ng-template>
+
+<ng-template #commentsModal let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" *ngIf="modalRunningMethodInfo != null">
+      Comments of {{ modalRunningMethodInfo.methodName }}
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="d()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-running-process-method-comments
+      *ngIf="modalRunningMethodInfo != null"
+      [comments]="modalRunningMethodInfo.comments"
+      [editable]="false"
+    ></app-running-process-method-comments>
+  </div>
+</ng-template>
+
+<ng-template #removeExecutedMethodModal let-d="dismiss" let-c="close">
+  <app-delete-modal
+    *ngIf="modalRunningMethodInfo != null"
+    (dismiss)="d()"
+    (delete)="removeExecutedMethod(modalRunningMethodInfo.executionId); c()"
+  >
+    <div modalTitle>Remove development step's execution</div>
+    This will remove this execution of the development step
+    {{ modalRunningMethodInfo.methodName }} and map all affected artifacts to be
+    manually added.
+  </app-delete-modal>
+</ng-template>
+
+<ng-content select="[processView]"></ng-content>
+
+<div class="container">
+  <div class="sbmd-panel">
+    <div class="row">
+      <div class="col-4"><strong>Legend:</strong></div>
+      <div class="col-4">
+        <i class="bi bi-square bpmn-legend-icon text-success"></i> Executed node
+      </div>
+      <div class="col-4">
+        <i class="bi bi-square bpmn-legend-icon text-danger"></i> Currently
+        executing node
+      </div>
+    </div>
+    <div class="row">
+      <div class="offset-4 col-4" *ngIf="isComplexModel">
+        <i class="bi bi-square bpmn-legend-icon text-warning"></i> Unreachable
+        node
+      </div>
+      <div class="col-4" [class.offset-8]="!isComplexModel">
+        <i class="bi bi-square bpmn-legend-icon text-muted"></i> Missing
+        artifacts for node
+      </div>
+    </div>
+    <div class="row" *ngIf="isComplexModel">
+      <div class="col-4">
+        <i class="bi bi-play-circle bpmn-legend-icon"></i> Start execution here
+      </div>
+      <div class="col-4">
+        <i class="bi bi-plus-circle bpmn-legend-icon"></i> Fake execution of
+        development step
+      </div>
+      <div class="col-4">
+        <i class="bi bi-arrow-right-circle bpmn-legend-icon"></i> Skip execution
+        of development step
+      </div>
+    </div>
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Executed development steps</h6>
+    <div *ngIf="runningProcess.executedMethods.length === 0">
+      No executed development steps.
+    </div>
+    <ul
+      class="list-group mb-0"
+      *ngIf="runningProcess.executedMethods.length > 0"
+    >
+      <li
+        class="list-group-item"
+        *ngFor="let executedMethod of runningProcess.executedMethods"
+      >
+        <div class="d-flex align-items-baseline">
+          {{ executedMethod.methodName }}
+          <div class="ms-auto">
+            <button
+              *ngIf="executedMethod.nodeId != null"
+              class="btn btn-sm btn-dark me-1"
+              (click)="focusNode.emit(executedMethod.nodeId)"
+            >
+              Show
+            </button>
+            <button
+              class="btn btn-sm btn-dark me-1"
+              (click)="viewArtifacts(executedMethod.executionId)"
+            >
+              View artifacts
+            </button>
+            <button
+              class="btn btn-sm btn-dark me-1"
+              (click)="openCommentsModal(executedMethod.executionId)"
+            >
+              View comments
+            </button>
+            <button
+              class="btn btn-sm btn-dark"
+              (click)="openRemoveExecutionModal(executedMethod.executionId)"
+            >
+              Remove execution
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <app-running-process-artifacts
+    [runningProcess]="runningProcess"
+    (focusNode)="focusNode.emit($event)"
+    (addArtifact)="addArtifact($event.artifact, $event.output)"
+    (importArtifact)="importArtifact($event)"
+    (createArtifact)="createArtifact($event)"
+    (exportArtifact)="exportArtifact($event.identifier, $event.artifact)"
+    (renameArtifact)="renameArtifact($event.identifier, $event.artifact)"
+    (editArtifact)="editArtifact($event)"
+    (viewArtifactVersion)="viewArtifactVersion($event)"
+    (removeArtifact)="removeArtifact($event)"
+  ></app-running-process-artifacts>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Missing Artifacts</h6>
+    <div *ngIf="missingArtifacts.length === 0">
+      There are no warnings about missing artifacts
+    </div>
+    <ul *ngIf="missingArtifacts.length > 0">
+      <li *ngFor="let warning of missingArtifacts">
+        Method
+        <a [routerLink]="[]" (click)="focusNode.emit(warning.elementId)">{{
+          warning.name
+        }}</a>
+        may be missing the following Artifacts
+        <ul>
+          <li *ngFor="let artifact of warning.artifacts">
+            {{ artifact.name }}
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>

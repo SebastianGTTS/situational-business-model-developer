@@ -1,0 +1,53 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Explanations</h6>
+    <ul ngbNav #nav="ngbNav" class="nav-pills nav-justified">
+      <li ngbNavItem>
+        <a ngbNavLink>Knowledge Provision</a>
+        <ng-template ngbNavContent>
+          <app-knowledge-provision-explanation></app-knowledge-provision-explanation>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Method Composition</a>
+        <ng-template ngbNavContent>
+          <app-method-composition-explanation></app-method-composition-explanation>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Method Enactment</a>
+        <ng-template ngbNavContent>
+          <app-method-enactment-explanation></app-method-enactment-explanation>
+        </ng-template>
+      </li>
+    </ul>
+  </div>
+
+  <div class="mt-1" [ngbNavOutlet]="nav"></div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Further Information</h6>
+    <p class="mt-2">
+      Further information can be accessed within the GitHub Repository of this
+      tool or the corressponding PHD Thesis:
+    </p>
+    <ul class="mb-0">
+      <li>
+        <strong>Open GitHub Repository:</strong>
+        <a
+          href="https://github.com/SebastianGTTS/situational-business-modeler-developer"
+        >
+          https://github.com/SebastianGTTS/situational-business-modeler-developer
+        </a>
+      </li>
+      <li>
+        <strong>Open PHD Thesis:</strong>
+        <a
+          href="https://digital.ub.uni-paderborn.de/urn/urn:nbn:de:hbz:466:2-44051"
+        >
+          https://digital.ub.uni-paderborn.de/urn/urn:nbn:de:hbz:466:2-44051
+        </a>
+      </li>
+    </ul>
+  </div>
+</main>

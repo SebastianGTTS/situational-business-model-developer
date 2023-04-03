@@ -1,0 +1,19 @@
+<form [formGroup]="examplesForm" (ngSubmit)="submitForm()">
+  <div class="mb-3" formArrayName="examples">
+    <app-form-array-list
+      elementName="Explanation"
+      [formArray]="formArray"
+    ></app-form-array-list>
+  </div>
+  <div class="d-grid">
+    <button
+      type="submit"
+      class="btn btn-sm"
+      [class.btn-dark]="!changed"
+      [class.btn-primary]="changed"
+      [disabled]="!examplesForm.valid"
+    >
+      Update<span *ngIf="changed"> (unsaved changes)</span>
+    </button>
+  </div>
+</form>

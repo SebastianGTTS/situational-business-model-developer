@@ -1,0 +1,25 @@
+<main role="main" class="container">
+  <div class="my-3 sbmd-info-block">
+    <h1 class="border-bottom border-gray pb-2">
+      Overview of the Method Elements
+    </h1>
+    The Method Elements are the atomic parts that combined into Method Building
+    Blocks. While most elements are defined here, the tasks are directly
+    specified within the building block.
+  </div>
+
+  <div class="my-3 sbmd-panel">
+    <h6 class="sbmd-panel-title">Method Elements</h6>
+    <div>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let item of methodElementLinks">
+          <app-list-item
+            [item]="item"
+            [viewLink]="item.route"
+            [showDelete]="false"
+          ></app-list-item>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>

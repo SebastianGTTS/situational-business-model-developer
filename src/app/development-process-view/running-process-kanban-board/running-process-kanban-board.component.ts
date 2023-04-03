@@ -8,8 +8,11 @@ import {
 } from '@angular/core';
 import { KanbanBoardMethodInfo } from '../kanban-board/kanban-board-method-info';
 import { RunningProcess } from '../../development-process-registry/running-process/running-process';
-import { RunningProcessService } from '../../development-process-registry/running-process/running-process.service';
 import { MethodDecision } from '../../development-process-registry/bm-process/method-decision';
+import { RunningPatternProcess } from '../../development-process-registry/running-process/running-pattern-process';
+import { RunningPhaseProcess } from '../../development-process-registry/running-process/running-phase-process';
+import { RunningPatternProcessService } from '../../development-process-registry/running-process/running-pattern-process.service';
+import { RunningPhaseProcessService } from '../../development-process-registry/running-process/running-phase-process.service';
 
 @Component({
   selector: 'app-running-process-kanban-board',
@@ -17,6 +20,9 @@ import { MethodDecision } from '../../development-process-registry/bm-process/me
   styleUrls: ['./running-process-kanban-board.component.css'],
 })
 export class RunningProcessKanbanBoardComponent implements OnChanges {
+  @Input() editable = true;
+  @Input() infoOnly = false;
+
   @Input() runningProcess!: RunningProcess;
 
   @Output() addTodo = new EventEmitter<void>();
@@ -34,7 +40,10 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
   doing: KanbanBoardMethodInfo[] = [];
   done: KanbanBoardMethodInfo[] = [];
 
-  constructor(private runningProcessService: RunningProcessService) {}
+  constructor(
+    private runningPatternProcessService: RunningPatternProcessService,
+    private runningPhaseProcessService: RunningPhaseProcessService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.runningProcess) {
@@ -43,8 +52,12 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
   }
 
   _showNodeInfo(nodeId: string): void {
-    if (this.runningProcess.hasProcess()) {
+    if (this.runningProcess instanceof RunningPatternProcess) {
       this.showInfo.emit(this.runningProcess.process.decisions[nodeId]);
+    } else if (this.runningProcess instanceof RunningPhaseProcess) {
+      this.showInfo.emit(
+        this.runningProcess.process.getPhaseMethodDecision(nodeId)?.decision
+      );
     }
   }
 
@@ -71,17 +84,30 @@ export class RunningProcessKanbanBoardComponent implements OnChanges {
   ): Promise<KanbanBoardMethodInfo[]> {
     const todo: KanbanBoardMethodInfo[] = [];
     todo.push(...runningProcess.todoMethods);
-    todo.push(
-      ...(
-        await this.runningProcessService.getExecutableMethods(runningProcess)
-      ).map((node) => {
-        return {
-          nodeId: node.id,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          methodName: runningProcess.process!.decisions[node.id].method.name,
-        };
-      })
-    );
+    if (runningProcess instanceof RunningPatternProcess) {
+      todo.push(
+        ...(
+          await this.runningPatternProcessService.getExecutableMethods(
+            runningProcess
+          )
+        ).map((node) => {
+          return {
+            nodeId: node.id,
+            methodName: runningProcess.process.decisions[node.id].method.name,
+          };
+        })
+      );
+    }
+    if (runningProcess instanceof RunningPhaseProcess) {
+      const currentPhaseMethodDecision =
+        this.runningPhaseProcessService.getExecutableMethod(runningProcess);
+      if (currentPhaseMethodDecision != null) {
+        todo.push({
+          nodeId: currentPhaseMethodDecision.id,
+          methodName: currentPhaseMethodDecision.decision.method.name,
+        });
+      }
+    }
     return todo;
   }
 

@@ -3,8 +3,8 @@ import BpmnRenderer from 'bpmn-js/lib/draw/BpmnRenderer';
 import TextRenderer from 'bpmn-js/lib/draw/TextRenderer';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { append, attr, remove, select } from 'tiny-svg';
-import { BmProcess } from '../../../development-process-registry/bm-process/bm-process';
-import { BmProcessService } from '../../../development-process-registry/bm-process/bm-process.service';
+import { BmPatternProcess } from '../../../development-process-registry/bm-process/bm-pattern-process';
+import { BmPatternProcessService } from '../../../development-process-registry/bm-process/bm-pattern-process.service';
 import { BpmnElement, BpmnFlowNode, EventBus } from 'bpmn-js';
 
 export default class BmProcessTaskRenderer
@@ -18,8 +18,8 @@ export default class BmProcessTaskRenderer
   private bpmnRenderer: BpmnRenderer;
   private textRenderer: TextRenderer;
 
-  process?: BmProcess;
-  bmProcessService?: BmProcessService;
+  process?: BmPatternProcess;
+  bmProcessService?: BmPatternProcessService;
 
   constructor(
     eventBus: EventBus,
@@ -40,7 +40,7 @@ export default class BmProcessTaskRenderer
     const shape: SVGRectElement = this.bpmnRenderer.drawShape(
       parentNode,
       element
-    );
+    ) as SVGRectElement;
     const method = element.businessObject.get('method');
     if (method) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
